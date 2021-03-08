@@ -8,8 +8,34 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: GoogleCloudPlatform/release-please-action@v2.2.0
+        id: release
         with:
           token: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
-          release-type: simple
+          release-type: node
           package-name: radixdtl-desktop-wallet
           changelog-types: '[{"type":"feat","section":"Features","hidden":false},{"type":"fix","section":"Bug Fixes","hidden":false},{"type":"docs","section":"Documentation","hidden":false},{"type":"chore","section":"Dependencies","hidden":false},{"type":"security","section":"Security","hidden":false},{"type":"style","section":"Code Style","hidden":false},{"type":"test","section":"Test Coverage","hidden":false}]'
+
+  build-release:
+    needs: [release-please]
+    if: github.ref == 'refs/heads/master'
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v1
+
+      - name: Install Node.js, NPM and Yarn
+        uses: actions/setup-node@v1
+        with:
+          node-version: 10
+
+      - name: Build/release Electron app
+        uses: samuelmeuli/action-electron-builder@v1
+        with:
+          # GitHub token, automatically provided to the action
+          # (No need to define this secret in the repo settings)
+          github_token: ${{ secrets.github_token }}
+          use_vue_cli: true
+          release: true

@@ -1,5 +1,17 @@
 {
   "name": "radixdlt-desktop-wallet",
+  "description": "an electron desktop wallet for Radix DLT",
+  "author": "Township",
+  "contributors": [
+    {
+      "name": "Township Agency",
+      "url": "https://township.agency/"
+    },
+    {
+      "name": "Alexandrea Defreitas",
+      "url": "https://alexandrea.co/"
+    }
+  ],
   "version": "0.1.0",
   "private": true,
   "scripts": {
