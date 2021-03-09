@@ -1,7 +1,7 @@
 on:
   push:
     branches:
-      - master
+      - main
 name: release-please
 jobs:
   release-please:
@@ -17,7 +17,7 @@ jobs:
 
   build-release:
     needs: [release-please]
-    if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/main'
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
