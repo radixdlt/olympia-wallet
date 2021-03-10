@@ -3,7 +3,7 @@ module.exports = {
     electronBuilder: {
       builderOptions: {
         snap: {
-          publish: "github"
+          publish: 'github'
         }
       }
     }
