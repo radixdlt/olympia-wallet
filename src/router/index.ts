@@ -1,6 +1,6 @@
 import { RouteRecordRaw, createRouter, createWebHashHistory, createWebHistory } from 'vue-router'
 import Home from '../views/Home.vue'
-import CreateWallet from '../views/CreateWallet.vue'
+import CreateWallet from '../views/CreateWallet/index.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
