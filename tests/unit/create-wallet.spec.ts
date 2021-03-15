@@ -4,6 +4,7 @@ import App from '@/App.vue'
 import CreateWalletViewMnemonic from '@/views/CreateWallet/CreateWalletViewMnemonic.vue'
 import CreateWalletEnterMnemonic from '@/views/CreateWallet/CreateWalletEnterMnemonic.vue'
 import CreateWalletCreatePasscode from '@/views/CreateWallet/CreateWalletCreatePasscode.vue'
+import CreateWalletCreatePin from '@/views/CreateWallet/CreateWalletCreatePin.vue'
 import router from '@/router'
 import '@/validations'
 
@@ -122,6 +123,32 @@ describe('create wallet', () => {
     await flushPromises()
 
     expect(wrapper.html()).not.to.include('password is not valid.')
+    expect(wrapper.html()).not.to.include('confirmation is not valid.')
+  })
+
+  it('a user will see validation errors for an invalid PIN', async () => {
+    await router.isReady()
+    const wrapper = mount(CreateWalletCreatePin, {
+      global: {
+        plugins: [router]
+      }
+    })
+
+    const pinInput = wrapper.find('input[data-ci="create-wallet-pin-input"]')
+    const confirmInput = wrapper.find('input[data-ci="create-wallet-confirm-input"]')
+
+    await pinInput.setValue('')
+    await confirmInput.setValue('')
+    expect(wrapper.html()).to.include('pin is not valid.')
+
+    await pinInput.setValue('4567')
+    await confirmInput.setValue('9876')
+    expect(wrapper.html()).to.include('confirmation is not valid.')
+
+    await confirmInput.setValue('4567')
+    await flushPromises()
+
+    expect(wrapper.html()).not.to.include('pin is not valid.')
     expect(wrapper.html()).not.to.include('confirmation is not valid.')
   })
 })

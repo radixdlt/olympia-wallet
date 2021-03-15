@@ -27,12 +27,20 @@
       @back="step = 1"
     >
     </create-wallet-create-passcode>
+
+    <create-wallet-create-pin
+      v-if="step == 3"
+      @confirm="step = 4"
+      @back="step = 2"
+    >
+    </create-wallet-create-pin>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
 import CreateWalletCreatePasscode from './CreateWalletCreatePasscode.vue'
+import CreateWalletCreatePin from './CreateWalletCreatePin.vue'
 import CreateWalletViewMnemonic from './CreateWalletViewMnemonic.vue'
 import CreateWalletEnterMnemonic from './CreateWalletEnterMnemonic.vue'
 import RadixService from '@/services/radix'
@@ -46,6 +54,7 @@ const CreateWallet = defineComponent({
 
   components: {
     CreateWalletCreatePasscode,
+    CreateWalletCreatePin,
     CreateWalletViewMnemonic,
     CreateWalletEnterMnemonic
   },
