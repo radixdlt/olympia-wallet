@@ -1,19 +1,9 @@
 {
   "name": "radixdlt-desktop-wallet",
-  "description": "an electron desktop wallet for Radix DLT",
-  "author": "Township",
-  "contributors": [
-    {
-      "name": "Township Agency",
-      "url": "https://township.agency/"
-    },
-    {
-      "name": "Alexandrea Defreitas",
-      "url": "https://alexandrea.co/"
-    }
-  ],
   "version": "0.1.0",
   "private": true,
+  "description": "an electron desktop wallet for Radix DLT",
+  "author": "Township",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
@@ -26,9 +16,15 @@
   },
   "main": "background.js",
   "dependencies": {
+    "@tailwindcss/postcss7-compat": "^2.0.2",
+    "autoprefixer": "^9",
     "core-js": "^3.6.5",
+    "postcss": "^7",
+    "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.0.2",
     "vue": "^3.0.0",
-    "vue-class-component": "^8.0.0-0"
+    "vue-class-component": "^8.0.0-0",
+    "vue-property-decorator": "^10.0.0-rc.2",
+    "vue-router": "^4.0.0-0"
   },
   "devDependencies": {
     "@types/chai": "^4.2.11",
@@ -38,6 +34,7 @@
     "@typescript-eslint/parser": "^2.33.0",
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-plugin-eslint": "~4.5.0",
+    "@vue/cli-plugin-router": "^4.5.11",
     "@vue/cli-plugin-typescript": "~4.5.0",
     "@vue/cli-plugin-unit-mocha": "~4.5.0",
     "@vue/cli-service": "~4.5.0",
@@ -57,6 +54,17 @@
     "eslint-plugin-vue": "^7.0.0-0",
     "spectron": "13.0.0",
     "typescript": "~3.9.3",
-    "vue-cli-plugin-electron-builder": "~2.0.0-rc.6"
-  }
+    "vue-cli-plugin-electron-builder": "~2.0.0-rc.6",
+    "vue-cli-plugin-tailwind": "~2.0.6"
+  },
+  "contributors": [
+    {
+      "name": "Township Agency",
+      "url": "https://township.agency/"
+    },
+    {
+      "name": "Alexandrea Defreitas",
+      "url": "https://alexandrea.co/"
+    }
+  ]
 }
