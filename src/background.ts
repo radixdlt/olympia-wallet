@@ -1,8 +1,10 @@
 'use strict'
 
-import { app, protocol, BrowserWindow } from 'electron'
+import { app, ipcMain, protocol, BrowserWindow } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
+import path from 'path'
+import { getKeystoreFile, writeKeystoreFile } from '@/actions/electron/create-wallet'
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
 // Scheme must be registered before the app is ready
@@ -13,7 +15,7 @@ protocol.registerSchemesAsPrivileged([
 async function createWindow () {
   // Create the browser window.
   const win = new BrowserWindow({
-    width: 800,
+    width: 1200,
     height: 600,
     webPreferences: {
 
@@ -23,7 +25,8 @@ async function createWindow () {
       // Use pluginOptions.nodeIntegration, leave this alone
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
       nodeIntegration: (process.env
-        .ELECTRON_NODE_INTEGRATION as unknown) as boolean
+        .ELECTRON_NODE_INTEGRATION as unknown) as boolean,
+      preload: path.join(__dirname, 'preload.js')
     }
   })
 
@@ -67,6 +70,10 @@ app.on('ready', async () => {
   }
   createWindow()
 })
+
+// Define channels for ipc to listen to and which actions to fires
+ipcMain.on('save-keystores-message', writeKeystoreFile)
+ipcMain.handle('get-keystore-message', getKeystoreFile)
 
 // Exit cleanly on request from parent process in development mode.
 if (isDevelopment) {

@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
-    "target": "esnext",
-    "module": "esnext",
+    "target": "ESNext",
+    "module": "commonjs",
     "strict": true,
     "jsx": "preserve",
     "importHelpers": true,
@@ -15,7 +15,8 @@
     "types": [
       "webpack-env",
       "mocha",
-      "chai"
+      "chai",
+      "node"
     ],
     "paths": {
       "@/*": [
@@ -23,7 +24,8 @@
       ]
     },
     "lib": [
-      "esnext",
+      "ES2020",
+      "ESNext",
       "dom",
       "dom.iterable",
       "scripthost"
@@ -38,5 +40,13 @@
   ],
   "exclude": [
     "node_modules"
-  ]
+  ],
+  "composite": true,
+  "declaration": true,
+  "declarationMap": true,
+  "downlevelIteration": true,
+  "emitDecoratorMetadata": true,
+  "preserveConstEnums": true,
+  "resolveJsonModule": true,
+  "noUnusedLocals": false,
 }
