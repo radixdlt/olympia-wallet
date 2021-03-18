@@ -1,44 +1,30 @@
 <template>
   <div data-ci="create-wallet-create-pin-component">
-    <button
-      @click="$emit('back')"
-      type="button"
-      class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm bg-indigo-600 hover:bg-indigo-700 text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-    >
-      Back
-    </button>
-
-    <p class="mb-4">
-      Please enter a secure PIN. This will be used to verify all transactons made in the Wallet.
-    </p>
-
     <form>
-      <Field
-        type="password"
+      <pin-input
         name="pin"
-        class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md mb-4"
-        rules="required:length:4"
-        maxlength="4"
+        :values="values.pin"
+        :autofocus="updatingFirstInput"
+        @finished="handleFinished"
+        class="mb-14"
         data-ci="create-wallet-pin-input"
-      ></Field>
-      <ErrorMessage name="pin" />
-
-      <Field
-        type="password"
+      >
+      </pin-input>
+      <pin-input
         name="confirmation"
-        class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md mb-4"
-        rules="required|length:4|confirmed:@pin"
-        maxlength="4"
+        :values="values.confirmation"
+        :autofocus="!updatingFirstInput"
+        class="mb-48"
         data-ci="create-wallet-confirm-input"
-      ></Field>
-      <ErrorMessage name="confirmation" />
+      >
+      </pin-input>
     </form>
 
     <button
       @click="$emit('confirm')"
       type="button"
-      class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-      :class="{ 'bg-indigo-200 cursor-not-allowed': disableSubmit, 'bg-indigo-600 hover:bg-indigo-700': !disableSubmit }"
+      class="inline-flex items-center justify-center px-6 py-5 border font-normal leading-snug rounded w-96"
+      :class="{ 'bg-rGray border-rGray text-rGrayDark cursor-not-allowed': disableSubmit, 'bg-rGreen border-rGreen text-white': !disableSubmit }"
       :disabled="disableSubmit"
     >
       Confirm PIN
@@ -48,7 +34,8 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { useForm, Field, ErrorMessage } from 'vee-validate'
+import { useForm } from 'vee-validate'
+import PinInput from '@/components/PinInput.vue'
 
 interface PasswordForm {
   pin: string;
@@ -57,17 +44,23 @@ interface PasswordForm {
 
 const CreateWalletCreatePin = defineComponent({
   components: {
-    Field,
-    ErrorMessage
+    PinInput
   },
 
   setup () {
-    const { errors, values, meta } = useForm<PasswordForm>()
+    const { errors, values, meta, resetForm } = useForm<PasswordForm>()
 
     return {
       errors,
       values,
-      meta
+      meta,
+      resetForm
+    }
+  },
+
+  data () {
+    return {
+      updatingFirstInput: true
     }
   },
 
@@ -77,7 +70,19 @@ const CreateWalletCreatePin = defineComponent({
     }
   },
 
-  emits: ['confirm', 'back']
+  methods: {
+    handleFinished (key: string) {
+      if (key === 'pin') {
+        this.updatingFirstInput = false
+        this.$emit('enteredPin', true)
+      } else {
+        this.updatingFirstInput = true
+        this.$emit('enteredPin', false)
+      }
+    }
+  },
+
+  emits: ['confirm', 'enteredPin']
 })
 
 export default CreateWalletCreatePin

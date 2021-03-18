@@ -1,19 +1,17 @@
 <template>
   <div data-ci="create-wallet-view-mnemonic-component">
-    <p class="mb-4">
-      The following 12 words are the seed of your new account. As long as you have them, you will always be able to recover your account, but remember not to store them digitally.
-    </p>
-
     <div class="flex flex-wrap mb-4">
-      <span v-for="(word, i) in mnemonic" :key="i" class="w-1/6">{{word}}</span>
+      <div v-for="(word, i) in mnemonic" :key="i" class="w-1/4 mb-14">
+        <span class="w-40 border rounded-full border-rGray leading-tight h-16 justify-center items-center inline-flex">{{word}}</span>
+      </div>
     </div>
 
     <button
       @click="$emit('confirm')"
       type="button"
-      class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+      class="inline-flex items-center justify-center px-6 py-5 bg-rGreen border border-rGreen text-white font-normal leading-snug rounded"
     >
-      I have written down my recovery phrase
+      I've written down my recovery phrase
     </button>
   </div>
 </template>

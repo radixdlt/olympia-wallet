@@ -32,6 +32,7 @@
     "postcss": "^7",
     "rxjs": "^6.6.6",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.0.2",
+    "tailwindcss-filters": "^3.0.0",
     "vee-validate": "^4.0.0",
     "vue": "^3.0.0",
     "vue-class-component": "^8.0.0-0",

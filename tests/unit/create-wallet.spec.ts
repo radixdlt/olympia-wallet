@@ -1,6 +1,5 @@
 import { expect } from 'chai'
 import { mount, flushPromises } from '@vue/test-utils'
-import App from '@/App.vue'
 import CreateWalletViewMnemonic from '@/views/CreateWallet/CreateWalletViewMnemonic.vue'
 import CreateWalletEnterMnemonic from '@/views/CreateWallet/CreateWalletEnterMnemonic.vue'
 import CreateWalletCreatePasscode from '@/views/CreateWallet/CreateWalletCreatePasscode.vue'
@@ -9,23 +8,8 @@ import router from '@/router'
 import '@/validations'
 
 describe('create wallet', () => {
-  it('a user on the homescreen can click to begin creating a wallet', async () => {
-    router.push('/')
-    await router.isReady()
-
-    const wrapper = mount(App, {
-      global: {
-        plugins: [router]
-      }
-    })
-    expect(wrapper.html()).to.include('data-ci="home-view"')
-
-    await wrapper.find('a[data-ci="create-wallet-button"]').trigger('click')
-    await flushPromises()
-    expect(wrapper.html()).to.include('data-ci="create-wallet-view"')
-  })
-
   it('a user can see a 12 word mnemonic', async () => {
+    router.push('/create-wallet')
     await router.isReady()
     const testMnemonic: string[] = ['special', 'cheap', 'poverty', 'alert', 'minute', 'behave', 'pride', 'step', 'radio', 'sugar', 'kidney', 'smoke']
     const wrapper = mount(CreateWalletViewMnemonic, {
@@ -46,6 +30,7 @@ describe('create wallet', () => {
   })
 
   it('a user can input a 4 randoms words to confirm their mnemonic', async () => {
+    router.push('/create-wallet')
     await router.isReady()
     const testMnemonic: string[] = ['special', 'cheap', 'poverty', 'alert', 'minute', 'behave', 'pride', 'step', 'radio', 'sugar', 'kidney', 'smoke']
     const wrapper = mount(CreateWalletEnterMnemonic, {
@@ -70,6 +55,7 @@ describe('create wallet', () => {
   })
 
   it('when a user correctly inputs 4 randoms words to confirm their mnemonic, then they can proceed', async () => {
+    router.push('/create-wallet')
     await router.isReady()
     const testMnemonic: string[] = ['special', 'cheap', 'poverty', 'alert', 'minute', 'behave', 'pride', 'step', 'radio', 'sugar', 'kidney', 'smoke']
     const wrapper = mount(CreateWalletEnterMnemonic, {
@@ -101,6 +87,7 @@ describe('create wallet', () => {
   })
 
   it('a user will see validation errors for a mismatched passcode', async () => {
+    router.push('/create-wallet')
     await router.isReady()
     const wrapper = mount(CreateWalletCreatePasscode, {
       global: {

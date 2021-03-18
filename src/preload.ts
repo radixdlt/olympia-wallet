@@ -1,5 +1,4 @@
 import { contextBridge, ipcRenderer, IpcRenderer } from 'electron'
-import EventEmitter from 'events'
 
 declare global {
   interface Window {
