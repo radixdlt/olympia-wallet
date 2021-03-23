@@ -7,23 +7,23 @@
     <h1 class="mb-4">Create Wallet</h1>
 
     <create-wallet-view-mnemonic
-      v-if="step == 0"
-      :mnemonic="mnemonic"
+      v-if="step == 2"
+      :mnemonic="mnemonic.words"
       @confirm="step = 1"
     >
     </create-wallet-view-mnemonic>
 
     <create-wallet-enter-mnemonic
       v-if="step == 1"
-      :mnemonic="mnemonic"
+      :mnemonic="mnemonic.words"
       @confirm="step = 2"
       @back="step = 0"
     >
     </create-wallet-enter-mnemonic>
 
     <create-wallet-create-passcode
-      v-if="step == 2"
-      @confirm="step = 3"
+      v-if="step == 0"
+      @confirm="createWallet"
       @back="step = 1"
     >
     </create-wallet-create-passcode>
@@ -39,19 +39,16 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { Mnemonic, MnemomicT, WalletT } from '@radixdlt/account'
+import { useTask } from 'vue-concurrency'
 import CreateWalletCreatePasscode from './CreateWalletCreatePasscode.vue'
 import CreateWalletCreatePin from './CreateWalletCreatePin.vue'
 import CreateWalletViewMnemonic from './CreateWalletViewMnemonic.vue'
 import CreateWalletEnterMnemonic from './CreateWalletEnterMnemonic.vue'
-import RadixService from '@/services/radix'
+import { createWalletFromMnemonicAndPasscode, decryptWallet } from '@/actions/vue/create-wallet'
+import { AbortSignalWithPromise } from 'vue-concurrency/dist/vue3/src/types'
 
 const CreateWallet = defineComponent({
-  setup () {
-    return {
-      radixService: new RadixService()
-    }
-  },
-
   components: {
     CreateWalletCreatePasscode,
     CreateWalletCreatePin,
@@ -59,15 +56,32 @@ const CreateWallet = defineComponent({
     CreateWalletEnterMnemonic
   },
 
+  setup () {
+    const mnemonic: MnemomicT = Mnemonic.generateNew()
+    const createWalletTask = useTask(function * (signal: AbortSignalWithPromise, passcode: string) {
+      yield createWalletFromMnemonicAndPasscode(mnemonic, passcode)
+      const wallet = yield decryptWallet(passcode)
+      return wallet
+    })
+
+    return { mnemonic, createWalletTask }
+  },
+
   data () {
     return {
-      mnemonic: [] as string[],
       step: 0
     }
   },
 
-  mounted () {
-    this.mnemonic = this.radixService.generateMnemonic()
+  methods: {
+    createWallet (passcode: string) {
+      this.createWalletTask.perform(passcode)
+        .then((wallet: WalletT) => {
+          // We have access to the wallet here
+          console.log('wallet res', wallet)
+          this.step = 3
+        })
+    }
   }
 })
 
