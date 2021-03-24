@@ -17,7 +17,9 @@
   "main": "background.js",
   "dependencies": {
     "@babel/core": "^7.13.10",
-    "@radixdlt/account": "^1.0.7-alpha.0",
+    "@nopr3d/vue-next-rx": "^1.0.6",
+    "@radixdlt/account": "^1.0.7-alpha.2",
+    "@radixdlt/application": "^1.0.7-alpha.2",
     "@radixdlt/crypto": "^1.0.7-alpha.0",
     "@radixdlt/primitives": "^1.0.6-alpha.0",
     "@tailwindcss/forms": "^0.2.1",

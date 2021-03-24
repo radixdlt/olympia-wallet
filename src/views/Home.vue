@@ -1,5 +1,13 @@
 <template>
   <div data-ci="home-view" class="flex flex-row py-8 px-5 min-h-screen">
+    <div class="fixed inset-0 w-screen h-screen flex items-center justify-center z-30">
+      <div class="w-1/2 bg-white rounded shadow text-sm p-4 max-h-screen overflow-scroll">
+        <span v-if="!accounts">Loading...</span>
+        Accounts: {{ accounts }}
+        <br/>
+        Active Account: {{ activeAccount }}
+      </div>
+    </div>
     <div class="w-72 mr-5">
       <img alt="Radix DLT Logo" src="../assets/logo.svg" class="w-30 mb-10">
       <p class="text-white font-normal text-normal leading-snug mr-12">
@@ -41,8 +49,59 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: 'Home'
-}
+<script lang="ts">
+import { defineComponent } from 'vue'
+import { AccountT, AccountsT, WalletT } from '@radixdlt/account'
+import { Radix } from '@radixdlt/application'
+import { Subscription } from 'rxjs'
+import { ref } from '@nopr3d/vue-next-rx'
+import { useTask } from 'vue-concurrency'
+import { AbortSignalWithPromise } from 'vue-concurrency/dist/vue3/src/types'
+import { decryptWallet } from '@/actions/vue/create-wallet'
+
+const CreateWallet = defineComponent({
+  setup () {
+    /* This is a demo to prove we can integrate with the SDK to fetch a wallet's accounts */
+    const activeAccount = ref(null)
+    const accounts = ref(null)
+    const createWalletTask = useTask(function * (signal: AbortSignalWithPromise, passcode: string) {
+      const wallet = yield decryptWallet(passcode)
+      return wallet
+    })
+
+    const passcode = 'asdfasdf' // the passcode you used when creating a wallet
+    createWalletTask.perform(passcode)
+      .then((wallet: WalletT) => {
+        const radix = Radix.create().withWallet(wallet)
+        const subs = new Subscription()
+
+        radix.activeAccount
+          .subscribe(
+            (accountRes: AccountT) => {
+              console.log('active account returned from subscription', accountRes)
+              activeAccount.value = accountRes
+            },
+            (e) => console.warn(e)
+          )
+          .add(subs)
+
+        radix.accounts
+          .subscribe(
+            (accountsRes: AccountsT) => {
+              console.log('accounts returned from subscription', accountsRes)
+              accounts.value = accountsRes
+            },
+            (e) => console.warn(e)
+          )
+          .add(subs)
+      })
+    return { createWalletTask, accounts, activeAccount }
+  },
+
+  updated () {
+    console.log('accounts in vue instance', this.accounts)
+  }
+})
+
+export default CreateWallet
 </script>
