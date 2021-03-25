@@ -58,6 +58,7 @@ import { ref } from '@nopr3d/vue-next-rx'
 import { useTask } from 'vue-concurrency'
 import { AbortSignalWithPromise } from 'vue-concurrency/dist/vue3/src/types'
 import { decryptWallet } from '@/actions/vue/create-wallet'
+import { useStore } from '@/store'
 
 const CreateWallet = defineComponent({
   setup () {
@@ -95,6 +96,10 @@ const CreateWallet = defineComponent({
           )
           .add(subs)
       })
+
+    const store = useStore()
+
+    console.log('store', store.state)
     return { createWalletTask, accounts, activeAccount }
   },
 

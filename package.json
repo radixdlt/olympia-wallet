@@ -41,7 +41,8 @@
     "vue-concurrency": "^2.0.3",
     "vue-property-decorator": "^10.0.0-rc.2",
     "vue-router": "^4.0.0-0",
-    "vue-rx": "^6.2.0"
+    "vue-rx": "^6.2.0",
+    "vuex": "^4.0.0"
   },
   "devDependencies": {
     "@babel/plugin-proposal-nullish-coalescing-operator": "^7.13.8",
