@@ -3,8 +3,7 @@
     <div class="flex flex-wrap mb-4">
       <div v-for="(word, i) in mnemonic" :key="i" class="w-1/4 mb-14">
         <mnemonic-input
-          :required-words="requiredWords"
-          :word="word"
+          :require-input="requiredWords.indexOf(word) > 0"
           :modelValue="inputWords[i]"
           @update:modelValue="handleChange(i, $event)"
         ></mnemonic-input>

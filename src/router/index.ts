@@ -1,6 +1,7 @@
 import { RouteRecordRaw, createRouter, createWebHashHistory, createWebHistory } from 'vue-router'
 import Home from '../views/Home.vue'
 import CreateWallet from '../views/CreateWallet/index.vue'
+import RestoreWallet from '../views/RestoreWallet/index.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -12,6 +13,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/create-wallet',
     name: 'Create Wallet',
     component: CreateWallet
+  },
+  {
+    path: '/restore-wallet',
+    name: 'Restore Wallet',
+    component: RestoreWallet
   }
 ]
 
