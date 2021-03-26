@@ -17,8 +17,12 @@ export const createWalletFromMnemonicAndPasscode = async (mnemonic: MnemomicT, p
   }
 }
 
+export const touchKeystore = (): Promise<string> => new Promise((resolve) => {
+  resolve(window.ipcRenderer.invoke('get-keystore-message'))
+})
+
 export const decryptWallet = async (passcode: string) =>
-  window.ipcRenderer.invoke('get-keystore-message')
+  touchKeystore()
     .then((json: string) => {
       const keystore = JSON.parse(json)
       return Wallet.fromKeystore({ keystore, password: passcode })

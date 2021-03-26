@@ -5,18 +5,19 @@ import { WalletT } from '@radixdlt/account'
 
 interface State {
   wallet: WalletT | null;
-  count: number;
 }
 
 // Create a new store instance.
 export const store = createStore<State>({
   state () {
     return {
-      wallet: null,
-      count: 0
+      wallet: null
     }
   },
   mutations: {
+    setWallet (state: State, wallet: WalletT) {
+      state.wallet = wallet
+    }
   }
 })
 
