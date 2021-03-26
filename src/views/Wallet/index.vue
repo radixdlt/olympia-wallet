@@ -1,31 +1,49 @@
 <template>
   <div data-ci="wallet-view" class="flex flex-row min-h-screen">
-    <div class="w-72 mx-5 py-8">
-      <img alt="Radix DLT Logo" src="../../assets/logo.svg" class="w-30 mb-10">
-    </div>
+    <wallet-sidebar-default
+      v-if="sidebar == 'default'"
+      @open="sidebar = 'accounts'"
+    >
+    </wallet-sidebar-default>
 
-    <div class="bg-white pt-headerHeight pb-8 px-11 flex-1">
-      <span v-if="!accounts">Loading...</span>
-      Accounts: {{ accounts }}
-      <br/>
-      Active Account: {{ activeAccount }}
-    </div>
+    <wallet-sidebar-accounts
+      v-if="sidebar == 'accounts'"
+      :accounts="accounts"
+      @back="sidebar = 'default'"
+    >
+    </wallet-sidebar-accounts>
+
+    <wallet-overview
+      v-if="page == 'overview'"
+      :tokenBalances="tokenBalances"
+    >
+    </wallet-overview>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { AccountT, AccountsT } from '@radixdlt/account'
-import { Radix } from '@radixdlt/application'
+import { Radix, TokenBalances } from '@radixdlt/application'
 import { Subscription } from 'rxjs'
 import { ref } from '@nopr3d/vue-next-rx'
 import { useStore } from '@/store'
 import { useRouter } from 'vue-router'
+import WalletOverview from './WalletOverview.vue'
+import WalletSidebarAccounts from './WalletSidebarAccounts.vue'
+import WalletSidebarDefault from './WalletSidebarDefault.vue'
 
 const Wallet = defineComponent({
+  components: {
+    WalletOverview,
+    WalletSidebarAccounts,
+    WalletSidebarDefault
+  },
+
   setup () {
     const activeAccount = ref(null)
     const accounts = ref(null)
+    const tokenBalances = ref(0.01)
     const store = useStore()
     const router = useRouter()
 
@@ -55,7 +73,22 @@ const Wallet = defineComponent({
       )
       .add(subs)
 
-    return { accounts, activeAccount }
+    radix.tokenBalances
+      .subscribe(
+        (tokenBalancesRes: TokenBalances) => {
+          console.log('accounts returned from subscription', tokenBalancesRes)
+          tokenBalances.value = tokenBalancesRes
+        }
+      ).add(subs)
+
+    return { accounts, activeAccount, tokenBalances }
+  },
+
+  data () {
+    return {
+      page: 'overview',
+      sidebar: 'default'
+    }
   }
 })
 

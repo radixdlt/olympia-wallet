@@ -1329,15 +1329,16 @@
     node-ipc "^9.1.1"
     ws "^7.3.1"
 
-"@radixdlt/account@^1.0.7-alpha.2":
-  version "1.0.7-alpha.2"
-  resolved "https://registry.yarnpkg.com/@radixdlt/account/-/account-1.0.7-alpha.2.tgz#bb996f5a0219c9fc2cb534a48b395b5a2ce165be"
-  integrity sha512-8HeqTu4TLWb3gjaBOXn8Kl9GyQE8ns7U8k4EoqU4C99wKuiovKeGIWK1jpzi6YmHaV1YySNfhgS69uw2uWY+ag==
+"@radixdlt/account@^1.0.7-alpha.4", "@radixdlt/account@^1.0.7-alpha.7":
+  version "1.0.7-alpha.7"
+  resolved "https://registry.yarnpkg.com/@radixdlt/account/-/account-1.0.7-alpha.7.tgz#eb099455383d4e5122fc75178a99f017b5290266"
+  integrity sha512-wQ2cLeCrI6jrflKNyeyOfPd8H3Z2Vkbh9hkD5vYQ4n1bLqN9xne25cNnRXytthodrOc+1YkqsCXZGSl0K8sphQ==
   dependencies:
-    "@radixdlt/crypto" "^1.0.7-alpha.1"
-    "@radixdlt/data-formats" "^1.0.6-alpha.0"
-    "@radixdlt/primitives" "^1.0.6-alpha.0"
+    "@radixdlt/crypto" "^1.0.7-alpha.4"
+    "@radixdlt/data-formats" "^1.0.6-alpha.3"
+    "@radixdlt/primitives" "^1.0.6-alpha.3"
     "@radixdlt/uint256" "^1.1.0"
+    "@radixdlt/util" "^1.0.6-alpha.3"
     bip39 "^3.0.3"
     hdkey "^2.0.1"
     long "^4.0.0"
@@ -1345,54 +1346,55 @@
     prelude-ts "^1.0.2"
     rxjs "7.0.0-beta.13"
 
-"@radixdlt/actions@^1.0.7-alpha.2":
-  version "1.0.7-alpha.2"
-  resolved "https://registry.yarnpkg.com/@radixdlt/actions/-/actions-1.0.7-alpha.2.tgz#9089cc7d02c8c9aa0bb3299f2393d2487ec4e4f7"
-  integrity sha512-/e49j5fdtSEms6Pg9tZhf7vNl3N/5kO4Av+VFSwjAvliIDfqFSQmK8PzqYILcCAseS2acRwAw0wvZo/KVnhnkQ==
+"@radixdlt/actions@^1.0.7-alpha.7":
+  version "1.0.7-alpha.7"
+  resolved "https://registry.yarnpkg.com/@radixdlt/actions/-/actions-1.0.7-alpha.7.tgz#ae5f379b3a44fc2cbb1a7afbeec040475c4d971f"
+  integrity sha512-1P5nLMRaGVvL6O8YWwKm93S4aXIQ1ySLMgEMkwTpqTgCWj3AM7pwW1d+rD2iUJ8vF3UFxoHlaPBGiszkSDnqHQ==
   dependencies:
-    "@radixdlt/account" "^1.0.7-alpha.2"
-    "@radixdlt/atom" "^1.0.7-alpha.2"
-    "@radixdlt/primitives" "^1.0.6-alpha.0"
+    "@radixdlt/account" "^1.0.7-alpha.7"
+    "@radixdlt/atom" "^1.0.7-alpha.7"
+    "@radixdlt/primitives" "^1.0.6-alpha.3"
     "@types/uuid" "^8.3.0"
     neverthrow "^4.0.1"
     uuid "^8.3.2"
 
-"@radixdlt/application@^1.0.7-alpha.2":
-  version "1.0.7-alpha.2"
-  resolved "https://registry.yarnpkg.com/@radixdlt/application/-/application-1.0.7-alpha.2.tgz#9976f06243db2e6b5556a8b96c7f9dd67299cb98"
-  integrity sha512-SGy2Ifji9RNaivf9kaaK6uAwjxs0jp/SkctcU/U8BLHEldfrkV7e0ab8JadufhuM/EXP9W351nlp6+yHW1Taew==
+"@radixdlt/application@^1.0.7-alpha.4":
+  version "1.0.7-alpha.7"
+  resolved "https://registry.yarnpkg.com/@radixdlt/application/-/application-1.0.7-alpha.7.tgz#37fb369ccb26c5cb74ab50d8cd20a02c6aa61631"
+  integrity sha512-hCe1G1faJRUNCNlHSL4kjPcwlZweQY0tJwkWVazUh5Lp6wUHTpsrPzeXl4YkJBYVEEOe6fSzYzCKMUIgmaQfHA==
   dependencies:
     "@open-rpc/mock-server" "^1.7.2"
-    "@radixdlt/actions" "^1.0.7-alpha.2"
-    "@radixdlt/atom" "^1.0.7-alpha.2"
-    "@radixdlt/crypto" "^1.0.7-alpha.1"
-    "@radixdlt/data-formats" "^1.0.6-alpha.0"
+    "@radixdlt/actions" "^1.0.7-alpha.7"
+    "@radixdlt/atom" "^1.0.7-alpha.7"
+    "@radixdlt/crypto" "^1.0.7-alpha.4"
+    "@radixdlt/data-formats" "^1.0.6-alpha.3"
     "@radixdlt/networking" "^1.0.6-alpha.0"
-    "@radixdlt/primitives" "^1.0.6-alpha.0"
-    "@radixdlt/util" "^1.0.6-alpha.0"
+    "@radixdlt/primitives" "^1.0.6-alpha.3"
+    "@radixdlt/util" "^1.0.6-alpha.3"
     jest "^26.6.3"
     neverthrow "^4.0.1"
+    ramda "^0.27.1"
     rxjs "7.0.0-beta.13"
 
-"@radixdlt/atom@^1.0.7-alpha.2":
-  version "1.0.7-alpha.2"
-  resolved "https://registry.yarnpkg.com/@radixdlt/atom/-/atom-1.0.7-alpha.2.tgz#f89767074f30027bc77e53f77da6ce7aafc7f01c"
-  integrity sha512-QO0dOiukpDOB08Ii49/zahtUAMoYHjqLuS4/2nYwxDUZ+pz7e/Bgu3WYJP71aVbG4fNWyByeramT24RahIqk+A==
+"@radixdlt/atom@^1.0.7-alpha.7":
+  version "1.0.7-alpha.7"
+  resolved "https://registry.yarnpkg.com/@radixdlt/atom/-/atom-1.0.7-alpha.7.tgz#0ffedc2770cba2aa23735e5b7d0ed858d0009b97"
+  integrity sha512-IhtVh4C7D7v+yLWLXJWKUWek87aLMxk2v7goOKkD3a42ZV+g8flZTJZ9KJkLLKxrlz8hIgzX9nMNAgqmTmOi7A==
   dependencies:
-    "@radixdlt/account" "^1.0.7-alpha.2"
-    "@radixdlt/data-formats" "^1.0.6-alpha.0"
-    "@radixdlt/primitives" "^1.0.6-alpha.0"
+    "@radixdlt/account" "^1.0.7-alpha.7"
+    "@radixdlt/data-formats" "^1.0.6-alpha.3"
+    "@radixdlt/primitives" "^1.0.6-alpha.3"
     neverthrow "^4.0.1"
 
-"@radixdlt/crypto@^1.0.7-alpha.0":
-  version "1.0.7-alpha.0"
-  resolved "https://registry.yarnpkg.com/@radixdlt/crypto/-/crypto-1.0.7-alpha.0.tgz#99987569b6a00ff41e6d1d26f543702ec25f747b"
-  integrity sha512-MfUaKAuzvdF4InTN3/7QSVqUG5sfPGayxJiXLOE8J4jiJzxgfdS1rzeS0NDl/hyI1yub7y3G2pICQhVvotpIrg==
+"@radixdlt/crypto@^1.0.7-alpha.4":
+  version "1.0.7-alpha.4"
+  resolved "https://registry.yarnpkg.com/@radixdlt/crypto/-/crypto-1.0.7-alpha.4.tgz#817aa58367b85ea0b875a7a30285f71ffa6c0f9e"
+  integrity sha512-WXc39PRpCaiD27YOLbdZdY1ZakruEc64rOn+DwcgVQLyjBW+ULspppT4Ma6QMm2WvyU6Wqwt8Nh93l4kb9h/1Q==
   dependencies:
-    "@radixdlt/data-formats" "^1.0.6-alpha.0"
-    "@radixdlt/primitives" "^1.0.6-alpha.0"
+    "@radixdlt/data-formats" "^1.0.6-alpha.3"
+    "@radixdlt/primitives" "^1.0.6-alpha.3"
     "@radixdlt/uint256" "^1.1.0"
-    "@radixdlt/util" "^1.0.6-alpha.0"
+    "@radixdlt/util" "^1.0.6-alpha.3"
     base-x "^3.0.8"
     elliptic "^6.5.3"
     neverthrow "^4.0.1"
@@ -1400,28 +1402,12 @@
     scrypt-js "^3.0.1"
     uuid "^8.3.2"
 
-"@radixdlt/crypto@^1.0.7-alpha.1":
-  version "1.0.7-alpha.1"
-  resolved "https://registry.yarnpkg.com/@radixdlt/crypto/-/crypto-1.0.7-alpha.1.tgz#6b5d50ed6b0027fc32b639398261494338ac212d"
-  integrity sha512-gGsqLGcHY8nMARjNTdegszzZmaG3nMt5hTiMyTZnraV6+WNkh0usR8UBN1duGMzcMlUNnXD3r2kLH6iQYmqLyQ==
+"@radixdlt/data-formats@^1.0.6-alpha.3":
+  version "1.0.6-alpha.3"
+  resolved "https://registry.yarnpkg.com/@radixdlt/data-formats/-/data-formats-1.0.6-alpha.3.tgz#7c8bea1394f080736d7163964d7113afaefba8e8"
+  integrity sha512-XYooNyxkUB8bHfwKRQ9PTtrFul0eMTXLRoNmhvKYmYjU5qIpQ0cVsK0A+mI71Mrcyyw6wwJN7xJ6FFVgEo+Djw==
   dependencies:
-    "@radixdlt/data-formats" "^1.0.6-alpha.0"
-    "@radixdlt/primitives" "^1.0.6-alpha.0"
-    "@radixdlt/uint256" "^1.1.0"
-    "@radixdlt/util" "^1.0.6-alpha.0"
-    base-x "^3.0.8"
-    elliptic "^6.5.3"
-    neverthrow "^4.0.1"
-    node-forge "^0.10.0"
-    scrypt-js "^3.0.1"
-    uuid "^8.3.2"
-
-"@radixdlt/data-formats@^1.0.6-alpha.0":
-  version "1.0.6-alpha.0"
-  resolved "https://registry.yarnpkg.com/@radixdlt/data-formats/-/data-formats-1.0.6-alpha.0.tgz#327a2f98c7c5782de3d941fae5b9d7e8884b3e57"
-  integrity sha512-ZveaCqIYiI/OuZLEXhnIrf8h0wM5J1KFWA6U2doLWFlK56h/kR3uC+ftSB8AfBKbooJYCtMipOB7CXlvaIuEuQ==
-  dependencies:
-    "@radixdlt/util" "^1.0.6-alpha.0"
+    "@radixdlt/util" "^1.0.6-alpha.3"
     cbor "^5.2.0"
     neverthrow "^4.0.1"
     ramda "^0.27.1"
@@ -1433,14 +1419,14 @@
   dependencies:
     "@open-rpc/client-js" "^1.6.2"
 
-"@radixdlt/primitives@^1.0.6-alpha.0":
-  version "1.0.6-alpha.0"
-  resolved "https://registry.yarnpkg.com/@radixdlt/primitives/-/primitives-1.0.6-alpha.0.tgz#76030dd02be47eabdddc896154d511aadc5a2e0c"
-  integrity sha512-xKCtHQRZA4csQhCN18gZXz9DTkRs6eXYsJcCetceTAKVrlbI+Gw0bVMadfaqVSsN+UvBKZKaOy+fsgLVh0OuaA==
+"@radixdlt/primitives@^1.0.6-alpha.3", "@radixdlt/primitives@^1.0.6-alpha.4":
+  version "1.0.6-alpha.3"
+  resolved "https://registry.yarnpkg.com/@radixdlt/primitives/-/primitives-1.0.6-alpha.3.tgz#31650c37f73e305f5a8349d26383cd8da734b41a"
+  integrity sha512-VZ/hMFQd8fcCWbk8ORVRRhz9FUHx8zsuq6z3nCyf4HW6jA+88Tp4Q6qRAhQMEg7yFBKrVwzyN95K5qBG2emdOQ==
   dependencies:
-    "@radixdlt/data-formats" "^1.0.6-alpha.0"
+    "@radixdlt/data-formats" "^1.0.6-alpha.3"
     "@radixdlt/uint256" "^1.1.0"
-    "@radixdlt/util" "^1.0.6-alpha.0"
+    "@radixdlt/util" "^1.0.6-alpha.3"
     bn.js "^5.1.3"
     long "^4.0.0"
     neverthrow "^4.0.1"
@@ -1450,11 +1436,14 @@
   resolved "https://registry.npmjs.org/@radixdlt/uint256/-/uint256-1.1.0.tgz"
   integrity sha512-jpthXXsTJhvBTQrSSi0lXA0HPTmhrYIJklTRNicZgvITosvpByinCzZEebJbYeGfWlWRsqFHsKbFWgNTRVNIUg==
 
-"@radixdlt/util@^1.0.6-alpha.0":
-  version "1.0.6-alpha.0"
-  resolved "https://registry.yarnpkg.com/@radixdlt/util/-/util-1.0.6-alpha.0.tgz#ebe2ed267ce5598354865a256ad1d63182182c6e"
-  integrity sha512-3cDDTZKGM3YWklMY2JP5zQhG2iL3K/GhD+ogfDgJcdudYPQZOotC/fSKKkFkk3KwybPVZ6p2kXDoSL8ITr2gKQ==
+"@radixdlt/util@^1.0.6-alpha.3":
+  version "1.0.6-alpha.3"
+  resolved "https://registry.yarnpkg.com/@radixdlt/util/-/util-1.0.6-alpha.3.tgz#5162c00cc7aa410e30f2986de5cdf241d1eb7bb2"
+  integrity sha512-ipcBpWNR2aU9Ao7DPnvEkfG5ipMfzOzQX1nwoDb6hUJPAUd5+6RZa8EOp2/3Ut35+Z2vrxr8ka/gLH7hVuDJRw==
   dependencies:
+    chalk "^4.1.0"
+    loglevel "^1.7.1"
+    loglevel-plugin-prefix "^0.8.4"
     neverthrow "^4.0.1"
     ramda "^0.27.1"
     randombytes "^2.1.0"
@@ -8751,9 +8740,9 @@ loglevel-plugin-prefix@^0.8.4:
   resolved "https://registry.npmjs.org/loglevel-plugin-prefix/-/loglevel-plugin-prefix-0.8.4.tgz"
   integrity sha512-WpG9CcFAOjz/FtNht+QJeGpvVl/cdR6P0z6OcXSkr8wFJOsV2GRj2j10JLfjuA4aYkcKCNIEqRGCyTife9R8/g==
 
-loglevel@^1.6.0, loglevel@^1.6.8:
+loglevel@^1.6.0, loglevel@^1.6.8, loglevel@^1.7.1:
   version "1.7.1"
-  resolved "https://registry.npmjs.org/loglevel/-/loglevel-1.7.1.tgz"
+  resolved "https://registry.yarnpkg.com/loglevel/-/loglevel-1.7.1.tgz#005fde2f5e6e47068f935ff28573e125ef72f197"
   integrity sha512-Hesni4s5UkWkwCGJMQGAh71PaLUmKFM60dHvq0zi/vDhhrzuk+4GgNbTXJ12YYQJn6ZKBDNIjYcuQGKudvqrIw==
 
 long@^4.0.0:
