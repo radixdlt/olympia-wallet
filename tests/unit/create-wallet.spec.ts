@@ -1,25 +1,26 @@
 import { expect } from 'chai'
-import { mount, flushPromises } from '@vue/test-utils'
+import { mount, flushPromises, VueWrapper } from '@vue/test-utils'
 import CreateWalletViewMnemonic from '@/views/CreateWallet/CreateWalletViewMnemonic.vue'
 import CreateWalletEnterMnemonic from '@/views/CreateWallet/CreateWalletEnterMnemonic.vue'
 import CreateWalletCreatePasscode from '@/views/CreateWallet/CreateWalletCreatePasscode.vue'
 import CreateWalletCreatePin from '@/views/CreateWallet/CreateWalletCreatePin.vue'
 import router from '@/router'
 import '@/validations'
+import { ComponentPublicInstance } from '@vue/runtime-core'
 
 describe('create wallet', () => {
   it('a user can see a 12 word mnemonic', async () => {
     router.push('/create-wallet')
     await router.isReady()
     const testMnemonic: string[] = ['special', 'cheap', 'poverty', 'alert', 'minute', 'behave', 'pride', 'step', 'radio', 'sugar', 'kidney', 'smoke']
-    const wrapper = mount(CreateWalletViewMnemonic, {
+    const wrapper = mount(CreateWalletViewMnemonic as any, {
       props: {
         mnemonic: testMnemonic
       },
       global: {
         plugins: [router]
       }
-    })
+    }) as VueWrapper<ComponentPublicInstance<typeof CreateWalletViewMnemonic>>
 
     expect(wrapper.html()).to.include('data-ci="create-wallet-view-mnemonic-component"')
     expect(wrapper.vm.mnemonic.toString()).to.equal(testMnemonic.toString())
@@ -33,14 +34,14 @@ describe('create wallet', () => {
     router.push('/create-wallet')
     await router.isReady()
     const testMnemonic: string[] = ['special', 'cheap', 'poverty', 'alert', 'minute', 'behave', 'pride', 'step', 'radio', 'sugar', 'kidney', 'smoke']
-    const wrapper = mount(CreateWalletEnterMnemonic, {
+    const wrapper = mount(CreateWalletEnterMnemonic as any, {
       props: {
         mnemonic: testMnemonic
       },
       global: {
         plugins: [router]
       }
-    })
+    }) as VueWrapper<ComponentPublicInstance<typeof CreateWalletViewMnemonic>>
 
     const allInputs = wrapper.findAll('input')
     const disabledInputs = allInputs.filter(el => el.attributes('disabled') === '')
@@ -58,14 +59,14 @@ describe('create wallet', () => {
     router.push('/create-wallet')
     await router.isReady()
     const testMnemonic: string[] = ['special', 'cheap', 'poverty', 'alert', 'minute', 'behave', 'pride', 'step', 'radio', 'sugar', 'kidney', 'smoke']
-    const wrapper = mount(CreateWalletEnterMnemonic, {
+    const wrapper = mount(CreateWalletEnterMnemonic as any, {
       props: {
         mnemonic: testMnemonic
       },
       global: {
         plugins: [router]
       }
-    })
+    }) as VueWrapper<ComponentPublicInstance<typeof CreateWalletViewMnemonic>>
     const allInputs = wrapper.findAll('input')
 
     expect(wrapper.find('button[data-ci="create-wallet-enter-mnemonic-component--confirm-button"]').attributes('disabled')).to.equal('')

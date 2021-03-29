@@ -1,6 +1,6 @@
 <template>
   <div data-ci="home-view" class="flex flex-row py-8 px-5 min-h-screen">
-    <div class="fixed inset-0 w-screen h-screen flex items-center justify-center z-30">
+    <div class="hidden fixed inset-0 w-screen h-screen flex items-center justify-center z-30">
       <div class="w-1/2 bg-white rounded shadow text-sm p-4 max-h-screen overflow-scroll">
         <span v-if="!accounts">Loading...</span>
         Accounts: {{ accounts }}
@@ -39,8 +39,8 @@
         You have an existing wallet and know your recovery password or have a hardware wallet start here.
       </p>
       <router-link
-        to="/create-wallet"
-        data-ci="create-wallet-button"
+        to="/restore-wallet"
+        data-ci="restore-wallet-button"
         class="inline-flex items-center justify-center px-6 py-5 bg-none border border-rGreen text-rGreen font-normal leading-snug rounded"
       >
         Restore a previous wallet

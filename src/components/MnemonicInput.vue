@@ -22,27 +22,17 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue'
+import { defineComponent } from 'vue'
 
 const MnemonicInput = defineComponent({
   props: {
-    requiredWords: {
-      type: Array as PropType<Array<string>>,
-      required: true
-    },
-    word: {
-      type: String,
+    requireInput: {
+      type: Boolean,
       required: true
     },
     modelValue: {
       type: String,
       required: false
-    }
-  },
-
-  data () {
-    return {
-      requireInput: this.requiredWords.indexOf(this.word) > 0
     }
   },
 
