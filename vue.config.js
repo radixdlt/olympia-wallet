@@ -5,7 +5,8 @@ module.exports = {
         snap: {
           publish: 'github'
         }
-      }
+      },
+      preload: 'src/preload.ts'
     }
   }
 }

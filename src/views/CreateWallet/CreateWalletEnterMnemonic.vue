@@ -1,19 +1,7 @@
 <template>
   <div data-ci="create-wallet-enter-mnemonic-component">
-    <button
-      @click="$emit('back')"
-      type="button"
-      class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm bg-indigo-600 hover:bg-indigo-700 text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-    >
-      Back
-    </button>
-
-    <p class="mb-4">
-      Please enter your 12-word mnemonic. The words must be in the correct order.
-    </p>
-
     <div class="flex flex-wrap mb-4">
-      <div v-for="(word, i) in mnemonic" :key="i" class="w-1/6">
+      <div v-for="(word, i) in mnemonic" :key="i" class="w-1/4 mb-14">
         <mnemonic-input
           :required-words="requiredWords"
           :word="word"
@@ -27,11 +15,11 @@
       data-ci="create-wallet-enter-mnemonic-component--confirm-button"
       @click="$emit('confirm')"
       type="button"
-      class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-      :class="{ 'bg-indigo-200 cursor-not-allowed': !inputsMatch, 'bg-indigo-600 hover:bg-indigo-700': inputsMatch }"
+      class="inline-flex items-center justify-center px-6 py-5 border font-normal leading-snug rounded w-96"
+      :class="{ 'bg-rGray border-rGray text-rGrayDark cursor-not-allowed': !inputsMatch, 'bg-rGreen border-rGreen text-white': inputsMatch }"
       :disabled="!inputsMatch"
     >
-      I have written down my recovery phrase
+      {{buttonText}}
     </button>
   </div>
 </template>
@@ -69,6 +57,9 @@ const CreateWalletViewMnemonic = defineComponent({
   computed: {
     inputsMatch (): boolean {
       return this.inputWords.toString() === this.mnemonic.toString()
+    },
+    buttonText (): string {
+      return this.inputsMatch ? 'I\'ve done it!' : 'Fill these out first'
     }
   },
 
@@ -80,7 +71,7 @@ const CreateWalletViewMnemonic = defineComponent({
     }
   },
 
-  emits: ['confirm', 'back']
+  emits: ['confirm']
 })
 
 export default CreateWalletViewMnemonic

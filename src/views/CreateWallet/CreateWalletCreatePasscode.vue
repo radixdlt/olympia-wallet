@@ -1,22 +1,10 @@
 <template>
   <div data-ci="create-wallet-create-passcode-component">
-    <button
-      @click="$emit('back')"
-      type="button"
-      class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm bg-indigo-600 hover:bg-indigo-700 text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-    >
-      Back
-    </button>
-
-    <p class="mb-4">
-      Please enter a secure password here. This password secures your mnemonicly generated key, and will be required every time you open this application
-    </p>
-
-    <form>
+    <form class="flex flex-col w-96">
       <Field
         type="password"
         name="password"
-        class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md mb-4"
+        class="focus:outline-none focus:ring-transparent focus:shadow-none border-t-0 border-l-0 border-r-0 border-b border-rBlack mb-14"
         placeholder="enter password"
         rules="required"
         data-ci="create-wallet-passcode-input"
@@ -26,7 +14,7 @@
       <Field
         type="password"
         name="confirmation"
-        class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md mb-4"
+        class="focus:outline-none focus:ring-transparent focus:shadow-none border-t-0 border-l-0 border-r-0 border-b border-rBlack mb-56"
         placeholder="confirm password"
         rules="required|confirmed:@password"
         data-ci="create-wallet-confirm-input"
@@ -35,10 +23,10 @@
     </form>
 
     <button
-      @click="$emit('confirm')"
+      @click="$emit('confirm', values.password)"
       type="button"
-      class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-      :class="{ 'bg-indigo-200 cursor-not-allowed': disableSubmit, 'bg-indigo-600 hover:bg-indigo-700': !disableSubmit }"
+      class="inline-flex items-center justify-center px-6 py-5 border font-normal leading-snug rounded w-96"
+      :class="{ 'bg-rGray border-rGray text-rGrayDark cursor-not-allowed': disableSubmit, 'bg-rGreen border-rGreen text-white': !disableSubmit }"
       :disabled="disableSubmit"
     >
       Confirm password
@@ -77,7 +65,7 @@ const CreateWalletCreatePasscode = defineComponent({
     }
   },
 
-  emits: ['confirm', 'back']
+  emits: ['confirm']
 })
 
 export default CreateWalletCreatePasscode
