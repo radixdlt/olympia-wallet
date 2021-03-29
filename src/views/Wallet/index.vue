@@ -32,7 +32,11 @@ const Wallet = defineComponent({
     // Return home if wallet is undefined
     if (!store.state.wallet) router.push('/')
 
-    const radix = Radix.create().withWallet(store.state.wallet)
+    const mockAPI = mockedAPI
+    const radix = Radix
+      .create()
+      .__withAPI(mockAPI)
+      .withWallet(store.state.wallet)
     const subs = new Subscription()
 
     radix.activeAccount
