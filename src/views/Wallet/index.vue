@@ -2,6 +2,7 @@
   <div data-ci="wallet-view" class="flex flex-row min-h-screen">
     <wallet-sidebar-default
       v-if="sidebar == 'default'"
+      :activeAccount="activeAccount"
       @open="sidebar = 'accounts'"
     >
     </wallet-sidebar-default>

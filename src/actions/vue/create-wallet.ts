@@ -34,3 +34,5 @@ export const decryptWallet = async (passcode: string) =>
         return res.value
       }
     })
+
+export const copyToClipboard = (text: string) => window.ipcRenderer.send('copy-to-clipboard', text)
