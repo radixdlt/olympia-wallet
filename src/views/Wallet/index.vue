@@ -32,6 +32,7 @@ import { useRouter } from 'vue-router'
 import WalletOverview from './WalletOverview.vue'
 import WalletSidebarAccounts from './WalletSidebarAccounts.vue'
 import WalletSidebarDefault from './WalletSidebarDefault.vue'
+import { mockedAPI } from '@/mockRadix'
 
 const Wallet = defineComponent({
   components: {
@@ -50,7 +51,11 @@ const Wallet = defineComponent({
     // Return home if wallet is undefined
     if (!store.state.wallet) router.push('/')
 
-    const radix = Radix.create().withWallet(store.state.wallet)
+    const mockAPI = mockedAPI
+    const radix = Radix
+      .create()
+      .__withAPI(mockAPI)
+      .withWallet(store.state.wallet)
     const subs = new Subscription()
 
     radix.activeAccount
