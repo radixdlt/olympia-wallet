@@ -1,14 +1,14 @@
 <template>
-  <div data-ci="home-view" class="flex flex-row min-h-screen items-center">
-    <template v-if="hasWallet == false">
+  <div data-ci="home-view" class="flex flex-row min-h-screen" :class="{'items-center': hasWallet.value}">
+    <template v-if="!hasWallet.value">
       <div class="w-72 mx-5 py-8">
         <img alt="Radix DLT Logo" src="../../assets/logo.svg" class="w-30 mb-10">
         <p class="text-white font-normal text-normal leading-snug mr-12">
-          Welcome to the Radix Betanet.
+          {{ $t('home.welcomeOne') }}
           <br/><br/>
-          Decentralized finance applications are currently being built on protocols that were not designed to meet the needs and requirements of DeFi services.
+          {{ $t('home.welcomeTwo') }}
           <br/><br/>
-          Radix is using our significant technology innovations to be the first layer 1 protocol specifically built to serve the rapidly growing DeFi industry.
+          {{ $t('home.welcomeThree') }}
         </p>
       </div>
       <div class="py-8 flex flex-row">

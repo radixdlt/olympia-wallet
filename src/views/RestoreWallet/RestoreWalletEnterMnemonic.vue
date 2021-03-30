@@ -43,7 +43,7 @@ const RestoreWalletEnterMnemonic = defineComponent({
       return this.inputWords.every((value: string) => value && value.length > 0)
     },
     buttonText (): string {
-      return this.inputValid ? 'I\'ve done it!' : 'Fill these out first'
+      return this.inputValid ? this.$t('restoreWallet.recoveryButtonEnabled') : this.$t('restoreWallet.recoveryButtonDisabled')
     }
   },
 

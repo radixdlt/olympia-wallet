@@ -27,7 +27,7 @@
       :class="{ 'bg-rGray border-rGray text-rGrayDark cursor-not-allowed': disableSubmit, 'bg-rGreen border-rGreen text-white': !disableSubmit }"
       :disabled="disableSubmit"
     >
-      Confirm PIN
+      {{ $t('createWallet.pinButton') }}
     </button>
   </div>
 </template>

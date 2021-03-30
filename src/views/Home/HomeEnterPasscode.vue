@@ -1,6 +1,6 @@
 <template>
   <div data-ci="create-wallet-create-passcode-component">
-    <p class="text-rBlack text-base text-center mb-10">Enter your password to access your wallet</p>
+    <p class="text-rBlack text-base text-center mb-10">{{ $t('home.passwordTitle') }}</p>
     <form class="flex flex-col w-96 relative">
       <svg width="24" height="31" viewBox="0 0 24 31" fill="none" xmlns="http://www.w3.org/2000/svg" class="absolute inset-0 opacity transition-opacity" :class="{'opacity-40': disableSubmit}">
         <path d="M3.98975 12.1227V8.91388C3.98975 4.54318 7.55907 1 11.962 1C16.3649 1 19.9342 4.54318 19.9342 8.91388V12.1227" stroke="#00C389" stroke-width="1.5" stroke-miterlimit="10"/>
@@ -12,7 +12,7 @@
           type="password"
           name="password"
           class="focus:outline-none focus:ring-transparent focus:shadow-none border-t-0 border-l-0 border-r-0 border-b border-rBlack pl-8"
-          placeholder="enter password"
+          :placeholder="$t('home.passwordPlaceholder')"
           rules="required"
           data-ci="create-wallet-passcode-input"
         ></Field>
@@ -27,7 +27,7 @@
       :class="{ 'bg-rGray border-rGray text-rGrayDark cursor-not-allowed': disableSubmit, 'bg-rGreen border-rGreen text-white': !disableSubmit }"
       :disabled="disableSubmit"
     >
-      Open wallet
+      {{ $t('home.passwordButton') }}
     </button>
   </div>
 </template>

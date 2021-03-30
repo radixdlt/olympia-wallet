@@ -11,7 +11,7 @@
       type="button"
       class="inline-flex items-center justify-center px-6 py-5 bg-rGreen border border-rGreen text-white font-normal leading-snug rounded"
     >
-      I've written down my recovery phrase
+      {{ $t('createWallet.recoveryButtonOne') }}
     </button>
   </div>
 </template>
