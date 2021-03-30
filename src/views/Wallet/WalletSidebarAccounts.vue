@@ -12,7 +12,9 @@
       v-for="(account, i) in accounts.all"
       :key="i"
       :account="account"
-      class="mb-8"
+      :activeAccount="activeAccount"
+      @click="$emit('switchAccount', account)"
+      class="mb-8 text-white hover:text-rGreen transition-colors cursor-pointer"
     >
     </account-list-item>
 
@@ -29,7 +31,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { AccountsT } from '@radixdlt/account'
+import { AccountsT, AccountT } from '@radixdlt/account'
 import AccountListItem from '@/components/AccountListItem.vue'
 
 const WalletSidebarDefault = defineComponent({
@@ -38,10 +40,17 @@ const WalletSidebarDefault = defineComponent({
   },
 
   props: {
-    accounts: Object as PropType<AccountsT>
+    accounts: {
+      type: Object as PropType<AccountsT>,
+      required: true
+    },
+    activeAccount: {
+      type: Object as PropType<AccountT>,
+      required: true
+    }
   },
 
-  emits: ['back', 'addAccount']
+  emits: ['back', 'addAccount', 'switchAccount']
 })
 
 export default WalletSidebarDefault

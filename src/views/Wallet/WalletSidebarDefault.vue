@@ -6,6 +6,7 @@
       <div class="relative py-3">
         <account-list-item
           :account="activeAccount"
+          :activeAccount="activeAccount"
         />
         <svg class="absolute top-0 right-0 z-20 mt-4" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
           <rect x="5" y="9" width="2" height="2" rx="1" class="fill-current"/>

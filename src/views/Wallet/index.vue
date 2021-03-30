@@ -10,7 +10,10 @@
     <wallet-sidebar-accounts
       v-if="sidebar == 'accounts'"
       :accounts="accounts"
+      :activeAccount="activeAccount"
       @back="sidebar = 'default'"
+      @addAccount="addAccount"
+      @switchAccount="switchAccount"
     >
     </wallet-sidebar-accounts>
 
@@ -64,7 +67,7 @@ const Wallet = defineComponent({
     radix.activeAccount
       .subscribe(
         (accountRes: AccountT) => {
-          // console.log('active account returned from subscription', accountRes)
+          // console.log('active account returned from subscription', accountRes.hdPath.toString())
           activeAccount.value = accountRes
         },
         (e) => console.warn(e)
@@ -98,7 +101,11 @@ const Wallet = defineComponent({
       }
     ).add(subs)
 
-    return { accounts, activeAccount, tokenBalances, transactionHistory }
+    const addAccount = () => radix.deriveNextAccount({ alsoSwitchTo: true })
+
+    const switchAccount = (account: AccountT) => radix.switchAccount({ toAccount: account })
+
+    return { accounts, activeAccount, tokenBalances, addAccount, transactionHistory, switchAccount }
   },
 
   data () {
