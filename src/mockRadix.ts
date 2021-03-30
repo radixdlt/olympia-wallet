@@ -493,13 +493,13 @@ export const deterministicRandomTxHistoryWithInput = (
                 (_, actionIndex): ExecutedAction => {
                   const v: number = anInt() % 4 // Transfer, Stake, Unstake, Other
                   const actionType: ActionType =
-v === 0
-  ? ActionType.TOKEN_TRANSFER
-  : v === 1
-    ? ActionType.STAKE_TOKENS
-    : v === 2
-      ? ActionType.UNSTAKE_TOKENS
-      : ActionType.OTHER
+  v === 0
+    ? ActionType.TOKEN_TRANSFER
+    : v === 1
+      ? ActionType.STAKE_TOKENS
+      : v === 2
+        ? ActionType.UNSTAKE_TOKENS
+        : ActionType.OTHER
 
                   let executedAction: ExecutedAction
 

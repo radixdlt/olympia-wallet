@@ -17,6 +17,7 @@
     <wallet-overview
       v-if="page == 'overview'"
       :tokenBalances="tokenBalances"
+      :transactionHistory="transactionHistory"
     >
     </wallet-overview>
   </div>
@@ -46,6 +47,7 @@ const Wallet = defineComponent({
     const activeAccount = ref(null)
     const accounts = ref(null)
     const tokenBalances = ref(0.01)
+    const transactionHistory = ref(null)
     const store = useStore()
     const router = useRouter()
 
@@ -87,7 +89,16 @@ const Wallet = defineComponent({
         }
       ).add(subs)
 
-    return { accounts, activeAccount, tokenBalances }
+    radix.transactionHistory({
+      size: 3
+    }).subscribe(
+      (txs) => {
+        console.log('📒⏱ transaction history: ⏱📒', txs)
+        transactionHistory.value = txs
+      }
+    ).add(subs)
+
+    return { accounts, activeAccount, tokenBalances, transactionHistory }
   },
 
   data () {
