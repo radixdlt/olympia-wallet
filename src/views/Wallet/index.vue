@@ -38,7 +38,7 @@ const Wallet = defineComponent({
     radix.activeAccount
       .subscribe(
         (accountRes: AccountT) => {
-          console.log('active account returned from subscription', accountRes)
+          // console.log('active account returned from subscription', accountRes)
           activeAccount.value = accountRes
         },
         (e) => console.warn(e)
@@ -48,7 +48,7 @@ const Wallet = defineComponent({
     radix.accounts
       .subscribe(
         (accountsRes: AccountsT) => {
-          console.log('accounts returned from subscription', accountsRes)
+          // console.log('accounts returned from subscription', accountsRes)
           accounts.value = accountsRes
         },
         (e) => console.warn(e)
