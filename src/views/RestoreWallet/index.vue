@@ -5,32 +5,28 @@
         <img alt="Radix DLT Logo" src="../../assets/logo.svg" class="w-30 mb-12 ">
       </router-link>
       <wizard-heading
-        name="Recovery Phrase"
+        :name="$t('restoreTitle')"
         :isActiveStep="step === 0"
         :isCompleted="step > 1"
         @click="step = 0"
       >
       </wizard-heading>
       <div v-if="step === 0">
-        <div class="border border-white rounded p-3 mb-8">
-          Enter your 12 word mnemonic to restore your wallet.
-        </div>
+        <div class="border border-white rounded p-3 mb-8">{{ $t('restoreHelp') }}</div>
       </div>
 
       <wizard-heading
-        name="Password"
+        :name="$t('passwordTitle')"
         :isActiveStep="step === 1"
         :isCompleted="step > 1"
         :disabled="step < 1"
         @click="step = 1"
       >
       </wizard-heading>
-      <div class="border border-white rounded p-3 mb-8" v-if="step === 1">
-        Please enter a secure password here. This password secures your mnemonicly generated key, and will be required every time you open this application
-      </div>
+      <div class="border border-white rounded p-3 mb-8" v-if="step === 1">{{ $t('passwordHelp') }}</div>
 
       <wizard-heading
-        name="PIN"
+        :name="$t('pinTitle')"
         :isActiveStep="step === 2"
         :isCompleted="step > 2"
         :disabled="step < 2"
@@ -40,12 +36,8 @@
         }"
       >
       </wizard-heading>
-      <div class="border border-white rounded p-3 mb-8" v-if="step === 2">
-        Please enter a secure PIN. This will be used to verify all transactions made in the Wallet.
-      </div>
-      <div class="border border-white rounded p-3 mb-8" v-if="step === 3">
-        Please confirm your PIN.
-      </div>
+      <div class="border border-white rounded p-3 mb-8" v-if="step === 2">{{ $t('pinHelpOne') }}</div>
+      <div class="border border-white rounded p-3 mb-8" v-if="step === 3">{{ $t('pinHelpTwo') }}</div>
     </div>
 
     <div class="bg-white pt-headerHeight pb-8 px-11 flex-1">

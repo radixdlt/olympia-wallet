@@ -5,37 +5,31 @@
         <img alt="Radix DLT Logo" src="../../assets/logo.svg" class="w-30 mb-12 ">
       </router-link>
       <wizard-heading
-        name="Recovery Phrase"
+        :name="$t('createWallet.recoveryTitle')"
         :isActiveStep="step === 0 || step === 1"
         :isCompleted="step > 1"
         @click="step = 0"
       >
       </wizard-heading>
       <div v-if="step === 0">
-        <div class="border border-white rounded p-3 mb-8">
-          The following 12 words are the seed of your new account. As long as you have them, you will always be able to recover your account, but remember not to store them digitally.
-        </div>
+        <div class="border border-white rounded p-3 mb-8">{{ $t('createWallet.recoveryHelpOne') }}</div>
       </div>
       <div v-if="step === 1">
-        <div class="border border-white rounded p-3 mb-8">
-          Please enter your 12-word mnemonic. The words must be in the correct order.
-        </div>
+        <div class="border border-white rounded p-3 mb-8">{{ $t('createWallet.recoveryHelpTwo') }}</div>
       </div>
 
       <wizard-heading
-        name="Password"
+        :name="$t('createWallet.passwordTitle')"
         :isActiveStep="step === 2"
         :isCompleted="step > 2"
         :disabled="step < 2"
         @click="step = 2"
       >
       </wizard-heading>
-      <div class="border border-white rounded p-3 mb-8" v-if="step === 2">
-        Please enter a secure password here.  This password secures your mnemonicly generated key, and will be required every time you open this application
-      </div>
+      <div class="border border-white rounded p-3 mb-8" v-if="step === 2">{{ $t('createWallet.passwordHelp') }}</div>
 
       <wizard-heading
-        name="PIN"
+        :name="$t('createWallet.pinTitle')"
         :isActiveStep="step === 3"
         :isCompleted="step > 3"
         :disabled="step < 3"
@@ -45,12 +39,8 @@
         }"
       >
       </wizard-heading>
-      <div class="border border-white rounded p-3 mb-8" v-if="step === 3">
-        Please enter a secure PIN. This will be used to verify all transactions made in the Wallet.
-      </div>
-      <div class="border border-white rounded p-3 mb-8" v-if="step === 4">
-        Please confirm your PIN.
-      </div>
+      <div class="border border-white rounded p-3 mb-8" v-if="step === 3">{{ $t('createWallet.pinHelpOne') }}</div>
+      <div class="border border-white rounded p-3 mb-8" v-if="step === 4">{{ $t('createWallet.pinHelpTwo') }}</div>
     </div>
 
     <div class="bg-white pt-headerHeight pb-8 px-11 flex-1">

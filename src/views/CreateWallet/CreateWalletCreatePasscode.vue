@@ -5,7 +5,7 @@
         type="password"
         name="password"
         class="focus:outline-none focus:ring-transparent focus:shadow-none border-t-0 border-l-0 border-r-0 border-b border-rBlack mb-14"
-        placeholder="enter password"
+        :placeholder="$t('createWallet.passwordPlaceholder')"
         rules="required"
         data-ci="create-wallet-passcode-input"
       ></Field>
@@ -15,7 +15,7 @@
         type="password"
         name="confirmation"
         class="focus:outline-none focus:ring-transparent focus:shadow-none border-t-0 border-l-0 border-r-0 border-b border-rBlack mb-56"
-        placeholder="confirm password"
+        :placeholder="$t('createWallet.passwordConfirmationPlaceholder')"
         rules="required|confirmed:@password"
         data-ci="create-wallet-confirm-input"
       ></Field>
@@ -29,7 +29,7 @@
       :class="{ 'bg-rGray border-rGray text-rGrayDark cursor-not-allowed': disableSubmit, 'bg-rGreen border-rGreen text-white': !disableSubmit }"
       :disabled="disableSubmit"
     >
-      Confirm password
+      {{ $t('createWallet.passwordButton') }}
     </button>
   </div>
 </template>
