@@ -43,6 +43,19 @@ const messages = {
       pinTitle: 'PIN',
       pinHelpOne: 'Please enter a secure PIN. This will be used to verify all transactions made in the Wallet.',
       pinHelpTwo: 'Please confirm your PIN.'
+    },
+    wallet: {
+      addressLabel: 'addr:',
+      back: 'back',
+      addAccount: 'Add Account',
+      balancesHeading: 'Balances',
+      copyAddress: 'Copy Address',
+      totalTokens: 'Total',
+      availableTokens: 'Available',
+      stakedTokens: 'Staked',
+      recentTransactionsHeading: 'Recent Transactions',
+      navBalances: 'Balances',
+      navHistory: 'History'
     }
   }
 }
