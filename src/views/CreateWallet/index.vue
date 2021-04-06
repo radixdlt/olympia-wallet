@@ -66,7 +66,7 @@
 
       <create-wallet-create-pin
         v-if="step == 3 || step == 4"
-        @confirm="() => console.log('completed')"
+        @confirm="handleCreatePin"
         @enteredPin="handleEnterPin"
       >
       </create-wallet-create-pin>
@@ -84,7 +84,7 @@ import CreateWalletCreatePin from './CreateWalletCreatePin.vue'
 import CreateWalletViewMnemonic from './CreateWalletViewMnemonic.vue'
 import CreateWalletEnterMnemonic from './CreateWalletEnterMnemonic.vue'
 import WizardHeading from '@/components/WizardHeading.vue'
-import { createWalletFromMnemonicAndPasscode, decryptWallet } from '@/actions/vue/create-wallet'
+import { createWalletFromMnemonicAndPasscode, decryptWallet, storePin } from '@/actions/vue/create-wallet'
 
 const CreateWallet = defineComponent({
   components: {
@@ -123,6 +123,9 @@ const CreateWallet = defineComponent({
     },
     handleEnterPin (val: boolean) {
       val ? this.step = 4 : this.step = 3
+    },
+    handleCreatePin (pin: string) {
+      storePin(pin)
     }
   }
 })
