@@ -16,7 +16,7 @@
       <h2 class="font-extralight text-5xl leading-snug text-rBlack mb-4">{{ $t('home.restoreTitle')}}</h2>
       <p class="text-rBlack font-normal text-normal leading-snug flex-1">{{ $t('home.restoreContent')}}</p>
       <router-link
-        to="/create-wallet"
+        to="/restore-wallet"
         data-ci="create-wallet-button"
         class="inline-flex items-center justify-center px-6 py-5 bg-none border border-rGreen text-rGreen font-normal leading-snug rounded"
       >

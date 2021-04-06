@@ -5,28 +5,28 @@
         <img alt="Radix DLT Logo" src="../../assets/logo.svg" class="w-30 mb-12 ">
       </router-link>
       <wizard-heading
-        :name="$t('restoreTitle')"
+        :name="$t('restoreWallet.recoveryTitle')"
         :isActiveStep="step === 0"
         :isCompleted="step > 1"
         @click="step = 0"
       >
       </wizard-heading>
       <div v-if="step === 0">
-        <div class="border border-white rounded p-3 mb-8">{{ $t('restoreHelp') }}</div>
+        <div class="border border-white rounded p-3 mb-8">{{ $t('restoreWallet.recoveryHelp') }}</div>
       </div>
 
       <wizard-heading
-        :name="$t('passwordTitle')"
+        :name="$t('restoreWallet.passwordTitle')"
         :isActiveStep="step === 1"
         :isCompleted="step > 1"
         :disabled="step < 1"
         @click="step = 1"
       >
       </wizard-heading>
-      <div class="border border-white rounded p-3 mb-8" v-if="step === 1">{{ $t('passwordHelp') }}</div>
+      <div class="border border-white rounded p-3 mb-8" v-if="step === 1">{{ $t('restoreWallet.passwordHelp') }}</div>
 
       <wizard-heading
-        :name="$t('pinTitle')"
+        :name="$t('restoreWallet.pinTitle')"
         :isActiveStep="step === 2"
         :isCompleted="step > 2"
         :disabled="step < 2"
@@ -36,8 +36,8 @@
         }"
       >
       </wizard-heading>
-      <div class="border border-white rounded p-3 mb-8" v-if="step === 2">{{ $t('pinHelpOne') }}</div>
-      <div class="border border-white rounded p-3 mb-8" v-if="step === 3">{{ $t('pinHelpTwo') }}</div>
+      <div class="border border-white rounded p-3 mb-8" v-if="step === 2">{{ $t('restoreWallet.pinHelpOne') }}</div>
+      <div class="border border-white rounded p-3 mb-8" v-if="step === 3">{{ $t('restoreWallet.pinHelpTwo') }}</div>
     </div>
 
     <div class="bg-white pt-headerHeight pb-8 px-11 flex-1">
