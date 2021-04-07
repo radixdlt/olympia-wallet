@@ -1,40 +1,69 @@
 <template>
-  <div class="flex flex-col flex-1">
-    <div class="bg-rGrayLight py-6 px-8">
+  <div class="flex flex-col flex-1 min-w-0">
+    <div class="bg-rGrayLightest py-6 px-8">
       <div class="flex justify-between mb-6">
         <h3 class="font-medium text-rBlack">{{ $t('wallet.balancesHeading') }}</h3>
-        <div class="flex flex-row items-center text-xs text-rGrayMed">
-          <span class="w-64 truncate">{{ activeAddress.toString() }}</span>
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" class="hover:text-rGray cursor-pointer">
-            <path d="M10.0452 9.53031C9.33401 8.8191 9.33401 7.66599 10.0452 6.95478L11.7122 5.28776C12.4234 4.57655 13.5766 4.57655 14.2878 5.28776C14.999 5.99897 14.999 7.15208 14.2878 7.86329L12.6208 9.53027C11.9096 10.2416 10.7565 10.2416 10.0452 9.53031Z" class="stroke-current" stroke-miterlimit="10"/>
-            <path d="M5.80254 13.7735C5.09133 13.0623 5.09133 11.9092 5.80254 11.1979L7.46956 9.53093C8.18077 8.81972 9.33388 8.81972 10.0451 9.53093C10.7563 10.2421 10.7563 11.3952 10.0451 12.1065L8.37812 13.7734C7.66695 14.4847 6.5138 14.4847 5.80254 13.7735Z" class="stroke-current" stroke-miterlimit="10"/>
-          </svg>
-          <span>{{ $t('wallet.copyAddress') }}</span>
+        <div class="flex flex-row items-center text-sm text-rGrayMed">
+          <span class="text-rBlack mr-4">{{ activeAddress.toString() }}</span>
+          <div class="hover:text-rGreen flex flex-row items-center cursor-pointer transition-colors">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="7.5" y="7.5" width="7" height="7" class="stroke-current"/>
+              <path d="M13 5H5V13" class="stroke-current"/>
+            </svg>
+            <span>{{ $t('wallet.copyAddress') }}</span>
+          </div>
         </div>
       </div>
 
-      <div class="bg-white border border-rGray rounded-md flex flex-row mb-7">
+      <div class="bg-white border border-rGray rounded-md flex flex-row mb-7 overflow-y-scroll">
         <img src="@/assets/token.svg" alt="token symbol" class="p-3 border-r border-rGray" />
         <div class="flex flex-col my-3 px-5 border-r border-rGray flex-1">
           <span class="text-sm text-rGrayDark">{{ $t('wallet.totalTokens') }}</span>
+          <div class="flex flex-row items-end">
+            <div class="text-4xl font-light mr-4 text-rGreen">{{ totalXRD.toString() }}</div>
+            <div class="font-thin text-rGrayMark bg-rGrayLight border border-rGray py-0.5 px-1 rounded borderself-end">XRD</div>
+          </div>
         </div>
         <div class="flex flex-col my-3 px-5 border-r border-rGray flex-1">
           <span class="text-sm text-rGrayDark">{{ $t('wallet.availableTokens') }}</span>
+          <div class="flex flex-row items-end">
+            <span class="text-4xl font-light mr-4 text-rBlack">{{ availableXRD.toString() }}</span>
+            <div class="font-thin text-rGrayMark bg-rGrayLight border border-rGray py-0.5 px-1 rounded borderself-end">XRD</div>
+          </div>
         </div>
         <div class="flex flex-col my-3 px-5 flex-1">
           <span class="text-sm text-rGrayDark">{{ $t('wallet.stakedTokens') }}</span>
-        </div>
-      </div>
-
-      <div class="flex flex-row">
-        <div v-for="(tokenBalance, i) in tokenBalances.tokenBalances" :key="i" class="flex flex-row items-end border-r border-rGray px-7">
-          <div class="text-2xl font-light mr-4 text-rBlack">{{ tokenBalance.amount.toString() }}</div>
-          <div class="font-thin text-rGrayMark bg-rGrayLight border border-rGray py-0.5 px-1 rounded borderself-end">{{ tokenBalance.token.name }}</div>
+          <div class="flex flex-row items-end">
+            <span class="text-4xl font-light mr-4 text-rBlack">{{ totalStaked.toString() }}</span>
+            <div class="font-thin text-rGrayMark bg-rGrayLight border border-rGray py-0.5 px-1 rounded borderself-end">XRD</div>
+          </div>
         </div>
       </div>
     </div>
 
-    <div class="bg-white text-rBlack py-6 px-8 flex-1">
+    <div class="bg-white text-rBlack py-7 px-8 flex-1">
+      <div class="font-medium mb-8">{{ $t('wallet.additionalBalancesHeading') }}</div>
+
+      <div class="flex flex-row flex-wrap justify-between">
+        <div
+          v-for="(tokenBalance, i) in otherTokenBalances"
+          :key="i"
+          class="w-1/2 -mx-9 px-9 mb-8"
+        >
+          <div class="flex flex-row py-1 divide-x divide-rGray border border-rGray rounded-md">
+            <div class="flex items-center justify-center">
+              <div class="p-4 m-4 bg-rGrayLight rounded-full">
+                <img src="@/assets/balance.svg" alt="balances" />
+              </div>
+            </div>
+            <div class="flex-1 flex flex-row items-center pl-8">
+              <div class="text-4xl font-light mr-4 text-rBlack">{{ tokenBalance.amount.toString() }}</div>
+              <div class="font-thin text-rGrayMark bg-rGrayLight border border-rGray py-0.5 px-1 rounded borderself-end">{{ tokenBalance.token.name }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="font-medium mb-4">Active Stakes</div>
       <pre class="text-xs p-4 bg-gray-100 rounded mb-4">{{ activeStakes }}</pre>
 
@@ -47,13 +76,15 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { TokenBalance } from '@/mockRadix'
-import { StakePositions, TransactionHistory, UnstakePositions } from '@radixdlt/application'
+import { StakePosition, TransactionHistory, UnstakePosition, TokenBalances } from '@radixdlt/application'
 import { AccountT, AddressT } from '@radixdlt/account'
+import { sumAmounts, subtract } from '@/helpers/arithmetic'
+import { AmountT } from '@radixdlt/primitives'
 
 const WalletOverview = defineComponent({
   props: {
     tokenBalances: {
-      type: Object as PropType<TokenBalance>,
+      type: Object as PropType<TokenBalances>,
       required: true
     },
     transactionHistory: {
@@ -69,12 +100,34 @@ const WalletOverview = defineComponent({
       required: true
     },
     activeStakes: {
-      type: Array as PropType<Array<StakePositions>>,
+      type: Array as PropType<Array<StakePosition>>,
       required: true
     },
     activeUnstakes: {
-      type: Object as PropType<Array<UnstakePositions>>,
+      type: Object as PropType<Array<UnstakePosition>>,
       required: true
+    }
+  },
+
+  computed: {
+    totalXRD (): AmountT | null {
+      return sumAmounts(this.tokenBalances.tokenBalances.flatMap((item: TokenBalance) => item.amount))
+    },
+    totalStaked (): AmountT | null {
+      return sumAmounts(this.activeStakes.flatMap((item: StakePosition) => item.amount))
+    },
+    availableXRD (): AmountT | null {
+      if (!this.totalXRD || !this.totalStaked) return null
+      else {
+        const totalXRD: AmountT = this.totalXRD
+        const totalStaked: AmountT = this.totalStaked
+        const res = subtract(totalXRD, totalStaked)
+        if (res.isOk()) return res.value
+        else return null
+      }
+    },
+    otherTokenBalances (): TokenBalance[] {
+      return this.tokenBalances.tokenBalances.filter((item: TokenBalance) => item.token.name !== 'XRD')
     }
   }
 })

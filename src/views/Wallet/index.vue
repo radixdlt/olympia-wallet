@@ -42,7 +42,7 @@
 import { defineComponent } from 'vue'
 import { AccountT, AccountsT, AddressT } from '@radixdlt/account'
 import { Radix, StakePositions, TokenBalances, UnstakePositions } from '@radixdlt/application'
-import { Subscription } from 'rxjs'
+import { Subscription, interval } from 'rxjs'
 import { ref } from '@nopr3d/vue-next-rx'
 import { useStore } from '@/store'
 import { useRouter } from 'vue-router'
@@ -79,6 +79,7 @@ const Wallet = defineComponent({
       .create()
       .__withAPI(mockAPI)
       .withWallet(store.state.wallet)
+      .withTokenBalanceFetchTrigger(interval(3 * 60 * 1_000))
     const subs = new Subscription()
 
     radix.activeAccount.subscribe((accountRes: AccountT) => { activeAccount.value = accountRes }).add(subs)

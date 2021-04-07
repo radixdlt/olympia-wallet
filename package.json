@@ -37,7 +37,7 @@
     "fs.promises": "^0.1.2",
     "postcss": "^7",
     "rxjs": "7.0.0-beta.13",
-    "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.0.2",
+    "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.1.0",
     "tailwindcss-filters": "^3.0.0",
     "vee-validate": "^4.0.0",
     "vue": "^3.0.0",
