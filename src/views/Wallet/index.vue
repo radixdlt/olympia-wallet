@@ -19,23 +19,24 @@
     >
     </wallet-sidebar-accounts>
 
-    <wallet-overview
-      v-if="view == 'overview'"
-      :activeAccount="activeAccount"
-      :activeAddress="activeAddress"
-      :activeStakes="activeStakes"
-      :activeUnstakes="activeUnstakes"
-      :tokenBalances="tokenBalances"
-      :transactionHistory="transactionHistory"
-    >
-    </wallet-overview>
+    <template v-if="activeAddress">
+      <wallet-overview
+        v-if="view == 'overview'"
+        :activeAddress="activeAddress"
+        :activeStakes="activeStakes"
+        :activeUnstakes="activeUnstakes"
+        :tokenBalances="tokenBalances"
+        :transactionHistory="transactionHistory"
+      >
+      </wallet-overview>
 
-    <wallet-history
-      v-if="view == 'history'"
-      :transactionHistory="transactionHistory"
-      :activeAddress="activeAddress"
-    >
-    </wallet-history>
+      <wallet-history
+        v-if="view == 'history'"
+        :transactions="transactionHistory.transactions"
+        :activeAddress="activeAddress"
+      >
+      </wallet-history>
+    </template>
   </div>
 </template>
 

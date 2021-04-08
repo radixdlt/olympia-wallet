@@ -6,7 +6,7 @@
 
     <div class="bg-white text-rBlack py-6 px-8">
       <transaction-list-item
-        v-for="(txn, i) in transactionHistory.transactions"
+        v-for="(txn, i) in transactions"
         :key="i"
         :transaction="txn"
         :index="i"
@@ -18,7 +18,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { TransactionHistory } from '@radixdlt/application'
+import { ExecutedTransaction } from '@radixdlt/application'
 import { AddressT } from '@radixdlt/account'
 import TransactionListItem from '@/components/TransactionListItem.vue'
 
@@ -28,9 +28,10 @@ const WalletHistory = defineComponent({
   },
 
   props: {
-    transactionHistory: {
-      type: Object as PropType<TransactionHistory>,
-      required: true
+    transactions: {
+      type: Array as PropType<Array<ExecutedTransaction>>,
+      required: true,
+      default: []
     },
     activeAddress: {
       type: Object as PropType<AddressT>,

@@ -3,7 +3,7 @@
     <div class="bg-rGrayLightest py-6 px-8">
       <div class="flex justify-between mb-6">
         <h3 class="font-medium text-rBlack">{{ $t('wallet.balancesHeading') }}</h3>
-        <div class="flex flex-row items-center text-sm text-rGrayMed">
+        <div v-if="activeAddress" class="flex flex-row items-center text-sm text-rGrayMed">
           <span class="text-rBlack mr-4">{{ activeAddress.toString() }}</span>
           <div class="hover:text-rGreen flex flex-row items-center cursor-pointer transition-colors">
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -20,21 +20,21 @@
         <div class="flex flex-col my-3 px-5 border-r border-rGray flex-1">
           <span class="text-sm text-rGrayDark">{{ $t('wallet.totalTokens') }}</span>
           <div class="flex flex-row items-end">
-            <div class="text-4xl font-light mr-4 text-rGreen">{{ totalXRD.toString() }}</div>
+            <div class="text-4xl font-light mr-4 text-rGreen">{{ totalXRD && totalXRD.toString() }}</div>
             <div class="font-thin text-rGrayMark bg-rGrayLight border border-rGray py-0.5 px-1 rounded borderself-end">XRD</div>
           </div>
         </div>
         <div class="flex flex-col my-3 px-5 border-r border-rGray flex-1">
           <span class="text-sm text-rGrayDark">{{ $t('wallet.availableTokens') }}</span>
           <div class="flex flex-row items-end">
-            <span class="text-4xl font-light mr-4 text-rBlack">{{ availableXRD.toString() }}</span>
+            <span class="text-4xl font-light mr-4 text-rBlack">{{ availableXRD && availableXRD.toString() }}</span>
             <div class="font-thin text-rGrayMark bg-rGrayLight border border-rGray py-0.5 px-1 rounded borderself-end">XRD</div>
           </div>
         </div>
         <div class="flex flex-col my-3 px-5 flex-1">
           <span class="text-sm text-rGrayDark">{{ $t('wallet.stakedTokens') }}</span>
           <div class="flex flex-row items-end">
-            <span class="text-4xl font-light mr-4 text-rBlack">{{ totalStaked.toString() }}</span>
+            <span class="text-4xl font-light mr-4 text-rBlack">{{ totalStaked && totalStaked.toString() }}</span>
             <div class="font-thin text-rGrayMark bg-rGrayLight border border-rGray py-0.5 px-1 rounded borderself-end">XRD</div>
           </div>
         </div>
@@ -91,10 +91,6 @@ const WalletOverview = defineComponent({
       type: Object as PropType<TransactionHistory>,
       required: true
     },
-    activeAccount: {
-      type: Object as PropType<AccountT>,
-      required: true
-    },
     activeAddress: {
       type: Object as PropType<AddressT>,
       required: true
@@ -117,7 +113,8 @@ const WalletOverview = defineComponent({
       return sumAmounts(this.activeStakes.flatMap((item: StakePosition) => item.amount))
     },
     availableXRD (): AmountT | null {
-      if (!this.totalXRD || !this.totalStaked) return null
+      if (!this.totalStaked) return this.totalXRD
+      if (!this.totalXRD) return null
       else {
         const totalXRD: AmountT = this.totalXRD
         const totalStaked: AmountT = this.totalStaked

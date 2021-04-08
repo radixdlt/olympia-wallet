@@ -52,6 +52,7 @@ const ActionListItemTransferTokens = defineComponent({
 
   computed: {
     isRecipient (): boolean {
+      if (!this.activeAddress) return false
       return this.action.to.toString() === this.activeAddress.toString()
     }
   }
