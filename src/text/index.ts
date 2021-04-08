@@ -54,9 +54,19 @@ const messages = {
       totalTokens: 'Total',
       availableTokens: 'Available',
       stakedTokens: 'Staked',
-      recentTransactionsHeading: 'Recent Transactions',
       navBalances: 'Balances',
       navHistory: 'History'
+    },
+    history: {
+      historyHeading: 'History',
+      unstakeAction: 'Unstake',
+      validatorLabel: 'Validator',
+      receivedAction: 'Received',
+      sentAction: 'Sent',
+      toLabel: 'To',
+      fromLabel: 'From',
+      stakeAction: 'Stake',
+      otherAction: 'Other'
     }
   }
 }

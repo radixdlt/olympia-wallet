@@ -8,9 +8,11 @@ module.exports = {
         rBlue: '#052CC0',
         rBlack: '#003057',
         rGreen: '#00C389',
+        rOffwhite: '#F8F8FD',
+        rGrayLightest: '#F7F7FD',
         rGrayLight: '#F2F2FC',
         rGray: '#DDE5ED',
-        rGrayMed: '#7A99AC',
+        rGrayMed: '#4F758B',
         rGrayDark: '#7A99AC'
       },
       height: {

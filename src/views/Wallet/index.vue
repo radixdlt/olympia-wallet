@@ -33,6 +33,7 @@
     <wallet-history
       v-if="view == 'history'"
       :transactionHistory="transactionHistory"
+      :activeAddress="activeAddress"
     >
     </wallet-history>
   </div>
