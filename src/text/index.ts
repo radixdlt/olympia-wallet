@@ -2,6 +2,16 @@ import { createI18n } from 'vue-i18n'
 
 const messages = {
   en: {
+    validations: {
+      default: '%{field} is invalid',
+      required: '%{field} is required',
+      confirmed: '%{field} doesn\'t match',
+      length: '%{field} is the wrong length',
+      validAddress: 'Enter a valid address',
+      validAmount: 'Enter a valid amount',
+      insufficientFunds: '%{field} cannot be greater than account balance',
+      amountOfType: 'Requested amount to send is not a mulltiple of token granularity (%{granularity}), will be unable to send'
+    },
     home: {
       welcomeOne: 'Welcome to the Radix Betanet.',
       welcomeTwo: 'Decentralized finance applications are currently being built on protocols that were not designed to meet the needs and requirements of DeFi services.',
@@ -55,7 +65,8 @@ const messages = {
       availableTokens: 'Available',
       stakedTokens: 'Staked',
       navBalances: 'Balances',
-      navHistory: 'History'
+      navHistory: 'History',
+      navTransaction: 'Send Tokens'
     },
     history: {
       historyHeading: 'History',
@@ -67,6 +78,19 @@ const messages = {
       fromLabel: 'From',
       stakeAction: 'Stake',
       otherAction: 'Other'
+    },
+    transaction: {
+      transactionHeading: 'Send Tokens',
+      modalHeading: 'Confirm Transaction Details',
+      toLabel: 'To',
+      fromLabel: 'From',
+      amountLabel: 'Amount',
+      messageLabel: 'Message',
+      feeLabel: 'Fee',
+      cancelButton: 'Cancel',
+      confirmButton: 'Confirm',
+      sendButton: 'Send',
+      insufficientFunds: 'Sorry, but you don\'t have any tokens to send!'
     }
   }
 }
