@@ -32,6 +32,7 @@
     "@types/luxon": "^1.26.3",
     "@vee-validate/rules": "^4.1.20",
     "autoprefixer": "^9",
+    "bignumber.js": "^9.0.1",
     "bn.js": "^5.2.0",
     "core-js": "^3.9.1",
     "fs-extra": "^9.1.0",

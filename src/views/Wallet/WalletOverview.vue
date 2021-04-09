@@ -20,21 +20,21 @@
         <div class="flex flex-col my-3 px-5 border-r border-rGray flex-1">
           <span class="text-sm text-rGrayDark">{{ $t('wallet.totalTokens') }}</span>
           <div class="flex flex-row items-end">
-            <div class="text-4xl font-light mr-4 text-rGreen">{{ totalXRD && totalXRD.toString() }}</div>
+            <big-amount :amount="totalXRD" class="text-4xl font-light mr-4 text-rGreen" />
             <div class="font-thin text-rGrayMark bg-rGrayLight border border-rGray py-0.5 px-1 rounded borderself-end">XRD</div>
           </div>
         </div>
         <div class="flex flex-col my-3 px-5 border-r border-rGray flex-1">
           <span class="text-sm text-rGrayDark">{{ $t('wallet.availableTokens') }}</span>
           <div class="flex flex-row items-end">
-            <span class="text-4xl font-light mr-4 text-rBlack">{{ availableXRD && availableXRD.toString() }}</span>
+            <big-amount :amount="availableXRD" class="text-4xl font-light mr-4 text-rBlack" />
             <div class="font-thin text-rGrayMark bg-rGrayLight border border-rGray py-0.5 px-1 rounded borderself-end">XRD</div>
           </div>
         </div>
         <div class="flex flex-col my-3 px-5 flex-1">
           <span class="text-sm text-rGrayDark">{{ $t('wallet.stakedTokens') }}</span>
           <div class="flex flex-row items-end">
-            <span class="text-4xl font-light mr-4 text-rBlack">{{ totalStaked && totalStaked.toString() }}</span>
+            <big-amount :amount="totalStaked" class="text-4xl font-light mr-4 text-rBlack" />
             <div class="font-thin text-rGrayMark bg-rGrayLight border border-rGray py-0.5 px-1 rounded borderself-end">XRD</div>
           </div>
         </div>
@@ -44,11 +44,11 @@
     <div class="bg-white text-rBlack py-7 px-8 flex-1">
       <div class="font-medium mb-8">{{ $t('wallet.additionalBalancesHeading') }}</div>
 
-      <div class="flex flex-row flex-wrap justify-between">
+      <div class="flex flex-row flex-wrap justify-between -mx-9">
         <div
           v-for="(tokenBalance, i) in otherTokenBalances"
           :key="i"
-          class="w-1/2 -mx-9 px-9 mb-8"
+          class="w-1/2 px-9 mb-8"
         >
           <div class="flex flex-row py-1 divide-x divide-rGray border border-rGray rounded-md">
             <div class="flex items-center justify-center">
@@ -56,8 +56,8 @@
                 <img src="@/assets/balance.svg" alt="balances" />
               </div>
             </div>
-            <div class="flex-1 flex flex-row items-center pl-8">
-              <div class="text-4xl font-light mr-4 text-rBlack">{{ tokenBalance.amount.toString() }}</div>
+            <div class="flex-1 flex flex-row items-center px-8 overflow-x-scroll">
+              <big-amount :amount="tokenBalance.amount" class="text-4xl font-light mr-4 text-rBlack" />
               <div class="font-thin text-rGrayMark bg-rGrayLight border border-rGray py-0.5 px-1 rounded borderself-end">{{ tokenBalance.token.name }}</div>
             </div>
           </div>
@@ -77,11 +77,16 @@
 import { defineComponent, PropType } from 'vue'
 import { TokenBalance } from '@/mockRadix'
 import { StakePosition, TransactionHistory, UnstakePosition, TokenBalances } from '@radixdlt/application'
-import { AccountT, AddressT } from '@radixdlt/account'
+import { AddressT } from '@radixdlt/account'
 import { sumAmounts, subtract } from '@/helpers/arithmetic'
 import { AmountT } from '@radixdlt/primitives'
+import BigAmount from '@/components/BigAmount.vue'
 
 const WalletOverview = defineComponent({
+  components: {
+    BigAmount
+  },
+
   props: {
     tokenBalances: {
       type: Object as PropType<TokenBalances>,
@@ -113,14 +118,18 @@ const WalletOverview = defineComponent({
       return sumAmounts(this.activeStakes.flatMap((item: StakePosition) => item.amount))
     },
     availableXRD (): AmountT | null {
+      console.log('available', this.totalStaked)
       if (!this.totalStaked) return this.totalXRD
       if (!this.totalXRD) return null
       else {
+        console.log('in else')
         const totalXRD: AmountT = this.totalXRD
         const totalStaked: AmountT = this.totalStaked
         const res = subtract(totalXRD, totalStaked)
-        if (res.isOk()) return res.value
-        else return null
+        if (res.isOk()) {
+          console.log(this.totalXRD.toString(), this.totalStaked.toString(), res.value.toString())
+          return res.value
+        } else return null
       }
     },
     otherTokenBalances (): TokenBalance[] {
