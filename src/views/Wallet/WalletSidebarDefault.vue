@@ -34,6 +34,22 @@
 
     <div
       class="flex flex-row items-center my-8 cursor-pointer transition-opacity"
+      :class="{ 'opacity-40': activeView !== 'transaction' }"
+      @click="$emit('setView', 'transaction')"
+    >
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr-3">
+        <path d="M0 10.7441H15.5762" stroke="white" stroke-width="1.5" stroke-miterlimit="10"/>
+        <path d="M5.94873 5.75879H21.5982" stroke="white" stroke-width="1.5" stroke-miterlimit="10"/>
+        <path d="M5.93506 15.7588H21.579" stroke="white" stroke-width="1.5" stroke-miterlimit="10"/>
+        <path d="M15.8271 0.75H21.5982" stroke="#00C389" stroke-width="1.5" stroke-miterlimit="10"/>
+        <path d="M15.8271 20.75H21.5982" stroke="#00C389" stroke-width="1.5" stroke-miterlimit="10"/>
+        <path d="M18.0728 10.7441H21.5985" stroke="#00C389" stroke-width="1.5" stroke-miterlimit="10"/>
+      </svg>
+      <div class="font-normal text-white">{{ $t('wallet.navTransaction') }}</div>
+    </div>
+
+    <div
+      class="flex flex-row items-center my-8 cursor-pointer transition-opacity"
       :class="{ 'opacity-40': activeView !== 'history' }"
       @click="$emit('setView', 'history')"
     >

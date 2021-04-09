@@ -30,12 +30,32 @@
       >
       </wallet-overview>
 
+      <wallet-transaction
+        v-if="view == 'transaction'"
+        :activeAddress="activeAddress"
+        :tokenBalances="tokenBalances"
+        :shouldShowConfirmation="shouldShowConfirmation"
+        @transferTokens="transferTokens"
+      >
+
+      </wallet-transaction>
+
       <wallet-history
         v-if="view == 'history'"
         :transactions="transactionHistory.transactions"
         :activeAddress="activeAddress"
       >
       </wallet-history>
+
+      <wallet-confirm-transaction-modal
+        v-if="shouldShowConfirmation"
+        :activeAddress="activeAddress"
+        :transferInput="transferInput"
+        :transactionFee="transactionFee"
+        @cancel="shouldShowConfirmation = false"
+        @confirm="confirmTransaction"
+      >
+      </wallet-confirm-transaction-modal>
     </template>
   </div>
 </template>
@@ -43,25 +63,32 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { AccountT, AccountsT, AddressT } from '@radixdlt/account'
-import { Radix, StakePositions, TokenBalances, UnstakePositions, mockedAPI } from '@radixdlt/application'
-import { Subscription, interval } from 'rxjs'
+import { Subscription, interval, Subject, Observable, combineLatest } from 'rxjs'
+import { Radix, TransferTokensOptions, StakePositions, TokenBalances, UnstakePositions, ManualUserConfirmTX, mockedAPI, TransactionTracking } from '@radixdlt/application'
 import { ref } from '@nopr3d/vue-next-rx'
 import { useStore } from '@/store'
 import { useRouter } from 'vue-router'
+import WalletConfirmTransactionModal from './WalletConfirmTransactionModal.vue'
 import WalletOverview from './WalletOverview.vue'
 import WalletHistory from './WalletHistory.vue'
 import WalletSidebarAccounts from './WalletSidebarAccounts.vue'
 import WalletSidebarDefault from './WalletSidebarDefault.vue'
+import WalletTransaction from './WalletTransaction.vue'
 
 const Wallet = defineComponent({
   components: {
+    WalletConfirmTransactionModal,
     WalletOverview,
     WalletHistory,
     WalletSidebarAccounts,
-    WalletSidebarDefault
+    WalletSidebarDefault,
+    WalletTransaction
   },
 
   setup () {
+    const store = useStore()
+    const router = useRouter()
+
     const activeAccount = ref(null)
     const activeAddress = ref(null)
     const activeStakes = ref(null)
@@ -69,16 +96,20 @@ const Wallet = defineComponent({
     const accounts = ref(null)
     const tokenBalances = ref(0.01)
     const transactionHistory = ref(null)
-    const store = useStore()
-    const router = useRouter()
+    const shouldShowConfirmation = ref(false)
+    const transferInput = ref({})
+    const transactionFee = ref(0)
+    const transactionToConfirm = ref(null)
+
+    const userConfirmation = new Subject<ManualUserConfirmTX>()
+    const userDidConfirm = new Subject<boolean>()
 
     // Return home if wallet is undefined
     if (!store.state.wallet) router.push('/')
 
-    const mockAPI = mockedAPI
     const radix = Radix
       .create()
-      .__withAPI(mockAPI)
+      .__withAPI(mockedAPI)
       .withWallet(store.state.wallet)
       .withTokenBalanceFetchTrigger(interval(3 * 60 * 1_000))
     const subs = new Subscription()
@@ -95,7 +126,79 @@ const Wallet = defineComponent({
 
     const switchAccount = (account: AccountT) => radix.switchAccount({ toAccount: account })
 
-    return { accounts, activeAccount, activeAddress, activeStakes, activeUnstakes, tokenBalances, addAccount, transactionHistory, switchAccount }
+    const confirmTransaction = () => userDidConfirm.next(true)
+
+    const transferTokens = (data: TransferTokensOptions) => {
+      let pollTXStatusTrigger: Observable<unknown>
+      transferInput.value = data
+
+      const buildTransferTokens = (): any => ({
+        transferInput: data,
+        userConfirmation: userConfirmation,
+        pollTXStatusTrigger: pollTXStatusTrigger
+      })
+
+      const transactionTracking: TransactionTracking = radix.transferTokens({
+        ...buildTransferTokens(),
+        userConfirmation
+      })
+
+      userConfirmation
+        .subscribe((txnToConfirm: ManualUserConfirmTX) => {
+          transactionToConfirm.value = txnToConfirm
+          userDidConfirm.next(false)
+          shouldShowConfirmation.value = true
+          transactionFee.value = txnToConfirm.txToConfirm.fee
+        })
+        .add(subs)
+
+      combineLatest<[ManualUserConfirmTX, boolean]>([userConfirmation, userDidConfirm])
+        .subscribe(([txnToConfirm, didConfirm]: [ManualUserConfirmTX, boolean]) => {
+          if (didConfirm) txnToConfirm.confirm()
+        })
+        .add(subs)
+
+      // Log transaction status to console for now
+      transactionTracking.events
+        .subscribe({
+          next: (values: any) => {
+            console.log('transaction tracking', values)
+          },
+          error: (e: any) => {
+            console.warn('error', e)
+          }
+        })
+        .add(subs)
+
+      // Log transaction completed/error to console for now
+      transactionTracking.completion
+        .subscribe({
+          next: (_txID: any) => {
+            console.log('completed here', _txID)
+          },
+          error: (e: any) => {
+            console.warn('error', e)
+          }
+        })
+        .add(subs)
+    }
+
+    return {
+      accounts,
+      activeAccount,
+      activeAddress,
+      activeStakes,
+      activeUnstakes,
+      confirmTransaction,
+      tokenBalances,
+      addAccount,
+      transactionHistory,
+      transactionFee,
+      transferInput,
+      switchAccount,
+      transferTokens,
+      shouldShowConfirmation
+    }
   },
 
   data () {

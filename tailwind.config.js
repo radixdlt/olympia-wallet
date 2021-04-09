@@ -13,7 +13,11 @@ module.exports = {
         rGrayLight: '#F2F2FC',
         rGray: '#DDE5ED',
         rGrayMed: '#4F758B',
-        rGrayDark: '#7A99AC'
+        rGrayDark: '#7A99AC',
+        translucent: {
+          black: 'rgba(0, 0, 0, 0.1)',
+          gray: 'rgba(242, 242, 252, 0.3)'
+        }
       },
       height: {
         tallest: '99999999999px'

@@ -23,7 +23,7 @@ const BigAmount = defineComponent({
   computed: {
     asBigNumber (): string {
       const baseline = new BigNumber('1000000000000000000e-18')
-      const bigNumber = new BigNumber(this.amount.toString().replace(' ', ''))
+      const bigNumber = new BigNumber(this.amount.toString({ useLargestDenomination: true }))
       // Return with 3 dig digit decimal precision
       if (bigNumber.isLessThan(baseline)) return bigNumber.precision(3).toFormat()
       // Return with additional three digit decimal precision
