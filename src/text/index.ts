@@ -43,6 +43,30 @@ const messages = {
       pinTitle: 'PIN',
       pinHelpOne: 'Please enter a secure PIN. This will be used to verify all transactions made in the Wallet.',
       pinHelpTwo: 'Please confirm your PIN.'
+    },
+    wallet: {
+      addressLabel: 'addr:',
+      back: 'back',
+      addAccount: 'Add Account',
+      balancesHeading: 'XRD Balances',
+      additionalBalancesHeading: 'Additional Balances',
+      copyAddress: 'Copy Address',
+      totalTokens: 'Total',
+      availableTokens: 'Available',
+      stakedTokens: 'Staked',
+      navBalances: 'Balances',
+      navHistory: 'History'
+    },
+    history: {
+      historyHeading: 'History',
+      unstakeAction: 'Unstake',
+      validatorLabel: 'Validator',
+      receivedAction: 'Received',
+      sentAction: 'Sent',
+      toLabel: 'To',
+      fromLabel: 'From',
+      stakeAction: 'Stake',
+      otherAction: 'Other'
     }
   }
 }

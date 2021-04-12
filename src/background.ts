@@ -4,7 +4,7 @@ import { app, ipcMain, protocol, BrowserWindow } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 import path from 'path'
-import { getKeystoreFile, writeKeystoreFile } from '@/actions/electron/create-wallet'
+import { copyToClipboard, getKeystoreFile, writeKeystoreFile } from '@/actions/electron/create-wallet'
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
 // Scheme must be registered before the app is ready
@@ -74,6 +74,7 @@ app.on('ready', async () => {
 // Define channels for ipc to listen to and which actions to fires
 ipcMain.on('save-keystores-message', writeKeystoreFile)
 ipcMain.handle('get-keystore-message', getKeystoreFile)
+ipcMain.on('copy-to-clipboard', copyToClipboard)
 
 // Exit cleanly on request from parent process in development mode.
 if (isDevelopment) {
