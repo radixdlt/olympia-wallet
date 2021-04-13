@@ -27,14 +27,14 @@
 
       <div class="flex flex-row justify-end">
         <button
-          @click="$emit('cancel')"
+          @click="canCancel && $emit('cancel')"
           class="inline-flex items-center justify-center px-6 py-5 bg-none border border-rGrayDark text-rGrayDark font-normal leading-snug rounded w-56 mr-6"
         >
           {{ $t('transaction.cancelButton') }}
         </button>
 
         <button
-          @click="$emit('confirm')"
+          @click="handleConfirm"
           class="inline-flex items-center justify-center px-6 py-5 bg-none border border-rGreen text-rGreen font-normal leading-snug rounded w-56"
         >
           {{ $t('transaction.confirmButton') }}
@@ -73,6 +73,19 @@ const WalletConfirmTransactionModal = defineComponent({
     transactionFee: {
       type: Object as PropType<AmountT>,
       required: true
+    }
+  },
+
+  data () {
+    return {
+      canCancel: true
+    }
+  },
+
+  methods: {
+    handleConfirm () {
+      this.canCancel = false
+      this.$emit('confirm')
     }
   },
 
