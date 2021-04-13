@@ -77,7 +77,9 @@ const messages = {
       toLabel: 'To',
       fromLabel: 'From',
       stakeAction: 'Stake',
-      otherAction: 'Other'
+      otherAction: 'Other',
+      previous: 'Previous',
+      next: 'Next'
     },
     transaction: {
       transactionHeading: 'Send Tokens',
