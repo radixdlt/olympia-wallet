@@ -2,6 +2,9 @@
   <div class="flex flex-col flex-1 min-w-0">
     <div class="bg-rGrayLightest py-6 px-8 bg-gray">
       <h3 class="font-medium text-rBlack">{{ $t('history.historyHeading') }}</h3>
+
+      <button @click="$emit('refresh')">Refresh</button>
+      <button @click="$emit('next')">Next</button>
     </div>
 
     <div class="bg-white text-rBlack py-6 px-8">
@@ -20,6 +23,7 @@
         :transaction="txn"
         :index="i"
         :activeAddress="activeAddress"
+        :pending="false"
       />
     </div>
   </div>
@@ -34,6 +38,10 @@ import TransactionListItem from '@/components/TransactionListItem.vue'
 const WalletHistory = defineComponent({
   components: {
     TransactionListItem
+  },
+
+  setup (_props, context) {
+    context.emit('refresh')
   },
 
   props: {
@@ -51,7 +59,9 @@ const WalletHistory = defineComponent({
       required: true,
       default: []
     }
-  }
+  },
+
+  emits: ['refresh', 'next']
 })
 
 export default WalletHistory

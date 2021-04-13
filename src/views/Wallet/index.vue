@@ -45,6 +45,8 @@
         :transactions="transactionHistory.transactions"
         :activeAddress="activeAddress"
         :pendingTransactions="pendingTransactions"
+        @refresh="refreshHistory"
+        @next="nextPage"
       >
       </wallet-history>
 
@@ -64,7 +66,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { AccountT, AccountsT, AddressT } from '@radixdlt/account'
-import { Radix, TransferTokensOptions, StakePositions, TokenBalances, UnstakePositions, ManualUserConfirmTX, mockedAPI, TransactionTracking, TransactionStatus, SubmittedTransaction } from '@radixdlt/application'
+import { Radix, TransferTokensOptions, StakePositions, TokenBalances, UnstakePositions, ManualUserConfirmTX, mockedAPI, TransactionTracking, TransactionHistory, TransactionStatus, SubmittedTransaction, TransactionHistoryOfKnownAddressRequestInput } from '@radixdlt/application'
 import { Subscription, interval, Subject, Observable, combineLatest } from 'rxjs'
 import { ref } from '@nopr3d/vue-next-rx'
 import { useStore } from '@/store'
@@ -75,7 +77,7 @@ import WalletHistory from './WalletHistory.vue'
 import WalletSidebarAccounts from './WalletSidebarAccounts.vue'
 import WalletSidebarDefault from './WalletSidebarDefault.vue'
 import WalletTransaction from './WalletTransaction.vue'
-import { filter } from 'rxjs/operators'
+import { filter, mergeMap } from 'rxjs/operators'
 
 const Wallet = defineComponent({
   components: {
@@ -108,6 +110,7 @@ const Wallet = defineComponent({
 
     const userConfirmation = new Subject<ManualUserConfirmTX>()
     const userDidConfirm = new Subject<boolean>()
+    const historyPagination = new Subject<TransactionHistoryOfKnownAddressRequestInput>()
 
     // Return home if wallet is undefined
     if (!store.state.wallet) router.push('/')
@@ -124,7 +127,6 @@ const Wallet = defineComponent({
     radix.unstakingPositions.subscribe((unstakes: UnstakePositions) => { activeUnstakes.value = unstakes }).add(subs)
     radix.accounts.subscribe((accountsRes: AccountsT) => { accounts.value = accountsRes }).add(subs)
     radix.tokenBalances.subscribe((tokenBalancesRes: TokenBalances) => { tokenBalances.value = tokenBalancesRes }).add(subs)
-    radix.transactionHistory({ size: 10 }).subscribe((txs) => { transactionHistory.value = txs }).add(subs)
     radix.activeAddress.subscribe((addressRes: AddressT) => { activeAddress.value = addressRes }).add(subs)
 
     const addAccount = () => radix.deriveNextAccount({ alsoSwitchTo: true })
@@ -132,6 +134,14 @@ const Wallet = defineComponent({
     const switchAccount = (account: AccountT) => radix.switchAccount({ toAccount: account })
 
     const confirmTransaction = () => userDidConfirm.next(true)
+
+    // Update transaction history whenever params change
+    historyPagination
+      .pipe(mergeMap((params: TransactionHistoryOfKnownAddressRequestInput) => radix.transactionHistory(params)))
+      .subscribe((history: TransactionHistory) => {
+        transactionHistory.value = history
+      })
+      .add(subs)
 
     const transferTokens = (data: TransferTokensOptions) => {
       let pollTXStatusTrigger: Observable<unknown>
@@ -212,6 +222,19 @@ const Wallet = defineComponent({
         .add(subs)
     }
 
+    historyPagination.next({ size: 10 })
+
+    const refreshHistory = () => {
+      historyPagination.next({ size: 10 })
+    }
+
+    const nextPage = () => {
+      historyPagination.next({
+        size: 10,
+        cursor: transactionHistory.value.cursor
+      })
+    }
+
     return {
       accounts,
       activeAccount,
@@ -228,7 +251,9 @@ const Wallet = defineComponent({
       transferTokens,
       shouldShowConfirmation,
       pendingTransactions,
-      view
+      view,
+      refreshHistory,
+      nextPage
     }
   },
 
