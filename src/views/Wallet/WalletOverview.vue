@@ -63,12 +63,6 @@
           </div>
         </div>
       </div>
-
-      <div class="font-medium mb-4">Active Stakes</div>
-      <pre class="text-xs p-4 bg-gray-100 rounded mb-4">{{ activeStakes }}</pre>
-
-      <div class="font-medium mb-4">Active Unstakes</div>
-      <pre class="text-xs p-4 bg-gray-100 rounded">{{ activeUnstakes }}</pre>
     </div>
   </div>
 </template>
@@ -101,10 +95,6 @@ const WalletOverview = defineComponent({
     },
     activeStakes: {
       type: Array as PropType<Array<StakePosition>>,
-      required: true
-    },
-    activeUnstakes: {
-      type: Object as PropType<Array<UnstakePosition>>,
       required: true
     }
   },

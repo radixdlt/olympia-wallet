@@ -11,12 +11,12 @@
 
         <div class="border-b border-rGray py-7 flex items-center">
           <div class="w-32 text-right text-rGrayDark mr-8">{{ $t('transaction.toLabel') }}</div>
-          <div class="flex-1">{{ transferInput.to.toString() }}</div>
+          <div class="flex-1">{{ toContent }}</div>
         </div>
 
         <div class="border-b border-rGray py-7 flex items-center">
           <div class="w-32 text-right text-rGrayDark mr-8">{{ $t('transaction.amountLabel') }}</div>
-          <div class="flex-1"><big-amount :amount="transferInput.amount"></big-amount></div>
+          <div class="flex-1"><big-amount :amount="amount"></big-amount></div>
         </div>
 
         <div class="py-7 flex items-center">
@@ -51,8 +51,8 @@
 
 <script lang="ts">
 import { AddressT } from '@radixdlt/account'
-import { AmountT } from '@radixdlt/primitives'
-import { TransferTokensOptions } from '@radixdlt/application'
+import { AmountOrUnsafeInput, AmountT } from '@radixdlt/primitives'
+import { StakeTokensInput, TransferTokensInput } from '@radixdlt/application'
 import { defineComponent, PropType } from 'vue'
 import BigAmount from '@/components/BigAmount.vue'
 
@@ -67,7 +67,11 @@ const WalletConfirmTransactionModal = defineComponent({
       required: true
     },
     transferInput: {
-      type: Object as PropType<TransferTokensOptions>,
+      type: Object as PropType<TransferTokensInput>,
+      required: true
+    },
+    stakeInput: {
+      type: Object as PropType<StakeTokensInput>,
       required: true
     },
     transactionFee: {
@@ -79,6 +83,15 @@ const WalletConfirmTransactionModal = defineComponent({
   data () {
     return {
       canCancel: true
+    }
+  },
+
+  computed: {
+    toContent (): string {
+      return this.transferInput.to ? this.transferInput.to.toString() : this.stakeInput.validator.toString()
+    },
+    amount (): AmountOrUnsafeInput {
+      return this.transferInput.amount ? this.transferInput.amount : this.stakeInput.amount
     }
   },
 
