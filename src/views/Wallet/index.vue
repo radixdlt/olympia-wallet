@@ -44,6 +44,7 @@
         v-if="view == 'history'"
         :transactions="transactionHistory.transactions"
         :activeAddress="activeAddress"
+        :pendingTransactions="pendingTransactions"
       >
       </wallet-history>
 
@@ -63,7 +64,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { AccountT, AccountsT, AddressT } from '@radixdlt/account'
-import { Radix, TransferTokensOptions, StakePositions, TokenBalances, UnstakePositions, ManualUserConfirmTX, mockedAPI, TransactionTracking } from '@radixdlt/application'
+import { Radix, TransferTokensOptions, StakePositions, TokenBalances, UnstakePositions, ManualUserConfirmTX, mockedAPI, TransactionTracking, TransactionStatus, SubmittedTransaction } from '@radixdlt/application'
 import { Subscription, interval, Subject, Observable, combineLatest } from 'rxjs'
 import { ref } from '@nopr3d/vue-next-rx'
 import { useStore } from '@/store'
@@ -74,6 +75,7 @@ import WalletHistory from './WalletHistory.vue'
 import WalletSidebarAccounts from './WalletSidebarAccounts.vue'
 import WalletSidebarDefault from './WalletSidebarDefault.vue'
 import WalletTransaction from './WalletTransaction.vue'
+import { filter } from 'rxjs/operators'
 
 const Wallet = defineComponent({
   components: {
@@ -100,6 +102,9 @@ const Wallet = defineComponent({
     const transferInput = ref({})
     const transactionFee = ref(0)
     const transactionToConfirm = ref(null)
+    const pendingTransactions = ref([])
+    const view = ref('overview')
+    const draftTransaction = ref(null)
 
     const userConfirmation = new Subject<ManualUserConfirmTX>()
     const userDidConfirm = new Subject<boolean>()
@@ -143,6 +148,7 @@ const Wallet = defineComponent({
         userConfirmation
       })
 
+      // Subscribe to initial userConfirmation and display modal
       userConfirmation
         .subscribe((txnToConfirm: ManualUserConfirmTX) => {
           transactionToConfirm.value = txnToConfirm
@@ -152,9 +158,31 @@ const Wallet = defineComponent({
         })
         .add(subs)
 
+      // Confirm transaction and move user to history view after they press confirm
       combineLatest<[ManualUserConfirmTX, boolean]>([userConfirmation, userDidConfirm])
         .subscribe(([txnToConfirm, didConfirm]: [ManualUserConfirmTX, boolean]) => {
-          if (didConfirm) txnToConfirm.confirm()
+          if (didConfirm) {
+            txnToConfirm.confirm()
+            shouldShowConfirmation.value = false
+            view.value = 'history'
+          }
+        })
+        .add(subs)
+
+      // Store draft transaction actions
+      transactionTracking.events
+        .pipe(filter((trackingEvent) => trackingEvent.eventUpdateType === 'INITIATED'))
+        .subscribe((res) => { draftTransaction.value = res.value }).add(subs)
+
+      // Track pending transactions augmented with actions array
+      transactionTracking.events
+        .pipe(filter((trackingEvent) => trackingEvent.eventUpdateType === 'SUBMITTED'))
+        .subscribe((res: any) => {
+          pendingTransactions.value = pendingTransactions.value.concat([{
+            ...res.value,
+            actions: draftTransaction.value.actions
+          }])
+          draftTransaction.value = null
         })
         .add(subs)
 
@@ -173,8 +201,9 @@ const Wallet = defineComponent({
       // Log transaction completed/error to console for now
       transactionTracking.completion
         .subscribe({
-          next: (_txID: any) => {
-            console.log('completed here', _txID)
+          next: (txnID: any) => {
+            // To Do: Offer a way for the user to "refetch" history to include new items
+            pendingTransactions.value = pendingTransactions.value.filter((pendingTxn: SubmittedTransaction) => txnID.toString() !== pendingTxn.txID.toString())
           },
           error: (e: any) => {
             console.warn('error', e)
@@ -197,13 +226,14 @@ const Wallet = defineComponent({
       transferInput,
       switchAccount,
       transferTokens,
-      shouldShowConfirmation
+      shouldShowConfirmation,
+      pendingTransactions,
+      view
     }
   },
 
   data () {
     return {
-      view: 'overview',
       sidebar: 'default'
     }
   },
