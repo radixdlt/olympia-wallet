@@ -55,8 +55,10 @@
         :transactions="transactionHistory.transactions"
         :activeAddress="activeAddress"
         :pendingTransactions="pendingTransactions"
+        :canGoBack="previousCursor !== ''"
         @refresh="refreshHistory"
         @next="nextPage"
+        @previous="previousPage"
       >
       </wallet-history>
 
@@ -146,6 +148,7 @@ const WalletIndex = defineComponent({
     const view = ref('overview')
     const sidebar = ref('default')
     const draftTransaction = ref(null)
+    const previousCursor = ref('')
 
     const userDidConfirm = new Subject<boolean>()
     const userConfirmation = new Subject<ManualUserConfirmTX>()
@@ -211,6 +214,10 @@ const WalletIndex = defineComponent({
       }))
       .subscribe((history: TransactionHistory) => {
         console.log('received histiry', history)
+        // Store cursor for navigation back to previous page before updating view
+        if (transactionHistory.value && transactionHistory.value.cursor) previousCursor.value = transactionHistory.value.cursor
+        else previousCursor.value = ''
+
         transactionHistory.value = history
       })
       .add(subs)
@@ -370,6 +377,13 @@ const WalletIndex = defineComponent({
       })
     }
 
+    const previousPage = () => {
+      historyPagination.next({
+        size: 10,
+        cursor: previousCursor.value
+      })
+    }
+
     onUnmounted(() => subs.unsubscribe())
 
     return {
@@ -394,7 +408,9 @@ const WalletIndex = defineComponent({
       view,
       sidebar,
       refreshHistory,
-      nextPage
+      nextPage,
+      previousPage,
+      previousCursor
     }
   },
 
