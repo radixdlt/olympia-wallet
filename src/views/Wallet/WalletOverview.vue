@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col flex-1 min-w-0 overflow-y-scroll overflow-x-hidden">
+  <div class="flex flex-col flex-1 min-w-0 overflow-y-scroll overflow-x-hidden bg-white">
     <div class="bg-rGrayLightest py-6 px-8">
       <div class="flex justify-between mb-6">
         <h3 class="font-medium text-rBlack">{{ $t('wallet.balancesHeading') }}</h3>
@@ -15,7 +15,7 @@
         </div>
       </div>
 
-      <div class="bg-white border border-rGray rounded-md flex flex-row mb-7 overflow-y-scroll">
+      <div class="border border-rGray rounded-md flex flex-row mb-7 overflow-y-scroll">
         <img src="@/assets/token.svg" alt="token symbol" class="p-3 border-r border-rGray" />
         <div class="flex flex-col my-3 px-5 border-r border-rGray flex-1">
           <span class="text-sm text-rGrayDark">{{ $t('wallet.totalTokens') }}</span>
@@ -69,7 +69,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { StakePosition, TransactionHistory, TokenBalance, TokenBalances } from '@radixdlt/application'
+import { StakePosition, TokenBalance, TokenBalances } from '@radixdlt/application'
 import { AddressT } from '@radixdlt/account'
 import { sumAmounts, subtract } from '@/helpers/arithmetic'
 import { Amount, AmountT, Denomination } from '@radixdlt/primitives'

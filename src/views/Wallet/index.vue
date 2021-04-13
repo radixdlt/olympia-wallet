@@ -55,6 +55,8 @@
         :transactions="transactionHistory.transactions"
         :activeAddress="activeAddress"
         :pendingTransactions="pendingTransactions"
+        @refresh="refreshHistory"
+        @next="nextPage"
       >
       </wallet-history>
 
@@ -88,7 +90,7 @@
 import { defineComponent, onBeforeMount, onUnmounted } from 'vue'
 import { AccountT, AccountsT, AddressT, Wallet, WalletT, Mnemonic, HDPathRadixT } from '@radixdlt/account'
 import { Subscription, interval, Subject, Observable, combineLatest } from 'rxjs'
-import { Radix, TransferTokensOptions, StakePositions, TokenBalances, UnstakePositions, ManualUserConfirmTX, mockedAPI, TransactionTracking, StakeTokensInput, UnstakeTokensInput, TransactionStateUpdate, TransactionIdentifierT } from '@radixdlt/application'
+import { Radix, TransferTokensOptions, StakePositions, TokenBalances, UnstakePositions, ManualUserConfirmTX, mockedAPI, TransactionTracking, StakeTokensInput, UnstakeTokensInput, TransactionStateUpdate, TransactionIdentifierT, TransactionHistoryOfKnownAddressRequestInput, TransactionHistory } from '@radixdlt/application'
 import { ref } from '@nopr3d/vue-next-rx'
 import { useStore } from '@/store'
 import { useRouter } from 'vue-router'
@@ -101,10 +103,10 @@ import WalletStaking from './WalletStaking.vue'
 import WalletTransaction from './WalletTransaction.vue'
 import AccountEditName from '@/views/Account/AccountEditName.vue'
 import SettingsIndex from '@/views/Settings/index.vue'
-import { filter } from 'rxjs/operators'
 import { PrivateKey } from '@radixdlt/crypto/dist/_types'
 import { privateKeyFromScalar } from '@radixdlt/crypto/dist/_index'
 import { UInt256 } from '@radixdlt/uint256'
+import { filter, mergeMap } from 'rxjs/operators'
 
 const WalletIndex = defineComponent({
   components: {
@@ -147,6 +149,7 @@ const WalletIndex = defineComponent({
 
     const userDidConfirm = new Subject<boolean>()
     const userConfirmation = new Subject<ManualUserConfirmTX>()
+    const historyPagination = new Subject<TransactionHistoryOfKnownAddressRequestInput>()
 
     // Set initial view if provided in props
     onBeforeMount(() => {
@@ -187,7 +190,6 @@ const WalletIndex = defineComponent({
     const subs = new Subscription()
 
     wallet.tokenBalances.subscribe((tokenBalancesRes: TokenBalances) => { tokenBalances.value = tokenBalancesRes }).add(subs)
-    wallet.transactionHistory({ size: 10 }).subscribe((txs) => { transactionHistory.value = txs }).add(subs)
 
     radix.activeAccount.subscribe((accountRes: AccountT) => { activeAccount.value = accountRes }).add(subs)
     radix.stakingPositions.subscribe((stakes: StakePositions) => { activeStakes.value = stakes }).add(subs)
@@ -200,6 +202,18 @@ const WalletIndex = defineComponent({
     const switchAccount = (account: AccountT) => radix.switchAccount({ toAccount: account })
 
     const confirmTransaction = () => userDidConfirm.next(true)
+
+    // Update transaction history whenever params change
+    historyPagination
+      .pipe(mergeMap((params: TransactionHistoryOfKnownAddressRequestInput) => {
+        console.log('params arre', params)
+        return wallet.transactionHistory(params)
+      }))
+      .subscribe((history: TransactionHistory) => {
+        console.log('received histiry', history)
+        transactionHistory.value = history
+      })
+      .add(subs)
 
     const confirmAndExecuteTransaction = (transactionTracking: TransactionTracking) => {
       const transactionDidComplete = new Subject<boolean>()
@@ -339,6 +353,23 @@ const WalletIndex = defineComponent({
       confirmAndExecuteTransaction(unstakingTransactionTracking)
     }
 
+    historyPagination.next({ size: 10 })
+
+    const refreshHistory = () => {
+      historyPagination.next({ size: 10 })
+    }
+
+    const nextPage = () => {
+      console.log('requesting next', {
+        size: 10,
+        cursor: transactionHistory.value.cursor
+      })
+      historyPagination.next({
+        size: 10,
+        cursor: transactionHistory.value.cursor
+      })
+    }
+
     onUnmounted(() => subs.unsubscribe())
 
     return {
@@ -361,7 +392,9 @@ const WalletIndex = defineComponent({
       shouldShowConfirmation,
       pendingTransactions,
       view,
-      sidebar
+      sidebar,
+      refreshHistory,
+      nextPage
     }
   },
 

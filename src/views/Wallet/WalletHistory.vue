@@ -2,6 +2,9 @@
   <div class="flex flex-col flex-1 min-w-0 overflow-y-scroll">
     <div class="bg-rGrayLightest py-6 px-8 bg-gray">
       <h3 class="font-medium text-rBlack">{{ $t('history.historyHeading') }}</h3>
+
+      <button @click="$emit('refresh')">Refresh</button>
+      <button @click="$emit('next')">Next</button>
     </div>
 
     <div class="bg-white text-rBlack py-6 px-8 h-full">
@@ -37,6 +40,10 @@ const WalletHistory = defineComponent({
     TransactionListItem
   },
 
+  setup (_props, context) {
+    context.emit('refresh')
+  },
+
   props: {
     transactions: {
       type: Array as PropType<Array<ExecutedTransaction>>,
@@ -52,7 +59,9 @@ const WalletHistory = defineComponent({
       required: true,
       default: []
     }
-  }
+  },
+
+  emits: ['refresh', 'next']
 })
 
 export default WalletHistory
