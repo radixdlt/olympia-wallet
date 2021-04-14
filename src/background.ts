@@ -72,7 +72,7 @@ app.on('ready', async () => {
 })
 
 // Define channels for ipc to listen to and which actions to fires
-ipcMain.on('save-keystores-message', writeKeystoreFile)
+ipcMain.handle('save-keystores-message', writeKeystoreFile)
 ipcMain.handle('get-keystore-message', getKeystoreFile)
 ipcMain.on('copy-to-clipboard', copyToClipboard)
 ipcMain.handle('create-pin', storePin)
