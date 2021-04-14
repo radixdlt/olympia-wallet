@@ -75,8 +75,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { TokenBalance } from '@/mockRadix'
-import { StakePosition, TransactionHistory, UnstakePosition, TokenBalances } from '@radixdlt/application'
+import { StakePosition, TransactionHistory, UnstakePosition, TokenBalances, Token, TokenBalance } from '@radixdlt/application'
 import { AddressT } from '@radixdlt/account'
 import { sumAmounts, subtract } from '@/helpers/arithmetic'
 import { AmountT } from '@radixdlt/primitives'
