@@ -27,7 +27,7 @@
         class="bg-white py-8 px-11 max-w-lg rounded mx-auto"
       >
         <home-enter-passcode
-          @submit="createWallet"
+          @submit="loginWithWallet"
         ></home-enter-passcode>
       </div>
     </template>
@@ -36,15 +36,15 @@
 
 <script lang="ts">
 import { defineComponent, reactive } from 'vue'
+import { Radix, mockedAPI } from '@radixdlt/application'
 import { WalletT } from '@radixdlt/account'
-import { ref } from '@nopr3d/vue-next-rx'
-import { useTask } from 'vue-concurrency'
-import { AbortSignalWithPromise } from 'vue-concurrency/dist/vue3/src/types'
-import { decryptWallet, touchKeystore } from '@/actions/vue/create-wallet'
+import { hasKeystore, touchKeystore } from '@/actions/vue/create-wallet'
 import { useStore } from '@/store'
 import HomeCreateAndRestore from './HomeCreateAndRestore.vue'
 import HomeEnterPasscode from './HomeEnterPasscode.vue'
 import LoadingIcon from '@/components/LoadingIcon.vue'
+import { Subscription } from 'rxjs'
+import { useRouter } from 'vue-router'
 
 const CreateWallet = defineComponent({
   components: {
@@ -54,51 +54,33 @@ const CreateWallet = defineComponent({
   },
 
   setup () {
-    /* This is a demo to prove we can integrate with the SDK to fetch a wallet's accounts */
-    const activeAccount = ref(null)
-    const accounts = ref(null)
     const hasWallet = reactive({ value: null as boolean | null })
     const store = useStore()
+    const router = useRouter()
+    const radix = Radix
+      .create()
+      .__withAPI(mockedAPI)
+    const subs = new Subscription()
 
-    const createWalletTask = useTask(function * (signal: AbortSignalWithPromise, passcode: string) {
-      const wallet = yield decryptWallet(passcode)
-      return wallet
-    })
-    const touchKeystoreTask = useTask(function * () {
-      return touchKeystore()
-    })
+    // Move user to wallet when a wallet is successfully retrieved
+    radix.__wallet.subscribe((wallet: WalletT) => {
+      store.commit('setWallet', wallet)
+      router.push('/wallet')
+    }).add(subs)
 
-    // Check if local keystore exists
-    touchKeystoreTask.perform()
-      .then((json: string) => {
-        JSON.parse(json)
-        hasWallet.value = true
-      })
-      .catch(() => {
-        hasWallet.value = false
-        console.log('keystore doesn\'t exist')
-      })
+    // Login with password and path to keystore
+    const loginWithWallet = (password: string) => {
+      radix.login(password, touchKeystore)
+    }
+
+    // Check if keystore exists
+    hasKeystore().then((res: boolean) => { hasWallet.value = res })
 
     return {
-      // tasks
-      createWalletTask,
       // state
-      accounts,
-      activeAccount,
       hasWallet,
-      // mutations
-      setWallet: (wallet: WalletT) => store.commit('setWallet', wallet)
-    }
-  },
-
-  methods: {
-    createWallet (passcode: string) {
-      this.createWalletTask.perform(passcode)
-        .then((wallet: WalletT) => {
-          this.hasWallet.value = true
-          this.setWallet(wallet)
-          this.$router.push('/wallet')
-        })
+      // methods
+      loginWithWallet
     }
   }
 })

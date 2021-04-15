@@ -7,13 +7,19 @@ const store = new Store({
   name: 'wallet'
 })
 
-export const writeKeystoreFile = (event: IpcMainEvent, encodedWallet: string) => {
-  store.set('seed', encodedWallet)
+export const writeKeystoreFile = (event: IpcMainInvokeEvent, encodedWallet: string) => {
+  return store.set('seed', encodedWallet)
 }
 
 export const getKeystoreFile = () => {
   return store.get('seed')
 }
+
+const digestPin = async (pin: string) =>
+  crypto
+    .createHash('sha256')
+    .update(pin)
+    .digest('hex')
 
 export const storePin = (event: IpcMainInvokeEvent, pin: string) =>
   digestPin(pin).then((hash: string) => { store.set('pin', hash) })
@@ -21,9 +27,3 @@ export const storePin = (event: IpcMainInvokeEvent, pin: string) =>
 export const copyToClipboard = (event: IpcMainEvent, text: string) => {
   clipboard.writeText(text, 'selection')
 }
-
-const digestPin = async (pin: string) => 
-  crypto
-    .createHash('sha256')
-    .update(pin)
-    .digest('hex')

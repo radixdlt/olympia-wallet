@@ -43,7 +43,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { AccountT, AccountsT, AddressT } from '@radixdlt/account'
-import { Radix, StakePositions, TokenBalances, UnstakePositions } from '@radixdlt/application'
+import { Radix, StakePositions, TokenBalances, UnstakePositions, mockedAPI } from '@radixdlt/application'
 import { Subscription, interval } from 'rxjs'
 import { ref } from '@nopr3d/vue-next-rx'
 import { useStore } from '@/store'
@@ -52,7 +52,6 @@ import WalletOverview from './WalletOverview.vue'
 import WalletHistory from './WalletHistory.vue'
 import WalletSidebarAccounts from './WalletSidebarAccounts.vue'
 import WalletSidebarDefault from './WalletSidebarDefault.vue'
-import { mockedAPI } from '@/mockRadix'
 
 const Wallet = defineComponent({
   components: {

@@ -55,7 +55,7 @@
 
       <create-wallet-create-pin
         v-if="step == 2 || step == 3"
-        @confirm="() => console.log('completed')"
+        @confirm="handleCreatePin"
         @enteredPin="handleEnterPin"
       >
       </create-wallet-create-pin>
@@ -65,14 +65,14 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { Mnemonic, MnemomicT, WalletT } from '@radixdlt/account'
-import { useTask } from 'vue-concurrency'
-import { AbortSignalWithPromise } from 'vue-concurrency/dist/vue3/src/types'
+import { Mnemonic, WalletT } from '@radixdlt/account'
 import WizardHeading from '@/components/WizardHeading.vue'
-import { createWalletFromMnemonicAndPasscode, decryptWallet } from '@/actions/vue/create-wallet'
+import { createWalletFromMnemonicAndPasscode, storePin } from '@/actions/vue/create-wallet'
 import RestoreWalletEnterMnemonic from './RestoreWalletEnterMnemonic.vue'
 import CreateWalletCreatePasscode from '@/views/CreateWallet/CreateWalletCreatePasscode.vue'
 import CreateWalletCreatePin from '@/views/CreateWallet/CreateWalletCreatePin.vue'
+import { useStore } from '@/store'
+import { ref } from '@nopr3d/vue-next-rx'
 
 const RestoreWallet = defineComponent({
   components: {
@@ -82,10 +82,29 @@ const RestoreWallet = defineComponent({
     WizardHeading
   },
 
-  data () {
+  setup () {
+    const store = useStore()
+    const step = ref(0)
+    const passcode = ref('')
+    const mnemonic = ref(null)
+
+    // Create wallet with password and path to keystore
+    const createWallet = (pass: string) => {
+      createWalletFromMnemonicAndPasscode(mnemonic.value, pass)
+        .then((wallet: WalletT) => {
+          store.commit('setWallet', wallet)
+          step.value = 2
+          passcode.value = pass
+        })
+    }
+
     return {
-      step: 0,
-      mnemonic: null as MnemomicT | null
+      // state
+      mnemonic,
+      step,
+      passcode,
+      // methods
+      createWallet
     }
   },
 
@@ -99,24 +118,12 @@ const RestoreWallet = defineComponent({
         this.step = 1
       }
     },
-    createWallet (passcode: string) {
-      const createWalletTask = useTask(function * (signal: AbortSignalWithPromise, passcode: string, mnemonic: MnemomicT) {
-        yield createWalletFromMnemonicAndPasscode(mnemonic, passcode)
-        const wallet = yield decryptWallet(passcode)
-        return wallet
-      })
-
-      if (this.mnemonic) {
-        createWalletTask.perform(passcode, this.mnemonic)
-          .then((wallet: WalletT) => {
-            // We have access to the wallet here
-            console.log('wallet res', wallet)
-            this.step = 2
-          })
-      }
-    },
     handleEnterPin (val: boolean) {
       val ? this.step = 3 : this.step = 2
+    },
+    handleCreatePin (pin: string) {
+      storePin(pin)
+      this.$router.push('/wallet')
     }
   }
 })
