@@ -21,7 +21,7 @@
     </form>
 
     <button
-      @click="$emit('confirm')"
+      @click="$emit('confirm', this.values.pin)"
       type="button"
       class="inline-flex items-center justify-center px-6 py-5 border font-normal leading-snug rounded w-96"
       :class="{ 'bg-rGray border-rGray text-rGrayDark cursor-not-allowed': disableSubmit, 'bg-rGreen border-rGreen text-white': !disableSubmit }"

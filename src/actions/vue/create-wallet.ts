@@ -36,3 +36,7 @@ export const decryptWallet = async (passcode: string) =>
     })
 
 export const copyToClipboard = (text: string) => window.ipcRenderer.send('copy-to-clipboard', text)
+
+export const storePin = (pin: string): Promise<string> => new Promise((resolve) => {
+  resolve(window.ipcRenderer.invoke('create-pin', pin))
+})
