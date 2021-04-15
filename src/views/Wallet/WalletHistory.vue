@@ -6,11 +6,21 @@
 
     <div class="bg-white text-rBlack py-6 px-8">
       <transaction-list-item
+        v-for="(txn, i) in pendingTransactions"
+        :key="i"
+        :transaction="txn"
+        :index="i"
+        :activeAddress="activeAddress"
+        :pending="true"
+      />
+
+      <transaction-list-item
         v-for="(txn, i) in transactions"
         :key="i"
         :transaction="txn"
         :index="i"
         :activeAddress="activeAddress"
+        :pending="false"
       />
     </div>
   </div>
@@ -18,7 +28,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { ExecutedTransaction } from '@radixdlt/application'
+import { ExecutedTransaction, SubmittedTransaction } from '@radixdlt/application'
 import { AddressT } from '@radixdlt/account'
 import TransactionListItem from '@/components/TransactionListItem.vue'
 
@@ -36,6 +46,11 @@ const WalletHistory = defineComponent({
     activeAddress: {
       type: Object as PropType<AddressT>,
       required: true
+    },
+    pendingTransactions: {
+      type: Array as PropType<Array<SubmittedTransaction>>,
+      required: true,
+      default: []
     }
   }
 })

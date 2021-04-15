@@ -75,7 +75,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { StakePosition, TransactionHistory, UnstakePosition, TokenBalances, Token, TokenBalance } from '@radixdlt/application'
+import { StakePosition, TransactionHistory, UnstakePosition, TokenBalance, TokenBalances } from '@radixdlt/application'
 import { AddressT } from '@radixdlt/account'
 import { sumAmounts, subtract } from '@/helpers/arithmetic'
 import { AmountT } from '@radixdlt/primitives'
@@ -117,18 +117,14 @@ const WalletOverview = defineComponent({
       return sumAmounts(this.activeStakes.flatMap((item: StakePosition) => item.amount))
     },
     availableXRD (): AmountT | null {
-      console.log('available', this.totalStaked)
       if (!this.totalStaked) return this.totalXRD
       if (!this.totalXRD) return null
       else {
-        console.log('in else')
         const totalXRD: AmountT = this.totalXRD
         const totalStaked: AmountT = this.totalStaked
         const res = subtract(totalXRD, totalStaked)
-        if (res.isOk()) {
-          console.log(this.totalXRD.toString(), this.totalStaked.toString(), res.value.toString())
-          return res.value
-        } else return null
+        if (res.isOk()) return res.value
+        else return null
       }
     },
     otherTokenBalances (): TokenBalance[] {
