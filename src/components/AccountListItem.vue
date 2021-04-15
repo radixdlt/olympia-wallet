@@ -12,16 +12,18 @@
     </div>
     <div class="text-xs text-rGrayMed relative z-20 flex justify-between">
       <span class="mr-2">{{ $t('wallet.addressLabel') }}</span>
-      <span class="flex-1">{{ account.hdPath.toString() }}</span>
-      <click-to-copy :text="address" />
+      <span class="flex-1 w-full truncate">{{ address.toString() }}</span>
+      <click-to-copy :text="address.toString()" />
     </div>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { AccountT } from '@radixdlt/account'
+import { AccountT, AddressT } from '@radixdlt/account'
 import ClickToCopy from '@/components/ClickToCopy.vue'
+import { Subscription } from 'rxjs'
+import { ref } from '@nopr3d/vue-next-rx'
 
 const AccountListItem = defineComponent({
   components: {
@@ -39,14 +41,19 @@ const AccountListItem = defineComponent({
     }
   },
 
+  setup (props) {
+    const address = ref(null)
+    const subs = new Subscription()
+
+    props.account.deriveAddress().subscribe((a: AddressT) => { address.value = a }).add(subs)
+    return { address }
+  },
+
   computed: {
     isActive () {
       const activeAccountKey: string = this.activeAccount ? this.activeAccount.hdPath.toString() : 'active'
       const accountKey: string = this.account ? this.account.hdPath.toString() : 'account'
       return activeAccountKey === accountKey
-    },
-    address (): string {
-      return this.account ? this.account.hdPath.toString() : ''
     }
   }
 })
