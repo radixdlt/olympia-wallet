@@ -72,7 +72,7 @@ import { defineComponent, PropType } from 'vue'
 import { StakePosition, TransactionHistory, UnstakePosition, TokenBalance, TokenBalances } from '@radixdlt/application'
 import { AddressT } from '@radixdlt/account'
 import { sumAmounts, subtract } from '@/helpers/arithmetic'
-import { AmountT } from '@radixdlt/primitives'
+import { Amount, AmountT, Denomination } from '@radixdlt/primitives'
 import BigAmount from '@/components/BigAmount.vue'
 
 const WalletOverview = defineComponent({
@@ -100,21 +100,21 @@ const WalletOverview = defineComponent({
   },
 
   computed: {
-    totalXRD (): AmountT | null {
-      return sumAmounts(this.tokenBalances.tokenBalances.flatMap((item: TokenBalance) => item.amount))
+    totalXRD (): AmountT {
+      return sumAmounts(this.tokenBalances.tokenBalances.flatMap((item: TokenBalance) => item.amount)) || Amount.fromUnsafe(0, Denomination.Whole)._unsafeUnwrap()
     },
-    totalStaked (): AmountT | null {
-      return sumAmounts(this.activeStakes.flatMap((item: StakePosition) => item.amount))
+    totalStaked (): AmountT {
+      return sumAmounts(this.activeStakes.flatMap((item: StakePosition) => item.amount)) || Amount.fromUnsafe(0, Denomination.Whole)._unsafeUnwrap()
     },
-    availableXRD (): AmountT | null {
+    availableXRD (): AmountT {
       if (!this.totalStaked) return this.totalXRD
-      if (!this.totalXRD) return null
+      if (!this.totalXRD) return Amount.fromUnsafe(0, Denomination.Whole)._unsafeUnwrap()
       else {
         const totalXRD: AmountT = this.totalXRD
         const totalStaked: AmountT = this.totalStaked
         const res = subtract(totalXRD, totalStaked)
         if (res.isOk()) return res.value
-        else return null
+        else return Amount.fromUnsafe(0, Denomination.Whole)._unsafeUnwrap()
       }
     },
     otherTokenBalances (): TokenBalance[] {
