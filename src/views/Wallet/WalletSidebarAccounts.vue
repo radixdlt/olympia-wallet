@@ -13,8 +13,10 @@
       :key="i"
       :account="account"
       :activeAccount="activeAccount"
+      :shouldShowEdit="true"
       @click="$emit('switchAccount', account)"
-      class="mb-8 text-white hover:text-rGreen transition-colors cursor-pointer"
+      @edit="$emit('editName', account)"
+      class="mb-8"
     >
     </account-list-item>
 
@@ -50,7 +52,7 @@ const WalletSidebarDefault = defineComponent({
     }
   },
 
-  emits: ['back', 'addAccount', 'switchAccount']
+  emits: ['back', 'addAccount', 'switchAccount', 'editName']
 })
 
 export default WalletSidebarDefault

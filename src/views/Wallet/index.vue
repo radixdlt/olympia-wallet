@@ -16,6 +16,7 @@
       @back="sidebar = 'default'"
       @addAccount="addAccount"
       @switchAccount="switchAccount"
+      @editName="setView('editName')"
     >
     </wallet-sidebar-accounts>
 
@@ -68,6 +69,13 @@
         @confirm="confirmTransaction"
       >
       </wallet-confirm-transaction-modal>
+
+      <account-edit-name
+        v-if="view == 'editName'"
+        :activeAddress="activeAddress"
+        @save="view = 'overview'; sidebar = 'default'"
+      >
+      </account-edit-name>
     </template>
   </div>
 </template>
@@ -87,10 +95,12 @@ import WalletSidebarAccounts from './WalletSidebarAccounts.vue'
 import WalletSidebarDefault from './WalletSidebarDefault.vue'
 import WalletStaking from './WalletStaking.vue'
 import WalletTransaction from './WalletTransaction.vue'
+import AccountEditName from '@/views/Account/AccountEditName.vue'
 import { filter } from 'rxjs/operators'
 
 const Wallet = defineComponent({
   components: {
+    AccountEditName,
     WalletConfirmTransactionModal,
     WalletOverview,
     WalletHistory,

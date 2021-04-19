@@ -123,7 +123,7 @@ const RestoreWallet = defineComponent({
     },
     handleCreatePin (pin: string) {
       storePin(pin)
-      this.$router.push('/wallet')
+      this.$router.push({ path: '/wallet', query: { initialView: 'editName', initialSidebar: 'accounts' } })
     }
   }
 })
