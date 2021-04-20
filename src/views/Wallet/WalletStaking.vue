@@ -2,29 +2,14 @@
   <div class="bg-rGrayLightest flex flex-row w-full p-5 flex-1 h-screen">
     <div class="flex-flex-col flex-1">
       <div class="flex flex-row">
-        <div
-          class="w-40 flex items-center justify-center py-5 -mb-px relative z-20 cursor-pointer"
-          :class="{'bg-white border-t border-r border-l border-rGray rounded-t-md': activeForm == 'stake'}"
-          @click="() => setForm('stake')"
-        >
-          {{ $t('staking.stakeTab') }}
-        </div>
-        <div
-          class="w-40 flex items-center justify-center py-5 -mb-px relative z-20 cursor-pointer"
-          :class="{'bg-white border-t border-r border-l border-rGray rounded-t-md': activeForm == 'unstake'}"
-          @click="() => setForm('unstake')"
-        >
-          {{ $t('staking.unstakeTab') }}
-        </div>
+        <tabs-tab :isActive="activeForm == 'stake'" @click="() => setForm('stake')">{{ $t('staking.stakeTab') }}</tabs-tab>
+        <tabs-tab :isActive="activeForm == 'unstake'" @click="() => setForm('unstake')">{{ $t('staking.unstakeTab') }}</tabs-tab>
       </div>
       <form
         @submit.prevent="handleSubmitStake"
         class="flex flex-col flex-1 mr-6"
       >
-        <div
-          class="bg-white border border-rGray flex flex-col w-full"
-          :class="{'rounded-b-md rounded-r-md': activeForm == 'stake', 'rounded-md': activeForm == 'unstake'}"
-        >
+        <tabs-content :leftTabIsActive="activeForm == 'stake'">
           <div class="py-6 px-4 text-sm text-rGrayDark border-b border-rGray">{{ stakingDisclaimer }}</div>
           <div class="py-3 px-4 text-sm text-rGrayDark border-b border-rGray">
             <div class="text-rGrayDark mb-3">{{ $t('staking.fromLabel')}}</div>
@@ -60,7 +45,7 @@
               </div>
             </div>
           </div>
-        </div>
+        </tabs-content>
 
         <button
           type="submit"
@@ -105,6 +90,8 @@ import { useForm, Field, ErrorMessage } from 'vee-validate'
 import StakeListItem from '@/components/StakeListItem.vue'
 import { Amount, AmountT, Denomination } from '@radixdlt/primitives'
 import { safelyUnwrapAddress, safelyUnwrapAmount, validateAmountOfType } from '@/helpers/validateRadixTypes'
+import TabsTab from '@/components/TabsTab.vue'
+import TabsContent from '@/components/TabsContent.vue'
 
 interface StakeForm {
   validator: string;
@@ -115,7 +102,9 @@ const WalletStaking = defineComponent({
   components: {
     ErrorMessage,
     Field,
-    StakeListItem
+    StakeListItem,
+    TabsContent,
+    TabsTab
   },
 
   setup () {
