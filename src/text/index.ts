@@ -68,7 +68,8 @@ const messages = {
       navBalances: 'Balances',
       navHistory: 'History',
       navTransaction: 'Send Tokens',
-      navStake: 'Stake & Unstake'
+      navStake: 'Stake & Unstake',
+      navSettings: 'Wallet Settings'
     },
     history: {
       historyHeading: 'History',
@@ -96,8 +97,8 @@ const messages = {
     },
     staking: {
       currentStakesHeading: 'Current Stakes',
-      stakeTab: 'Stake',
-      unstakeTab: 'Unstake',
+      stakeTab: 'Stake Tokens',
+      unstakeTab: 'Unstake Tokens',
       unstakingLabel: 'Unstaking',
       addButton: 'Add',
       reduceButton: 'Reduce',
@@ -116,6 +117,11 @@ const messages = {
       editNameHeading: 'Let’s set the name of your account',
       nameInputPlaceholder: 'Name me!',
       updateNameButton: 'Save'
+    },
+    settings: {
+      currentPinLabel: 'enter current PIN',
+      pinLabel: 'enter new PIN',
+      confirmationPinLabel: 'confirm new PIN'
     }
   }
 }

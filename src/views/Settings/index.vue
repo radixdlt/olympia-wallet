@@ -4,8 +4,8 @@
       <div class="flex flex-row">
         <tabs-tab :isActive="activeForm = 'pin'" @click="activeForm = 'pin'">Reset PIN</tabs-tab>
       </div>
-      <tabs-content :leftTabIsActive="activeForm = 'pin'">
-
+      <tabs-content :leftTabIsActive="activeForm == 'pin'">
+        <settings-reset-pin v-if="activeForm == 'pin'"></settings-reset-pin>
       </tabs-content>
     </div>
   </div>
@@ -15,9 +15,11 @@
 import { defineComponent } from 'vue'
 import TabsTab from '@/components/TabsTab.vue'
 import TabsContent from '@/components/TabsContent.vue'
+import SettingsResetPin from './SettingsResetPin.vue'
 
 const SettingsIndex = defineComponent({
   components: {
+    SettingsResetPin,
     TabsContent,
     TabsTab
   },

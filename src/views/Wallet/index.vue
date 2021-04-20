@@ -86,7 +86,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onBeforeMount } from 'vue'
+import { defineComponent, onBeforeMount, onUnmounted } from 'vue'
 import { AccountT, AccountsT, AddressT } from '@radixdlt/account'
 import { Subscription, interval, Subject, Observable, combineLatest } from 'rxjs'
 import { Radix, TransferTokensOptions, StakePositions, TokenBalances, UnstakePositions, ManualUserConfirmTX, mockedAPI, TransactionTracking, SubmittedTransaction, StakeTokensInput, UnstakeTokensInput } from '@radixdlt/application'
@@ -312,6 +312,8 @@ const Wallet = defineComponent({
 
       confirmAndExecuteTransaction(unstakingTransactionTracking)
     }
+
+    onUnmounted(() => subs.unsubscribe())
 
     return {
       accounts,

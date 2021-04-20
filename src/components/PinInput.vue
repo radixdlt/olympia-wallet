@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="relative">
     <div class="flex -mr-11" :class="{'filter-blurSmall': !autofocus}">
       <div
         v-for="(digit, i) in [1, 2, 3, 4]"
@@ -14,7 +14,7 @@
     <input
       :name="name"
       type="password"
-      class="opacity-0 h-0 m-0 p-0"
+      class="opacity-0 absolute top-0 left-0 w-full h-full cursor-pointer"
       maxlength="4"
       ref="inputRef"
       v-model="value"
@@ -22,7 +22,7 @@
       @blur="focusInput()"
       @input="handleChange($event.target.value)"
     />
-    <div v-if="errorMessage" class="flex flex-row items-center justify-center text-rRed">
+    <div v-if="errorMessage" class="flex flex-row items-center justify-center text-rRed mt-4">
       <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr-3">
       <circle cx="7" cy="7" r="6.5" transform="rotate(90 7 7)" fill="#EF4136" stroke="#EF4136"/>
       <rect x="4" y="5" width="1" height="7" transform="rotate(-45 4 5)" fill="white"/>
