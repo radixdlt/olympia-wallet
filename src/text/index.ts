@@ -10,7 +10,8 @@ const messages = {
       validAddress: 'Enter a valid address',
       validAmount: 'Enter a valid amount',
       insufficientFunds: '%{field} cannot be greater than account balance',
-      amountOfType: 'Requested amount to send is not a mulltiple of token granularity (%{granularity}), will be unable to send'
+      amountOfType: 'Requested amount to send is not a mulltiple of token granularity (%{granularity}), will be unable to send',
+      invalidPin: 'Your pin was not a match. Try again.'
     },
     home: {
       welcomeOne: 'Welcome to the Radix Betanet.',

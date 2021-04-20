@@ -40,3 +40,7 @@ export const copyToClipboard = (text: string) => window.ipcRenderer.send('copy-t
 export const storePin = (pin: string): Promise<string> => new Promise((resolve) => {
   resolve(window.ipcRenderer.invoke('create-pin', pin))
 })
+
+export const validatePin = (pin: string): Promise<boolean> => new Promise((resolve) => {
+  resolve(window.ipcRenderer.invoke('validate-pin-message', pin))
+})
