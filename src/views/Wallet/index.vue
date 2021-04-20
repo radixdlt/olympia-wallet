@@ -1,5 +1,5 @@
 <template>
-  <div data-ci="wallet-view" class="flex flex-row min-h-screen">
+  <div data-ci="wallet-view" class="flex flex-row h-screen">
     <wallet-sidebar-default
       v-if="sidebar == 'default'"
       :activeAccount="activeAccount"
@@ -76,6 +76,11 @@
         @save="view = 'overview'; sidebar = 'default'"
       >
       </account-edit-name>
+
+      <settings-index
+        v-if="view == 'settings'"
+      >
+      </settings-index>
     </template>
   </div>
 </template>
@@ -96,11 +101,13 @@ import WalletSidebarDefault from './WalletSidebarDefault.vue'
 import WalletStaking from './WalletStaking.vue'
 import WalletTransaction from './WalletTransaction.vue'
 import AccountEditName from '@/views/Account/AccountEditName.vue'
+import SettingsIndex from '@/views/Settings/index.vue'
 import { filter } from 'rxjs/operators'
 
 const Wallet = defineComponent({
   components: {
     AccountEditName,
+    SettingsIndex,
     WalletConfirmTransactionModal,
     WalletOverview,
     WalletHistory,
