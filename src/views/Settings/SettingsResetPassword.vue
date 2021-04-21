@@ -1,0 +1,154 @@
+<template>
+  <form class="p-10 flex flex-col max-w-lg w-full" @submit.prevent="handleSubmit">
+    <div class="text-rGrayDark text-sm mb-11 w-full max-w-md">
+      {{ $t('settings.resetPasswordDisclaimer') }}
+    </div>
+
+    <div class="mb-14">
+      <Field
+        type="password"
+        name="currentPassword"
+        class="focus:outline-none focus:ring-transparent focus:shadow-none border-t-0 border-l-0 border-r-0 border-b border-rBlack w-full"
+        :placeholder="$t('createWallet.passwordPlaceholder')"
+        rules="required"
+        data-ci="create-wallet-passcode-input"
+      ></Field>
+      <FormErrorMessage name="currentPassword" />
+    </div>
+
+    <div class="mb-14">
+      <Field
+        type="password"
+        name="password"
+        class="focus:outline-none focus:ring-transparent focus:shadow-none border-t-0 border-l-0 border-r-0 border-b border-rBlack w-full"
+        :placeholder="$t('createWallet.passwordPlaceholder')"
+        rules="required"
+        data-ci="create-wallet-passcode-input"
+      ></Field>
+      <FormErrorMessage name="password" />
+    </div>
+
+    <div class="mb-56">
+      <Field
+        type="password"
+        name="confirmation"
+        class="focus:outline-none focus:ring-transparent focus:shadow-none border-t-0 border-l-0 border-r-0 border-b border-rBlack w-full"
+        :placeholder="$t('createWallet.passwordConfirmationPlaceholder')"
+        rules="required|confirmed:@password"
+        data-ci="create-wallet-confirm-input"
+      ></Field>
+      <FormErrorMessage name="confirmation" />
+    </div>
+
+    <button
+      type="submit"
+      class="inline-flex items-center justify-center px-6 py-5 border font-normal leading-snug rounded w-96"
+      :class="{ 'bg-rGray border-rGray text-rGrayDark cursor-not-allowed': disableSubmit, 'bg-rGreen border-rGreen text-white': !disableSubmit }"
+      :disabled="disableSubmit"
+    >
+      {{ $t('createWallet.passwordButton') }}
+    </button>
+  </form>
+</template>
+
+<script lang="ts">
+import { defineComponent, onUnmounted } from 'vue'
+import { useForm, Field } from 'vee-validate'
+import { Keystore, KeystoreT } from '@radixdlt/crypto'
+import { Radix, mockedAPI } from '@radixdlt/application'
+import { MnemomicT, WalletT } from '@radixdlt/account'
+import { Result } from 'neverthrow'
+import { useStore } from '@/store'
+import { touchKeystore, createWalletFromMnemonicAndPasscode } from '@/actions/vue/create-wallet'
+import { Subscription } from 'rxjs'
+import FormErrorMessage from '@/components/FormErrorMessage.vue'
+import { ref } from '@nopr3d/vue-next-rx'
+
+interface PasswordForm {
+  currentPassword: string;
+  password: string;
+  confirm: string;
+}
+
+const SettingsResetPassword = defineComponent({
+  components: {
+    Field,
+    FormErrorMessage
+  },
+
+  setup () {
+    const { errors, values, meta, setErrors, resetForm } = useForm<PasswordForm>()
+    const store = useStore()
+    const subs = new Subscription()
+    const isLoading = ref(false)
+
+    const radix = Radix
+      .create()
+      .__withAPI(mockedAPI)
+      .withWallet(store.state.wallet)
+
+    const handleResetPassword = (newPassword: string) => {
+      const getMnemonicForPassword = radix.revealMnemonic()
+        .subscribe((m: MnemomicT) => {
+          createWalletFromMnemonicAndPasscode(m, newPassword)
+            .then((wallet: WalletT) => {
+              store.commit('setWallet', wallet)
+              resetForm()
+            })
+            .then(() => getMnemonicForPassword.unsubscribe())
+        })
+
+      getMnemonicForPassword.add(subs)
+    }
+
+    onUnmounted(() => subs.unsubscribe())
+
+    return {
+      errors,
+      values,
+      meta,
+      setErrors,
+      handleResetPassword,
+      isLoading
+    }
+  },
+
+  computed: {
+    disableSubmit (): boolean {
+      return this.meta.dirty ? !this.meta.valid : true
+    }
+  },
+
+  methods: {
+    handleSubmit () {
+      this.isLoading = true
+      touchKeystore()
+        .then((keystore: KeystoreT) =>
+          Keystore.decrypt({
+            keystore,
+            password: this.values.currentPassword
+          })
+        )
+        .then((res: Result<Buffer, Error>) => {
+          if (res.isOk()) this.handleResetPassword(this.values.password)
+          else {
+            this.isLoading = false
+            this.setErrors({
+              currentPassword: this.$t('validations.incorrectPassword')
+            })
+          }
+        })
+        .catch(() => {
+          this.isLoading = false
+          this.setErrors({
+            currentPassword: this.$t('validations.incorrectPassword')
+          })
+        })
+    }
+  },
+
+  emits: ['submit']
+})
+
+export default SettingsResetPassword
+</script>

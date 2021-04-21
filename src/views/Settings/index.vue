@@ -2,17 +2,22 @@
   <div class="bg-rGrayLightest p-5 flex-1 overflow-y-scroll">
     <div class="flex flex-col">
       <div class="flex flex-row">
+        <tabs-tab :isActive="activeForm == 'password'" @click="() => handleClickTab('password')">Reset Password</tabs-tab>
         <tabs-tab :isActive="activeForm == 'pin'" @click="() => handleClickTab('pin')">Reset PIN</tabs-tab>
         <tabs-tab :isActive="activeForm == 'mnemonic'" @click="() => handleClickTab('mnemonic')">Reveal Mnemonic</tabs-tab>
       </div>
-      <tabs-content :leftTabIsActive="activeForm == 'pin'">
-        <settings-reset-pin v-if="activeForm == 'pin'"></settings-reset-pin>
+      <tabs-content :leftTabIsActive="activeForm == 'password'">
+        <settings-reset-password
+          v-if="activeForm == 'password'"
+        />
+        <settings-reset-pin
+          v-if="activeForm == 'pin'"
+        />
         <settings-reveal-mnemonic
           v-if="activeForm == 'mnemonic'"
           @clickAccessMnemonic="handleAccessMnemonic"
           :mnemonic="mnemonic"
-        >
-        </settings-reveal-mnemonic>
+        />
       </tabs-content>
     </div>
   </div>
@@ -26,12 +31,14 @@ import TabsTab from '@/components/TabsTab.vue'
 import TabsContent from '@/components/TabsContent.vue'
 import SettingsResetPin from './SettingsResetPin.vue'
 import SettingsRevealMnemonic from './SettingsRevealMnemonic.vue'
+import SettingsResetPassword from './SettingsResetPassword.vue'
 import { useStore } from '@/store'
 import { MnemomicT } from '@radixdlt/account'
 import { ref } from '@nopr3d/vue-next-rx'
 
 const SettingsIndex = defineComponent({
   components: {
+    SettingsResetPassword,
     SettingsResetPin,
     SettingsRevealMnemonic,
     TabsContent,
@@ -72,7 +79,7 @@ const SettingsIndex = defineComponent({
 
   data () {
     return {
-      activeForm: 'pin'
+      activeForm: 'password'
     }
   },
 

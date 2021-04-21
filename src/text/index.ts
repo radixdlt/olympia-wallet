@@ -11,7 +11,8 @@ const messages = {
       validAmount: 'Enter a valid amount',
       insufficientFunds: '%{field} cannot be greater than account balance',
       amountOfType: 'Requested amount to send is not a mulltiple of token granularity (%{granularity}), will be unable to send',
-      invalidPin: 'Your pin was not a match. Try again.'
+      invalidPin: 'Your pin was not a match. Try again.',
+      incorrectPassword: 'Your password is incorrect. Try again.'
     },
     home: {
       welcomeOne: 'Welcome to the Radix Betanet.',
@@ -124,7 +125,8 @@ const messages = {
       confirmationPinLabel: 'confirm new PIN',
       mnemonicDisclaimer: 'WRITE  COPY Be careful, blah blah blah, vitae mollis magna elementunas malesuada tortor turpis, vitae mollis magna elementum in. Proin rhoncus vulputate erat, eget aliquam lacus dignissim vel.da tortor turpis, vitae mollis magna elementum in. Proin rhoncus vulputate erat, eim vel.',
       mnemonicModalHeading: 'Enter your pin to access your mnemonic',
-      accessMnemonicButton: 'Access Mnemonic'
+      accessMnemonicButton: 'Access Mnemonic',
+      resetPasswordDisclaimer: 'WRITE  COPY Maecenas malesuada tortor turpis, vitae mollis magna elementunas malesuada tortor turpis, vitae mollisdignissim vel.'
     }
   }
 }
