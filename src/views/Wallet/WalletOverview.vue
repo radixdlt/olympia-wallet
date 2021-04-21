@@ -69,7 +69,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { StakePosition, TransactionHistory, UnstakePosition, TokenBalance, TokenBalances } from '@radixdlt/application'
+import { StakePosition, TransactionHistory, TokenBalance, TokenBalances } from '@radixdlt/application'
 import { AddressT } from '@radixdlt/account'
 import { sumAmounts, subtract } from '@/helpers/arithmetic'
 import { Amount, AmountT, Denomination } from '@radixdlt/primitives'
@@ -101,7 +101,9 @@ const WalletOverview = defineComponent({
 
   computed: {
     totalXRD (): AmountT {
-      return sumAmounts(this.tokenBalances.tokenBalances.flatMap((item: TokenBalance) => item.amount)) || Amount.fromUnsafe(0, Denomination.Whole)._unsafeUnwrap()
+      return this.tokenBalances.tokenBalances
+        ? sumAmounts(this.tokenBalances.tokenBalances.flatMap((item: TokenBalance) => item.amount)) || Amount.fromUnsafe(0, Denomination.Whole)._unsafeUnwrap()
+        : Amount.fromUnsafe(0, Denomination.Whole)._unsafeUnwrap()
     },
     totalStaked (): AmountT {
       return sumAmounts(this.activeStakes.flatMap((item: StakePosition) => item.amount)) || Amount.fromUnsafe(0, Denomination.Whole)._unsafeUnwrap()
@@ -118,7 +120,9 @@ const WalletOverview = defineComponent({
       }
     },
     otherTokenBalances (): TokenBalance[] {
-      return this.tokenBalances.tokenBalances.filter((item: TokenBalance) => item.token.name !== 'XRD')
+      return this.tokenBalances.tokenBalances
+        ? this.tokenBalances.tokenBalances.filter((item: TokenBalance) => item.token.name !== 'XRD')
+        : []
     }
   }
 })

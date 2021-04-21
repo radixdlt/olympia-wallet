@@ -87,9 +87,9 @@
 
 <script lang="ts">
 import { defineComponent, onBeforeMount, onUnmounted } from 'vue'
-import { AccountT, AccountsT, AddressT } from '@radixdlt/account'
+import { AccountT, AccountsT, AddressT, Wallet, WalletT, Mnemonic, HDPathRadixT } from '@radixdlt/account'
 import { Subscription, interval, Subject, Observable, combineLatest } from 'rxjs'
-import { Radix, TransferTokensOptions, StakePositions, TokenBalances, UnstakePositions, ManualUserConfirmTX, mockedAPI, TransactionTracking, SubmittedTransaction, StakeTokensInput, UnstakeTokensInput } from '@radixdlt/application'
+import { Radix, TransferTokensOptions, StakePositions, TokenBalances, UnstakePositions, ManualUserConfirmTX, mockedAPI, TransactionTracking, StakeTokensInput, UnstakeTokensInput, TransactionStateUpdate, TransactionIdentifierT } from '@radixdlt/application'
 import { ref } from '@nopr3d/vue-next-rx'
 import { useStore } from '@/store'
 import { useRouter } from 'vue-router'
@@ -103,8 +103,11 @@ import WalletTransaction from './WalletTransaction.vue'
 import AccountEditName from '@/views/Account/AccountEditName.vue'
 import SettingsIndex from '@/views/Settings/index.vue'
 import { filter } from 'rxjs/operators'
+import { PrivateKey } from '@radixdlt/crypto/dist/_types'
+import { privateKeyFromScalar } from '@radixdlt/crypto/dist/_index'
+import { UInt256 } from '@radixdlt/uint256'
 
-const Wallet = defineComponent({
+const WalletIndex = defineComponent({
   components: {
     AccountEditName,
     SettingsIndex,
@@ -131,7 +134,7 @@ const Wallet = defineComponent({
     const activeStakes = ref(null)
     const activeUnstakes = ref(null)
     const accounts = ref(null)
-    const tokenBalances = ref(0.01)
+    const tokenBalances = ref([])
     const transactionHistory = ref(null)
     const shouldShowConfirmation = ref(false)
     const transferInput = ref({})
@@ -155,18 +158,41 @@ const Wallet = defineComponent({
     // Return home if wallet is undefined
     if (!store.state.wallet) router.push('/')
 
+    // Create demo wallet for now
+    const makeWalletWithFunds = (): WalletT => {
+      return Wallet.__unsafeCreateWithPrivateKeyProvider({
+        mnemonic: Mnemonic.generateNew(), // not used,
+        __privateKeyProvider: (hdPath: HDPathRadixT): PrivateKey => {
+          const privateKeyScalar: number =
+          (hdPath.addressIndex.value() % 10000) + 1 // `0` is not a valid key.
+          return privateKeyFromScalar(
+            UInt256.valueOf(privateKeyScalar)
+          )._unsafeUnwrap()
+        }
+      })
+    }
+
     const radix = Radix
       .create()
       .__withAPI(mockedAPI)
       .withWallet(store.state.wallet)
       .withTokenBalanceFetchTrigger(interval(3 * 60 * 1_000))
+
+    const faucet = makeWalletWithFunds()
+    const wallet = Radix
+      .create()
+      .connect('https://54.73.253.49/rpc')
+      .withWallet(faucet)
+      .withTokenBalanceFetchTrigger(interval(3 * 60 * 1_000))
+
     const subs = new Subscription()
+
+    wallet.tokenBalances.subscribe((tokenBalancesRes: TokenBalances) => { tokenBalances.value = tokenBalancesRes }).add(subs)
 
     radix.activeAccount.subscribe((accountRes: AccountT) => { activeAccount.value = accountRes }).add(subs)
     radix.stakingPositions.subscribe((stakes: StakePositions) => { activeStakes.value = stakes }).add(subs)
     radix.unstakingPositions.subscribe((unstakes: UnstakePositions) => { activeUnstakes.value = unstakes }).add(subs)
     radix.accounts.subscribe((accountsRes: AccountsT) => { accounts.value = accountsRes }).add(subs)
-    radix.tokenBalances.subscribe((tokenBalancesRes: TokenBalances) => { tokenBalances.value = tokenBalancesRes }).add(subs)
     radix.transactionHistory({ size: 10 }).subscribe((txs) => { transactionHistory.value = txs }).add(subs)
     radix.activeAddress.subscribe((addressRes: AddressT) => { activeAddress.value = addressRes }).add(subs)
 
@@ -200,15 +226,15 @@ const Wallet = defineComponent({
       // Store draft transaction actions
       const trackingInitiated = transactionTracking.events
         .pipe(filter((trackingEvent) => trackingEvent.eventUpdateType === 'INITIATED'))
-        .subscribe((res) => { draftTransaction.value = res.value })
+        .subscribe((res) => { draftTransaction.value = res })
       trackingInitiated.add(subs)
 
       // Track pending transactions augmented with actions array
       const trackingSubmittedEvents = transactionTracking.events
-        .pipe(filter((trackingEvent) => trackingEvent.eventUpdateType === 'SUBMITTED'))
-        .subscribe((res: any) => {
+        .pipe(filter((trackingEvent: TransactionStateUpdate) => trackingEvent.eventUpdateType === 'SUBMITTED'))
+        .subscribe((res: TransactionStateUpdate) => {
           pendingTransactions.value = pendingTransactions.value.concat([{
-            ...res.value,
+            ...res,
             actions: draftTransaction.value.actions
           }])
           draftTransaction.value = null
@@ -232,9 +258,10 @@ const Wallet = defineComponent({
       // Log transaction completed/error to console for now
       const trackingCompletion = transactionTracking.completion
         .subscribe({
-          next: (txnID: any) => {
+          next: (txnID: TransactionIdentifierT) => {
+            console.log('completed', txnID, pendingTransactions.value)
             // To Do: Offer a way for the user to "refetch" history to include new items
-            pendingTransactions.value = pendingTransactions.value.filter((pendingTxn: SubmittedTransaction) => txnID.toString() !== pendingTxn.txID.toString())
+            pendingTransactions.value = pendingTransactions.value.filter((pendingTxn: any) => txnID.toString() !== pendingTxn.txID.toString())
             transactionDidComplete.next(true)
           },
           error: (e: any) => {
@@ -346,5 +373,5 @@ const Wallet = defineComponent({
   }
 })
 
-export default Wallet
+export default WalletIndex
 </script>
