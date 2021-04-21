@@ -66,7 +66,8 @@ const messages = {
       stakedTokens: 'Staked',
       navBalances: 'Balances',
       navHistory: 'History',
-      navTransaction: 'Send Tokens'
+      navTransaction: 'Send Tokens',
+      navStake: 'Stake & Unstake'
     },
     history: {
       historyHeading: 'History',
@@ -91,6 +92,24 @@ const messages = {
       confirmButton: 'Confirm',
       sendButton: 'Send',
       insufficientFunds: 'Sorry, but you don\'t have any tokens to send!'
+    },
+    staking: {
+      currentStakesHeading: 'Current Stakes',
+      stakeTab: 'Stake',
+      unstakeTab: 'Unstake',
+      unstakingLabel: 'Unstaking',
+      addButton: 'Add',
+      reduceButton: 'Reduce',
+      fromLabel: 'Staking Account',
+      validatorLabel: 'Validator',
+      amountLabel: 'Amount',
+      feeLabel: 'Fee',
+      stakeButton: 'Stake',
+      unstakeButton: 'Request Unstake',
+      stakeDisclaimer: 'WRITE STAKE COPY Network health explainer with link to FAQ and Validator link, short paragraph. dit diam. Maecenas malesuada tortor turpis, vitae mollis magna elementunas malesuada tortor turpis, vitae mollis magna elementum in. Proin rhoncus vulputate erat, eget aliquam lacus dignissim vel.',
+      unstakeDisclaimer: 'WRITE UNSTAKE COPY Network health explainer with link to FAQ and Validator link, short paragraph. dit diam. Maecenas malesuada tortor turpis, vitae mollis magna elementunas malesuada tortor turpis, vitae mollis magna elementum in. Proin rhoncus vulputate erat, eget aliquam lacus dignissim vel.',
+      availableBalancePlaceholder: 'Available balance ...',
+      validatorPlaceholder: 'enter validator address'
     }
   }
 }

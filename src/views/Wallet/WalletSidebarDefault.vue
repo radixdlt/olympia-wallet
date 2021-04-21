@@ -50,6 +50,18 @@
 
     <div
       class="flex flex-row items-center my-8 cursor-pointer transition-opacity"
+      :class="{ 'opacity-40': activeView !== 'staking' }"
+      @click="$emit('setView', 'staking')"
+    >
+      <svg width="20" height="25" viewBox="0 0 20 25" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr-3">
+        <path d="M3.85449 10.1179V7.65369C3.85449 4.29719 6.57551 1.57617 9.93201 1.57617C13.2885 1.57617 16.0095 4.29719 16.0095 7.65369V10.1179" stroke="white" stroke-width="1.5" stroke-miterlimit="10"/>
+        <path d="M1.57617 24.1513V9.92188H4.0387H15.875H18.3376V23.4034H5.06131" stroke="#00C389" stroke-width="1.5" stroke-miterlimit="10"/>
+      </svg>
+      <div class="font-normal text-white">{{ $t('wallet.navStake') }}</div>
+    </div>
+
+    <div
+      class="flex flex-row items-center my-8 cursor-pointer transition-opacity"
       :class="{ 'opacity-40': activeView !== 'history' }"
       @click="$emit('setView', 'history')"
     >
