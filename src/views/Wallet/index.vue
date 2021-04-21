@@ -27,7 +27,6 @@
         :activeStakes="activeStakes"
         :activeUnstakes="activeUnstakes"
         :tokenBalances="tokenBalances"
-        :transactionHistory="transactionHistory"
       >
       </wallet-overview>
 
@@ -135,7 +134,7 @@ const WalletIndex = defineComponent({
     const activeUnstakes = ref(null)
     const accounts = ref(null)
     const tokenBalances = ref([])
-    const transactionHistory = ref(null)
+    const transactionHistory = ref({ transactions: [] })
     const shouldShowConfirmation = ref(false)
     const transferInput = ref({})
     const stakeInput = ref({})
@@ -188,12 +187,12 @@ const WalletIndex = defineComponent({
     const subs = new Subscription()
 
     wallet.tokenBalances.subscribe((tokenBalancesRes: TokenBalances) => { tokenBalances.value = tokenBalancesRes }).add(subs)
+    wallet.transactionHistory({ size: 10 }).subscribe((txs) => { transactionHistory.value = txs }).add(subs)
 
     radix.activeAccount.subscribe((accountRes: AccountT) => { activeAccount.value = accountRes }).add(subs)
     radix.stakingPositions.subscribe((stakes: StakePositions) => { activeStakes.value = stakes }).add(subs)
     radix.unstakingPositions.subscribe((unstakes: UnstakePositions) => { activeUnstakes.value = unstakes }).add(subs)
     radix.accounts.subscribe((accountsRes: AccountsT) => { accounts.value = accountsRes }).add(subs)
-    radix.transactionHistory({ size: 10 }).subscribe((txs) => { transactionHistory.value = txs }).add(subs)
     radix.activeAddress.subscribe((addressRes: AddressT) => { activeAddress.value = addressRes }).add(subs)
 
     const addAccount = () => radix.deriveNextAccount({ alsoSwitchTo: true })

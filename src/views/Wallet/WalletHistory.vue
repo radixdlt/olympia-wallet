@@ -4,7 +4,7 @@
       <h3 class="font-medium text-rBlack">{{ $t('history.historyHeading') }}</h3>
     </div>
 
-    <div class="bg-white text-rBlack py-6 px-8">
+    <div class="bg-white text-rBlack py-6 px-8 h-full">
       <transaction-list-item
         v-for="(txn, i) in pendingTransactions"
         :key="i"

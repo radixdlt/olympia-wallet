@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col flex-1 min-w-0 overflow-y-scroll">
+  <div class="flex flex-col flex-1 min-w-0 overflow-y-scroll overflow-x-hidden">
     <div class="bg-rGrayLightest py-6 px-8">
       <div class="flex justify-between mb-6">
         <h3 class="font-medium text-rBlack">{{ $t('wallet.balancesHeading') }}</h3>
@@ -83,10 +83,6 @@ const WalletOverview = defineComponent({
   props: {
     tokenBalances: {
       type: Object as PropType<TokenBalances>,
-      required: true
-    },
-    transactionHistory: {
-      type: Object as PropType<TransactionHistory>,
       required: true
     },
     activeAddress: {
