@@ -5,6 +5,7 @@ import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 import path from 'path'
 import { copyToClipboard, getKeystoreFile, storePin, writeKeystoreFile } from '@/actions/electron/create-wallet'
+import { getAccountName, saveAccountName } from './actions/electron/data-store'
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
 // Scheme must be registered before the app is ready
@@ -76,6 +77,8 @@ ipcMain.handle('save-keystores-message', writeKeystoreFile)
 ipcMain.handle('get-keystore-message', getKeystoreFile)
 ipcMain.on('copy-to-clipboard', copyToClipboard)
 ipcMain.handle('create-pin', storePin)
+ipcMain.handle('save-account-name', saveAccountName)
+ipcMain.handle('get-account-name', getAccountName)
 
 // Exit cleanly on request from parent process in development mode.
 if (isDevelopment) {

@@ -13,7 +13,11 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/wallet',
     name: 'Wallet',
-    component: Wallet
+    component: Wallet,
+    props: route => ({
+      initialView: route.query.initialView,
+      initialSidebar: route.query.initialSidebar
+    })
   },
   {
     path: '/create-wallet',

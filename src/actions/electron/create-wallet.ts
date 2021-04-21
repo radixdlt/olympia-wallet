@@ -1,11 +1,7 @@
 import { IpcMainEvent, IpcMainInvokeEvent } from 'electron/main'
 import { clipboard } from 'electron'
-import Store from 'electron-store'
 import crypto from 'crypto'
-
-const store = new Store({
-  name: 'wallet'
-})
+import { store } from '@/actions/electron/data-store'
 
 export const writeKeystoreFile = (event: IpcMainInvokeEvent, encodedWallet: string) => {
   return store.set('seed', encodedWallet)

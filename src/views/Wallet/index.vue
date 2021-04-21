@@ -14,8 +14,9 @@
       :accounts="accounts"
       :activeAccount="activeAccount"
       @back="sidebar = 'default'"
-      @addAccount="addAccount"
+      @addAccount="() => { addAccount() ; view = 'editName' }"
       @switchAccount="switchAccount"
+      @editName="setView('editName')"
     >
     </wallet-sidebar-accounts>
 
@@ -68,12 +69,19 @@
         @confirm="confirmTransaction"
       >
       </wallet-confirm-transaction-modal>
+
+      <account-edit-name
+        v-if="view == 'editName'"
+        :activeAddress="activeAddress"
+        @save="view = 'overview'; sidebar = 'default'"
+      >
+      </account-edit-name>
     </template>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, onBeforeMount } from 'vue'
 import { AccountT, AccountsT, AddressT } from '@radixdlt/account'
 import { Subscription, interval, Subject, Observable, combineLatest } from 'rxjs'
 import { Radix, TransferTokensOptions, StakePositions, TokenBalances, UnstakePositions, ManualUserConfirmTX, mockedAPI, TransactionTracking, SubmittedTransaction, StakeTokensInput, UnstakeTokensInput } from '@radixdlt/application'
@@ -87,10 +95,12 @@ import WalletSidebarAccounts from './WalletSidebarAccounts.vue'
 import WalletSidebarDefault from './WalletSidebarDefault.vue'
 import WalletStaking from './WalletStaking.vue'
 import WalletTransaction from './WalletTransaction.vue'
+import AccountEditName from '@/views/Account/AccountEditName.vue'
 import { filter } from 'rxjs/operators'
 
 const Wallet = defineComponent({
   components: {
+    AccountEditName,
     WalletConfirmTransactionModal,
     WalletOverview,
     WalletHistory,
@@ -100,7 +110,12 @@ const Wallet = defineComponent({
     WalletTransaction
   },
 
-  setup () {
+  props: {
+    initialView: String,
+    initialSidebar: String
+  },
+
+  setup (props) {
     const store = useStore()
     const router = useRouter()
 
@@ -118,10 +133,17 @@ const Wallet = defineComponent({
     const transactionToConfirm = ref(null)
     const pendingTransactions = ref([])
     const view = ref('overview')
+    const sidebar = ref('default')
     const draftTransaction = ref(null)
 
     const userDidConfirm = new Subject<boolean>()
     const userConfirmation = new Subject<ManualUserConfirmTX>()
+
+    // Set initial view if provided in props
+    onBeforeMount(() => {
+      if (props.initialView) view.value = props.initialView
+      if (props.initialSidebar) sidebar.value = props.initialSidebar
+    })
 
     // Return home if wallet is undefined
     if (!store.state.wallet) router.push('/')
@@ -303,13 +325,8 @@ const Wallet = defineComponent({
       unstakeTokens,
       shouldShowConfirmation,
       pendingTransactions,
-      view
-    }
-  },
-
-  data () {
-    return {
-      sidebar: 'default'
+      view,
+      sidebar
     }
   },
 

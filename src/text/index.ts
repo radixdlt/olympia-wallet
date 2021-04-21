@@ -110,6 +110,11 @@ const messages = {
       unstakeDisclaimer: 'WRITE UNSTAKE COPY Network health explainer with link to FAQ and Validator link, short paragraph. dit diam. Maecenas malesuada tortor turpis, vitae mollis magna elementunas malesuada tortor turpis, vitae mollis magna elementum in. Proin rhoncus vulputate erat, eget aliquam lacus dignissim vel.',
       availableBalancePlaceholder: 'Available balance ...',
       validatorPlaceholder: 'enter validator address'
+    },
+    account: {
+      editNameHeading: 'Let’s set the name of your account',
+      nameInputPlaceholder: 'Name me!',
+      updateNameButton: 'Save'
     }
   }
 }
