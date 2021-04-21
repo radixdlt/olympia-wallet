@@ -121,7 +121,10 @@ const messages = {
     settings: {
       currentPinLabel: 'enter current PIN',
       pinLabel: 'enter new PIN',
-      confirmationPinLabel: 'confirm new PIN'
+      confirmationPinLabel: 'confirm new PIN',
+      mnemonicDisclaimer: 'WRITE  COPY Be careful, blah blah blah, vitae mollis magna elementunas malesuada tortor turpis, vitae mollis magna elementum in. Proin rhoncus vulputate erat, eget aliquam lacus dignissim vel.da tortor turpis, vitae mollis magna elementum in. Proin rhoncus vulputate erat, eim vel.',
+      mnemonicModalHeading: 'Enter your pin to access your mnemonic',
+      accessMnemonicButton: 'Access Mnemonic'
     }
   }
 }
