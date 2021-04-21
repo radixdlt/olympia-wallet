@@ -1,6 +1,9 @@
 <template>
   <div class="fixed w-screen h-screen z-20 flex items-center justify-center bg-translucent-black">
-    <div class="bg-white rounded-md py-7 px-5 w-full max-w-4xl flex flex-col items-end absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+    <form
+      class="bg-white rounded-md py-7 px-5 w-full max-w-4xl flex flex-col items-end absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+      @submit.prevent="handleConfirm"
+    >
       <h3 class="font-medium text-rBlack mb-9 w-full">{{ $t('transaction.modalHeading') }}</h3>
 
       <div class="bg-translucent-gray rounded-md border border-rGray text-rBlack mb-8 w-full">
@@ -25,22 +28,32 @@
         </div>
       </div>
 
-      <div class="flex flex-row justify-end">
-        <button
-          @click="canCancel && $emit('cancel')"
-          class="inline-flex items-center justify-center px-6 py-5 bg-none border border-rGrayDark text-rGrayDark font-normal leading-snug rounded w-56 mr-6"
-        >
-          {{ $t('transaction.cancelButton') }}
-        </button>
+      <pin-input
+        name="pin"
+        :values="values.pin"
+        :autofocus="true"
+        class="mb-4 mx-auto"
+        data-ci="confirmation-pin"
+        @finished="handleValidatePin"
+      >
+      </pin-input>
 
-        <button
-          @click="handleConfirm"
-          class="inline-flex items-center justify-center px-6 py-5 bg-none border border-rGreen text-rGreen font-normal leading-snug rounded w-56"
-        >
-          {{ $t('transaction.confirmButton') }}
-        </button>
-      </div>
-    </div>
+      <button
+        type="submit"
+        class="inline-flex items-center justify-center px-6 py-4 border font-normal leading-snug rounded transition-colors w-72 mx-auto"
+        :class="{ 'bg-rGray border-rGray text-rGrayDark cursor-not-allowed': disableSubmit, 'bg-rGreen border-rGreen text-white': !disableSubmit }"
+        :disabed="!disableSubmit"
+      >
+        {{ $t('transaction.confirmButton') }}
+      </button>
+
+      <button
+        class="text-rGrayDark py-4 px-4text-sm mx-auto"
+        @click="canCancel && $emit('cancel')"
+      >
+        {{ $t('transaction.cancelButton') }}
+      </button>
+    </form>
 
     <div
       class="bg-translucent-black w-full h-full"
@@ -54,11 +67,25 @@ import { AddressT } from '@radixdlt/account'
 import { AmountOrUnsafeInput, AmountT } from '@radixdlt/primitives'
 import { StakeTokensInput, TransferTokensInput } from '@radixdlt/application'
 import { defineComponent, PropType } from 'vue'
+import { useForm } from 'vee-validate'
 import BigAmount from '@/components/BigAmount.vue'
+import PinInput from '@/components/PinInput.vue'
+import { validatePin } from '@/actions/vue/create-wallet'
+
+interface ConfirmationForm {
+  pin: string;
+}
 
 const WalletConfirmTransactionModal = defineComponent({
   components: {
-    BigAmount
+    BigAmount,
+    PinInput
+  },
+
+  setup () {
+    const { errors, meta, values, setErrors } = useForm<ConfirmationForm>()
+
+    return { errors, meta, values, setErrors }
   },
 
   props: {
@@ -92,6 +119,9 @@ const WalletConfirmTransactionModal = defineComponent({
     },
     amount (): AmountOrUnsafeInput {
       return this.transferInput.amount ? this.transferInput.amount : this.stakeInput.amount
+    },
+    disableSubmit (): boolean {
+      return this.meta.dirty ? !this.meta.valid : true
     }
   },
 
@@ -99,6 +129,16 @@ const WalletConfirmTransactionModal = defineComponent({
     handleConfirm () {
       this.canCancel = false
       this.$emit('confirm')
+    },
+    handleValidatePin () {
+      validatePin(this.values.pin)
+        .then((isValid: boolean) => {
+          if (!isValid) {
+            this.setErrors({
+              pin: this.$t('validations.invalidPin')
+            })
+          }
+        })
     }
   },
 

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="flex" :class="{'filter-blurSmall': !autofocus}">
+    <div class="flex -mr-11" :class="{'filter-blurSmall': !autofocus}">
       <div
         v-for="(digit, i) in [1, 2, 3, 4]"
         :key="i"
@@ -12,6 +12,7 @@
       />
     </div>
     <input
+      :name="name"
       type="password"
       class="opacity-0 h-0 m-0 p-0"
       maxlength="4"
@@ -21,7 +22,14 @@
       @blur="focusInput()"
       @input="handleChange($event.target.value)"
     />
-    <span>{{ errorMessage }}</span>
+    <div v-if="errorMessage" class="flex flex-row items-center justify-center text-rRed">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr-3">
+      <circle cx="7" cy="7" r="6.5" transform="rotate(90 7 7)" fill="#EF4136" stroke="#EF4136"/>
+      <rect x="4" y="5" width="1" height="7" transform="rotate(-45 4 5)" fill="white"/>
+      <rect x="8.94971" y="4.29297" width="1" height="7" transform="rotate(45 8.94971 4.29297)" fill="white"/>
+      </svg>
+      <span>{{ errorMessage }}</span>
+    </div>
   </div>
 </template>
 
@@ -39,7 +47,7 @@ const PinInput = defineComponent({
       }
     }
 
-    const { value, errorMessage } = useField<string>(props.name, 'required:length:4')
+    const { value, errorMessage } = useField<string>(props.name, 'required|length:4')
 
     return {
       inputRef,

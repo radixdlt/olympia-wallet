@@ -23,3 +23,6 @@ export const storePin = (event: IpcMainInvokeEvent, pin: string) =>
 export const copyToClipboard = (event: IpcMainEvent, text: string) => {
   clipboard.writeText(text, 'selection')
 }
+
+export const validatePin = (event: IpcMainInvokeEvent, pin: string) =>
+  digestPin(pin).then((inputHash: string) => store.get('pin') === inputHash)

@@ -4,7 +4,7 @@ import { app, ipcMain, protocol, BrowserWindow } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 import path from 'path'
-import { copyToClipboard, getKeystoreFile, storePin, writeKeystoreFile } from '@/actions/electron/create-wallet'
+import { copyToClipboard, getKeystoreFile, storePin, validatePin, writeKeystoreFile } from '@/actions/electron/create-wallet'
 import { getAccountName, saveAccountName } from './actions/electron/data-store'
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
@@ -79,6 +79,7 @@ ipcMain.on('copy-to-clipboard', copyToClipboard)
 ipcMain.handle('create-pin', storePin)
 ipcMain.handle('save-account-name', saveAccountName)
 ipcMain.handle('get-account-name', getAccountName)
+ipcMain.handle('validate-pin-message', validatePin)
 
 // Exit cleanly on request from parent process in development mode.
 if (isDevelopment) {
