@@ -5,8 +5,16 @@ import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 import path from 'path'
 import { copyToClipboard, getKeystoreFile, storePin, validatePin, writeKeystoreFile } from '@/actions/electron/create-wallet'
-import { getAccountName, saveAccountName } from './actions/electron/data-store'
+import {
+  getAccountName,
+  saveAccountName,
+  getDerivedAccountsIndex,
+  saveDerivedAccountsIndex
+} from './actions/electron/data-store'
 const isDevelopment = process.env.NODE_ENV !== 'production'
+
+app.commandLine.appendSwitch('ignore-certificate-errors')
+process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
@@ -79,6 +87,8 @@ ipcMain.on('copy-to-clipboard', copyToClipboard)
 ipcMain.handle('create-pin', storePin)
 ipcMain.handle('save-account-name', saveAccountName)
 ipcMain.handle('get-account-name', getAccountName)
+ipcMain.handle('save-num-accounts', saveDerivedAccountsIndex)
+ipcMain.handle('get-num-accounts', getDerivedAccountsIndex)
 ipcMain.handle('validate-pin-message', validatePin)
 
 // Exit cleanly on request from parent process in development mode.

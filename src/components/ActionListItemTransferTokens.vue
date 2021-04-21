@@ -27,7 +27,7 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { ExecutedTransferTokensAction } from '@radixdlt/application'
-import { AddressT } from '@radixdlt/account'
+import { AccountAddressT } from '@radixdlt/account'
 import ClickToCopy from '@/components/ClickToCopy.vue'
 
 const ActionListItemTransferTokens = defineComponent({
@@ -41,7 +41,7 @@ const ActionListItemTransferTokens = defineComponent({
       required: true
     },
     activeAddress: {
-      type: Object as PropType<AddressT>,
+      type: Object as PropType<AccountAddressT>,
       required: true
     },
     index: {

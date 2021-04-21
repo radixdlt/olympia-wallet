@@ -71,7 +71,7 @@ import ActionListItemStakeTokens from '@/components/ActionListItemStakeTokens.vu
 import ActionListItemUnstakeTokens from '@/components/ActionListItemUnstakeTokens.vue'
 import ActionListItemTransferTokens from '@/components/ActionListItemTransferTokens.vue'
 import ActionListItemOther from '@/components/ActionListItemOther.vue'
-import { AddressT } from '@radixdlt/account'
+import { AccountAddressT } from '@radixdlt/account'
 
 export default defineComponent({
   components: {
@@ -91,7 +91,7 @@ export default defineComponent({
       required: true
     },
     activeAddress: {
-      type: Object as PropType<AddressT>,
+      type: Object as PropType<AccountAddressT>,
       required: true
     },
     pending: {

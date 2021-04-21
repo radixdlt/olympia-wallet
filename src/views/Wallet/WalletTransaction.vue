@@ -13,7 +13,7 @@
 
       <form
         @submit.prevent="handleSubmit"
-        v-if="tokenBalances.tokenBalances.length > 0"
+        v-if="tokenBalances.length > 0"
         class="flex flex-col items-end"
       >
         <div class="bg-white rounded-md border border-rGray text-rBlack mb-8 w-full">
@@ -59,7 +59,7 @@
                 v-model="currency"
               >
                 <option
-                  v-for="token in tokenBalances.tokenBalances"
+                  v-for="token in tokenBalances"
                   :key="token.token.name"
                   :value="token.token.name"
                 >
@@ -69,7 +69,7 @@
             </div>
           </div>
 
-          <div class="border-b border-rGray  py-7 flex items-center">
+          <div v-show="messagesEnabled" class="border-b border-rGray  py-7 flex items-center">
             <div class="w-32 text-right text-rGrayDark mr-8">{{ $t('transaction.messageLabel') }}</div>
             <div class="flex-1 pr-8">
               <FormField
@@ -102,10 +102,10 @@
 </template>
 
 <script lang="ts">
-import { AddressT } from '@radixdlt/account'
+import { AccountAddressT } from '@radixdlt/account'
 import { defineComponent, PropType } from 'vue'
-import { safelyUnwrapAddress, safelyUnwrapAmount, validateAmountOfType } from '@/helpers/validateRadixTypes'
-import { TokenBalance, TokenBalances } from '@radixdlt/application'
+import { safelyUnwrapAddress, safelyUnwrapAmount, validateAmountOfType, validateGreaterThanZero } from '@/helpers/validateRadixTypes'
+import { TokenBalance } from '@radixdlt/application'
 import { useForm } from 'vee-validate'
 import ClickToCopy from '@/components/ClickToCopy.vue'
 import FormErrorMessage from '@/components/FormErrorMessage.vue'
@@ -134,25 +134,27 @@ const WalletTransaction = defineComponent({
 
   props: {
     activeAddress: {
-      type: Object as PropType<AddressT>,
+      type: Object as PropType<AccountAddressT>,
       required: true
     },
     tokenBalances: {
-      type: Object as PropType<TokenBalances>,
-      required: true
+      type: Object as PropType<Array<TokenBalance>>,
+      required: true,
+      default: []
     }
   },
 
   data () {
     return {
-      currency: this.tokenBalances.tokenBalances.length > 0 ? this.tokenBalances.tokenBalances[0].token.name : ''
+      currency: this.tokenBalances.length > 0 ? this.tokenBalances[0].token.name : '',
+      messagesEnabled: false
     }
   },
 
   computed: {
     selectedCurrency (): TokenBalance | null {
-      if (this.tokenBalances.tokenBalances.length <= 0) return null
-      const selectedCurrency = this.tokenBalances.tokenBalances.find((tokenBalance: TokenBalance) => tokenBalance.token.name === this.currency)
+      if (this.tokenBalances.length <= 0) return null
+      const selectedCurrency = this.tokenBalances.find((tokenBalance: TokenBalance) => tokenBalance.token.name === this.currency)
       return selectedCurrency || null
     },
     amountPlaceholder (): string {
@@ -168,16 +170,17 @@ const WalletTransaction = defineComponent({
         const safeAmount = safelyUnwrapAmount(Number(this.values.amount))
         const token = this.selectedCurrency.token
         const validAmount = safeAmount && validateAmountOfType(safeAmount, token)
+        console.log('my token', token)
 
-        if (validAmount) {
+        if (!validAmount) {
+          this.setErrors({
+            amount: this.$t('validations.amountOfType', { granularity: token.granularity.toString() })
+          })
+        } else {
           this.$emit('transferTokens', {
             to: safeAddress,
             amount: safeAmount,
             tokenIdentifier: token.rri.toString()
-          })
-        } else {
-          this.setErrors({
-            amount: this.$t('validations.amountOfType', { granularity: token.granularity.toString() })
           })
         }
       }

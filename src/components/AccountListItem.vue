@@ -24,7 +24,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { AccountT, AddressT } from '@radixdlt/account'
+import { AccountT, AccountAddressT } from '@radixdlt/account'
 import ClickToCopy from '@/components/ClickToCopy.vue'
 import { Subscription } from 'rxjs'
 import { ref } from '@nopr3d/vue-next-rx'
@@ -55,7 +55,7 @@ const AccountListItem = defineComponent({
     const name = ref('')
     const subs = new Subscription()
 
-    props.account.deriveAddress().subscribe((a: AddressT) => {
+    props.account.deriveAddress().subscribe((a: AccountAddressT) => {
       address.value = a
       getAccountName(a.toString())
         .then((storedName: string) => { name.value = storedName || a.toString() })

@@ -12,7 +12,8 @@ const messages = {
       insufficientFunds: '%{field} cannot be greater than account balance',
       amountOfType: 'Requested amount to send is not a mulltiple of token granularity (%{granularity}), will be unable to send',
       invalidPin: 'Your pin was not a match. Try again.',
-      incorrectPassword: 'Your password is incorrect. Try again.'
+      incorrectPassword: 'Your password is incorrect. Try again.',
+      greaterThanZero: 'Must be greater than 0'
     },
     home: {
       welcomeOne: 'Welcome to the Radix Betanet.',
@@ -81,7 +82,9 @@ const messages = {
       toLabel: 'To',
       fromLabel: 'From',
       stakeAction: 'Stake',
-      otherAction: 'Other'
+      otherAction: 'Other',
+      previous: 'Previous',
+      next: 'Next'
     },
     transaction: {
       transactionHeading: 'Send Tokens',

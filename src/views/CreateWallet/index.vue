@@ -85,6 +85,7 @@ import WizardHeading from '@/components/WizardHeading.vue'
 import { createWalletFromMnemonicAndPasscode, storePin } from '@/actions/vue/create-wallet'
 import { useStore } from '@/store'
 import { ref } from '@nopr3d/vue-next-rx'
+import { saveDerivedAccountsIndex } from '@/actions/vue/data-store'
 
 const CreateWallet = defineComponent({
   components: {
@@ -106,6 +107,7 @@ const CreateWallet = defineComponent({
       createWalletFromMnemonicAndPasscode(mnemonic, pass)
         .then((wallet: WalletT) => {
           store.commit('setWallet', wallet)
+          saveDerivedAccountsIndex(0)
           step.value = 3
           passcode.value = pass
         })
