@@ -48,12 +48,9 @@
           </div>
         </tabs-content>
 
-        <button
-          type="submit"
-          class="inline-flex items-center justify-center px-6 py-4 border font-normal leading-snug rounded w-full mt-12 transition-colors bg-rGreen border-rGreen text-white"
-        >
+        <ButtonSubmit class="mt-12" :disabled="false">
           {{ stakeButtonCopy }}
-        </button>
+        </ButtonSubmit>
       </form>
     </div>
 
@@ -95,6 +92,7 @@ import TabsTab from '@/components/TabsTab.vue'
 import TabsContent from '@/components/TabsContent.vue'
 import FormErrorMessage from '@/components/FormErrorMessage.vue'
 import FormField from '@/components/FormField.vue'
+import ButtonSubmit from '@/components/ButtonSubmit.vue'
 
 interface StakeForm {
   validator: string;
@@ -103,6 +101,7 @@ interface StakeForm {
 
 const WalletStaking = defineComponent({
   components: {
+    ButtonSubmit,
     FormField,
     FormErrorMessage,
     StakeListItem,
@@ -145,6 +144,7 @@ const WalletStaking = defineComponent({
       return this.activeForm === 'stake' ? this.$t('staking.stakeDisclaimer') : this.$t('staking.unstakeDisclaimer')
     },
     xrdToken (): TokenBalance | null {
+      console.log('xrdtoken', this.tokenBalances)
       if (this.tokenBalances.tokenBalances && this.tokenBalances.tokenBalances.length > 0) {
         return this.tokenBalances.tokenBalances.find((tb: TokenBalance) => tb.token.symbol === 'XRD') || null
       }
@@ -185,6 +185,7 @@ const WalletStaking = defineComponent({
       this.values.validator = validator.toString()
     },
     handleSubmitStake () {
+      console.log('submitting', this.meta, this.xrdToken)
       if (this.meta.valid && this.xrdToken) {
         const safeAddress = safelyUnwrapAddress(this.values.validator)
         const safeAmount = safelyUnwrapAmount(Number(this.values.amount))

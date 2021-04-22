@@ -11,14 +11,9 @@
         :placeholder="$t('account.nameInputPlaceholder')"
       />
 
-      <button
-        type="submit"
-        class="inline-flex items-center justify-center px-6 py-4 border font-normal leading-snug rounded w-full transition-colors"
-        :class="{ 'bg-rGray border-rGray text-rGrayDark cursor-not-allowed': !name, 'bg-rGreen border-rGreen text-white': !!name }"
-        :disabed="!name"
-      >
+      <ButtonSubmit :disabled="!name">
         {{ $t('account.updateNameButton') }}
-      </button>
+      </ButtonSubmit>
     </form>
 
     <img src="@/assets/account.svg" class="absolute right-0 top-0 h-full" />
@@ -30,8 +25,13 @@ import { defineComponent, PropType, watch } from 'vue'
 import { getAccountName, saveAccountName } from '@/actions/vue/data-store'
 import { AddressT } from '@radixdlt/account'
 import { ref } from '@nopr3d/vue-next-rx'
+import ButtonSubmit from '@/components/ButtonSubmit.vue'
 
 const AccountEditName = defineComponent({
+  components: {
+    ButtonSubmit
+  },
+
   props: {
     activeAddress: {
       type: Object as PropType<AddressT>,

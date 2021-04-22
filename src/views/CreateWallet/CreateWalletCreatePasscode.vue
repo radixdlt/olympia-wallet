@@ -1,6 +1,6 @@
 <template>
   <div data-ci="create-wallet-create-passcode-component">
-    <form class="flex flex-col w-96">
+    <form class="flex flex-col w-96" @submit.prevent="$emit('confirm', values.password)">
       <div class="mb-14">
         <FormField
           type="password"
@@ -24,17 +24,11 @@
         />
         <FormErrorMessage name="confirmation" />
       </div>
-    </form>
 
-    <button
-      @click="$emit('confirm', values.password)"
-      type="button"
-      class="inline-flex items-center justify-center px-6 py-5 border font-normal leading-snug rounded w-96"
-      :class="{ 'bg-rGray border-rGray text-rGrayDark cursor-not-allowed': disableSubmit, 'bg-rGreen border-rGreen text-white': !disableSubmit }"
-      :disabled="disableSubmit"
-    >
-      {{ $t('createWallet.passwordButton') }}
-    </button>
+      <ButtonSubmit class="w-96" :disabled="disableSubmit">
+        {{ $t('createWallet.passwordButton') }}
+      </ButtonSubmit>
+    </form>
   </div>
 </template>
 
@@ -43,6 +37,7 @@ import { defineComponent } from 'vue'
 import { useForm } from 'vee-validate'
 import FormErrorMessage from '@/components/FormErrorMessage.vue'
 import FormField from '@/components/FormField.vue'
+import ButtonSubmit from '@/components/ButtonSubmit.vue'
 
 interface PasswordForm {
   password: string;
@@ -51,6 +46,7 @@ interface PasswordForm {
 
 const CreateWalletCreatePasscode = defineComponent({
   components: {
+    ButtonSubmit,
     FormField,
     FormErrorMessage
   },

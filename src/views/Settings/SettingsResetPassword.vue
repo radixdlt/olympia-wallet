@@ -40,14 +40,9 @@
       <FormErrorMessage name="confirmation" />
     </div>
 
-    <button
-      type="submit"
-      class="inline-flex items-center justify-center px-6 py-5 border font-normal leading-snug rounded w-96"
-      :class="{ 'bg-rGray border-rGray text-rGrayDark cursor-not-allowed': disableSubmit, 'bg-rGreen border-rGreen text-white': !disableSubmit }"
-      :disabled="disableSubmit"
-    >
+    <ButtonSubmit class="w-96" :disabled="disableSubmit">
       {{ $t('createWallet.passwordButton') }}
-    </button>
+    </ButtonSubmit>
   </form>
 </template>
 
@@ -64,6 +59,7 @@ import { useStore } from '@/store'
 import { touchKeystore, createWalletFromMnemonicAndPasscode } from '@/actions/vue/create-wallet'
 import FormErrorMessage from '@/components/FormErrorMessage.vue'
 import FormField from '@/components/FormField.vue'
+import ButtonSubmit from '@/components/ButtonSubmit.vue'
 
 interface PasswordForm {
   currentPassword: string;
@@ -73,6 +69,7 @@ interface PasswordForm {
 
 const SettingsResetPassword = defineComponent({
   components: {
+    ButtonSubmit,
     FormField,
     FormErrorMessage
   },

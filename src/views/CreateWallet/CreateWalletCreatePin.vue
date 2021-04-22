@@ -1,6 +1,6 @@
 <template>
   <div data-ci="create-wallet-create-pin-component">
-    <form>
+    <form @submit.prevent="$emit('confirm', this.values.pin)">
       <pin-input
         name="pin"
         :values="values.pin"
@@ -18,17 +18,11 @@
         data-ci="create-wallet-confirm-input"
       >
       </pin-input>
-    </form>
 
-    <button
-      @click="$emit('confirm', this.values.pin)"
-      type="button"
-      class="inline-flex items-center justify-center px-6 py-5 border font-normal leading-snug rounded w-96"
-      :class="{ 'bg-rGray border-rGray text-rGrayDark cursor-not-allowed': disableSubmit, 'bg-rGreen border-rGreen text-white': !disableSubmit }"
-      :disabled="disableSubmit"
-    >
-      {{ $t('createWallet.pinButton') }}
-    </button>
+      <ButtonSubmit class="w-96" :disabled="disableSubmit">
+        {{ $t('createWallet.pinButton') }}
+      </ButtonSubmit>
+    </form>
   </div>
 </template>
 
@@ -36,6 +30,7 @@
 import { defineComponent } from 'vue'
 import { useForm } from 'vee-validate'
 import PinInput from '@/components/PinInput.vue'
+import ButtonSubmit from '@/components/ButtonSubmit.vue'
 
 interface PasswordForm {
   pin: string;
@@ -44,6 +39,7 @@ interface PasswordForm {
 
 const CreateWalletCreatePin = defineComponent({
   components: {
+    ButtonSubmit,
     PinInput
   },
 

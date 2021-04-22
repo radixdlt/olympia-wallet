@@ -1,5 +1,5 @@
 <template>
-  <div data-ci="create-wallet-enter-mnemonic-component">
+  <form data-ci="create-wallet-enter-mnemonic-component" @submit.prevent="$emit('confirm', inputWords)">
     <div class="flex flex-wrap mb-4">
       <div v-for="(word, i) in inputWords" :key="i" class="w-1/4 mb-14">
         <mnemonic-input
@@ -10,25 +10,20 @@
       </div>
     </div>
 
-    <button
-      data-ci="create-wallet-enter-mnemonic-component--confirm-button"
-      @click="$emit('confirm', inputWords)"
-      type="button"
-      class="inline-flex items-center justify-center px-6 py-5 border font-normal leading-snug rounded w-96"
-      :class="{ 'bg-rGray border-rGray text-rGrayDark cursor-not-allowed': !inputValid, 'bg-rGreen border-rGreen text-white': inputValid }"
-      :disabled="!inputValid"
-    >
+    <ButtonSubmit data-ci="create-wallet-enter-mnemonic-component--confirm-button" class="w-96" :disabled="!inputValid">
       {{buttonText}}
-    </button>
-  </div>
+    </ButtonSubmit>
+  </form>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
 import MnemonicInput from '@/components/MnemonicInput.vue'
+import ButtonSubmit from '@/components/ButtonSubmit.vue'
 
 const RestoreWalletEnterMnemonic = defineComponent({
   components: {
+    ButtonSubmit,
     MnemonicInput
   },
 
