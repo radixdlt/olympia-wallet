@@ -11,7 +11,8 @@ const messages = {
       validAmount: 'Enter a valid amount',
       insufficientFunds: '%{field} cannot be greater than account balance',
       amountOfType: 'Requested amount to send is not a mulltiple of token granularity (%{granularity}), will be unable to send',
-      invalidPin: 'Your pin was not a match. Try again.'
+      invalidPin: 'Your pin was not a match. Try again.',
+      incorrectPassword: 'Your password is incorrect. Try again.'
     },
     home: {
       welcomeOne: 'Welcome to the Radix Betanet.',
@@ -68,7 +69,8 @@ const messages = {
       navBalances: 'Balances',
       navHistory: 'History',
       navTransaction: 'Send Tokens',
-      navStake: 'Stake & Unstake'
+      navStake: 'Stake & Unstake',
+      navSettings: 'Wallet Settings'
     },
     history: {
       historyHeading: 'History',
@@ -96,8 +98,8 @@ const messages = {
     },
     staking: {
       currentStakesHeading: 'Current Stakes',
-      stakeTab: 'Stake',
-      unstakeTab: 'Unstake',
+      stakeTab: 'Stake Tokens',
+      unstakeTab: 'Unstake Tokens',
       unstakingLabel: 'Unstaking',
       addButton: 'Add',
       reduceButton: 'Reduce',
@@ -116,6 +118,15 @@ const messages = {
       editNameHeading: 'Let’s set the name of your account',
       nameInputPlaceholder: 'Name me!',
       updateNameButton: 'Save'
+    },
+    settings: {
+      currentPinLabel: 'enter current PIN',
+      pinLabel: 'enter new PIN',
+      confirmationPinLabel: 'confirm new PIN',
+      mnemonicDisclaimer: 'WRITE  COPY Be careful, blah blah blah, vitae mollis magna elementunas malesuada tortor turpis, vitae mollis magna elementum in. Proin rhoncus vulputate erat, eget aliquam lacus dignissim vel.da tortor turpis, vitae mollis magna elementum in. Proin rhoncus vulputate erat, eim vel.',
+      mnemonicModalHeading: 'Enter your pin to access your mnemonic',
+      accessMnemonicButton: 'Access Mnemonic',
+      resetPasswordDisclaimer: 'WRITE  COPY Maecenas malesuada tortor turpis, vitae mollis magna elementunas malesuada tortor turpis, vitae mollisdignissim vel.'
     }
   }
 }

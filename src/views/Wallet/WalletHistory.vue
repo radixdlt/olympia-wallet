@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col flex-1 min-w-0">
+  <div class="flex flex-col flex-1 min-w-0 overflow-y-scroll">
     <div class="bg-rGrayLightest py-6 px-8 bg-gray">
       <h3 class="font-medium text-rBlack">{{ $t('history.historyHeading') }}</h3>
     </div>

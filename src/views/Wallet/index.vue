@@ -1,5 +1,5 @@
 <template>
-  <div data-ci="wallet-view" class="flex flex-row min-h-screen">
+  <div data-ci="wallet-view" class="flex flex-row h-screen">
     <wallet-sidebar-default
       v-if="sidebar == 'default'"
       :activeAccount="activeAccount"
@@ -76,12 +76,17 @@
         @save="view = 'overview'; sidebar = 'default'"
       >
       </account-edit-name>
+
+      <settings-index
+        v-if="view == 'settings'"
+      >
+      </settings-index>
     </template>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, onBeforeMount } from 'vue'
+import { defineComponent, onBeforeMount, onUnmounted } from 'vue'
 import { AccountT, AccountsT, AddressT } from '@radixdlt/account'
 import { Subscription, interval, Subject, Observable, combineLatest } from 'rxjs'
 import { Radix, TransferTokensOptions, StakePositions, TokenBalances, UnstakePositions, ManualUserConfirmTX, mockedAPI, TransactionTracking, SubmittedTransaction, StakeTokensInput, UnstakeTokensInput } from '@radixdlt/application'
@@ -96,11 +101,13 @@ import WalletSidebarDefault from './WalletSidebarDefault.vue'
 import WalletStaking from './WalletStaking.vue'
 import WalletTransaction from './WalletTransaction.vue'
 import AccountEditName from '@/views/Account/AccountEditName.vue'
+import SettingsIndex from '@/views/Settings/index.vue'
 import { filter } from 'rxjs/operators'
 
 const Wallet = defineComponent({
   components: {
     AccountEditName,
+    SettingsIndex,
     WalletConfirmTransactionModal,
     WalletOverview,
     WalletHistory,
@@ -305,6 +312,8 @@ const Wallet = defineComponent({
 
       confirmAndExecuteTransaction(unstakingTransactionTracking)
     }
+
+    onUnmounted(() => subs.unsubscribe())
 
     return {
       accounts,
