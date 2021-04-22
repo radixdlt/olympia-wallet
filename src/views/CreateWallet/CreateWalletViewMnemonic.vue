@@ -6,20 +6,21 @@
       </div>
     </div>
 
-    <button
-      @click="$emit('confirm')"
-      type="button"
-      class="inline-flex items-center justify-center px-6 py-5 bg-rGreen border border-rGreen text-white font-normal leading-snug rounded"
-    >
+    <ButtonSubmit @click="$emit('confirm')" :disabled="false" class="w-96">
       {{ $t('createWallet.recoveryButtonOne') }}
-    </button>
+    </ButtonSubmit>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
+import ButtonSubmit from '@/components/ButtonSubmit.vue'
 
 const CreateWalletViewMnemonic = defineComponent({
+  components: {
+    ButtonSubmit
+  },
+
   props: {
     mnemonic: {
       type: Array as PropType<Array<string>>,

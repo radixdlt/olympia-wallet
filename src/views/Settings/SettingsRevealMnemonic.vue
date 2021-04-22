@@ -17,14 +17,14 @@
         </mnemonic-display>
       </div>
 
-      <button-submit
+      <ButtonSubmit
         v-if="mnemonicNotRequested"
-        :disableSubmit="false"
+        :disabled="false"
         @click="enteringPin = true"
         class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
       >
         {{ $t('settings.accessMnemonicButton') }}
-      </button-submit>
+      </ButtonSubmit>
 
       <template v-if="enteringPin">
         <div
@@ -46,12 +46,12 @@
             @finished="handleValidatePin"
           >
           </pin-input>
-          <button-submit
-            :disableSubmit="disableSubmit"
+          <ButtonSubmit
+            :disabled="disableSubmit"
             class="mb-9"
           >
             {{ $t('settings.accessMnemonicButton') }}
-          </button-submit>
+          </ButtonSubmit>
         </form>
       </template>
     </div>

@@ -89,12 +89,9 @@
           </div>
         </div>
 
-        <button
-          type="submit"
-          class="inline-flex items-center justify-center px-6 py-4 border font-normal leading-snug rounded w-52 transition-colors bg-rGreen border-rGreen text-white"
-        >
+        <ButtonSubmit :disabled="false" class="w-52 ml-full">
           {{ $t('transaction.sendButton') }}
-        </button>
+        </ButtonSubmit>
       </form>
 
       <div v-else>
@@ -113,6 +110,7 @@ import { useForm } from 'vee-validate'
 import ClickToCopy from '@/components/ClickToCopy.vue'
 import FormErrorMessage from '@/components/FormErrorMessage.vue'
 import FormField from '@/components/FormField.vue'
+import ButtonSubmit from '@/components/ButtonSubmit.vue'
 
 interface TransactionForm {
   recipient: string;
@@ -122,6 +120,7 @@ interface TransactionForm {
 
 const WalletTransaction = defineComponent({
   components: {
+    ButtonSubmit,
     ClickToCopy,
     FormField,
     FormErrorMessage

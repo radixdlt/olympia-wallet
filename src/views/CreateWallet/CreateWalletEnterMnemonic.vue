@@ -1,5 +1,5 @@
 <template>
-  <div data-ci="create-wallet-enter-mnemonic-component">
+  <form data-ci="create-wallet-enter-mnemonic-component" @submit.prevent="$emit('confirm')">
     <div class="flex flex-wrap mb-4">
       <div v-for="(word, i) in mnemonic" :key="i" class="w-1/4 mb-14">
         <mnemonic-input
@@ -10,33 +10,28 @@
       </div>
     </div>
 
-    <button
-      data-ci="create-wallet-enter-mnemonic-component--confirm-button"
-      @click="$emit('confirm')"
-      type="button"
-      class="inline-flex items-center justify-center px-6 py-5 border font-normal leading-snug rounded w-96"
-      :class="{ 'bg-rGray border-rGray text-rGrayDark cursor-not-allowed': !inputsMatch, 'bg-rGreen border-rGreen text-white': inputsMatch }"
-      :disabled="!inputsMatch"
-    >
+    <ButtonSubmit data-ci="create-wallet-enter-mnemonic-component--confirm-button" class="w-96" :disabled="!inputsMatch">
       {{buttonText}}
-    </button>
-  </div>
+    </ButtonSubmit>
+  </form>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import MnemonicInput from '@/components/MnemonicInput.vue'
+import ButtonSubmit from '@/components/ButtonSubmit.vue'
 
 const CreateWalletViewMnemonic = defineComponent({
+  components: {
+    ButtonSubmit,
+    MnemonicInput
+  },
+
   props: {
     mnemonic: {
       type: Array as PropType<Array<string>>,
       required: true
     }
-  },
-
-  components: {
-    MnemonicInput
   },
 
   data () {

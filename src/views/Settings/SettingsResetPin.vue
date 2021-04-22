@@ -9,7 +9,7 @@
       name="currentPin"
       :values="values.currentPin"
       :autofocus="activePin == 0"
-      class="mb-8 mx-auto"
+      class="mb-8 max-w-sm"
       data-ci="current-pin"
       @finished="handleValidatePin"
       @click="activePin = 0"
@@ -21,7 +21,7 @@
       name="pin"
       :values="values.pin"
       :autofocus="activePin == 1"
-      class="mb-8 mx-auto"
+      class="mb-8 max-w-sm"
       data-ci="pin"
       @finished="activePin = 2"
       @click="activePin = 1"
@@ -33,21 +33,16 @@
       name="confirmation"
       :values="values.confirmation"
       :autofocus="activePin == 2"
-      class="mx-auto mb-8"
+      class="mb-8 max-w-sm"
       data-ci="confirmation"
       @finished="activePin = 3"
       @click="activePin = 2"
     >
     </pin-input>
 
-    <button
-      type="submit"
-      class="inline-flex items-center justify-center px-6 py-4 border font-normal leading-snug rounded transition-colors w-72 mx-auto"
-      :class="{ 'bg-rGray border-rGray text-rGrayDark cursor-not-allowed': disableSubmit, 'bg-rGreen border-rGreen text-white': !disableSubmit }"
-      :disabed="!disableSubmit"
-    >
+    <ButtonSubmit class="w-72 mx-auto" :disabled="disableSubmit">
       {{ $t('transaction.confirmButton') }}
-    </button>
+    </ButtonSubmit>
   </form>
 </template>
 
@@ -56,6 +51,7 @@ import { defineComponent } from 'vue'
 import { useForm } from 'vee-validate'
 import PinInput from '@/components/PinInput.vue'
 import { storePin, validatePin } from '@/actions/vue/create-wallet'
+import ButtonSubmit from '@/components/ButtonSubmit.vue'
 
 interface ResetPinForm {
   currentPin: string;
@@ -65,6 +61,7 @@ interface ResetPinForm {
 
 const SettingsResetPin = defineComponent({
   components: {
+    ButtonSubmit,
     PinInput
   },
 
