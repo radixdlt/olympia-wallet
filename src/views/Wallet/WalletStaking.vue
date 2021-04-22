@@ -23,7 +23,7 @@
               :placeholder="$t('staking.validatorPlaceholder')"
               rules="required|validAddress"
             ></Field>
-            <ErrorMessage name="validator" class="mt-4 text-sm text-red-400" />
+            <FormErrorMessage name="validator" class="mt-4 text-sm text-red-400" />
           </div>
           <div class="py-3 px-4 text-sm">
             <div class="flex flex-row">
@@ -37,7 +37,7 @@
                   :placeholder="amountPlaceholder"
                   rules="required|validAmount"
                 ></Field>
-                <ErrorMessage name="amount" class="mt-4 text-sm text-red-400" />
+                <FormErrorMessage name="amount" class="mt-4 text-sm text-red-400" />
               </div>
               <div class="flex flex-col w-32 justify-between">
                 <div class="text-rGrayDark mb-3">{{ $t('staking.feeLabel')}}</div>
@@ -86,12 +86,13 @@
 import { AddressT } from '@radixdlt/account'
 import { StakePosition, TokenBalance, TokenBalances, UnstakePosition } from '@radixdlt/application'
 import { defineComponent, PropType } from 'vue'
-import { useForm, Field, ErrorMessage } from 'vee-validate'
+import { useForm, Field } from 'vee-validate'
 import StakeListItem from '@/components/StakeListItem.vue'
 import { Amount, AmountT, Denomination } from '@radixdlt/primitives'
 import { safelyUnwrapAddress, safelyUnwrapAmount, validateAmountOfType } from '@/helpers/validateRadixTypes'
 import TabsTab from '@/components/TabsTab.vue'
 import TabsContent from '@/components/TabsContent.vue'
+import FormErrorMessage from '@/components/FormErrorMessage.vue'
 
 interface StakeForm {
   validator: string;
@@ -100,8 +101,8 @@ interface StakeForm {
 
 const WalletStaking = defineComponent({
   components: {
-    ErrorMessage,
     Field,
+    FormErrorMessage,
     StakeListItem,
     TabsContent,
     TabsTab

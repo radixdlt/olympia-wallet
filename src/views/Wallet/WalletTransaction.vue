@@ -31,7 +31,7 @@
                 placeholder="enter address"
                 rules="required|validAddress"
               ></Field>
-              <ErrorMessage name="recipient" class="mt-4 text-sm text-red-400" />
+              <FormErrorMessage name="recipient" class="mt-4 text-sm text-red-400" />
             </div>
           </div>
 
@@ -51,7 +51,7 @@
                     insufficientFunds: this.selectedCurrency.amount.toString()
                   }"
                 ></Field>
-                <ErrorMessage name="amount" class="mt-4 text-sm text-red-400" />
+                <FormErrorMessage name="amount" class="mt-4 text-sm text-red-400" />
               </div>
               <select
                 class="border-t-0 border-r-0 border-l-0 py-1 border-rBlack focus:ring-0 focus:outline-none focus:border-rGreen"
@@ -77,7 +77,7 @@
                 placeholder="Add an optional message"
                 rules=""
               ></Field>
-              <ErrorMessage name="message" class="mt-4 text-sm text-red-400" />
+              <FormErrorMessage name="message" class="mt-4 text-sm text-red-400" />
             </div>
           </div>
 
@@ -107,8 +107,9 @@ import { AddressT } from '@radixdlt/account'
 import { defineComponent, PropType } from 'vue'
 import { safelyUnwrapAddress, safelyUnwrapAmount, validateAmountOfType } from '@/helpers/validateRadixTypes'
 import { TokenBalance, TokenBalances } from '@radixdlt/application'
-import { useForm, Field, ErrorMessage } from 'vee-validate'
+import { useForm, Field } from 'vee-validate'
 import ClickToCopy from '@/components/ClickToCopy.vue'
+import FormErrorMessage from '@/components/FormErrorMessage.vue'
 
 interface TransactionForm {
   recipient: string;
@@ -119,8 +120,8 @@ interface TransactionForm {
 const WalletTransaction = defineComponent({
   components: {
     ClickToCopy,
-    ErrorMessage,
-    Field
+    Field,
+    FormErrorMessage
   },
 
   setup () {

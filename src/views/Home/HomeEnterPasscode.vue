@@ -16,7 +16,7 @@
           rules="required"
           data-ci="create-wallet-passcode-input"
         ></Field>
-        <ErrorMessage name="password" class="mt-4 text-sm text-red-400" />
+        <FormErrorMessage name="password" class="mt-4 text-sm text-red-400" />
       </div>
     </form>
 
@@ -34,7 +34,8 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { useForm, Field, ErrorMessage } from 'vee-validate'
+import { useForm, Field } from 'vee-validate'
+import FormErrorMessage from '@/components/FormErrorMessage.vue'
 
 interface PasswordForm {
   password: string;
@@ -43,7 +44,7 @@ interface PasswordForm {
 const HomeEnterPasscode = defineComponent({
   components: {
     Field,
-    ErrorMessage
+    FormErrorMessage
   },
 
   setup () {
