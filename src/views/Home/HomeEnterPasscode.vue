@@ -8,15 +8,15 @@
       </svg>
 
       <div class="mb-10 flex flex-col">
-        <Field
+        <FormField
           type="password"
           name="password"
-          class="focus:outline-none focus:ring-transparent focus:shadow-none border-t-0 border-l-0 border-r-0 border-b border-rBlack pl-8"
+          class="pl-8"
           :placeholder="$t('home.passwordPlaceholder')"
           rules="required"
           data-ci="create-wallet-passcode-input"
-        ></Field>
-        <ErrorMessage name="password" class="mt-4 text-sm text-red-400" />
+        />
+        <FormErrorMessage name="password" class="mt-4 text-sm text-red-400" />
       </div>
     </form>
 
@@ -34,7 +34,9 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { useForm, Field, ErrorMessage } from 'vee-validate'
+import { useForm } from 'vee-validate'
+import FormErrorMessage from '@/components/FormErrorMessage.vue'
+import FormField from '@/components/FormField.vue'
 
 interface PasswordForm {
   password: string;
@@ -42,8 +44,8 @@ interface PasswordForm {
 
 const HomeEnterPasscode = defineComponent({
   components: {
-    Field,
-    ErrorMessage
+    FormField,
+    FormErrorMessage
   },
 
   setup () {

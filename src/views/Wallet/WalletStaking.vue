@@ -17,31 +17,32 @@
           </div>
           <div class="py-3 px-4 text-sm border-b border-rGray">
             <div class="text-rGrayDark mb-3">{{ $t('staking.validatorLabel')}}</div>
-            <Field
+            <FormField
               name="validator"
-              class="w-full border-b border-rBlack leading-8 focus:ring-0 focus:outline-none focus:border-rGreen"
+              type="text"
+              class="w-full"
               :placeholder="$t('staking.validatorPlaceholder')"
               rules="required|validAddress"
-            ></Field>
-            <ErrorMessage name="validator" class="mt-4 text-sm text-red-400" />
+            />
+            <FormErrorMessage name="validator" class="mt-4 text-sm text-red-400" />
           </div>
           <div class="py-3 px-4 text-sm">
             <div class="flex flex-row">
               <div class="flex flex-col mr-3 flex-1">
                 <div class="text-rGrayDark mb-3">{{ $t('staking.amountLabel')}}</div>
-                <Field
+                <FormField
                   name="amount"
                   type="number"
                   step="any"
-                  class="w-full border-t-0 border-r-0 border-l-0 p-0 border-b border-rBlack leading-8 focus:ring-0 focus:outline-none focus:border-rGreen text-sm"
+                  class="w-full text-sm"
                   :placeholder="amountPlaceholder"
                   rules="required|validAmount"
-                ></Field>
-                <ErrorMessage name="amount" class="mt-4 text-sm text-red-400" />
+                />
+                <FormErrorMessage name="amount" class="mt-4 text-sm text-red-400" />
               </div>
-              <div class="flex flex-col w-32 justify-between">
+              <div class="flex flex-col w-32 ">
                 <div class="text-rGrayDark mb-3">{{ $t('staking.feeLabel')}}</div>
-                <div class="pb-2">0.000</div>
+                <div class="pt-4 pb-2">0.000</div>
               </div>
             </div>
           </div>
@@ -86,12 +87,14 @@
 import { AddressT } from '@radixdlt/account'
 import { StakePosition, TokenBalance, TokenBalances, UnstakePosition } from '@radixdlt/application'
 import { defineComponent, PropType } from 'vue'
-import { useForm, Field, ErrorMessage } from 'vee-validate'
+import { useForm } from 'vee-validate'
 import StakeListItem from '@/components/StakeListItem.vue'
 import { Amount, AmountT, Denomination } from '@radixdlt/primitives'
 import { safelyUnwrapAddress, safelyUnwrapAmount, validateAmountOfType } from '@/helpers/validateRadixTypes'
 import TabsTab from '@/components/TabsTab.vue'
 import TabsContent from '@/components/TabsContent.vue'
+import FormErrorMessage from '@/components/FormErrorMessage.vue'
+import FormField from '@/components/FormField.vue'
 
 interface StakeForm {
   validator: string;
@@ -100,8 +103,8 @@ interface StakeForm {
 
 const WalletStaking = defineComponent({
   components: {
-    ErrorMessage,
-    Field,
+    FormField,
+    FormErrorMessage,
     StakeListItem,
     TabsContent,
     TabsTab

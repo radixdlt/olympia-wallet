@@ -94,7 +94,10 @@ const messages = {
       cancelButton: 'Cancel',
       confirmButton: 'Confirm',
       sendButton: 'Send',
-      insufficientFunds: 'Sorry, but you don\'t have any tokens to send!'
+      insufficientFunds: 'Sorry, but you don\'t have any tokens to send!',
+      recipientPlaceholder: 'enter address',
+      amountPlaceholder: 'Available balance ...',
+      messagePlaceholder: 'Add an optional message'
     },
     staking: {
       currentStakesHeading: 'Current Stakes',

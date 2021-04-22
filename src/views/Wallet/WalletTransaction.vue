@@ -1,6 +1,6 @@
 <template>
-  <div class="flex flex-col flex-1 min-w-0 overflow-y-scroll">
-    <div class="bg-rGrayLightest py-6 px-8 bg-gray h-full">
+  <div class="flex flex-col flex-1 min-w-0 overflow-y-scroll bg-rGrayLightest">
+    <div class="py-6 px-8 bg-gray h-full">
       <div class="flex justify-between mb-16">
         <h3 class="font-medium text-rBlack">{{ $t('transaction.transactionHeading') }}</h3>
         <div class="flex items-center text-rGrayDark">
@@ -25,13 +25,14 @@
           <div class="border-b border-rGray py-7 flex items-center">
             <div class="w-32 text-right text-rGrayDark mr-8">{{ $t('transaction.toLabel') }}</div>
             <div class="flex-1 pr-8">
-              <Field
+              <FormField
                 name="recipient"
-                class="w-full border-b border-rBlack leading-8 focus:ring-0 focus:outline-none focus:border-rGreen"
-                placeholder="enter address"
+                type="text"
+                class="w-full"
+                :placeholder="$t('transaction.recipientPlaceholder')"
                 rules="required|validAddress"
-              ></Field>
-              <ErrorMessage name="recipient" class="mt-4 text-sm text-red-400" />
+              />
+              <FormErrorMessage name="recipient" class="mt-4 text-sm text-red-400" />
             </div>
           </div>
 
@@ -39,22 +40,22 @@
             <div class="w-32 text-right text-rGrayDark mr-8">{{ $t('transaction.amountLabel') }}</div>
             <div class="flex-1 flex items-start pr-8">
               <div class="flex flex-col flex-1 mr-3">
-                <Field
+                <FormField
                   name="amount"
                   type="number"
                   step="any"
-                  class="w-full border-t-0 border-r-0 border-l-0 py-0 border-b border-rBlack leading-8 focus:ring-0 focus:outline-none focus:border-rGreen"
+                  class="w-full"
                   :placeholder="amountPlaceholder"
                   :rules="{
                     required: true,
                     validAmount: true,
                     insufficientFunds: this.selectedCurrency.amount.toString()
                   }"
-                ></Field>
-                <ErrorMessage name="amount" class="mt-4 text-sm text-red-400" />
+                />
+                <FormErrorMessage name="amount" class="mt-4 text-sm text-red-400" />
               </div>
               <select
-                class="border-t-0 border-r-0 border-l-0 py-1 border-rBlack focus:ring-0 focus:outline-none focus:border-rGreen"
+                class="border-t-0 border-r-0 border-l-0 py-2 border-rBlack focus:ring-0 focus:outline-none focus:border-rGreen"
                 v-model="currency"
               >
                 <option
@@ -71,13 +72,14 @@
           <div class="border-b border-rGray  py-7 flex items-center">
             <div class="w-32 text-right text-rGrayDark mr-8">{{ $t('transaction.messageLabel') }}</div>
             <div class="flex-1 pr-8">
-              <Field
+              <FormField
                 name="message"
-                class="w-full border-b border-rBlack leading-8 focus:ring-0 focus:outline-none focus:border-rGreen"
-                placeholder="Add an optional message"
+                type="text"
+                class="w-full"
+                :placeholder="$t('transaction.messagePlaceholder')"
                 rules=""
-              ></Field>
-              <ErrorMessage name="message" class="mt-4 text-sm text-red-400" />
+              />
+              <FormErrorMessage name="message" class="mt-4 text-sm text-red-400" />
             </div>
           </div>
 
@@ -107,8 +109,10 @@ import { AddressT } from '@radixdlt/account'
 import { defineComponent, PropType } from 'vue'
 import { safelyUnwrapAddress, safelyUnwrapAmount, validateAmountOfType } from '@/helpers/validateRadixTypes'
 import { TokenBalance, TokenBalances } from '@radixdlt/application'
-import { useForm, Field, ErrorMessage } from 'vee-validate'
+import { useForm } from 'vee-validate'
 import ClickToCopy from '@/components/ClickToCopy.vue'
+import FormErrorMessage from '@/components/FormErrorMessage.vue'
+import FormField from '@/components/FormField.vue'
 
 interface TransactionForm {
   recipient: string;
@@ -119,8 +123,8 @@ interface TransactionForm {
 const WalletTransaction = defineComponent({
   components: {
     ClickToCopy,
-    ErrorMessage,
-    Field
+    FormField,
+    FormErrorMessage
   },
 
   setup () {
@@ -154,7 +158,7 @@ const WalletTransaction = defineComponent({
     },
     amountPlaceholder (): string {
       const availableBalanceForCurrency = this.selectedCurrency && this.selectedCurrency.amount.toString()
-      return `Available balance ... ${availableBalanceForCurrency} `
+      return `${this.$t('transaction.amountPlaceholder')} ${availableBalanceForCurrency} `
     }
   },
 
