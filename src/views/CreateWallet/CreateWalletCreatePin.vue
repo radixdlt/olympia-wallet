@@ -6,7 +6,7 @@
         :values="values.pin"
         :autofocus="updatingFirstInput"
         @finished="handleFinished"
-        class="mb-14"
+        class="mb-14 max-w-sm"
         data-ci="create-wallet-pin-input"
       >
       </pin-input>
@@ -14,7 +14,7 @@
         name="confirmation"
         :values="values.confirmation"
         :autofocus="!updatingFirstInput"
-        class="mb-48"
+        class="mb-48 max-w-sm"
         data-ci="create-wallet-confirm-input"
       >
       </pin-input>

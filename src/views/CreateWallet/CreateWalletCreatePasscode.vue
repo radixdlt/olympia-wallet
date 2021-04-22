@@ -1,25 +1,29 @@
 <template>
   <div data-ci="create-wallet-create-passcode-component">
     <form class="flex flex-col w-96">
-      <Field
-        type="password"
-        name="password"
-        class="focus:outline-none focus:ring-transparent focus:shadow-none border-t-0 border-l-0 border-r-0 border-b border-rBlack mb-14"
-        :placeholder="$t('createWallet.passwordPlaceholder')"
-        rules="required"
-        data-ci="create-wallet-passcode-input"
-      ></Field>
-      <FormErrorMessage name="password" />
+      <div class="mb-14">
+        <FormField
+          type="password"
+          name="password"
+          class="w-full"
+          :placeholder="$t('createWallet.passwordPlaceholder')"
+          rules="required"
+          data-ci="create-wallet-passcode-input"
+        />
+        <FormErrorMessage name="password" />
+      </div>
 
-      <Field
-        type="password"
-        name="confirmation"
-        class="focus:outline-none focus:ring-transparent focus:shadow-none border-t-0 border-l-0 border-r-0 border-b border-rBlack mb-56"
-        :placeholder="$t('createWallet.passwordConfirmationPlaceholder')"
-        rules="required|confirmed:@password"
-        data-ci="create-wallet-confirm-input"
-      ></Field>
-      <FormErrorMessage name="confirmation" />
+      <div class="mb-56">
+        <FormField
+          type="password"
+          name="confirmation"
+          class="w-full"
+          :placeholder="$t('createWallet.passwordConfirmationPlaceholder')"
+          rules="required|confirmed:@password"
+          data-ci="create-wallet-confirm-input"
+        />
+        <FormErrorMessage name="confirmation" />
+      </div>
     </form>
 
     <button
@@ -36,8 +40,9 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { useForm, Field } from 'vee-validate'
+import { useForm } from 'vee-validate'
 import FormErrorMessage from '@/components/FormErrorMessage.vue'
+import FormField from '@/components/FormField.vue'
 
 interface PasswordForm {
   password: string;
@@ -46,7 +51,7 @@ interface PasswordForm {
 
 const CreateWalletCreatePasscode = defineComponent({
   components: {
-    Field,
+    FormField,
     FormErrorMessage
   },
 

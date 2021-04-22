@@ -5,38 +5,38 @@
     </div>
 
     <div class="mb-14">
-      <Field
+      <FormField
         type="password"
         name="currentPassword"
-        class="focus:outline-none focus:ring-transparent focus:shadow-none border-t-0 border-l-0 border-r-0 border-b border-rBlack w-full"
+        class="w-full"
         :placeholder="$t('createWallet.passwordPlaceholder')"
         rules="required"
         data-ci="create-wallet-passcode-input"
-      ></Field>
+      />
       <FormErrorMessage name="currentPassword" />
     </div>
 
     <div class="mb-14">
-      <Field
+      <FormField
         type="password"
         name="password"
-        class="focus:outline-none focus:ring-transparent focus:shadow-none border-t-0 border-l-0 border-r-0 border-b border-rBlack w-full"
+        class="w-full"
         :placeholder="$t('createWallet.passwordPlaceholder')"
         rules="required"
         data-ci="create-wallet-passcode-input"
-      ></Field>
+      />
       <FormErrorMessage name="password" />
     </div>
 
     <div class="mb-56">
-      <Field
+      <FormField
         type="password"
         name="confirmation"
-        class="focus:outline-none focus:ring-transparent focus:shadow-none border-t-0 border-l-0 border-r-0 border-b border-rBlack w-full"
+        class="w-full"
         :placeholder="$t('createWallet.passwordConfirmationPlaceholder')"
         rules="required|confirmed:@password"
         data-ci="create-wallet-confirm-input"
-      ></Field>
+      />
       <FormErrorMessage name="confirmation" />
     </div>
 
@@ -53,16 +53,17 @@
 
 <script lang="ts">
 import { defineComponent, onUnmounted } from 'vue'
-import { useForm, Field } from 'vee-validate'
+import { useForm } from 'vee-validate'
 import { Keystore, KeystoreT } from '@radixdlt/crypto'
 import { Radix, mockedAPI } from '@radixdlt/application'
 import { MnemomicT, WalletT } from '@radixdlt/account'
 import { Result } from 'neverthrow'
+import { Subscription } from 'rxjs'
+import { ref } from '@nopr3d/vue-next-rx'
 import { useStore } from '@/store'
 import { touchKeystore, createWalletFromMnemonicAndPasscode } from '@/actions/vue/create-wallet'
-import { Subscription } from 'rxjs'
 import FormErrorMessage from '@/components/FormErrorMessage.vue'
-import { ref } from '@nopr3d/vue-next-rx'
+import FormField from '@/components/FormField.vue'
 
 interface PasswordForm {
   currentPassword: string;
@@ -72,7 +73,7 @@ interface PasswordForm {
 
 const SettingsResetPassword = defineComponent({
   components: {
-    Field,
+    FormField,
     FormErrorMessage
   },
 
