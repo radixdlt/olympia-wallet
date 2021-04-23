@@ -1,7 +1,7 @@
 on:
   push:
     branches:
-      - main
+      - alex/rdx-40-api-wallet-transactions
 name: release-please
 jobs:
   release-please:
@@ -17,7 +17,7 @@ jobs:
 
   build-release:
     needs: [release-please]
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/alex/rdx-40-api-wallet-transactions'
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
