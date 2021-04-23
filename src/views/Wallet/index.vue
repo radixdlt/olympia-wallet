@@ -94,7 +94,7 @@ import { defineComponent, onBeforeMount, onUnmounted } from 'vue'
 import { AccountT, AccountsT, AddressT, Wallet, WalletT, Mnemonic, HDPathRadixT } from '@radixdlt/account'
 import { Subscription, interval, Subject, Observable, combineLatest, from } from 'rxjs'
 import { Radix, TransferTokensOptions, StakePositions, TokenBalances, UnstakePositions, ManualUserConfirmTX, mockedAPI, TransactionTracking, StakeTokensInput, UnstakeTokensInput, TransactionStateUpdate, TransactionIdentifierT, TransactionHistoryOfKnownAddressRequestInput, TransactionHistory } from '@radixdlt/application'
-import { ref } from '@nopr3d/vue-next-rx'
+import { ref, watch } from '@nopr3d/vue-next-rx'
 import { useStore } from '@/store'
 import { useRouter } from 'vue-router'
 import WalletConfirmTransactionModal from './WalletConfirmTransactionModal.vue'
@@ -154,7 +154,12 @@ const WalletIndex = defineComponent({
     const userDidConfirm = new Subject<boolean>()
     const userConfirmation = new Subject<ManualUserConfirmTX>()
     const historyPagination = new Subject<TransactionHistoryOfKnownAddressRequestInput>()
-    const faucetParams = new Subject<Record<string, any>>()
+    const faucetParams = new Subject<number>()
+
+    watch(tokenBalances, (balances) => {
+      console.log('watching', balances)
+      balances.tokenBalances.map((b: any) => console.log(b.amount.toString()))
+    })
 
     // Set initial view if provided in props
     onBeforeMount(() => {
@@ -183,7 +188,7 @@ const WalletIndex = defineComponent({
       .create()
       .__withAPI(mockedAPI)
       .withWallet(store.state.wallet)
-      .withTokenBalanceFetchTrigger(interval(3 * 60 * 1_000))
+      .withTokenBalanceFetchTrigger(interval(5 * 1_000))
 
     // wallet subscriptions work when we call withWallet() on this
     const faucet = makeWalletWithFunds()
@@ -192,7 +197,7 @@ const WalletIndex = defineComponent({
       .create()
       .connect('https://54.73.253.49/rpc')
       .withWallet(store.state.wallet) // wallet subscriptions don't work when we use the local wallet
-      .withTokenBalanceFetchTrigger(interval(3 * 60 * 1_000))
+      .withTokenBalanceFetchTrigger(interval(5 * 1_000))
 
     const subs = new Subscription()
 
@@ -227,6 +232,7 @@ const WalletIndex = defineComponent({
 
     wallet.errors.subscribe(
       (errorNotification) => {
+        console.warn(errorNotification)
         console.log(`☣️ error ${errorNotification}`)
       }
     ).add(subs)
@@ -250,6 +256,17 @@ const WalletIndex = defineComponent({
         else previousCursor.value = ''
 
         transactionHistory.value = history
+      })
+      .add(subs)
+
+    faucetParams
+      .pipe(mergeMap((params: number) => {
+        console.log('faucet params are', params)
+        return wallet.tokenBalances
+      }))
+      .subscribe((tokenBalancesRes: TokenBalances) => {
+        console.log('fauced token balances', tokenBalancesRes)
+        tokenBalances.value = tokenBalancesRes
       })
       .add(subs)
 
@@ -428,7 +445,7 @@ const WalletIndex = defineComponent({
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(request)
         })
-      ).subscribe((res: any) => console.log('received', res)).add(subs)
+      ).subscribe((res: any) => { faucetParams.next(Math.random()) }).add(subs)
     }
 
     onUnmounted(() => subs.unsubscribe())
