@@ -33,7 +33,7 @@
       <wallet-transaction
         v-if="view == 'transaction'"
         :activeAddress="activeAddress"
-        :tokenBalances="tokenBalances"
+        :tokenBalances="tokenBalances.tokenBalances"
         :shouldShowConfirmation="shouldShowConfirmation"
         @transferTokens="transferTokens"
       >
@@ -106,7 +106,7 @@ import WalletTransaction from './WalletTransaction.vue'
 import AccountEditName from '@/views/Account/AccountEditName.vue'
 import SettingsIndex from '@/views/Settings/index.vue'
 import { PrivateKey } from '@radixdlt/crypto/dist/_types'
-import { privateKeyFromScalar } from '@radixdlt/crypto/dist/_index'
+import { privateKeyFromScalar } from '@radixdlt/crypto/dist'
 import { UInt256 } from '@radixdlt/uint256'
 import { filter, mergeMap } from 'rxjs/operators'
 
@@ -137,7 +137,7 @@ const WalletIndex = defineComponent({
     const activeStakes = ref(null)
     const activeUnstakes = ref(null)
     const accounts = ref(null)
-    const tokenBalances = ref([])
+    const tokenBalances = ref({ tokenBalances: [] })
     const transactionHistory = ref({ transactions: [] })
     const shouldShowConfirmation = ref(false)
     const transferInput = ref({})
@@ -184,6 +184,7 @@ const WalletIndex = defineComponent({
       .withTokenBalanceFetchTrigger(interval(3 * 60 * 1_000))
 
     const faucet = makeWalletWithFunds()
+    console.log(faucet)
     const wallet = Radix
       .create()
       .connect('https://54.73.253.49/rpc')
@@ -192,7 +193,10 @@ const WalletIndex = defineComponent({
 
     const subs = new Subscription()
 
-    wallet.tokenBalances.subscribe((tokenBalancesRes: TokenBalances) => { tokenBalances.value = tokenBalancesRes }).add(subs)
+    wallet.tokenBalances.subscribe((tokenBalancesRes: TokenBalances) => {
+      tokenBalances.value = tokenBalancesRes
+      console.log('token balances', tokenBalancesRes)
+    }).add(subs)
 
     radix.activeAccount.subscribe((accountRes: AccountT) => { activeAccount.value = accountRes }).add(subs)
     radix.stakingPositions.subscribe((stakes: StakePositions) => { activeStakes.value = stakes }).add(subs)
@@ -314,7 +318,7 @@ const WalletIndex = defineComponent({
         pollTXStatusTrigger: pollTXStatusTrigger
       })
 
-      const transactionTracking: TransactionTracking = radix.transferTokens({
+      const transactionTracking: TransactionTracking = wallet.transferTokens({
         ...buildTransferTokens(),
         userConfirmation
       })

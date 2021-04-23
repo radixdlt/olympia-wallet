@@ -12,18 +12,14 @@ export const safelyUnwrapAddress = (addressString: string): AddressT | null => {
 }
 
 export const safelyUnwrapAmount = (amount: number): AmountT | null => {
-  const amountResult = Amount.fromUnsafe(amount, Denomination.Whole)
+  const amountResult = Amount.fromUnsafe(amount)
   if (amountResult.isErr()) {
-  //   console.log('Invalid amount string, did you input a number?')
+    console.log('Invalid amount string, did you input a number?')
     return null
   }
+  console.log('amountResult', amountResult)
   return amountResult.value
 }
 
-export const validateAmountOfType = (amount: AmountT, token: Token): boolean => {
-  if (!amount.isMultipleOf(token.granularity)) {
-    // console.log('⚠️ requested amount to send is not a mulltiple of token granularity, will be unable to send')
-    return false
-  }
-  return true
-}
+export const validateAmountOfType = (amount: AmountT, token: Token): boolean =>
+  amount.isMultipleOf(token.granularity)

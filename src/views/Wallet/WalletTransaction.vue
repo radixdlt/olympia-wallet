@@ -13,7 +13,7 @@
 
       <form
         @submit.prevent="handleSubmit"
-        v-if="tokenBalances.tokenBalances.length > 0"
+        v-if="tokenBalances.length > 0"
         class="flex flex-col items-end"
       >
         <div class="bg-white rounded-md border border-rGray text-rBlack mb-8 w-full">
@@ -59,7 +59,7 @@
                 v-model="currency"
               >
                 <option
-                  v-for="token in tokenBalances.tokenBalances"
+                  v-for="token in tokenBalances"
                   :key="token.token.name"
                   :value="token.token.name"
                 >
@@ -105,7 +105,7 @@
 import { AddressT } from '@radixdlt/account'
 import { defineComponent, PropType } from 'vue'
 import { safelyUnwrapAddress, safelyUnwrapAmount, validateAmountOfType } from '@/helpers/validateRadixTypes'
-import { TokenBalance, TokenBalances } from '@radixdlt/application'
+import { TokenBalance } from '@radixdlt/application'
 import { useForm } from 'vee-validate'
 import ClickToCopy from '@/components/ClickToCopy.vue'
 import FormErrorMessage from '@/components/FormErrorMessage.vue'
@@ -138,21 +138,22 @@ const WalletTransaction = defineComponent({
       required: true
     },
     tokenBalances: {
-      type: Object as PropType<TokenBalances>,
-      required: true
+      type: Object as PropType<Array<TokenBalance>>,
+      required: true,
+      default: []
     }
   },
 
   data () {
     return {
-      currency: this.tokenBalances.tokenBalances.length > 0 ? this.tokenBalances.tokenBalances[0].token.name : ''
+      currency: this.tokenBalances.length > 0 ? this.tokenBalances[0].token.name : ''
     }
   },
 
   computed: {
     selectedCurrency (): TokenBalance | null {
-      if (this.tokenBalances.tokenBalances.length <= 0) return null
-      const selectedCurrency = this.tokenBalances.tokenBalances.find((tokenBalance: TokenBalance) => tokenBalance.token.name === this.currency)
+      if (this.tokenBalances.length <= 0) return null
+      const selectedCurrency = this.tokenBalances.find((tokenBalance: TokenBalance) => tokenBalance.token.name === this.currency)
       return selectedCurrency || null
     },
     amountPlaceholder (): string {
@@ -167,19 +168,14 @@ const WalletTransaction = defineComponent({
         const safeAddress = safelyUnwrapAddress(this.values.recipient)
         const safeAmount = safelyUnwrapAmount(Number(this.values.amount))
         const token = this.selectedCurrency.token
-        const validAmount = safeAmount && validateAmountOfType(safeAmount, token)
+        // const validAmount = safeAmount && validateAmountOfType(safeAmount, token)
 
-        if (validAmount) {
-          this.$emit('transferTokens', {
-            to: safeAddress,
-            amount: safeAmount,
-            tokenIdentifier: token.rri.toString()
-          })
-        } else {
-          this.setErrors({
-            amount: this.$t('validations.amountOfType', { granularity: token.granularity.toString() })
-          })
-        }
+        // console.log('is valid', validAmount)
+        this.$emit('transferTokens', {
+          to: safeAddress,
+          amount: safeAmount,
+          tokenIdentifier: token.rri.toString()
+        })
       }
     }
   },
