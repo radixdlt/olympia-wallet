@@ -168,14 +168,21 @@ const WalletTransaction = defineComponent({
         const safeAddress = safelyUnwrapAddress(this.values.recipient)
         const safeAmount = safelyUnwrapAmount(Number(this.values.amount))
         const token = this.selectedCurrency.token
-        // const validAmount = safeAmount && validateAmountOfType(safeAmount, token)
+        // If amount is a valid AmountT and multiple of granularity
+        // This is the line that fails ->
+        const validAmount = safeAmount && validateAmountOfType(safeAmount, token)
 
-        // console.log('is valid', validAmount)
-        this.$emit('transferTokens', {
-          to: safeAddress,
-          amount: safeAmount,
-          tokenIdentifier: token.rri.toString()
-        })
+        if (validAmount) {
+          this.$emit('transferTokens', {
+            to: safeAddress,
+            amount: safeAmount,
+            tokenIdentifier: token.rri.toString()
+          })
+        } else {
+          this.setErrors({
+            amount: this.$t('validations.amountOfType', { granularity: token.granularity.toString() })
+          })
+        }
       }
     }
   },
