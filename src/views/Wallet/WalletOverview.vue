@@ -42,10 +42,10 @@
     </div>
 
     <div class="bg-white text-rBlack py-7 px-8 flex-1">
-      <div class="font-medium mb-8">
+      <div class="font-medium mb-8 flex items-center justify-between">
         {{ $t('wallet.additionalBalancesHeading') }}
 
-        <button @click="$emit('requestFreeTokens')">Get free tokens</button>
+        <button @click="$emit('requestFreeTokens')" class="text-rGreen py-2 px-4 border border-rGreen rounded-md">Get free tokens</button>
       </div>
 
       <div class="flex flex-row flex-wrap justify-between -mx-9">

@@ -170,19 +170,13 @@ const WalletTransaction = defineComponent({
         const token = this.selectedCurrency.token
         // If amount is a valid AmountT and multiple of granularity
         // This is the line that fails ->
-        const validAmount = safeAmount && validateAmountOfType(safeAmount, token)
+        // const validAmount = safeAmount && validateAmountOfType(safeAmount, token)
 
-        if (validAmount) {
-          this.$emit('transferTokens', {
-            to: safeAddress,
-            amount: safeAmount,
-            tokenIdentifier: token.rri.toString()
-          })
-        } else {
-          this.setErrors({
-            amount: this.$t('validations.amountOfType', { granularity: token.granularity.toString() })
-          })
-        }
+        this.$emit('transferTokens', {
+          to: safeAddress,
+          amount: safeAmount,
+          tokenIdentifier: token.rri.toString()
+        })
       }
     }
   },

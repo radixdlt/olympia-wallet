@@ -91,10 +91,10 @@
 
 <script lang="ts">
 import { defineComponent, onBeforeMount, onUnmounted } from 'vue'
-import { AccountT, AccountsT, AddressT, Wallet, WalletT, Mnemonic, HDPathRadixT } from '@radixdlt/account'
+import { AccountT, AccountsT, AddressT } from '@radixdlt/account'
 import { Subscription, interval, Subject, Observable, combineLatest, from } from 'rxjs'
 import { Radix, TransferTokensOptions, StakePositions, TokenBalances, UnstakePositions, ManualUserConfirmTX, mockedAPI, TransactionTracking, StakeTokensInput, UnstakeTokensInput, TransactionStateUpdate, TransactionIdentifierT, TransactionHistoryOfKnownAddressRequestInput, TransactionHistory } from '@radixdlt/application'
-import { ref, watch } from '@nopr3d/vue-next-rx'
+import { ref } from '@nopr3d/vue-next-rx'
 import { useStore } from '@/store'
 import { useRouter } from 'vue-router'
 import WalletConfirmTransactionModal from './WalletConfirmTransactionModal.vue'
@@ -106,9 +106,6 @@ import WalletStaking from './WalletStaking.vue'
 import WalletTransaction from './WalletTransaction.vue'
 import AccountEditName from '@/views/Account/AccountEditName.vue'
 import SettingsIndex from '@/views/Settings/index.vue'
-import { PrivateKey } from '@radixdlt/crypto/dist/_types'
-import { privateKeyFromScalar } from '@radixdlt/crypto/dist'
-import { UInt256 } from '@radixdlt/uint256'
 import { filter, mergeMap } from 'rxjs/operators'
 
 const WalletIndex = defineComponent({
@@ -156,11 +153,6 @@ const WalletIndex = defineComponent({
     const historyPagination = new Subject<TransactionHistoryOfKnownAddressRequestInput>()
     const faucetParams = new Subject<number>()
 
-    watch(tokenBalances, (balances) => {
-      console.log('watching', balances)
-      balances.tokenBalances.map((b: any) => console.log(b.amount.toString()))
-    })
-
     // Set initial view if provided in props
     onBeforeMount(() => {
       if (props.initialView) view.value = props.initialView
@@ -170,29 +162,12 @@ const WalletIndex = defineComponent({
     // Return home if wallet is undefined
     if (!store.state.wallet) router.push('/')
 
-    // Create demo wallet
-    const makeWalletWithFunds = (): WalletT => {
-      return Wallet.__unsafeCreateWithPrivateKeyProvider({
-        mnemonic: Mnemonic.generateNew(), // not used,
-        __privateKeyProvider: (hdPath: HDPathRadixT): PrivateKey => {
-          const privateKeyScalar: number =
-          (hdPath.addressIndex.value() % 10000) + 1 // `0` is not a valid key.
-          return privateKeyFromScalar(
-            UInt256.valueOf(privateKeyScalar)
-          )._unsafeUnwrap()
-        }
-      })
-    }
-
     const radix = Radix
       .create()
       .__withAPI(mockedAPI)
       .withWallet(store.state.wallet)
       .withTokenBalanceFetchTrigger(interval(5 * 1_000))
 
-    // wallet subscriptions work when we call withWallet() on this
-    const faucet = makeWalletWithFunds()
-    console.log(faucet, store.state.wallet)
     const wallet = Radix
       .create()
       .connect('https://54.73.253.49/rpc')
@@ -201,41 +176,19 @@ const WalletIndex = defineComponent({
 
     const subs = new Subscription()
 
-    wallet.tokenBalances.subscribe((tokenBalancesRes: TokenBalances) => {
-      tokenBalances.value = tokenBalancesRes
-      console.log('token balances', tokenBalancesRes)
-    }).add(subs)
-
-    wallet.activeAccount.subscribe((accountRes: AccountT) => {
-      console.log('activeAccount', accountRes)
-      activeAccount.value = accountRes
-    }).add(subs)
+    wallet.tokenBalances.subscribe((tokenBalancesRes: TokenBalances) => { tokenBalances.value = tokenBalancesRes }).add(subs)
+    wallet.activeAccount.subscribe((accountRes: AccountT) => { activeAccount.value = accountRes }).add(subs)
     radix.stakingPositions.subscribe((stakes: StakePositions) => { activeStakes.value = stakes }).add(subs)
     radix.unstakingPositions.subscribe((unstakes: UnstakePositions) => { activeUnstakes.value = unstakes }).add(subs)
-    wallet.accounts.subscribe((accountsRes: AccountsT) => {
-      console.log('accounts', accountsRes)
-      accounts.value = accountsRes
-    }).add(subs)
-    wallet.activeAddress.subscribe((addressRes: AddressT) => {
-      console.log('activeAddress', addressRes)
-      activeAddress.value = addressRes
-    }).add(subs)
+    wallet.accounts.subscribe((accountsRes: AccountsT) => { accounts.value = accountsRes }).add(subs)
+    wallet.activeAddress.subscribe((addressRes: AddressT) => { activeAddress.value = addressRes }).add(subs)
 
-    // const people$ = from(
-    //     fetch('https://54.73.253.49/faucet/request', {
-    //       method: 'POST',
-    //       mode: 'no-cors',
-    //       headers: { 'Content-Type': 'application/json' },
-    //       body: JSON.stringify(request)
-    //     })
-    //   ).subscribe((res: any) => console.log('received', res)).add(subs)
-
-    wallet.errors.subscribe(
-      (errorNotification) => {
-        console.warn(errorNotification)
-        console.log(`☣️ error ${errorNotification}`)
-      }
-    ).add(subs)
+    // wallet.errors.subscribe(
+    //   (errorNotification) => {
+    //     console.warn(errorNotification)
+    //     console.log(`☣️ error ${errorNotification}`)
+    //   }
+    // ).add(subs)
 
     const addAccount = () => wallet.deriveNextAccount({ alsoSwitchTo: true })
 
@@ -245,12 +198,8 @@ const WalletIndex = defineComponent({
 
     // Update transaction history whenever params change
     historyPagination
-      .pipe(mergeMap((params: TransactionHistoryOfKnownAddressRequestInput) => {
-        console.log('params arre', params)
-        return wallet.transactionHistory(params)
-      }))
+      .pipe(mergeMap((params: TransactionHistoryOfKnownAddressRequestInput) => wallet.transactionHistory(params)))
       .subscribe((history: TransactionHistory) => {
-        console.log('received histiry', history)
         // Store cursor for navigation back to previous page before updating view
         if (transactionHistory.value && transactionHistory.value.cursor) previousCursor.value = transactionHistory.value.cursor
         else previousCursor.value = ''
@@ -259,15 +208,10 @@ const WalletIndex = defineComponent({
       })
       .add(subs)
 
+    // This isn't firing the way I want it to
     faucetParams
-      .pipe(mergeMap((params: number) => {
-        console.log('faucet params are', params)
-        return wallet.tokenBalances
-      }))
-      .subscribe((tokenBalancesRes: TokenBalances) => {
-        console.log('fauced token balances', tokenBalancesRes)
-        tokenBalances.value = tokenBalancesRes
-      })
+      .pipe(mergeMap((params: number) => wallet.tokenBalances))
+      .subscribe((tokenBalancesRes: TokenBalances) => { tokenBalances.value = tokenBalancesRes })
       .add(subs)
 
     const confirmAndExecuteTransaction = (transactionTracking: TransactionTracking) => {
@@ -438,14 +382,14 @@ const WalletIndex = defineComponent({
           address: activeAddress.value.toString()
         }
       }
-      const people$ = from(
+      from(
         fetch('https://54.73.253.49/faucet/request', {
           method: 'POST',
           mode: 'no-cors',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(request)
         })
-      ).subscribe((res: any) => { faucetParams.next(Math.random()) }).add(subs)
+      ).subscribe(() => { faucetParams.next(Math.random()) }).add(subs)
     }
 
     onUnmounted(() => subs.unsubscribe())
