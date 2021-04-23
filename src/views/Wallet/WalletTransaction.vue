@@ -3,11 +3,12 @@
     <div class="py-6 px-8 bg-gray h-full">
       <div class="flex justify-between mb-16">
         <h3 class="font-medium text-rBlack">{{ $t('transaction.transactionHeading') }}</h3>
-        <div class="flex items-center text-rGrayDark">
-          <div class="text-sm mr-3">{{ activeAddress.toString() }}</div>
-          <click-to-copy :text="activeAddress.toString()">
-            <span class="text-xs">{{ $t('wallet.copyAddress') }}</span>
-          </click-to-copy>
+        <div class="flex items-center text-rBlack text-sm">
+          <span class="text-rBlack mr-4">{{ $t('wallet.currentAddress') }} {{ activeAddress.toString() }}</span>
+          <div class="hover:text-rGreen flex flex-row items-center cursor-pointer transition-colors">
+            <click-to-copy :text="activeAddress.toString()">
+            </click-to-copy>
+          </div>
         </div>
       </div>
 

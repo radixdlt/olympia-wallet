@@ -4,7 +4,6 @@
       <rect x="7.5" y="7.5" width="7" height="7" class="stroke-current"/>
       <path d="M13 5H5V13" class="stroke-current"/>
     </svg>
-    <slot></slot>
   </div>
 </template>
 

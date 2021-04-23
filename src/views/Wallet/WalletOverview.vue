@@ -4,13 +4,12 @@
       <div class="flex justify-between mb-6">
         <h3 class="font-medium text-rBlack">{{ $t('wallet.balancesHeading') }}</h3>
         <div v-if="activeAddress" class="flex flex-row items-center text-sm text-rGrayMed">
-          <span class="text-rBlack mr-4">{{ activeAddress.toString() }}</span>
+          <span class="text-rBlack mr-4">{{ $t('wallet.currentAddress') }} {{ activeAddress.toString() }}</span>
           <div class="hover:text-rGreen flex flex-row items-center cursor-pointer transition-colors">
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
               <rect x="7.5" y="7.5" width="7" height="7" class="stroke-current"/>
               <path d="M13 5H5V13" class="stroke-current"/>
             </svg>
-            <span>{{ $t('wallet.copyAddress') }}</span>
           </div>
         </div>
       </div>
@@ -55,12 +54,7 @@
           class="w-1/2 px-9 mb-8"
         >
           <div class="flex flex-row py-1 divide-x divide-rGray border border-rGray rounded-md">
-            <div class="flex items-center justify-center">
-              <div class="p-4 m-4 bg-rGrayLight rounded-full">
-                <img src="@/assets/balance.svg" alt="balances" />
-              </div>
-            </div>
-            <div class="flex-1 flex flex-row items-center px-8 overflow-x-scroll">
+            <div class="flex-1 flex flex-row items-center px-8 overflow-x-scroll p-2 m-2.5">
               <big-amount :amount="tokenBalance.amount" class="text-4xl font-light mr-4 text-rBlack" />
               <div class="font-thin text-rGrayMark bg-rGrayLight border border-rGray py-0.5 px-1 rounded borderself-end">{{ tokenBalance.token.name }}</div>
             </div>

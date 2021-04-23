@@ -58,12 +58,12 @@ const messages = {
       pinHelpTwo: 'Please confirm your PIN.'
     },
     wallet: {
-      addressLabel: 'addr:',
+      addressLabel: 'Address:',
       back: 'back',
       addAccount: 'Add Account',
       balancesHeading: 'XRD Balances',
       additionalBalancesHeading: 'Additional Balances',
-      copyAddress: 'Copy Address',
+      currentAddress: 'Current Address:',
       totalTokens: 'Total',
       availableTokens: 'Available',
       stakedTokens: 'Staked',
@@ -71,7 +71,8 @@ const messages = {
       navHistory: 'History',
       navTransaction: 'Send Tokens',
       navStake: 'Stake & Unstake',
-      navSettings: 'Wallet Settings'
+      navSettings: 'Wallet Settings',
+      navHelp: 'Help'
     },
     history: {
       historyHeading: 'History',

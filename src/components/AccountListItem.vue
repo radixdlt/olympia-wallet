@@ -14,9 +14,9 @@
 
       <div v-if="shouldShowEdit" class="text-white hover:text-rGreen transition-colors cursor-pointer" @click="$emit('edit')">Edit</div>
     </div>
-    <div class="text-xs text-rGrayMed relative z-20 flex justify-between">
+    <div class="text-xs text-white relative z-20 flex justify-between">
       <span class="mr-2">{{ $t('wallet.addressLabel') }}</span>
-      <span class="flex-1 w-full truncate">{{ address.toString() }}</span>
+      <span class="flex-1 w-full truncate">{{ displayAddress }}</span>
       <click-to-copy :text="address.toString()" />
     </div>
   </div>
@@ -29,6 +29,11 @@ import ClickToCopy from '@/components/ClickToCopy.vue'
 import { Subscription } from 'rxjs'
 import { ref } from '@nopr3d/vue-next-rx'
 import { getAccountName } from '@/actions/vue/data-store'
+
+const composeDisplayAddress = function (address: AddressT) {
+  const s = address.toString()
+  return s.substring(0, 8) + '...' + s.substring(s.length - 8)
+}
 
 const AccountListItem = defineComponent({
   components: {
@@ -60,7 +65,10 @@ const AccountListItem = defineComponent({
       getAccountName(a.toString())
         .then((storedName: string) => { name.value = storedName || a.toString() })
     }).add(subs)
-    return { address, name }
+
+    const displayAddress = composeDisplayAddress(address.value)
+    console.log(displayAddress)
+    return { address, displayAddress, name }
   },
 
   computed: {
