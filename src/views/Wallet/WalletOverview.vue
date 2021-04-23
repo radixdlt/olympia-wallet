@@ -42,7 +42,11 @@
     </div>
 
     <div class="bg-white text-rBlack py-7 px-8 flex-1">
-      <div class="font-medium mb-8">{{ $t('wallet.additionalBalancesHeading') }}</div>
+      <div class="font-medium mb-8">
+        {{ $t('wallet.additionalBalancesHeading') }}
+
+        <button @click="$emit('requestFreeTokens')">Get free tokens</button>
+      </div>
 
       <div class="flex flex-row flex-wrap justify-between -mx-9">
         <div
@@ -120,7 +124,9 @@ const WalletOverview = defineComponent({
         ? this.tokenBalances.tokenBalances.filter((item: TokenBalance) => item.token.name !== 'XRD')
         : []
     }
-  }
+  },
+
+  emits: ['requestFreeTokens']
 })
 
 export default WalletOverview

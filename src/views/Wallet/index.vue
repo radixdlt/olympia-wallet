@@ -27,6 +27,7 @@
         :activeStakes="activeStakes"
         :activeUnstakes="activeUnstakes"
         :tokenBalances="tokenBalances"
+        @requestFreeTokens="requestFreeTokens"
       >
       </wallet-overview>
 
@@ -91,7 +92,7 @@
 <script lang="ts">
 import { defineComponent, onBeforeMount, onUnmounted } from 'vue'
 import { AccountT, AccountsT, AddressT, Wallet, WalletT, Mnemonic, HDPathRadixT } from '@radixdlt/account'
-import { Subscription, interval, Subject, Observable, combineLatest } from 'rxjs'
+import { Subscription, interval, Subject, Observable, combineLatest, from } from 'rxjs'
 import { Radix, TransferTokensOptions, StakePositions, TokenBalances, UnstakePositions, ManualUserConfirmTX, mockedAPI, TransactionTracking, StakeTokensInput, UnstakeTokensInput, TransactionStateUpdate, TransactionIdentifierT, TransactionHistoryOfKnownAddressRequestInput, TransactionHistory } from '@radixdlt/application'
 import { ref } from '@nopr3d/vue-next-rx'
 import { useStore } from '@/store'
@@ -153,6 +154,7 @@ const WalletIndex = defineComponent({
     const userDidConfirm = new Subject<boolean>()
     const userConfirmation = new Subject<ManualUserConfirmTX>()
     const historyPagination = new Subject<TransactionHistoryOfKnownAddressRequestInput>()
+    const faucetParams = new Subject<Record<string, any>>()
 
     // Set initial view if provided in props
     onBeforeMount(() => {
@@ -163,7 +165,7 @@ const WalletIndex = defineComponent({
     // Return home if wallet is undefined
     if (!store.state.wallet) router.push('/')
 
-    // Create demo wallet for now
+    // Create demo wallet
     const makeWalletWithFunds = (): WalletT => {
       return Wallet.__unsafeCreateWithPrivateKeyProvider({
         mnemonic: Mnemonic.generateNew(), // not used,
@@ -183,12 +185,13 @@ const WalletIndex = defineComponent({
       .withWallet(store.state.wallet)
       .withTokenBalanceFetchTrigger(interval(3 * 60 * 1_000))
 
+    // wallet subscriptions work when we call withWallet() on this
     const faucet = makeWalletWithFunds()
-    console.log(faucet)
+    console.log(faucet, store.state.wallet)
     const wallet = Radix
       .create()
       .connect('https://54.73.253.49/rpc')
-      .withWallet(faucet)
+      .withWallet(store.state.wallet) // wallet subscriptions don't work when we use the local wallet
       .withTokenBalanceFetchTrigger(interval(3 * 60 * 1_000))
 
     const subs = new Subscription()
@@ -198,15 +201,39 @@ const WalletIndex = defineComponent({
       console.log('token balances', tokenBalancesRes)
     }).add(subs)
 
-    radix.activeAccount.subscribe((accountRes: AccountT) => { activeAccount.value = accountRes }).add(subs)
+    wallet.activeAccount.subscribe((accountRes: AccountT) => {
+      console.log('activeAccount', accountRes)
+      activeAccount.value = accountRes
+    }).add(subs)
     radix.stakingPositions.subscribe((stakes: StakePositions) => { activeStakes.value = stakes }).add(subs)
     radix.unstakingPositions.subscribe((unstakes: UnstakePositions) => { activeUnstakes.value = unstakes }).add(subs)
-    radix.accounts.subscribe((accountsRes: AccountsT) => { accounts.value = accountsRes }).add(subs)
-    radix.activeAddress.subscribe((addressRes: AddressT) => { activeAddress.value = addressRes }).add(subs)
+    wallet.accounts.subscribe((accountsRes: AccountsT) => {
+      console.log('accounts', accountsRes)
+      accounts.value = accountsRes
+    }).add(subs)
+    wallet.activeAddress.subscribe((addressRes: AddressT) => {
+      console.log('activeAddress', addressRes)
+      activeAddress.value = addressRes
+    }).add(subs)
 
-    const addAccount = () => radix.deriveNextAccount({ alsoSwitchTo: true })
+    // const people$ = from(
+    //     fetch('https://54.73.253.49/faucet/request', {
+    //       method: 'POST',
+    //       mode: 'no-cors',
+    //       headers: { 'Content-Type': 'application/json' },
+    //       body: JSON.stringify(request)
+    //     })
+    //   ).subscribe((res: any) => console.log('received', res)).add(subs)
 
-    const switchAccount = (account: AccountT) => radix.switchAccount({ toAccount: account })
+    wallet.errors.subscribe(
+      (errorNotification) => {
+        console.log(`☣️ error ${errorNotification}`)
+      }
+    ).add(subs)
+
+    const addAccount = () => wallet.deriveNextAccount({ alsoSwitchTo: true })
+
+    const switchAccount = (account: AccountT) => wallet.switchAccount({ toAccount: account })
 
     const confirmTransaction = () => userDidConfirm.next(true)
 
@@ -388,6 +415,22 @@ const WalletIndex = defineComponent({
       })
     }
 
+    const requestFreeTokens = () => {
+      const request = {
+        params: {
+          address: activeAddress.value.toString()
+        }
+      }
+      const people$ = from(
+        fetch('https://54.73.253.49/faucet/request', {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(request)
+        })
+      ).subscribe((res: any) => console.log('received', res)).add(subs)
+    }
+
     onUnmounted(() => subs.unsubscribe())
 
     return {
@@ -414,7 +457,8 @@ const WalletIndex = defineComponent({
       refreshHistory,
       nextPage,
       previousPage,
-      previousCursor
+      previousCursor,
+      requestFreeTokens
     }
   },
 
