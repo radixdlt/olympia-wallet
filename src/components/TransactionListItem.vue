@@ -1,6 +1,6 @@
 <template>
-  <div class="border border-rGray rounded-md flex flex-row mb-2">
-    <div v-if="pending" class="bg-rGrayLightest text-rGrayDark text-sm pl-3 w-44 flex items-center">
+  <div class="border border-rGray rounded-md flex flex-row mb-2 ml-12 mr-12">
+    <div v-if="pending" class="bg-rGrayLightest text-rGrayDark text-sm pl-3 w-40 flex items-center">
       <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" class="animate-spin">
         <g clip-path="url(#clip0)">
         <path d="M6.81934 0V4" stroke="#003057" stroke-width="1.0485" stroke-miterlimit="10"/>
@@ -21,7 +21,7 @@
         </defs>
       </svg>
     </div>
-    <div v-else class="bg-rGrayLightest text-rGrayDark text-sm pl-3 w-44 flex items-center">
+    <div v-else class="bg-rGrayLightest text-rGrayDark text-sm pl-3 w-40 flex items-center">
       {{ sentAt }}
     </div>
     <div class="flex-1">
