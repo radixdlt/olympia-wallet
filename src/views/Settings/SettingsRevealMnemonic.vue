@@ -2,6 +2,9 @@
   <div class="p-10">
     <div class="text-rGrayDark text-sm mb-11 w-full max-w-md">
       {{ $t('settings.mnemonicDisclaimer') }}
+      <br /><br />
+      <span class="font-bold"> {{ $t('settings.mnemonicDisclaimerTwo') }} </span>
+      {{ $t('settings.mnemonicDisclaimerThree') }}
     </div>
 
     <div class="flex flex-row flex-wrap relative">

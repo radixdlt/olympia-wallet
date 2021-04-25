@@ -2,6 +2,8 @@
   <form class="p-10 flex flex-col max-w-lg w-full" @submit.prevent="handleSubmit">
     <div class="text-rGrayDark text-sm mb-11 w-full max-w-md">
       {{ $t('settings.resetPasswordDisclaimer') }}
+      <br /><br />
+      {{ $t('settings.resetPasswordInstructions') }}
     </div>
 
     <div class="mb-14">
