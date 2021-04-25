@@ -13,7 +13,7 @@
         'filter-blur border-0': !requireInput,
         'focus:outline-none focus:ring-transparent focus:shadow-none border-t-0 border-l-0 border-r-0 border-b border-rBlack': requireInput
       }"
-      placeholder="word"
+      :placeholder="placeholder"
       :disabled="!requireInput"
       :value="modelValue"
       @input="$emit('update:modelValue', $event.target.value)"
@@ -33,6 +33,17 @@ const MnemonicInput = defineComponent({
     modelValue: {
       type: String,
       required: false
+    },
+    index: {
+      type: Number,
+      required: true
+    }
+  },
+
+  computed: {
+    placeholder (): string {
+      const i = this.index + 1
+      return `word #${i}`
     }
   },
 
