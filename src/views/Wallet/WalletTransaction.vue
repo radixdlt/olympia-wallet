@@ -86,7 +86,7 @@
 
           <div class="py-7 flex items-center">
             <div class="w-32 text-right text-rGrayDark mr-8">{{ $t('transaction.feeLabel') }}</div>
-            <div class="flex-1 text-2xl font-light">00.000</div>
+            <div class="flex-1 text-2xl font-light">—</div>
           </div>
         </div>
 
