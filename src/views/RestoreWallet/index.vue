@@ -73,6 +73,7 @@ import CreateWalletCreatePasscode from '@/views/CreateWallet/CreateWalletCreateP
 import CreateWalletCreatePin from '@/views/CreateWallet/CreateWalletCreatePin.vue'
 import { useStore } from '@/store'
 import { ref } from '@nopr3d/vue-next-rx'
+import { saveDerivedAccountsIndex } from '@/actions/vue/data-store'
 
 const RestoreWallet = defineComponent({
   components: {
@@ -93,6 +94,7 @@ const RestoreWallet = defineComponent({
       createWalletFromMnemonicAndPasscode(mnemonic.value, pass)
         .then((wallet: WalletT) => {
           store.commit('setWallet', wallet)
+          saveDerivedAccountsIndex(0)
           step.value = 2
           passcode.value = pass
         })

@@ -59,7 +59,7 @@ const CreateWallet = defineComponent({
     const router = useRouter()
     const radix = Radix
       .create()
-      .__withAPI(mockedAPI)
+      .connect('https://18.168.73.103/rpc')
     const subs = new Subscription()
 
     // Move user to wallet when a wallet is successfully retrieved

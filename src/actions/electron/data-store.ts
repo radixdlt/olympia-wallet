@@ -13,3 +13,11 @@ export const saveAccountName = (event: IpcMainInvokeEvent, data: string) => {
 export const getAccountName = (event: IpcMainInvokeEvent, accountAddress: string) => {
   return store.get(`account.${accountAddress}`)
 }
+
+export const saveDerivedAccountsIndex = (event: IpcMainInvokeEvent, num: string) => {
+  return store.set('derivedAccountsIndex', num)
+}
+
+export const getDerivedAccountsIndex = (event: IpcMainInvokeEvent) => {
+  return store.get('derivedAccountsIndex')
+}

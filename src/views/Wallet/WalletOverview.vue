@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col flex-1 min-w-0 overflow-y-scroll">
+  <div class="flex flex-col flex-1 min-w-0 overflow-y-scroll overflow-x-hidden bg-white">
     <div class="bg-rGrayLightest py-6 px-8">
       <div class="flex justify-between mb-6">
         <h3 class="font-medium text-rBlack">{{ $t('wallet.balancesHeading') }}</h3>
@@ -15,7 +15,7 @@
         </div>
       </div>
 
-      <div class="bg-white border border-rGray rounded-md flex flex-row mb-7 overflow-y-scroll">
+      <div class="border border-rGray rounded-md flex flex-row mb-7 overflow-y-scroll">
         <img src="@/assets/token.svg" alt="token symbol" class="p-3 border-r border-rGray" />
         <div class="flex flex-col my-3 px-5 border-r border-rGray flex-1">
           <span class="text-sm text-rGrayDark">{{ $t('wallet.totalTokens') }}</span>
@@ -42,7 +42,11 @@
     </div>
 
     <div class="bg-white text-rBlack py-7 px-8 flex-1">
-      <div class="font-medium mb-8">{{ $t('wallet.additionalBalancesHeading') }}</div>
+      <div class="font-medium mb-8 flex items-center justify-between">
+        {{ $t('wallet.additionalBalancesHeading') }}
+
+        <button @click="$emit('requestFreeTokens')" class="text-rGreen py-2 px-4 border border-rGreen rounded-md">Get free tokens</button>
+      </div>
 
       <div class="flex flex-row flex-wrap justify-between -mx-9">
         <div
@@ -69,8 +73,8 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { StakePosition, TransactionHistory, UnstakePosition, TokenBalance, TokenBalances } from '@radixdlt/application'
-import { AddressT } from '@radixdlt/account'
+import { StakePosition, TokenBalance, TokenBalances } from '@radixdlt/application'
+import { AccountAddressT } from '@radixdlt/account'
 import { sumAmounts, subtract } from '@/helpers/arithmetic'
 import { Amount, AmountT, Denomination } from '@radixdlt/primitives'
 import BigAmount from '@/components/BigAmount.vue'
@@ -85,12 +89,8 @@ const WalletOverview = defineComponent({
       type: Object as PropType<TokenBalances>,
       required: true
     },
-    transactionHistory: {
-      type: Object as PropType<TransactionHistory>,
-      required: true
-    },
     activeAddress: {
-      type: Object as PropType<AddressT>,
+      type: Object as PropType<AccountAddressT>,
       required: true
     },
     activeStakes: {
@@ -101,7 +101,9 @@ const WalletOverview = defineComponent({
 
   computed: {
     totalXRD (): AmountT {
-      return sumAmounts(this.tokenBalances.tokenBalances.flatMap((item: TokenBalance) => item.amount)) || Amount.fromUnsafe(0, Denomination.Whole)._unsafeUnwrap()
+      return this.tokenBalances.tokenBalances
+        ? sumAmounts(this.tokenBalances.tokenBalances.flatMap((item: TokenBalance) => item.amount)) || Amount.fromUnsafe(0, Denomination.Whole)._unsafeUnwrap()
+        : Amount.fromUnsafe(0, Denomination.Whole)._unsafeUnwrap()
     },
     totalStaked (): AmountT {
       return sumAmounts(this.activeStakes.flatMap((item: StakePosition) => item.amount)) || Amount.fromUnsafe(0, Denomination.Whole)._unsafeUnwrap()
@@ -118,9 +120,13 @@ const WalletOverview = defineComponent({
       }
     },
     otherTokenBalances (): TokenBalance[] {
-      return this.tokenBalances.tokenBalances.filter((item: TokenBalance) => item.token.name !== 'XRD')
+      return this.tokenBalances.tokenBalances
+        ? this.tokenBalances.tokenBalances.filter((item: TokenBalance) => item.token.name !== 'XRD')
+        : []
     }
-  }
+  },
+
+  emits: ['requestFreeTokens']
 })
 
 export default WalletOverview
