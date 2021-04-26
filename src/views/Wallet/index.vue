@@ -166,13 +166,13 @@ const WalletIndex = defineComponent({
       .create()
       .__withAPI(mockedAPI)
       .withWallet(store.state.wallet)
-      .withTokenBalanceFetchTrigger(interval(5 * 1_000))
+      .withTokenBalanceFetchTrigger(interval(30 * 1_000))
 
     const wallet = Radix
       .create()
       .connect('https://18.168.73.103/rpc')
       .withWallet(store.state.wallet) // wallet subscriptions don't work when we use the local wallet
-      .withTokenBalanceFetchTrigger(interval(5 * 1_000))
+      .withTokenBalanceFetchTrigger(interval(30 * 1_000))
 
     const subs = new Subscription()
 
@@ -273,7 +273,7 @@ const WalletIndex = defineComponent({
           next: (txnID: TransactionIdentifierT) => {
             console.log('completed', txnID, pendingTransactions.value)
             // To Do: Offer a way for the user to "refetch" history to include new items
-            pendingTransactions.value = pendingTransactions.value.filter((pendingTxn: any) => txnID.toString() !== pendingTxn.txID.toString())
+            pendingTransactions.value = pendingTransactions.value.filter((pendingTxn: any) => txnID.toString() !== pendingTxn.transactionState.txID.toString())
             transactionDidComplete.next(true)
           },
           error: (e: any) => {
@@ -285,6 +285,7 @@ const WalletIndex = defineComponent({
       // Cleanup subscriptions
       transactionDidComplete.subscribe((didComplete: boolean) => {
         if (didComplete) {
+          historyPagination.next({ size: 10 })
           createUserConfirmation.unsubscribe()
           watchUserDidConfirm.unsubscribe()
           trackingInitiated.unsubscribe()

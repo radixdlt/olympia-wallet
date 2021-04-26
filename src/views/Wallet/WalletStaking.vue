@@ -144,7 +144,6 @@ const WalletStaking = defineComponent({
       return this.activeForm === 'stake' ? this.$t('staking.stakeDisclaimer') : this.$t('staking.unstakeDisclaimer')
     },
     xrdToken (): TokenBalance | null {
-      console.log('xrdtoken', this.tokenBalances)
       if (this.tokenBalances.tokenBalances && this.tokenBalances.tokenBalances.length > 0) {
         return this.tokenBalances.tokenBalances.find((tb: TokenBalance) => tb.token.symbol === 'XRD') || null
       }
@@ -185,7 +184,6 @@ const WalletStaking = defineComponent({
       this.values.validator = validator.toString()
     },
     handleSubmitStake () {
-      console.log('submitting', this.meta, this.xrdToken)
       if (this.meta.valid && this.xrdToken) {
         const safeAddress = safelyUnwrapAddress(this.values.validator)
         const safeAmount = safelyUnwrapAmount(Number(this.values.amount))

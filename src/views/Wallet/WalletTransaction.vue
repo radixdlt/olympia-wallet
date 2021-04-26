@@ -104,7 +104,7 @@
 <script lang="ts">
 import { AccountAddressT } from '@radixdlt/account'
 import { defineComponent, PropType } from 'vue'
-import { safelyUnwrapAddress, safelyUnwrapAmount, validateAmountOfType } from '@/helpers/validateRadixTypes'
+import { safelyUnwrapAddress, safelyUnwrapAmount, validateAmountOfType, validateGreaterThanZero } from '@/helpers/validateRadixTypes'
 import { TokenBalance } from '@radixdlt/application'
 import { useForm } from 'vee-validate'
 import ClickToCopy from '@/components/ClickToCopy.vue'
@@ -168,15 +168,24 @@ const WalletTransaction = defineComponent({
         const safeAddress = safelyUnwrapAddress(this.values.recipient)
         const safeAmount = safelyUnwrapAmount(Number(this.values.amount))
         const token = this.selectedCurrency.token
-        // If amount is a valid AmountT and multiple of granularity
-        // This is the line that fails ->
-        // const validAmount = safeAmount && validateAmountOfType(safeAmount, token)
+        const validAmount = safeAmount && validateAmountOfType(safeAmount, token)
+        const greaterThanZero = safeAmount && validateGreaterThanZero(safeAmount)
 
-        this.$emit('transferTokens', {
-          to: safeAddress,
-          amount: safeAmount,
-          tokenIdentifier: token.rri.toString()
-        })
+        if (!greaterThanZero) {
+          this.setErrors({
+            amount: this.$t('validations.greaterThanZero')
+          })
+        } else if (!validAmount) {
+          this.setErrors({
+            amount: this.$t('validations.amountOfType', { granularity: token.granularity.toString() })
+          })
+        } else {
+          this.$emit('transferTokens', {
+            to: safeAddress,
+            amount: safeAmount,
+            tokenIdentifier: token.rri.toString()
+          })
+        }
       }
     }
   },
