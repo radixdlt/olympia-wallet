@@ -11,13 +11,13 @@
       </div>
       <div><span class="text-rBlack">{{ action.amount.toString() }}</span> XRD</div>
     </div>
-    <div v-if="index === 0" class="flex flex-col items-end">
-      <div class="flex flex-row flex-1 min-w-0">
-        <span>{{ $t('history.toLabel') }}:</span> <span class="ml-2 w-32 truncate min-w-0">{{ action.to.toString() }}</span>
+    <div class="flex flex-col items-end">
+      <div v-if="!isRecipient" class="flex flex-row flex-1 min-w-0">
+        <span>{{ $t('history.toLabel') }}:</span> <span class="ml-2 mr-1 min-w-0">{{ displayAddress(action.to) }}</span>
         <click-to-copy :text="action.to.toString()" />
       </div>
-      <div class="flex flex-row flex-1 min-w-0">
-        <span>{{ $t('history.fromLabel') }}:</span> <span class="ml-2 w-32 truncate min-w-0">{{ action.from.toString() }}</span>
+      <div v-if="isRecipient" class="flex flex-row flex-1 min-w-0">
+        <span>{{ $t('history.fromLabel') }}:</span> <span class="ml-2 mr-1 min-w-0">{{displayAddress(action.from) }}</span>
         <click-to-copy :text="action.from.toString()" />
       </div>
     </div>
@@ -29,6 +29,7 @@ import { defineComponent, PropType } from 'vue'
 import { ExecutedTransferTokensAction } from '@radixdlt/application'
 import { AccountAddressT } from '@radixdlt/account'
 import ClickToCopy from '@/components/ClickToCopy.vue'
+import { formatAddressForDisplay } from '@/helpers/formatter'
 
 const ActionListItemTransferTokens = defineComponent({
   components: {
@@ -52,8 +53,15 @@ const ActionListItemTransferTokens = defineComponent({
 
   computed: {
     isRecipient (): boolean {
+      console.log('ACTIVE ADDRESS', this.activeAddress)
       if (!this.activeAddress) return false
       return this.action.to.toString() === this.activeAddress.toString()
+    }
+  },
+
+  methods: {
+    displayAddress (address: AccountAddressT): string {
+      return formatAddressForDisplay(address)
     }
   }
 })

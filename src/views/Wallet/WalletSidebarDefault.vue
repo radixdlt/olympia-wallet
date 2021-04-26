@@ -1,20 +1,15 @@
 <template>
-  <div class="w-72 mx-5 py-8 flex flex-col">
+  <div class="w-52 mx-5 py-8 flex flex-col">
     <div>
       <img alt="Radix DLT Logo" src="../../assets/logo.svg" class="w-30 mb-10">
     </div>
 
-    <div class="flex flex-col text-white hover:text-rGreen transition-colors cursor-pointer mb-8" @click="$emit('open')">
+    <div class="flex flex-col text-white hover:text-rGreen transition-colors cursor-pointer mb-4" @click="$emit('open')">
       <div class="relative py-3">
         <account-list-item
           :account="activeAccount"
           :activeAccount="activeAccount"
         />
-        <svg class="absolute top-0 right-0 z-20 mt-4" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect x="5" y="9" width="2" height="2" rx="1" class="fill-current"/>
-          <rect x="9" y="9" width="2" height="2" rx="1" class="fill-current"/>
-          <rect x="13" y="9" width="2" height="2" rx="1" class="fill-current"/>
-        </svg>
         <div class="absolute bg-gradient-to-r from-blueEnd to-transparent inset-0 w-full h-full z-10 -mx-8 opacity-40">
         </div>
       </div>
@@ -22,22 +17,27 @@
 
     <div class="flex flex-col flex-1">
       <div
-        class="flex flex-row items-center my-8 cursor-pointer transition-opacity"
-        :class="{ 'opacity-40': activeView !== 'overview' }"
+        class="flex flex-row items-center my-5 cursor-pointer transition-opacity"
+        :class="{ 'opacity-70': activeView !== 'overview' }"
         @click="$emit('setView', 'overview')"
       >
-        <svg width="23" height="22" viewBox="0 0 23 22" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr-3">
-          <path d="M1 1H9.46735V8.93388H1.53347V4.26133" stroke="white" stroke-width="1.5" stroke-miterlimit="10"/>
-          <path d="M21.5291 1H13.5952V8.93388H21.5291V1Z" stroke="white" stroke-width="1.5" stroke-miterlimit="10"/>
-          <path d="M9.46757 13.0664H1.53369V21.0003H9.46757V13.0664Z" stroke="white" stroke-width="1.5" stroke-miterlimit="10"/>
-          <path d="M21.5291 13.0664H13.5952V21.0003H21.5291V13.0664Z" stroke="#00C389" stroke-width="1.5" stroke-miterlimit="10"/>
-        </svg>
+       <svg width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr-3">
+        <path d="M6.47401 13.5557L6.73695 14.4763C6.73703 16.0568 5.45579 17.3379 3.87531 17.3379C2.29491 17.3379 1.01367 16.0567 1.01367 14.4763L1.24568 13.6037" stroke="#00C389" stroke-width="1.5" stroke-miterlimit="10"/>
+        <path d="M22.9721 13.541L23.235 14.4616C23.2351 16.0421 21.9538 17.3233 20.3734 17.3233C18.7929 17.3233 17.5117 16.042 17.5117 14.4616L17.7437 13.5891" stroke="#00C389" stroke-width="1.5" stroke-miterlimit="10"/>
+        <path d="M12.1064 22.9783V19.6475" stroke="white" stroke-width="1.5" stroke-miterlimit="10"/>
+        <path d="M3.94141 23.5H20.2708" stroke="#00C389" stroke-width="1.5" stroke-miterlimit="10"/>
+        <path d="M12.1064 16.7533V0" stroke="white" stroke-width="1.5" stroke-miterlimit="10"/>
+        <path d="M23.1966 14.3256L20.2714 4.08594H3.94202L1 14.4617" stroke="white" stroke-width="1.5" stroke-miterlimit="10"/>
+        <path d="M20.2711 4.08594L17.5117 14.4617" stroke="white" stroke-width="1.5" stroke-miterlimit="10"/>
+        <path d="M6.72266 14.4617L3.94141 4.08594" stroke="white" stroke-width="1.5" stroke-miterlimit="10"/>
+      </svg>
+
         <div class="font-normal text-white">{{ $t('wallet.navBalances') }}</div>
       </div>
 
       <div
-        class="flex flex-row items-center my-8 cursor-pointer transition-opacity"
-        :class="{ 'opacity-40': activeView !== 'transaction' }"
+        class="flex flex-row items-center my-5 cursor-pointer transition-opacity"
+        :class="{ 'opacity-70': activeView !== 'transaction' }"
         @click="$emit('setView', 'transaction')"
       >
         <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr-3">
@@ -52,8 +52,8 @@
       </div>
 
       <div
-        class="flex flex-row items-center my-8 cursor-pointer transition-opacity"
-        :class="{ 'opacity-40': activeView !== 'staking' }"
+        class="flex flex-row items-center my-5 cursor-pointer transition-opacity"
+        :class="{ 'opacity-70': activeView !== 'staking' }"
         @click="$emit('setView', 'staking')"
       >
         <svg width="20" height="25" viewBox="0 0 20 25" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr-3">
@@ -64,8 +64,8 @@
       </div>
 
       <div
-        class="flex flex-row items-center my-8 cursor-pointer transition-opacity"
-        :class="{ 'opacity-40': activeView !== 'history' }"
+        class="flex flex-row items-center my-5 cursor-pointer transition-opacity"
+        :class="{ 'opacity-70': activeView !== 'history' }"
         @click="$emit('setView', 'history')"
       >
         <svg width="23" height="22" viewBox="0 0 23 22" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr-3">
@@ -80,8 +80,20 @@
 
     <div class="flex flex-col">
       <div
-        class="flex flex-row items-center my-8 cursor-pointer transition-opacity"
-        :class="{ 'opacity-40': activeView !== 'settings' }"
+        class="flex flex-row items-center my-2 cursor-pointer transition-opacity"
+      >
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr-3">
+          <path d="M11.528 14.224V11.552C12.4667 11.52 13.192 11.2907 13.704 10.864C14.2267 10.4373 14.488 9.86667 14.488 9.152V8.848C14.488 8.24 14.296 7.75467 13.912 7.392C13.528 7.01867 13 6.832 12.328 6.832C11.6347 6.832 11.0853 7.01333 10.68 7.376C10.2853 7.73867 10.008 8.224 9.848 8.832L9 8.528C9.10667 8.16533 9.25067 7.82933 9.432 7.52C9.624 7.21067 9.85333 6.944 10.12 6.72C10.3973 6.496 10.7227 6.32 11.096 6.192C11.4693 6.064 11.8907 6 12.36 6C13.3307 6 14.0933 6.26667 14.648 6.8C15.2027 7.33333 15.48 8.05333 15.48 8.96C15.48 9.45067 15.4 9.888 15.24 10.272C15.08 10.6453 14.856 10.9707 14.568 11.248C14.2907 11.5147 13.9653 11.728 13.592 11.888C13.2293 12.048 12.84 12.16 12.424 12.224V14.224H11.528ZM11.976 17.504C11.72 17.504 11.528 17.44 11.4 17.312C11.2827 17.184 11.224 17.008 11.224 16.784V16.608C11.224 16.384 11.2827 16.208 11.4 16.08C11.528 15.952 11.72 15.888 11.976 15.888C12.2427 15.888 12.4347 15.952 12.552 16.08C12.68 16.208 12.744 16.384 12.744 16.608V16.784C12.744 17.008 12.68 17.184 12.552 17.312C12.4347 17.44 12.2427 17.504 11.976 17.504Z" fill="#DDE5ED"/>
+          <circle cx="12" cy="12" r="11.5" stroke="#DDE5ED"/>
+        </svg>
+
+        <div class="font-normal text-white">{{ $t('wallet.navHelp') }}</div>
+      </div>
+    </div>
+
+    <div class="flex flex-col">
+      <div
+        class="flex flex-row items-center my-2 cursor-pointer transition-opacity"
         @click="$emit('setView', 'settings')"
       >
         <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr-3">
@@ -109,7 +121,7 @@ const WalletSidebarDefault = defineComponent({
     activeView: String
   },
 
-  emits: ['open', 'setView']
+  emits: ['open', 'setView', 'openHelp']
 })
 
 export default WalletSidebarDefault

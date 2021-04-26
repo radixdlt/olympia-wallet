@@ -3,6 +3,11 @@
     @submit.prevent="handleResetPin"
     class="p-10"
   >
+    <div class="text-rGrayDark text-sm mb-11 w-full max-w-md">
+      {{ $t('settings.resetPinDisclaimer') }}
+      <br /><br />
+      {{ $t('settings.resetPinDisclaimerTwo') }}
+    </div>
     <div class="text-rGrayDark mb-4">{{ $t('settings.currentPinLabel') }}</div>
 
     <pin-input

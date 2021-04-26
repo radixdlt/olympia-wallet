@@ -1,7 +1,16 @@
 <template>
   <div class="flex flex-col flex-1 min-w-0 overflow-y-scroll bg-white">
     <div class="bg-rGrayLightest py-6 px-8 bg-gray">
-      <h3 class="font-medium text-rBlack">{{ $t('history.historyHeading') }}</h3>
+      <div class="flex justify-between">
+        <h3 class="font-medium text-rBlack">{{ $t('history.historyHeading') }}</h3>
+        <div class="flex items-center text-rBlack text-sm">
+          <span class="text-rBlack mr-4">{{ $t('wallet.currentAddress') }} {{ activeAddress.toString() }}</span>
+          <div class="hover:text-rGreen flex flex-row items-center cursor-pointer transition-colors">
+            <click-to-copy :text="activeAddress.toString()">
+            </click-to-copy>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="text-rBlack py-6 px-8 min-h-full">
@@ -64,10 +73,12 @@ import { defineComponent, PropType } from 'vue'
 import { ExecutedTransaction } from '@radixdlt/application'
 import { AccountAddressT } from '@radixdlt/account'
 import TransactionListItem from '@/components/TransactionListItem.vue'
+import ClickToCopy from '@/components/ClickToCopy.vue'
 
 const WalletHistory = defineComponent({
   components: {
-    TransactionListItem
+    TransactionListItem,
+    ClickToCopy
   },
 
   props: {

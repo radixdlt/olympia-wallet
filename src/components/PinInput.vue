@@ -13,7 +13,7 @@
     </div>
     <input
       :name="name"
-      type="password"
+      type="number"
       class="opacity-0 absolute top-0 left-0 w-full h-full cursor-pointer"
       maxlength="4"
       ref="inputRef"
@@ -47,7 +47,7 @@ const PinInput = defineComponent({
       }
     }
 
-    const { value, errorMessage } = useField<string>(props.name, 'required|length:4')
+    const { value, errorMessage } = useField<string>(props.name, 'required')
 
     return {
       inputRef,

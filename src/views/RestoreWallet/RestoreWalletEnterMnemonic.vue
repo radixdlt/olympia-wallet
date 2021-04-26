@@ -5,6 +5,7 @@
         <mnemonic-input
           :require-input="true"
           :modelValue="word"
+          :index=i
           @update:modelValue="handleChange(i, $event)"
         ></mnemonic-input>
       </div>

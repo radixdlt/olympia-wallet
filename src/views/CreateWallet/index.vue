@@ -41,6 +41,18 @@
       </wizard-heading>
       <div class="border border-white rounded p-3 mb-8" v-if="step === 3">{{ $t('createWallet.pinHelpOne') }}</div>
       <div class="border border-white rounded p-3 mb-8" v-if="step === 4">{{ $t('createWallet.pinHelpTwo') }}</div>
+
+      <router-link
+        to="/"
+        data-ci="home-button"
+        class="hover:text-rGreen cursor-pointer transition-colors inline-flex flex-row items-center mt-60"
+      >
+       <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr-2">
+          <circle cx="10" cy="10" r="9.5" transform="rotate(90 10 10)" fill="none" class="stroke-current" />
+          <path d="M12 15L7 10L12 5" class="stroke-current" stroke-miterlimit="10"/>
+        </svg>
+        {{ $t('createWallet.startOver') }}
+      </router-link>
     </div>
 
     <div class="bg-white pt-headerHeight pb-8 px-11 flex-1">

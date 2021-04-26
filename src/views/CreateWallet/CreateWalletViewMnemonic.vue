@@ -2,7 +2,9 @@
   <div data-ci="create-wallet-view-mnemonic-component">
     <div class="flex flex-wrap mb-4">
       <div v-for="(word, i) in mnemonic" :key="i" class="w-1/4 mb-14">
-        <span class="w-40 border rounded-full border-rGray leading-tight h-16 justify-center items-center inline-flex">{{word}}</span>
+        <span class="w-40 border rounded-full border-rGray leading-tight h-16 justify-center items-center inline-flex">
+          {{ i + 1 }}. &nbsp;{{word}}
+        </span>
       </div>
     </div>
 

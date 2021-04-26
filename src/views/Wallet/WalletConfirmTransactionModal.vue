@@ -49,11 +49,6 @@
         {{ $t('transaction.cancelButton') }}
       </button>
     </form>
-
-    <div
-      class="bg-translucent-black w-full h-full"
-      @click="$emit('cancel')"
-    ></div>
   </div>
 </template>
 

@@ -7,9 +7,11 @@
       </div>
       <div><span class="text-rBlack">{{ action.amount.toString() }}</span> XRD</div>
     </div>
-    <div v-if="index === 0" class="flex flex-row min-w-0 text-right items-center">
-      {{ $t('history.validatorLabel') }}: <span class="ml-2 w-32 truncate">{{ action.validator.toString() }}</span>
-      <click-to-copy :text="action.validator.toString()" />
+    <div class="flex flex-col items-end">
+      <div class="flex flex-row flex-1 min-w-0">
+        <span>{{ $t('history.validatorLabel') }}:</span> <span class="ml-2 mr-1 min-w-0">{{ displayAddress(action.validator) }}</span>
+        <click-to-copy :text="action.validator.toString()" />
+      </div>
     </div>
   </div>
 </template>
@@ -18,6 +20,8 @@
 import { defineComponent, PropType } from 'vue'
 import { ExecutedStakeTokensAction } from '@radixdlt/application'
 import ClickToCopy from '@/components/ClickToCopy.vue'
+import { formatAddressForDisplay } from '@/helpers/formatter'
+import { AccountAddressT } from '@radixdlt/account'
 
 const ActionListItemStakeTokens = defineComponent({
   components: {
@@ -32,6 +36,12 @@ const ActionListItemStakeTokens = defineComponent({
     index: {
       type: Number,
       required: true
+    }
+  },
+
+  methods: {
+    displayAddress (address: AccountAddressT): string {
+      return formatAddressForDisplay(address)
     }
   }
 })

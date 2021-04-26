@@ -16,39 +16,42 @@ const messages = {
       greaterThanZero: 'Must be greater than 0'
     },
     home: {
-      welcomeOne: 'Welcome to the Radix Betanet.',
-      welcomeTwo: 'Decentralized finance applications are currently being built on protocols that were not designed to meet the needs and requirements of DeFi services.',
-      welcomeThree: 'Radix is using our significant technology innovations to be the first layer 1 protocol specifically built to serve the rapidly growing DeFi industry.',
+      welcomeOne: 'Welcome to the Radix Olympia Desktop Wallet.',
+      welcomeTwo: 'Betanet Version',
+      welcomeThree: 'Decentralized finance applications are currently being built on protocols that were not designed to meet the needs and requirements of DeFi.',
+      welcomeFour: 'Radix is using our technology innovations to create the first layer 1 protocol specifically built to serve the rapidly growing DeFi world.',
+      welcomeFive: 'Olympia is the first release of the Radix mainnet with the XRD token, dPoS staking, low fees, and a simplified form of our Cerberus consensus protocol. It provides the decentralized network foundations for our future releases that will introduce a DeFi-focused developer experience and unlimited scalability.',
       passwordTitle: 'Enter your password to access your wallet',
       passwordPlaceholder: 'enter password',
       passwordButton: 'Open Wallet',
-      createTitle: 'I don\'t have a wallet yet!',
-      createContent: 'You’re new to Radix, create a new wallet to get started holding, sending, and staking XRD.',
+      createTitle: 'I don\'t have a wallet yet.',
+      createContent: 'You’re new to Radix. Create a new wallet to get started holding, sending, and staking XRD tokens.',
       createButton: 'Create a new wallet',
-      restoreTitle: 'I already have a wallet',
-      restoreContent: 'You have an existing wallet and know your recovery password or have a hardware wallet start here.',
+      restoreTitle: 'I already have a wallet.',
+      restoreContent: 'You previously created a wallet and want to use your seed phrase to restore your access.',
       restoreButton: 'Restore a previous wallet'
     },
     createWallet: {
-      recoveryTitle: 'Recovery Phrase',
+      recoveryTitle: 'Seed Phrase',
       recoveryHelpOne: 'The following 12 words are the seed of your new account. As long as you have them, you will always be able to recover your account, but remember not to store them digitally.',
-      recoveryButtonOne: 'I\'ve written down my recovery phrase',
-      recoveryHelpTwo: 'Please enter your 12-word mnemonic. The words must be in the correct order.',
+      recoveryButtonOne: 'I\'ve written down my seed phrase',
+      recoveryHelpTwo: 'Please enter your 12-word seed phrase. The words must be in the correct order.',
       recoveryButtonTwoDisabled: 'Fill these out first',
       recoveryButtonTwoEnabled: 'I\'ve done it!',
       passwordTitle: 'Password',
-      passwordHelp: 'Please enter a secure password here.  This password secures your mnemonicly generated key, and will be required every time you open this application',
+      passwordHelp: 'Please enter a secure password here. This password secures your seed phrase, and will be required every time you open this application.',
       passwordPlaceholder: 'enter password',
       passwordConfirmationPlaceholder: 'confirm password',
       passwordButton: 'Confirm password',
       pinTitle: 'PIN',
       pinHelpOne: 'Please enter a secure PIN. This will be used to verify all transactions made in the Wallet.',
       pinHelpTwo: 'Please confirm your PIN.',
-      pinButton: 'Confirm PIN'
+      pinButton: 'Confirm PIN',
+      startOver: 'Start Over'
     },
     restoreWallet: {
-      recoveryTitle: 'Recovery Phrase',
-      recoveryHelp: 'Enter your 12 word mnemonic to restore your wallet.',
+      recoveryTitle: 'Seed Phrase',
+      recoveryHelp: 'Enter your 12 word seed phrase to restore your wallet.',
       recoveryButtonDisabled: 'Fill these out first',
       recoveryButtonEnabled: 'I\'ve done it!',
       passwordTitle: 'Password',
@@ -58,12 +61,12 @@ const messages = {
       pinHelpTwo: 'Please confirm your PIN.'
     },
     wallet: {
-      addressLabel: 'addr:',
+      addressLabel: 'Address:',
       back: 'back',
       addAccount: 'Add Account',
       balancesHeading: 'XRD Balances',
       additionalBalancesHeading: 'Additional Balances',
-      copyAddress: 'Copy Address',
+      currentAddress: 'Current Address:',
       totalTokens: 'Total',
       availableTokens: 'Available',
       stakedTokens: 'Staked',
@@ -71,7 +74,8 @@ const messages = {
       navHistory: 'History',
       navTransaction: 'Send Tokens',
       navStake: 'Stake & Unstake',
-      navSettings: 'Wallet Settings'
+      navSettings: 'Wallet Settings',
+      navHelp: 'Help'
     },
     history: {
       historyHeading: 'History',
@@ -115,8 +119,8 @@ const messages = {
       feeLabel: 'Fee',
       stakeButton: 'Stake',
       unstakeButton: 'Request Unstake',
-      stakeDisclaimer: 'WRITE STAKE COPY Network health explainer with link to FAQ and Validator link, short paragraph. dit diam. Maecenas malesuada tortor turpis, vitae mollis magna elementunas malesuada tortor turpis, vitae mollis magna elementum in. Proin rhoncus vulputate erat, eget aliquam lacus dignissim vel.',
-      unstakeDisclaimer: 'WRITE UNSTAKE COPY Network health explainer with link to FAQ and Validator link, short paragraph. dit diam. Maecenas malesuada tortor turpis, vitae mollis magna elementunas malesuada tortor turpis, vitae mollis magna elementum in. Proin rhoncus vulputate erat, eget aliquam lacus dignissim vel.',
+      stakeDisclaimer: 'Holders of XRD tokens may stake them to validator nodes of their choice to receive potential incentive rewards. Note that once XRD tokens are staked, unstaking them again will be subject to a lengthy unstaking delay. Please visit http://learn.radixdlt.com for more information about staking, unstaking, and selecting good validator nodes.',
+      unstakeDisclaimer: 'Your current stakes are shown at right. You may request an unstake of some or all of your XRD tokens from a validator. Once the request transaction has been processed, your tokens will be subject to a lengthy unstaking delay, after which they will become available for transfer once more. Please visit http://learn.radixdlt.com for more information about unstaking.',
       availableBalancePlaceholder: 'Available balance ...',
       validatorPlaceholder: 'enter validator address'
     },
@@ -129,10 +133,15 @@ const messages = {
       currentPinLabel: 'enter current PIN',
       pinLabel: 'enter new PIN',
       confirmationPinLabel: 'confirm new PIN',
-      mnemonicDisclaimer: 'WRITE  COPY Be careful, blah blah blah, vitae mollis magna elementunas malesuada tortor turpis, vitae mollis magna elementum in. Proin rhoncus vulputate erat, eget aliquam lacus dignissim vel.da tortor turpis, vitae mollis magna elementum in. Proin rhoncus vulputate erat, eim vel.',
-      mnemonicModalHeading: 'Enter your pin to access your mnemonic',
-      accessMnemonicButton: 'Access Mnemonic',
-      resetPasswordDisclaimer: 'WRITE  COPY Maecenas malesuada tortor turpis, vitae mollis magna elementunas malesuada tortor turpis, vitae mollisdignissim vel.'
+      mnemonicDisclaimer: 'Your seed phrase is a secret list of 12 words that uniquely provide access to your wallet. As long as you have them, you will always be able to recover access to your accounts within this wallet. You may view it here if you need to back it up for future recovery.',
+      mnemonicDisclaimerTwo: 'This seed phrase grants full access to all accounts in your wallet!',
+      mnemonicDisclaimerThree: 'Please do not view it in a public place, and remember to not store it digitally.',
+      mnemonicModalHeading: 'Enter your pin to access your seed phrase',
+      accessMnemonicButton: 'Access Seed Phrase',
+      resetPasswordDisclaimer: 'Your password is required each time you open the wallet application, and provides access to your secret seed phrase. We recommend you choose a strong, unguessable password that you have not used elsewhere.',
+      resetPasswordInstructions: 'Please enter your current password before choosing a new one.',
+      resetPinDisclaimer: 'Your PIN is required each time you wish to submit a transaction.',
+      resetPinDisclaimerTwo: 'Please enter your current PIN before choosing a new one.'
     }
   }
 }

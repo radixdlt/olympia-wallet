@@ -2,8 +2,8 @@
   "name": "radix-olympia-desktop-wallet",
   "version": "0.1.4",
   "private": true,
-  "description": "an electron desktop wallet for Radix DLT",
-  "author": "Township",
+  "description": "Radix Olympia Desktop Wallet",
+  "author": "Radix Tokens Jersey Limited",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
