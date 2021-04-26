@@ -60,7 +60,7 @@ const ActionListItemTransferTokens = defineComponent({
   },
 
   methods: {
-    displayAddress (address: AddressT): string {
+    displayAddress (address: AccountAddressT): string {
       return formatAddressForDisplay(address)
     }
   }

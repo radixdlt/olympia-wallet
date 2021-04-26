@@ -21,7 +21,7 @@ import { defineComponent, PropType } from 'vue'
 import { ExecutedUnstakeTokensAction } from '@radixdlt/application'
 import ClickToCopy from '@/components/ClickToCopy.vue'
 import { formatAddressForDisplay } from '@/helpers/formatter'
-import { AddressT } from '@radixdlt/account'
+import { AccountAddressT } from '@radixdlt/account'
 
 const ActionListItemUnstakeTokens = defineComponent({
   components: {
@@ -40,7 +40,7 @@ const ActionListItemUnstakeTokens = defineComponent({
   },
 
   methods: {
-    displayAddress (address: AddressT): string {
+    displayAddress (address: AccountAddressT): string {
       return formatAddressForDisplay(address)
     }
   }
