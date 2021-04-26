@@ -176,7 +176,11 @@ const WalletIndex = defineComponent({
 
     const subs = new Subscription()
 
-    wallet.tokenBalances.subscribe((tokenBalancesRes: TokenBalances) => { tokenBalances.value = tokenBalancesRes }).add(subs)
+    // wallet.tokenBalances.subscribe((tokenBalancesRes: TokenBalances) => { tokenBalances.value = tokenBalancesRes }).add(subs)
+    wallet.tokenBalances.subscribe((tokenBalancesRes: TokenBalances) => {
+      console.log('token balances', tokenBalancesRes)
+      tokenBalances.value = tokenBalancesRes
+    }).add(subs)
     wallet.activeAccount.subscribe((accountRes: AccountT) => { activeAccount.value = accountRes }).add(subs)
     radix.stakingPositions.subscribe((stakes: StakePositions) => { activeStakes.value = stakes }).add(subs)
     radix.unstakingPositions.subscribe((unstakes: UnstakePositions) => { activeUnstakes.value = unstakes }).add(subs)
