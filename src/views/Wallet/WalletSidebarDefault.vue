@@ -10,11 +10,6 @@
           :account="activeAccount"
           :activeAccount="activeAccount"
         />
-        <svg class="absolute top-0 right-0 z-20 mt-4" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect x="5" y="9" width="2" height="2" rx="1" class="fill-current"/>
-          <rect x="9" y="9" width="2" height="2" rx="1" class="fill-current"/>
-          <rect x="13" y="9" width="2" height="2" rx="1" class="fill-current"/>
-        </svg>
         <div class="absolute bg-gradient-to-r from-blueEnd to-transparent inset-0 w-full h-full z-10 -mx-8 opacity-40">
         </div>
       </div>
