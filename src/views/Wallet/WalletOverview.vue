@@ -121,7 +121,7 @@ const WalletOverview = defineComponent({
     },
     otherTokenBalances (): TokenBalance[] {
       return this.tokenBalances.tokenBalances
-        ? this.tokenBalances.tokenBalances.filter((item: TokenBalance) => item.token.name !== 'XRD')
+        ? this.tokenBalances.tokenBalances
         : []
     }
   },
