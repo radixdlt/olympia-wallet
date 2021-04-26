@@ -86,7 +86,7 @@ import { StakePosition, TokenBalance, TokenBalances, UnstakePosition } from '@ra
 import { defineComponent, PropType } from 'vue'
 import { useForm } from 'vee-validate'
 import StakeListItem from '@/components/StakeListItem.vue'
-import { Amount, AmountT, Denomination } from '@radixdlt/primitives'
+import { Amount, AmountT } from '@radixdlt/primitives'
 import { safelyUnwrapAddress, safelyUnwrapAmount, validateAmountOfType } from '@/helpers/validateRadixTypes'
 import TabsTab from '@/components/TabsTab.vue'
 import TabsContent from '@/components/TabsContent.vue'
@@ -155,8 +155,8 @@ const WalletStaking = defineComponent({
         this.tokenBalances.tokenBalances.find((tb: TokenBalance) => tb.token.symbol === 'XRD')
       ) {
         const xrdBalance = this.tokenBalances.tokenBalances.find((tb: TokenBalance) => tb.token.symbol === 'XRD')
-        return xrdBalance ? xrdBalance.amount : Amount.fromUnsafe(0, Denomination.Whole)._unsafeUnwrap()
-      } else return Amount.fromUnsafe(0, Denomination.Whole)._unsafeUnwrap()
+        return xrdBalance ? xrdBalance.amount : Amount.fromUnsafe(0)._unsafeUnwrap()
+      } else return Amount.fromUnsafe(0)._unsafeUnwrap()
     },
     amountPlaceholder (): string {
       const availableBalanceForCurrency = this.xrdBalance.toString()

@@ -70,7 +70,7 @@ import { defineComponent, PropType } from 'vue'
 import { StakePosition, TokenBalance, TokenBalances } from '@radixdlt/application'
 import { AccountAddressT } from '@radixdlt/account'
 import { sumAmounts, subtract } from '@/helpers/arithmetic'
-import { Amount, AmountT, Denomination } from '@radixdlt/primitives'
+import { Amount, AmountT } from '@radixdlt/primitives'
 import BigAmount from '@/components/BigAmount.vue'
 
 const WalletOverview = defineComponent({
@@ -96,21 +96,21 @@ const WalletOverview = defineComponent({
   computed: {
     totalXRD (): AmountT {
       return this.tokenBalances.tokenBalances
-        ? sumAmounts(this.tokenBalances.tokenBalances.flatMap((item: TokenBalance) => item.amount)) || Amount.fromUnsafe(0, Denomination.Whole)._unsafeUnwrap()
-        : Amount.fromUnsafe(0, Denomination.Whole)._unsafeUnwrap()
+        ? sumAmounts(this.tokenBalances.tokenBalances.flatMap((item: TokenBalance) => item.amount)) || Amount.fromUnsafe(0)._unsafeUnwrap()
+        : Amount.fromUnsafe(0)._unsafeUnwrap()
     },
     totalStaked (): AmountT {
-      return sumAmounts(this.activeStakes.flatMap((item: StakePosition) => item.amount)) || Amount.fromUnsafe(0, Denomination.Whole)._unsafeUnwrap()
+      return sumAmounts(this.activeStakes.flatMap((item: StakePosition) => item.amount)) || Amount.fromUnsafe(0)._unsafeUnwrap()
     },
     availableXRD (): AmountT {
       if (!this.totalStaked) return this.totalXRD
-      if (!this.totalXRD) return Amount.fromUnsafe(0, Denomination.Whole)._unsafeUnwrap()
+      if (!this.totalXRD) return Amount.fromUnsafe(0)._unsafeUnwrap()
       else {
         const totalXRD: AmountT = this.totalXRD
         const totalStaked: AmountT = this.totalStaked
-        const res = subtract(totalXRD, totalStaked)
-        if (res.isOk()) return res.value
-        else return Amount.fromUnsafe(0, Denomination.Whole)._unsafeUnwrap()
+        return subtract(totalXRD, totalStaked)
+        // if (res.isOk()) return res.value
+        // else return Amount.fromUnsafe(0)._unsafeUnwrap()
       }
     },
     otherTokenBalances (): TokenBalance[] {

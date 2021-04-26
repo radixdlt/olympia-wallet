@@ -1,7 +1,8 @@
 import { AccountAddress, AccountAddressT } from '@radixdlt/account'
-import { Amount, AmountT, Denomination, DenominationOutputFormat } from '@radixdlt/primitives'
+import { Amount, AmountT } from '@radixdlt/primitives'
 import { Token } from '@radixdlt/application/src/dto/_types'
 import BigNumber from 'bignumber.js'
+import { tokenBalancesErr } from '@radixdlt/application/src/errors'
 
 export const safelyUnwrapAddress = (addressString: string): AccountAddressT | null => {
   const recipientAddressResult = AccountAddress.fromUnsafe(addressString)
@@ -23,7 +24,7 @@ export const safelyUnwrapAmount = (amount: number): AmountT | null => {
   // const denomination = amount < 0 ? Denomination.Atto : Denomination.Whole
 
   const amountInput = amount * 1000000000000000000
-  const amountResult = Amount.fromUnsafe(String(amountInput), Denomination.Atto)
+  const amountResult = Amount.fromUnsafe(String(amountInput))
   // returns error Error: Invalid character at assert
   if (amountResult && amountResult.isErr()) {
     console.log('Invalid amount string, did you input a number?')
@@ -36,9 +37,12 @@ export const safelyUnwrapAmount = (amount: number): AmountT | null => {
 }
 
 export const validateAmountOfType = (amount: AmountT, token: Token): boolean =>
-  amount.isMultipleOf(token.granularity)
+  Amount.isAmountMultipleOf({
+    amount: Amount.fromUnsafe(amount)._unsafeUnwrap(),
+    granularity: Amount.fromUnsafe(token.granularity)._unsafeUnwrap()
+  })
 
 export const validateGreaterThanZero = (amount: AmountT): boolean => {
   const zero = Amount.fromUnsafe(0)._unsafeUnwrap()
-  return amount.greaterThan(zero)
+  return amount.gt(zero)
 }
