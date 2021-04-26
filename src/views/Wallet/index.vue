@@ -56,7 +56,7 @@
         :transactions="transactionHistory.transactions"
         :activeAddress="activeAddress"
         :pendingTransactions="pendingTransactions"
-        :canGoBack="previousCursor !== ''"
+        :canGoBack="cursorStack !== ''"
         @refresh="refreshHistory"
         @next="nextPage"
         @previous="previousPage"
@@ -146,7 +146,7 @@ const WalletIndex = defineComponent({
     const view = ref('overview')
     const sidebar = ref('default')
     const draftTransaction = ref(null)
-    const previousCursor = ref('')
+    const cursorStack = ref([])
 
     const userDidConfirm = new Subject<boolean>()
     const userConfirmation = new Subject<ManualUserConfirmTX>()
@@ -200,9 +200,8 @@ const WalletIndex = defineComponent({
     historyPagination
       .pipe(mergeMap((params: TransactionHistoryOfKnownAddressRequestInput) => wallet.transactionHistory(params)))
       .subscribe((history: TransactionHistory) => {
-        // Store cursor for navigation back to previous page before updating view
-        if (transactionHistory.value && transactionHistory.value.cursor) previousCursor.value = transactionHistory.value.cursor
-        else previousCursor.value = ''
+        console.log('ALEX -- received history', cursorStack.value, history)
+        if (cursorStack.value.length <= 0) cursorStack.value = [history.cursor]
 
         transactionHistory.value = history
       })
@@ -285,7 +284,7 @@ const WalletIndex = defineComponent({
       // Cleanup subscriptions
       transactionDidComplete.subscribe((didComplete: boolean) => {
         if (didComplete) {
-          historyPagination.next({ size: 10 })
+          historyPagination.next({ size: 2 })
           createUserConfirmation.unsubscribe()
           watchUserDidConfirm.unsubscribe()
           trackingInitiated.unsubscribe()
@@ -353,27 +352,33 @@ const WalletIndex = defineComponent({
       confirmAndExecuteTransaction(unstakingTransactionTracking)
     }
 
-    historyPagination.next({ size: 10 })
+    historyPagination.next({ size: 2 })
 
     const refreshHistory = () => {
-      historyPagination.next({ size: 10 })
+      historyPagination.next({ size: 2 })
     }
 
     const nextPage = () => {
+      // Store cursor for navigation back to previous page before updating view
+      console.log('ALEX - next page')
+      if (transactionHistory.value && transactionHistory.value.cursor) cursorStack.value.push(transactionHistory.value.cursor)
       console.log('requesting next', {
-        size: 10,
-        cursor: transactionHistory.value.cursor
+        size: 2,
+        cursor: cursorStack.value[cursorStack.value.length]
       })
       historyPagination.next({
-        size: 10,
-        cursor: transactionHistory.value.cursor
+        size: 2,
+        cursor: cursorStack.value[cursorStack.value.length]
       })
     }
 
     const previousPage = () => {
+      console.log('ALEX - prev page')
+      console.log('prev cursor', cursorStack.value, 'next cursor', transactionHistory.value.cursor)
+      if (transactionHistory.value && transactionHistory.value.cursor) cursorStack.value.pop()
       historyPagination.next({
-        size: 10,
-        cursor: previousCursor.value
+        size: 2,
+        cursor: cursorStack.value ? cursorStack.value[cursorStack.value.length - 1] : ''
       })
     }
 
@@ -419,7 +424,7 @@ const WalletIndex = defineComponent({
       refreshHistory,
       nextPage,
       previousPage,
-      previousCursor,
+      cursorStack,
       requestFreeTokens
     }
   },

@@ -169,13 +169,15 @@ const WalletTransaction = defineComponent({
         const safeAmount = safelyUnwrapAmount(Number(this.values.amount))
         const token = this.selectedCurrency.token
         const validAmount = safeAmount && validateAmountOfType(safeAmount, token)
-        const greaterThanZero = safeAmount && validateGreaterThanZero(safeAmount)
+        // const greaterThanZero = safeAmount && validateGreaterThanZero(safeAmount)
+        console.log('my token', token)
 
-        if (!greaterThanZero) {
-          this.setErrors({
-            amount: this.$t('validations.greaterThanZero')
-          })
-        } else if (!validAmount) {
+        // if (!greaterThanZero) {
+        //   this.setErrors({
+        //     amount: this.$t('validations.greaterThanZero')
+        //   })
+        // } else
+        if (!validAmount) {
           this.setErrors({
             amount: this.$t('validations.amountOfType', { granularity: token.granularity.toString() })
           })

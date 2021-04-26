@@ -115,6 +115,7 @@ const WalletConfirmTransactionModal = defineComponent({
       return this.transferInput.to ? this.transferInput.to.toString() : this.stakeInput.validator.toString()
     },
     amount (): AmountOrUnsafeInput {
+      console.log(this.transferInput.amount.toString)
       return this.transferInput.amount ? this.transferInput.amount : this.stakeInput.amount
     },
     disableSubmit (): boolean {
