@@ -112,6 +112,7 @@ import ClickToCopy from '@/components/ClickToCopy.vue'
 import FormErrorMessage from '@/components/FormErrorMessage.vue'
 import FormField from '@/components/FormField.vue'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
+import { asBigNumber } from '@/components/BigAmount.vue'
 
 interface TransactionForm {
   recipient: string;
@@ -159,8 +160,10 @@ const WalletTransaction = defineComponent({
       return selectedCurrency || null
     },
     amountPlaceholder (): string {
-      const availableBalanceForCurrency = this.selectedCurrency && this.selectedCurrency.amount.toString()
-      return `${this.$t('transaction.amountPlaceholder')} ${availableBalanceForCurrency} `
+      if (this.selectedCurrency && this.selectedCurrency.amount) {
+        return `${this.$t('transaction.amountPlaceholder')} ${asBigNumber(this.selectedCurrency.amount)} `
+      }
+      return ''
     }
   },
 

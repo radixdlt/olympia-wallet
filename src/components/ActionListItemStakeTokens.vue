@@ -5,7 +5,7 @@
         <img src="@/assets/stakeTokens.svg" alt="receive tokens" />
         <span class="ml-2 text-sm">{{ $t('history.stakeAction') }}</span>
       </div>
-      <div><span class="text-rBlack">{{ action.amount.toString() }}</span> XRD</div>
+      <div><big-amount :amount="action.amount" class="text-rBlack"/> XRD</div>
     </div>
     <div class="flex flex-col items-end">
       <div class="flex flex-row flex-1 min-w-0">
@@ -22,9 +22,11 @@ import { ExecutedStakeTokensAction } from '@radixdlt/application'
 import ClickToCopy from '@/components/ClickToCopy.vue'
 import { formatAddressForDisplay } from '@/helpers/formatter'
 import { AccountAddressT } from '@radixdlt/account'
+import BigAmount from '@/components/BigAmount.vue'
 
 const ActionListItemStakeTokens = defineComponent({
   components: {
+    BigAmount,
     ClickToCopy
   },
 
