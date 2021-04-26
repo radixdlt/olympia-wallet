@@ -91,7 +91,7 @@
 
 <script lang="ts">
 import { defineComponent, onBeforeMount, onUnmounted } from 'vue'
-import { AccountT, AccountsT, AddressT } from '@radixdlt/account'
+import { AccountT, AccountsT, AccountAddressT } from '@radixdlt/account'
 import { Subscription, interval, Subject, Observable, combineLatest, from } from 'rxjs'
 import { Radix, TransferTokensOptions, StakePositions, TokenBalances, UnstakePositions, ManualUserConfirmTX, mockedAPI, TransactionTracking, StakeTokensInput, UnstakeTokensInput, TransactionStateUpdate, TransactionIdentifierT, TransactionHistoryOfKnownAddressRequestInput, TransactionHistory } from '@radixdlt/application'
 import { ref } from '@nopr3d/vue-next-rx'
@@ -170,7 +170,7 @@ const WalletIndex = defineComponent({
 
     const wallet = Radix
       .create()
-      .connect('https://54.73.253.49/rpc')
+      .connect('https://18.168.73.103/rpc')
       .withWallet(store.state.wallet) // wallet subscriptions don't work when we use the local wallet
       .withTokenBalanceFetchTrigger(interval(5 * 1_000))
 
@@ -181,7 +181,7 @@ const WalletIndex = defineComponent({
     radix.stakingPositions.subscribe((stakes: StakePositions) => { activeStakes.value = stakes }).add(subs)
     radix.unstakingPositions.subscribe((unstakes: UnstakePositions) => { activeUnstakes.value = unstakes }).add(subs)
     wallet.accounts.subscribe((accountsRes: AccountsT) => { accounts.value = accountsRes }).add(subs)
-    wallet.activeAddress.subscribe((addressRes: AddressT) => { activeAddress.value = addressRes }).add(subs)
+    wallet.activeAddress.subscribe((addressRes: AccountAddressT) => { activeAddress.value = addressRes }).add(subs)
 
     // wallet.errors.subscribe(
     //   (errorNotification) => {
@@ -383,7 +383,7 @@ const WalletIndex = defineComponent({
         }
       }
       from(
-        fetch('https://54.73.253.49/faucet/request', {
+        fetch('https://18.134.217.54/faucet/request', {
           method: 'POST',
           mode: 'no-cors',
           headers: { 'Content-Type': 'application/json' },

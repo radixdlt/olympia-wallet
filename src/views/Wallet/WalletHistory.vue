@@ -61,7 +61,7 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { ExecutedTransaction } from '@radixdlt/application'
-import { AddressT } from '@radixdlt/account'
+import { AccountAddressT } from '@radixdlt/account'
 import TransactionListItem from '@/components/TransactionListItem.vue'
 
 const WalletHistory = defineComponent({
@@ -76,7 +76,7 @@ const WalletHistory = defineComponent({
       default: []
     },
     activeAddress: {
-      type: Object as PropType<AddressT>,
+      type: Object as PropType<AccountAddressT>,
       required: true
     },
     pendingTransactions: {

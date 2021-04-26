@@ -1,9 +1,9 @@
-import { Address, AddressT } from '@radixdlt/account'
+import { AccountAddress, AccountAddressT } from '@radixdlt/account'
 import { Amount, AmountT, Denomination } from '@radixdlt/primitives'
 import { Token } from '@radixdlt/application/src/dto/_types'
 
-export const safelyUnwrapAddress = (addressString: string): AddressT | null => {
-  const recipientAddressResult = Address.fromBase58String(addressString)
+export const safelyUnwrapAddress = (addressString: string): AccountAddressT | null => {
+  const recipientAddressResult = AccountAddress.fromUnsafe(addressString)
   if (recipientAddressResult.isErr()) {
     // console.log(`Invalid addres string, error: ${recipientAddressResult.error.message}`)
     return null

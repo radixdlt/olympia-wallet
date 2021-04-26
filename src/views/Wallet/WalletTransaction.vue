@@ -102,7 +102,7 @@
 </template>
 
 <script lang="ts">
-import { AddressT } from '@radixdlt/account'
+import { AccountAddressT } from '@radixdlt/account'
 import { defineComponent, PropType } from 'vue'
 import { safelyUnwrapAddress, safelyUnwrapAmount, validateAmountOfType } from '@/helpers/validateRadixTypes'
 import { TokenBalance } from '@radixdlt/application'
@@ -134,7 +134,7 @@ const WalletTransaction = defineComponent({
 
   props: {
     activeAddress: {
-      type: Object as PropType<AddressT>,
+      type: Object as PropType<AccountAddressT>,
       required: true
     },
     tokenBalances: {

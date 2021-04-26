@@ -23,7 +23,7 @@
 <script lang="ts">
 import { defineComponent, PropType, watch } from 'vue'
 import { getAccountName, saveAccountName } from '@/actions/vue/data-store'
-import { AddressT } from '@radixdlt/account'
+import { AccountAddressT } from '@radixdlt/account'
 import { ref } from '@nopr3d/vue-next-rx'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
 
@@ -34,7 +34,7 @@ const AccountEditName = defineComponent({
 
   props: {
     activeAddress: {
-      type: Object as PropType<AddressT>,
+      type: Object as PropType<AccountAddressT>,
       required: true
     }
   },

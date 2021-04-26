@@ -74,7 +74,7 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { StakePosition, TokenBalance, TokenBalances } from '@radixdlt/application'
-import { AddressT } from '@radixdlt/account'
+import { AccountAddressT } from '@radixdlt/account'
 import { sumAmounts, subtract } from '@/helpers/arithmetic'
 import { Amount, AmountT, Denomination } from '@radixdlt/primitives'
 import BigAmount from '@/components/BigAmount.vue'
@@ -90,7 +90,7 @@ const WalletOverview = defineComponent({
       required: true
     },
     activeAddress: {
-      type: Object as PropType<AddressT>,
+      type: Object as PropType<AccountAddressT>,
       required: true
     },
     activeStakes: {
