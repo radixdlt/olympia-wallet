@@ -4,11 +4,15 @@
       <div class="w-72 mx-5 py-8">
         <img alt="Radix DLT Logo" src="../../assets/logo.svg" class="w-30 mb-10">
         <p class="text-white font-normal text-normal leading-snug mr-12">
-          {{ $t('home.welcomeOne') }}
+          <span class="text-lg"> {{ $t('home.welcomeOne') }} </span>
           <br/><br/>
-          {{ $t('home.welcomeTwo') }}
+          <span class="text-lg"> {{ $t('home.welcomeTwo') }} </span>
           <br/><br/>
-          {{ $t('home.welcomeThree') }}
+          <span class="text-sm"> {{ $t('home.welcomeThree') }} </span>
+          <br/><br/>
+          <span class="text-sm"> {{ $t('home.welcomeFour') }} </span>
+          <br/><br/>
+          <span class="text-sm"> {{ $t('home.welcomeFive') }} </span>
         </p>
       </div>
       <div class="py-8 flex flex-row">

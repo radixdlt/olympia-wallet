@@ -16,9 +16,11 @@ const messages = {
       greaterThanZero: 'Must be greater than 0'
     },
     home: {
-      welcomeOne: 'Welcome to the Radix Betanet.',
-      welcomeTwo: 'Decentralized finance applications are currently being built on protocols that were not designed to meet the needs and requirements of DeFi services.',
-      welcomeThree: 'Radix is using our significant technology innovations to be the first layer 1 protocol specifically built to serve the rapidly growing DeFi industry.',
+      welcomeOne: 'Welcome to the Radix Olympia Desktop Wallet.',
+      welcomeTwo: 'Betanet Version.',
+      welcomeThree: 'Decentralized finance applications are currently being built on protocols that were not designed to meet the needs and requirements of DeFi.',
+      welcomeFour: 'Radix is using our technology innovations to create the first layer 1 protocol specifically built to serve the rapidly growing DeFi world.',
+      welcomeFive: 'Olympia is the first release of the Radix mainnet with the XRD token, dPoS staking, low fees, and a simplified form of our Cerberus consensus protocol. It provides the decentralized network foundations for our future releases that will introduce a DeFi-focused developer experience and unlimited scalability.',
       passwordTitle: 'Enter your password to access your wallet',
       passwordPlaceholder: 'enter password',
       passwordButton: 'Open Wallet',
