@@ -47,7 +47,7 @@ const PinInput = defineComponent({
       }
     }
 
-    const { value, errorMessage } = useField<string>(props.name, 'required|length:4')
+    const { value, errorMessage } = useField<string>(props.name, 'required')
 
     return {
       inputRef,
