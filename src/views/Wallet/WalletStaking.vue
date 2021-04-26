@@ -81,7 +81,7 @@
 </template>
 
 <script lang="ts">
-import { AddressT } from '@radixdlt/account'
+import { AccountAddressT } from '@radixdlt/account'
 import { StakePosition, TokenBalance, TokenBalances, UnstakePosition } from '@radixdlt/application'
 import { defineComponent, PropType } from 'vue'
 import { useForm } from 'vee-validate'
@@ -116,7 +116,7 @@ const WalletStaking = defineComponent({
 
   props: {
     activeAddress: {
-      type: Object as PropType<AddressT>,
+      type: Object as PropType<AccountAddressT>,
       required: true
     },
     activeStakes: {
@@ -176,11 +176,11 @@ const WalletStaking = defineComponent({
       this.activeForm = form
       this.resetForm()
     },
-    handleAddToValidator (validator: AddressT) {
+    handleAddToValidator (validator: AccountAddressT) {
       this.activeForm = 'stake'
       this.values.validator = validator.toString()
     },
-    handleReduceFromValidator (validator: AddressT) {
+    handleReduceFromValidator (validator: AccountAddressT) {
       this.activeForm = 'unstake'
       this.values.validator = validator.toString()
     },

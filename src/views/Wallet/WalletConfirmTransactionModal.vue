@@ -58,7 +58,7 @@
 </template>
 
 <script lang="ts">
-import { AddressT } from '@radixdlt/account'
+import { AccountAddressT } from '@radixdlt/account'
 import { AmountOrUnsafeInput, AmountT } from '@radixdlt/primitives'
 import { StakeTokensInput, TransferTokensInput } from '@radixdlt/application'
 import { defineComponent, PropType } from 'vue'
@@ -87,7 +87,7 @@ const WalletConfirmTransactionModal = defineComponent({
 
   props: {
     activeAddress: {
-      type: Object as PropType<AddressT>,
+      type: Object as PropType<AccountAddressT>,
       required: true
     },
     transferInput: {

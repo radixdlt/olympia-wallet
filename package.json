@@ -1,6 +1,6 @@
 {
-  "name": "radixdlt-desktop-wallet",
-  "version": "0.1.0",
+  "name": "radix-olympia-desktop-wallet",
+  "version": "0.1.4",
   "private": true,
   "description": "an electron desktop wallet for Radix DLT",
   "author": "Township",
@@ -18,8 +18,8 @@
   "dependencies": {
     "@babel/core": "^7.13.10",
     "@nopr3d/vue-next-rx": "^1.0.6",
-    "@radixdlt/account": "^1.0.22",
-    "@radixdlt/application": "^1.0.27",
+    "@radixdlt/account": "^1.0.25",
+    "@radixdlt/application": "^1.0.32",
     "@radixdlt/crypto": "^1.0.21",
     "@radixdlt/data-formats": "^1.0.18",
     "@radixdlt/hardware-wallet": "^1.0.10",
