@@ -29,11 +29,7 @@ import ClickToCopy from '@/components/ClickToCopy.vue'
 import { Subscription } from 'rxjs'
 import { ref } from '@nopr3d/vue-next-rx'
 import { getAccountName } from '@/actions/vue/data-store'
-
-const composeDisplayAddress = function (address: AccountAddressT) {
-  const s = address.toString()
-  return s.substring(0, 8) + '...' + s.substring(s.length - 8)
-}
+import { formatAddressForDisplay } from '@/helpers/formatter'
 
 const AccountListItem = defineComponent({
   components: {
@@ -66,7 +62,7 @@ const AccountListItem = defineComponent({
         .then((storedName: string) => { name.value = storedName || a.toString() })
     }).add(subs)
 
-    const displayAddress = composeDisplayAddress(address.value)
+    const displayAddress = formatAddressForDisplay(address.value)
     return { address, displayAddress, name }
   },
 
