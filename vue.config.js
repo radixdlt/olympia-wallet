@@ -2,6 +2,11 @@ module.exports = {
   pluginOptions: {
     electronBuilder: {
       builderOptions: {
+        publish: {
+          provider: 'github',
+          private: true,
+          releaseType: 'release'
+        },
         snap: {
           publish: 'github'
         },
