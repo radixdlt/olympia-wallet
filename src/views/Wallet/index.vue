@@ -175,7 +175,7 @@ const WalletIndex = defineComponent({
       .create()
       .connect('https://18.168.73.103/rpc')
       .withWallet(store.state.wallet) // wallet subscriptions don't work when we use the local wallet
-      .withTokenBalanceFetchTrigger(interval(30 * 1_000))
+      .withTokenBalanceFetchTrigger(interval(5 * 1_000))
 
     const subs = new Subscription()
 
@@ -207,7 +207,10 @@ const WalletIndex = defineComponent({
         })
     }
 
-    const switchAccount = (account: AccountT) => wallet.switchAccount({ toAccount: account })
+    const switchAccount = (account: AccountT) => {
+      tokenBalances.value = []
+      wallet.switchAccount({ toAccount: account })
+    }
 
     const confirmTransaction = () => userDidConfirm.next(true)
 
