@@ -9,7 +9,7 @@
         <img src="@/assets/sendTokens.svg" alt="send tokens" />
         <span class="ml-2 text-sm">{{ $t('history.sentAction') }}</span>
       </div>
-      <div><big-amount :amount="action.amount" class="text-rBlack"/> XRD</div>
+      <div><big-amount :amount="action.amount" class="text-rBlack"/> {{ this.action.rri.name.toUpperCase() }}</div>
     </div>
     <div class="flex flex-col items-end">
       <div v-if="!isRecipient" class="flex flex-row flex-1 min-w-0">
@@ -55,7 +55,6 @@ const ActionListItemTransferTokens = defineComponent({
 
   computed: {
     isRecipient (): boolean {
-      console.log('ACTIVE ADDRESS', this.activeAddress)
       if (!this.activeAddress) return false
       return this.action.to.toString() === this.activeAddress.toString()
     }
