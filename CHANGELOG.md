@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.3.0](https://www.github.com/township-agency/radixdlt-desktop-wallet/compare/v0.2.0...v0.3.0) (2021-04-27)
+
+
+### Features
+
+* Send Token Refinements ([#41](https://www.github.com/township-agency/radixdlt-desktop-wallet/issues/41)) ([e227007](https://www.github.com/township-agency/radixdlt-desktop-wallet/commit/e2270070a0c25f0b1f3c31e15013e0d0f3c80a04))
+* update README ([4e35bf4](https://www.github.com/township-agency/radixdlt-desktop-wallet/commit/4e35bf4faa204aeef0a47129977796831694d346))
+
+
+### Bug Fixes
+
+* Cancel transaction subscriptions when the user cancels transaction ([#42](https://www.github.com/township-agency/radixdlt-desktop-wallet/issues/42)) ([2fd939d](https://www.github.com/township-agency/radixdlt-desktop-wallet/commit/2fd939d0f79eaf45a6240985eca65e9f8860698a))
+* try to get all the versions to match ([#44](https://www.github.com/township-agency/radixdlt-desktop-wallet/issues/44)) ([5dcde25](https://www.github.com/township-agency/radixdlt-desktop-wallet/commit/5dcde25ed8eaa8a88d09b1db9bd6f20fefc66c80))
+
+
+### Dependencies
+
+* bump version and improve browser window ([259f414](https://www.github.com/township-agency/radixdlt-desktop-wallet/commit/259f41475ac2942261f9734ffa745d9b4789e60a))
+* Update Release Please ([8e0b9e5](https://www.github.com/township-agency/radixdlt-desktop-wallet/commit/8e0b9e5185ae0b57ae3cb01bea6b0852f88c153c))
+
 ## [0.3.0](https://www.github.com/township-agency/radixdlt-desktop-wallet/compare/v1.1.0...v0.2.0) (2021-04-27)
 
 ### Nothing Here
