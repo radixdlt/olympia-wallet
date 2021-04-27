@@ -74,7 +74,7 @@
         :stakeInput="stakeInput"
         :transactionFee="transactionFee"
         :selectedCurrency="selectedCurrency"
-        @cancel="shouldShowConfirmation = false"
+        @cancel="cancelTransaction"
         @confirm="confirmTransaction"
       >
       </wallet-confirm-transaction-modal>
@@ -162,6 +162,7 @@ const WalletIndex = defineComponent({
     const walletTransactionComponent = ref(null)
 
     const userDidConfirm = new Subject<boolean>()
+    const userDidCancel = new Subject<boolean>()
     const userConfirmation = new Subject<ManualUserConfirmTX>()
     const historyPagination = new Subject<TransactionHistoryOfKnownAddressRequestInput>()
     const faucetParams = new Subject<number>()
@@ -223,6 +224,8 @@ const WalletIndex = defineComponent({
 
     const confirmTransaction = () => userDidConfirm.next(true)
 
+    const cancelTransaction = () => userDidCancel.next(true)
+
     // Update transaction history whenever params change
     historyPagination
       .pipe(mergeMap((params: TransactionHistoryOfKnownAddressRequestInput) => wallet.transactionHistory(params)))
@@ -242,6 +245,7 @@ const WalletIndex = defineComponent({
     const confirmAndExecuteTransaction = (transactionTracking: TransactionTracking) => {
       const transactionDidComplete = new Subject<boolean>()
       transactionDidComplete.next(false)
+      userDidCancel.next(false)
 
       // Subscribe to initial userConfirmation and display modal
       const createUserConfirmation = userConfirmation
@@ -280,18 +284,6 @@ const WalletIndex = defineComponent({
         })
       trackingSubmittedEvents.add(subs)
 
-      // Log transaction status to console for now
-      const trackingAllEvents = transactionTracking.events
-        .subscribe({
-          next: (values: any) => {
-            console.log('transaction tracking', values)
-          },
-          error: (e: any) => {
-            console.warn('error', e)
-          }
-        })
-      trackingAllEvents.add(subs)
-
       // Log transaction completed/error to console for now
       const trackingCompletion = transactionTracking.completion
         .subscribe({
@@ -299,8 +291,8 @@ const WalletIndex = defineComponent({
             pendingTransactions.value = pendingTransactions.value.filter((pendingTxn: any) => txnID.toString() !== pendingTxn.transactionState.txID.toString())
             transactionDidComplete.next(true)
           },
-          error: (e: Error) => {
-            console.warn('error', e)
+          error: () => {
+            userDidCancel.next(true)
             walletTransactionComponent.value.setErrors({
               amount: t('validations.transactionFailed')
             })
@@ -308,16 +300,25 @@ const WalletIndex = defineComponent({
         })
       trackingCompletion.add(subs)
 
-      // Cleanup subscriptions
+      // Cleanup subscriptions on cancel and complete
+      const cleanupTransactionSubs = () => {
+        createUserConfirmation.unsubscribe()
+        watchUserDidConfirm.unsubscribe()
+        trackingInitiated.unsubscribe()
+        trackingSubmittedEvents.unsubscribe()
+        trackingCompletion.unsubscribe()
+      }
+      userDidCancel.subscribe((didCancel: boolean) => {
+        if (didCancel) {
+          cleanupTransactionSubs()
+          shouldShowConfirmation.value = false
+        }
+      })
+
       transactionDidComplete.subscribe((didComplete: boolean) => {
         if (didComplete) {
+          cleanupTransactionSubs()
           historyPagination.next({ size: 10 })
-          createUserConfirmation.unsubscribe()
-          watchUserDidConfirm.unsubscribe()
-          trackingInitiated.unsubscribe()
-          trackingSubmittedEvents.unsubscribe()
-          trackingAllEvents.unsubscribe()
-          trackingCompletion.unsubscribe()
         }
       }).add(subs)
     }
@@ -421,35 +422,45 @@ const WalletIndex = defineComponent({
     onUnmounted(() => subs.unsubscribe())
 
     return {
+      // data
       accounts,
       activeAccount,
       activeAddress,
       activeStakes,
       activeUnstakes,
-      confirmTransaction,
       tokenBalances,
-      addAccount,
       transactionHistory,
       transactionFee,
       transferInput,
       stakeInput,
+      pendingTransactions,
+      cursorStack,
+      nativeToken,
+      selectedCurrency,
+
+      // view flags
+      view,
+      sidebar,
+
+      // boolean flags
+      canGoNext,
+      shouldShowConfirmation,
+
+      // methods
       switchAccount,
+      confirmTransaction,
+      cancelTransaction,
+      addAccount,
       transferTokens,
       stakeTokens,
       unstakeTokens,
-      shouldShowConfirmation,
-      pendingTransactions,
-      view,
-      sidebar,
       refreshHistory,
       nextPage,
       previousPage,
-      cursorStack,
       requestFreeTokens,
-      canGoNext,
-      walletTransactionComponent,
-      nativeToken,
-      selectedCurrency
+
+      // child component refs
+      walletTransactionComponent
     }
   },
 
