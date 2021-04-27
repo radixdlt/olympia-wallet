@@ -1,7 +1,10 @@
 # Changelog
 
-## [0.2.0](https://www.github.com/township-agency/radixdlt-desktop-wallet/compare/v1.1.0...v0.2.0) (2021-04-27)
+## [0.3.0](https://www.github.com/township-agency/radixdlt-desktop-wallet/compare/v1.1.0...v0.2.0) (2021-04-27)
 
+### Nothing Here
+
+## [0.2.0](https://www.github.com/township-agency/radixdlt-desktop-wallet/compare/v1.1.0...v0.2.0) (2021-04-27)
 
 ### Features
 
