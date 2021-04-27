@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.3.1](https://www.github.com/township-agency/radixdlt-desktop-wallet/compare/v0.3.0...v0.3.1) (2021-04-27)
+
+
+### Bug Fixes
+
+* delete version.txt ([#46](https://www.github.com/township-agency/radixdlt-desktop-wallet/issues/46)) ([e557902](https://www.github.com/township-agency/radixdlt-desktop-wallet/commit/e55790294a274bd8de397408f3e2bcd3d11ec144))
+
 ## [0.3.0](https://www.github.com/township-agency/radixdlt-desktop-wallet/compare/v0.2.0...v0.3.0) (2021-04-27)
 
 
