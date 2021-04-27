@@ -56,7 +56,7 @@
           <div class="flex flex-row py-1 divide-x divide-rGray border border-rGray rounded-md">
             <div class="flex-1 flex flex-row items-center px-8 overflow-x-scroll p-2 m-2.5">
               <big-amount :amount="tokenBalance.amount" class="text-4xl font-light mr-4 text-rBlack" />
-              <div class="font-thin text-rGrayMark bg-rGrayLight border border-rGray py-0.5 px-1 rounded borderself-end">{{ tokenBalance.token.name }}</div>
+              <div class="font-thin text-rGrayMark bg-rGrayLight border border-rGray py-0.5 px-1 rounded borderself-end">{{ tokenBalance.token.symbol.toUpperCase() }}</div>
             </div>
           </div>
         </div>
@@ -100,22 +100,26 @@ const WalletOverview = defineComponent({
         : Amount.fromUnsafe(0)._unsafeUnwrap()
     },
     totalStaked (): AmountT {
-      return sumAmounts(this.activeStakes.flatMap((item: StakePosition) => item.amount)) || Amount.fromUnsafe(0)._unsafeUnwrap()
+      return Amount.fromUnsafe(0)._unsafeUnwrap()
+      // return sumAmounts(this.activeStakes.flatMap((item: StakePosition) => item.amount)) || Amount.fromUnsafe(0)._unsafeUnwrap()
     },
     availableXRD (): AmountT {
-      if (!this.totalStaked) return this.totalXRD
-      if (!this.totalXRD) return Amount.fromUnsafe(0)._unsafeUnwrap()
-      else {
-        const totalXRD: AmountT = this.totalXRD
-        const totalStaked: AmountT = this.totalStaked
-        return subtract(totalXRD, totalStaked)
-        // if (res.isOk()) return res.value
-        // else return Amount.fromUnsafe(0)._unsafeUnwrap()
-      }
+      // TODO: remove this when staking is implemented
+      return this.totalXRD
+
+      // if (!this.totalStaked) return this.totalXRD
+      // if (!this.totalXRD) return Amount.fromUnsafe(0)._unsafeUnwrap()
+      // else {
+      //   const totalXRD: AmountT = this.totalXRD
+      //   const totalStaked: AmountT = this.totalStaked
+      //   return subtract(totalXRD, totalStaked)
+      //   // if (res.isOk()) return res.value
+      //   // else return Amount.fromUnsafe(0)._unsafeUnwrap()
+      // }
     },
     otherTokenBalances (): TokenBalance[] {
       return this.tokenBalances.tokenBalances
-        ? this.tokenBalances.tokenBalances.filter((item: TokenBalance) => item.token.name !== 'XRD')
+        ? this.tokenBalances.tokenBalances.filter((item: TokenBalance) => item.token.symbol !== 'xrd')
         : []
     }
   },

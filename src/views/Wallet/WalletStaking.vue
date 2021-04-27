@@ -1,5 +1,8 @@
 <template>
-  <div class="bg-rGrayLightest flex flex-row w-full p-5 flex-1 h-screen overflow-y-scroll">
+  <div v-if=true class="bg-rGrayLightest flex flex-row w-full p-5 flex-1 h-screen">
+    Staking & Unstaking Coming Soon
+  </div>
+  <div v-if=false class="bg-rGrayLightest flex flex-row w-full p-5 flex-1 h-screen overflow-y-scroll">
     <div class="flex-flex-col flex-1">
       <div class="flex flex-row">
         <tabs-tab :isActive="activeForm == 'stake'" @click="() => setForm('stake')">{{ $t('staking.stakeTab') }}</tabs-tab>

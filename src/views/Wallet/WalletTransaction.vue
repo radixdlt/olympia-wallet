@@ -64,7 +64,7 @@
                   :key="token.token.name"
                   :value="token.token.name"
                 >
-                  {{ token.token.name }}
+                  {{ token.token.symbol.toUpperCase() }}
                 </option>
               </select>
             </div>
