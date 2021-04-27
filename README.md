@@ -1,4 +1,5 @@
 # radixdlt-desktop-wallet
+Welcome to the Radix Wallet README.
 
 ## Project setup
 ```
