@@ -45,12 +45,13 @@ const HomeEnterPasscode = defineComponent({
   },
 
   setup () {
-    const { errors, values, meta } = useForm<PasswordForm>()
+    const { errors, values, meta, setErrors } = useForm<PasswordForm>()
 
     return {
       errors,
       values,
-      meta
+      meta,
+      setErrors
     }
   },
 
