@@ -9,7 +9,7 @@
         <img src="@/assets/sendTokens.svg" alt="send tokens" />
         <span class="ml-2 text-sm">{{ $t('history.sentAction') }}</span>
       </div>
-      <div><span class="text-rBlack">{{ action.amount.toString() }}</span> XRD</div>
+      <div><big-amount :amount="action.amount" class="text-rBlack"/> {{ this.action.rri.name.toUpperCase() }}</div>
     </div>
     <div class="flex flex-col items-end">
       <div v-if="!isRecipient" class="flex flex-row flex-1 min-w-0">
@@ -30,9 +30,11 @@ import { ExecutedTransferTokensAction } from '@radixdlt/application'
 import { AccountAddressT } from '@radixdlt/account'
 import ClickToCopy from '@/components/ClickToCopy.vue'
 import { formatAddressForDisplay } from '@/helpers/formatter'
+import BigAmount from '@/components/BigAmount.vue'
 
 const ActionListItemTransferTokens = defineComponent({
   components: {
+    BigAmount,
     ClickToCopy
   },
 
@@ -53,7 +55,6 @@ const ActionListItemTransferTokens = defineComponent({
 
   computed: {
     isRecipient (): boolean {
-      console.log('ACTIVE ADDRESS', this.activeAddress)
       if (!this.activeAddress) return false
       return this.action.to.toString() === this.activeAddress.toString()
     }

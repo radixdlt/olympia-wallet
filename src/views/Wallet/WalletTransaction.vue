@@ -64,7 +64,7 @@
                   :key="token.token.name"
                   :value="token.token.name"
                 >
-                  {{ token.token.name }}
+                  {{ token.token.symbol.toUpperCase() }}
                 </option>
               </select>
             </div>
@@ -90,7 +90,7 @@
           </div>
         </div>
 
-        <ButtonSubmit :disabled="false" class="w-52 ml-full">
+        <ButtonSubmit :disabled="disableSubmit" class="w-52 ml-full">
           {{ $t('transaction.sendButton') }}
         </ButtonSubmit>
       </form>
@@ -112,6 +112,7 @@ import ClickToCopy from '@/components/ClickToCopy.vue'
 import FormErrorMessage from '@/components/FormErrorMessage.vue'
 import FormField from '@/components/FormField.vue'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
+import { asBigNumber } from '@/components/BigAmount.vue'
 
 interface TransactionForm {
   recipient: string;
@@ -159,8 +160,13 @@ const WalletTransaction = defineComponent({
       return selectedCurrency || null
     },
     amountPlaceholder (): string {
-      const availableBalanceForCurrency = this.selectedCurrency && this.selectedCurrency.amount.toString()
-      return `${this.$t('transaction.amountPlaceholder')} ${availableBalanceForCurrency} `
+      if (this.selectedCurrency && this.selectedCurrency.amount) {
+        return `${this.$t('transaction.amountPlaceholder')} ${asBigNumber(this.selectedCurrency.amount)} `
+      }
+      return ''
+    },
+    disableSubmit (): boolean {
+      return this.meta.dirty ? !this.meta.valid : true
     }
   },
 
@@ -171,7 +177,6 @@ const WalletTransaction = defineComponent({
         const safeAmount = safelyUnwrapAmount(Number(this.values.amount))
         const token = this.selectedCurrency.token
         const validAmount = safeAmount && validateAmountOfType(safeAmount, token)
-        console.log('my token', token)
 
         if (!validAmount) {
           this.setErrors({

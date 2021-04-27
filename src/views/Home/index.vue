@@ -32,6 +32,7 @@
       >
         <home-enter-passcode
           @submit="loginWithWallet"
+          ref="enterPasscodeComponent"
         ></home-enter-passcode>
       </div>
     </template>
@@ -40,7 +41,7 @@
 
 <script lang="ts">
 import { defineComponent, reactive } from 'vue'
-import { Radix, mockedAPI } from '@radixdlt/application'
+import { Radix, ErrorNotification, WalletErrorCause } from '@radixdlt/application'
 import { WalletT } from '@radixdlt/account'
 import { hasKeystore, touchKeystore } from '@/actions/vue/create-wallet'
 import { useStore } from '@/store'
@@ -49,6 +50,9 @@ import HomeEnterPasscode from './HomeEnterPasscode.vue'
 import LoadingIcon from '@/components/LoadingIcon.vue'
 import { Subscription } from 'rxjs'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
+import { ref } from '@nopr3d/vue-next-rx'
+import { filter } from 'rxjs/operators'
 
 const CreateWallet = defineComponent({
   components: {
@@ -61,10 +65,24 @@ const CreateWallet = defineComponent({
     const hasWallet = reactive({ value: null as boolean | null })
     const store = useStore()
     const router = useRouter()
+    const { t } = useI18n({ useScope: 'global' })
+
+    const enterPasscodeComponent = ref(null)
+
     const radix = Radix
       .create()
       .connect('https://18.168.73.103/rpc')
     const subs = new Subscription()
+
+    radix.errors
+      .pipe(filter((errorNotification: ErrorNotification) => errorNotification.cause === WalletErrorCause.LOAD_KEYSTORE_FAILED))
+      .subscribe(
+        () => {
+          enterPasscodeComponent.value.setErrors({
+            password: t('validations.incorrectPassword')
+          })
+        }
+      )
 
     // Move user to wallet when a wallet is successfully retrieved
     radix.__wallet.subscribe((wallet: WalletT) => {
@@ -84,7 +102,9 @@ const CreateWallet = defineComponent({
       // state
       hasWallet,
       // methods
-      loginWithWallet
+      loginWithWallet,
+      // component refs
+      enterPasscodeComponent
     }
   }
 })
