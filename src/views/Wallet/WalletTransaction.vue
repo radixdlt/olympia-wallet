@@ -217,7 +217,7 @@ const WalletTransaction = defineComponent({
             to: safeAddress,
             amount: safeAmount,
             tokenIdentifier: token.rri.toString()
-          })
+          }, this.selectedCurrency)
         }
       }
     }
