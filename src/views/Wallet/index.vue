@@ -37,6 +37,7 @@
         :activeAddress="activeAddress"
         :tokenBalances="tokenBalances.tokenBalances"
         :shouldShowConfirmation="shouldShowConfirmation"
+        :nativeToken="nativeToken"
         @transferTokens="transferTokens"
         ref="walletTransactionComponent"
       >
