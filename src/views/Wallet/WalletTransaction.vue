@@ -90,7 +90,7 @@
           </div>
         </div>
 
-        <ButtonSubmit :disabled="false" class="w-52 ml-full">
+        <ButtonSubmit :disabled="disableSubmit" class="w-52 ml-full">
           {{ $t('transaction.sendButton') }}
         </ButtonSubmit>
       </form>
@@ -164,6 +164,9 @@ const WalletTransaction = defineComponent({
         return `${this.$t('transaction.amountPlaceholder')} ${asBigNumber(this.selectedCurrency.amount)} `
       }
       return ''
+    },
+    disableSubmit (): boolean {
+      return this.meta.dirty ? !this.meta.valid : true
     }
   },
 

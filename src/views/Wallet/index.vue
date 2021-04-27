@@ -37,6 +37,7 @@
         :tokenBalances="tokenBalances.tokenBalances"
         :shouldShowConfirmation="shouldShowConfirmation"
         @transferTokens="transferTokens"
+        ref="walletTransactionComponent"
       >
       </wallet-transaction>
 
@@ -109,6 +110,7 @@ import AccountEditName from '@/views/Account/AccountEditName.vue'
 import SettingsIndex from '@/views/Settings/index.vue'
 import { filter, mergeMap } from 'rxjs/operators'
 import { getDerivedAccountsIndex, saveDerivedAccountsIndex } from '@/actions/vue/data-store'
+import { useI18n } from 'vue-i18n'
 
 const WalletIndex = defineComponent({
   components: {
@@ -131,6 +133,7 @@ const WalletIndex = defineComponent({
   setup (props) {
     const store = useStore()
     const router = useRouter()
+    const { t } = useI18n({ useScope: 'global' })
 
     const activeAccount = ref(null)
     const activeAddress = ref(null)
@@ -150,6 +153,8 @@ const WalletIndex = defineComponent({
     const draftTransaction = ref(null)
     const cursorStack = ref([])
     const canGoNext = ref(false)
+
+    const walletTransactionComponent = ref(null)
 
     const userDidConfirm = new Subject<boolean>()
     const userConfirmation = new Subject<ManualUserConfirmTX>()
@@ -191,9 +196,7 @@ const WalletIndex = defineComponent({
         if ((Number(accountsIndex)) > 0) {
           wallet.restoreAccountsUpToIndex(Number(accountsIndex))
             .subscribe(
-              (accountRes: AccountsT) => {
-                accounts.value = accountRes
-              })
+              (accountRes: AccountsT) => { accounts.value = accountRes })
         } else {
           saveDerivedAccountsIndex(0)
         }
@@ -290,8 +293,11 @@ const WalletIndex = defineComponent({
             pendingTransactions.value = pendingTransactions.value.filter((pendingTxn: any) => txnID.toString() !== pendingTxn.transactionState.txID.toString())
             transactionDidComplete.next(true)
           },
-          error: (e: any) => {
+          error: (e: Error) => {
             console.warn('error', e)
+            walletTransactionComponent.value.setErrors({
+              amount: t('validations.transactionFailed')
+            })
           }
         })
       trackingCompletion.add(subs)
@@ -433,7 +439,8 @@ const WalletIndex = defineComponent({
       previousPage,
       cursorStack,
       requestFreeTokens,
-      canGoNext
+      canGoNext,
+      walletTransactionComponent
     }
   },
 

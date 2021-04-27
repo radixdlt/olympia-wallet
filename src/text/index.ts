@@ -1,4 +1,4 @@
-import { createI18n } from 'vue-i18n'
+import { createI18n, useI18n as vueUseI18n } from 'vue-i18n'
 
 const messages = {
   en: {
@@ -13,7 +13,8 @@ const messages = {
       amountOfType: 'Requested amount to send is not a mulltiple of token granularity (%{granularity}), will be unable to send',
       invalidPin: 'Your pin was not a match. Try again.',
       incorrectPassword: 'Your password is incorrect. Try again.',
-      greaterThanZero: 'Must be greater than 0'
+      greaterThanZero: 'Must be greater than 0',
+      transactionFailed: 'Your transaction failed. Check that you have sufficient XRD to cover the transfer plus fee and that your amount is a multiple of the granularity.'
     },
     home: {
       welcomeOne: 'Welcome to the Radix Olympia Desktop Wallet.',
@@ -148,5 +149,7 @@ const messages = {
 
 export const i18n = createI18n({
   locale: 'en',
+  legacy: false,
+  globalInjection: true,
   messages
 })
