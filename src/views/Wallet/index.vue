@@ -27,6 +27,7 @@
         :activeStakes="activeStakes"
         :activeUnstakes="activeUnstakes"
         :tokenBalances="tokenBalances"
+        :nativeToken="nativeToken"
         @requestFreeTokens="requestFreeTokens"
       >
       </wallet-overview>
@@ -95,7 +96,7 @@
 import { defineComponent, onBeforeMount, onUnmounted } from 'vue'
 import { AccountT, AccountsT, AccountAddressT } from '@radixdlt/account'
 import { Subscription, interval, Subject, Observable, combineLatest, from } from 'rxjs'
-import { Radix, TransferTokensOptions, StakePositions, TokenBalances, UnstakePositions, ManualUserConfirmTX, mockedAPI, TransactionTracking, StakeTokensInput, UnstakeTokensInput, TransactionStateUpdate, TransactionIdentifierT, TransactionHistoryOfKnownAddressRequestInput, TransactionHistory } from '@radixdlt/application'
+import { Radix, TransferTokensOptions, StakePositions, TokenBalances, UnstakePositions, ManualUserConfirmTX, mockedAPI, TransactionTracking, StakeTokensInput, UnstakeTokensInput, TransactionStateUpdate, TransactionIdentifierT, TransactionHistoryOfKnownAddressRequestInput, TransactionHistory, Token } from '@radixdlt/application'
 import { ref } from '@nopr3d/vue-next-rx'
 import { useStore } from '@/store'
 import { useRouter } from 'vue-router'
@@ -153,6 +154,7 @@ const WalletIndex = defineComponent({
     const draftTransaction = ref(null)
     const cursorStack = ref([])
     const canGoNext = ref(false)
+    const nativeToken = ref(null)
 
     const walletTransactionComponent = ref(null)
 
@@ -190,6 +192,7 @@ const WalletIndex = defineComponent({
     radix.unstakingPositions.subscribe((unstakes: UnstakePositions) => { activeUnstakes.value = unstakes }).add(subs)
     wallet.accounts.subscribe((accountsRes: AccountsT) => { accounts.value = accountsRes }).add(subs)
     wallet.activeAddress.subscribe((addressRes: AccountAddressT) => { activeAddress.value = addressRes }).add(subs)
+    wallet.ledger.nativeToken().subscribe((nativeTokenRes: Token) => { nativeToken.value = nativeTokenRes }).add(subs)
 
     getDerivedAccountsIndex()
       .then((accountsIndex: string) => {
@@ -440,7 +443,8 @@ const WalletIndex = defineComponent({
       cursorStack,
       requestFreeTokens,
       canGoNext,
-      walletTransactionComponent
+      walletTransactionComponent,
+      nativeToken
     }
   },
 
