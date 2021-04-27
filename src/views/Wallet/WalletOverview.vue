@@ -67,7 +67,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { StakePosition, TokenBalance, TokenBalances } from '@radixdlt/application'
+import { StakePosition, Token, TokenBalance, TokenBalances } from '@radixdlt/application'
 import { AccountAddressT } from '@radixdlt/account'
 import { sumAmounts, subtract } from '@/helpers/arithmetic'
 import { Amount, AmountT } from '@radixdlt/primitives'
@@ -90,14 +90,20 @@ const WalletOverview = defineComponent({
     activeStakes: {
       type: Array as PropType<Array<StakePosition>>,
       required: true
+    },
+    nativeToken: {
+      type: Object as PropType<Token>,
+      required: false
     }
   },
 
   computed: {
     totalXRD (): AmountT {
-      return this.tokenBalances.tokenBalances
-        ? sumAmounts(this.tokenBalances.tokenBalances.flatMap((item: TokenBalance) => item.amount)) || Amount.fromUnsafe(0)._unsafeUnwrap()
-        : Amount.fromUnsafe(0)._unsafeUnwrap()
+      if (!this.nativeToken) return Amount.fromUnsafe(0)._unsafeUnwrap()
+      const xrdTokenBalance = this.tokenBalances.tokenBalances.find((tb: TokenBalance) => tb.token.rri.equals(this.nativeToken!.rri))
+      if (!xrdTokenBalance) return Amount.fromUnsafe(0)._unsafeUnwrap()
+      const xrdAmount = Amount.fromUnsafe(xrdTokenBalance.amount)
+      return xrdAmount.isErr() ? Amount.fromUnsafe(0)._unsafeUnwrap() : xrdAmount.value
     },
     totalStaked (): AmountT {
       return Amount.fromUnsafe(0)._unsafeUnwrap()
