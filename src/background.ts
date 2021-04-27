@@ -25,7 +25,11 @@ async function createWindow () {
   // Create the browser window.
   const win = new BrowserWindow({
     width: 1200,
-    height: 600,
+    height: 850,
+    maxWidth: 1200,
+    maxHeight: 850,
+    minWidth: 1200,
+    minHeight: 850,
     webPreferences: {
 
       // Required for Spectron testing
@@ -35,7 +39,8 @@ async function createWindow () {
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
       nodeIntegration: (process.env
         .ELECTRON_NODE_INTEGRATION as unknown) as boolean,
-      preload: path.join(__dirname, 'preload.js')
+      preload: path.join(__dirname, 'preload.js'),
+      devTools: false
     }
   })
 
