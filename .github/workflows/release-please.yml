@@ -10,7 +10,6 @@ jobs:
       - uses: GoogleCloudPlatform/release-please-action@v2
         id: release
         with:
-          token: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
           release-type: node
           package-name: radixdtl-desktop-wallet
           changelog-types: '[{"type":"feat","section":"Features","hidden":false},{"type":"fix","section":"Bug Fixes","hidden":false},{"type":"docs","section":"Documentation","hidden":false},{"type":"chore","section":"Dependencies","hidden":false},{"type":"security","section":"Security","hidden":false},{"type":"style","section":"Code Style","hidden":false},{"type":"test","section":"Test Coverage","hidden":false}]'
