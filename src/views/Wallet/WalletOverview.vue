@@ -20,21 +20,21 @@
           <span class="text-sm text-rGrayDark">{{ $t('wallet.totalTokens') }}</span>
           <div class="flex flex-row items-end">
             <big-amount :amount="totalXRD" class="text-4xl font-light mr-4 text-rGreen" />
-            <div class="font-thin text-rGrayMark bg-rGrayLight border border-rGray py-0.5 px-1 rounded borderself-end">XRD</div>
+            <token-symbol>XRD</token-symbol>
           </div>
         </div>
         <div class="flex flex-col my-3 px-5 border-r border-rGray flex-1">
           <span class="text-sm text-rGrayDark">{{ $t('wallet.availableTokens') }}</span>
           <div class="flex flex-row items-end">
             <big-amount :amount="availableXRD" class="text-4xl font-light mr-4 text-rBlack" />
-            <div class="font-thin text-rGrayMark bg-rGrayLight border border-rGray py-0.5 px-1 rounded borderself-end">XRD</div>
+            <token-symbol>XRD</token-symbol>
           </div>
         </div>
         <div class="flex flex-col my-3 px-5 flex-1">
           <span class="text-sm text-rGrayDark">{{ $t('wallet.stakedTokens') }}</span>
           <div class="flex flex-row items-end">
             <big-amount :amount="totalStaked" class="text-4xl font-light mr-4 text-rBlack" />
-            <div class="font-thin text-rGrayMark bg-rGrayLight border border-rGray py-0.5 px-1 rounded borderself-end">XRD</div>
+            <token-symbol>XRD</token-symbol>
           </div>
         </div>
       </div>
@@ -43,7 +43,6 @@
     <div class="bg-white text-rBlack py-7 px-8 flex-1">
       <div class="font-medium mb-8 flex items-center justify-between">
         {{ $t('wallet.additionalBalancesHeading') }}
-
         <button @click="$emit('requestFreeTokens')" class="text-rGreen py-2 px-4 border border-rGreen rounded-md">Get free tokens</button>
       </div>
 
@@ -56,7 +55,7 @@
           <div class="flex flex-row py-1 divide-x divide-rGray border border-rGray rounded-md">
             <div class="flex-1 flex flex-row items-center px-8 overflow-x-scroll p-2 m-2.5">
               <big-amount :amount="tokenBalance.amount" class="text-4xl font-light mr-4 text-rBlack" />
-              <div class="font-thin text-rGrayMark bg-rGrayLight border border-rGray py-0.5 px-1 rounded borderself-end">{{ tokenBalance.token.symbol.toUpperCase() }}</div>
+              <token-symbol>{{ tokenBalance.token.symbol.toUpperCase() }}</token-symbol>
             </div>
           </div>
         </div>
@@ -72,10 +71,12 @@ import { AccountAddressT } from '@radixdlt/account'
 import { sumAmounts, subtract } from '@/helpers/arithmetic'
 import { Amount, AmountT } from '@radixdlt/primitives'
 import BigAmount from '@/components/BigAmount.vue'
+import TokenSymbol from '@/components/TokenSymbol.vue'
 
 const WalletOverview = defineComponent({
   components: {
-    BigAmount
+    BigAmount,
+    TokenSymbol
   },
 
   props: {

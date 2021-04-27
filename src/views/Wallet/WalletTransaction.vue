@@ -18,75 +18,80 @@
         class="flex flex-col items-end"
       >
         <div class="bg-white rounded-md border border-rGray text-rBlack mb-8 w-full">
-          <div class="border-b border-rGray py-7 flex items-center">
-            <div class="w-32 text-right text-rGrayDark mr-8">{{ $t('transaction.fromLabel') }}</div>
-            <div class="flex-1">{{ activeAddress.toString() }}</div>
-          </div>
-
-          <div class="border-b border-rGray py-7 flex items-center">
-            <div class="w-32 text-right text-rGrayDark mr-8">{{ $t('transaction.toLabel') }}</div>
-            <div class="flex-1 pr-8">
-              <FormField
-                name="recipient"
-                type="text"
-                class="w-full"
-                :placeholder="$t('transaction.recipientPlaceholder')"
-                rules="required|validAddress"
-              />
-              <FormErrorMessage name="recipient" class="mt-4 text-sm text-red-400" />
+          <template v-if="nativeToken && selectedCurrency">
+            <div class="border-b border-rGray py-7 flex items-center">
+              <div class="w-32 text-right text-rGrayDark mr-8">{{ $t('transaction.fromLabel') }}</div>
+              <div class="flex-1">{{ activeAddress.toString() }}</div>
             </div>
-          </div>
 
-          <div class="border-b border-rGray py-7 flex items-center">
-            <div class="w-32 text-right text-rGrayDark mr-8">{{ $t('transaction.amountLabel') }}</div>
-            <div class="flex-1 flex items-start pr-8">
-              <div class="flex flex-col flex-1 mr-3">
+            <div class="border-b border-rGray py-7 flex items-center">
+              <div class="w-32 text-right text-rGrayDark mr-8">{{ $t('transaction.toLabel') }}</div>
+              <div class="flex-1 pr-8">
                 <FormField
-                  name="amount"
-                  type="number"
-                  step="any"
+                  name="recipient"
+                  type="text"
                   class="w-full"
-                  :placeholder="amountPlaceholder"
-                  :rules="{
-                    required: true,
-                    validAmount: true,
-                    insufficientFunds: this.selectedCurrency.amount.toString()
-                  }"
+                  :placeholder="$t('transaction.recipientPlaceholder')"
+                  rules="required|validAddress"
                 />
-                <FormErrorMessage name="amount" class="mt-4 text-sm text-red-400" />
+                <FormErrorMessage name="recipient" class="mt-4 text-sm text-red-400" />
               </div>
-              <select
-                class="border-t-0 border-r-0 border-l-0 py-2 border-rBlack focus:ring-0 focus:outline-none focus:border-rGreen"
-                v-model="currency"
-              >
-                <option
-                  v-for="token in tokenBalances"
-                  :key="token.token.name"
-                  :value="token.token.name"
+            </div>
+
+            <div class="border-b border-rGray py-7 flex items-center">
+              <div class="w-32 text-right text-rGrayDark mr-8">{{ $t('transaction.amountLabel') }}</div>
+              <div class="flex-1 flex items-start pr-8">
+                <div class="flex flex-col flex-1 mr-3">
+                  <FormField
+                    name="amount"
+                    type="number"
+                    step="any"
+                    class="w-full"
+                    :placeholder="amountPlaceholder"
+                    :rules="{
+                      required: true,
+                      validAmount: true,
+                      insufficientFunds: this.selectedCurrency.amount.toString()
+                    }"
+                  />
+                  <FormErrorMessage name="amount" class="mt-4 text-sm text-red-400" />
+                </div>
+                <select
+                  class="border-t-0 border-r-0 border-l-0 py-2 border-rBlack focus:ring-0 focus:outline-none focus:border-rGreen"
+                  v-model="currency"
                 >
-                  {{ token.token.symbol.toUpperCase() }}
-                </option>
-              </select>
+                  <option
+                    v-for="token in tokenOptions"
+                    :key="token.token.name"
+                    :value="token.token.name"
+                  >
+                    {{ token.token.symbol.toUpperCase() }}
+                  </option>
+                </select>
+              </div>
             </div>
-          </div>
 
-          <div v-show="messagesEnabled" class="border-b border-rGray  py-7 flex items-center">
-            <div class="w-32 text-right text-rGrayDark mr-8">{{ $t('transaction.messageLabel') }}</div>
-            <div class="flex-1 pr-8">
-              <FormField
-                name="message"
-                type="text"
-                class="w-full"
-                :placeholder="$t('transaction.messagePlaceholder')"
-                rules=""
-              />
-              <FormErrorMessage name="message" class="mt-4 text-sm text-red-400" />
+            <div v-show="messagesEnabled" class="border-b border-rGray  py-7 flex items-center">
+              <div class="w-32 text-right text-rGrayDark mr-8">{{ $t('transaction.messageLabel') }}</div>
+              <div class="flex-1 pr-8">
+                <FormField
+                  name="message"
+                  type="text"
+                  class="w-full"
+                  :placeholder="$t('transaction.messagePlaceholder')"
+                  rules=""
+                />
+                <FormErrorMessage name="message" class="mt-4 text-sm text-red-400" />
+              </div>
             </div>
-          </div>
 
-          <div class="py-7 flex items-center">
-            <div class="w-32 text-right text-rGrayDark mr-8">{{ $t('transaction.feeLabel') }}</div>
-            <div class="flex-1 text-2xl font-light">—</div>
+            <div class="py-7 flex items-center">
+              <div class="w-32 text-right text-rGrayDark mr-8">{{ $t('transaction.feeLabel') }}</div>
+              <div class="flex-1 text-2xl font-light">—</div>
+            </div>
+          </template>
+          <div v-else class="p-4 flex items-center justify-center">
+            <loading-icon class="text-rGrayDark" />
           </div>
         </div>
 
@@ -104,15 +109,16 @@
 
 <script lang="ts">
 import { AccountAddressT } from '@radixdlt/account'
-import { defineComponent, PropType } from 'vue'
-import { safelyUnwrapAddress, safelyUnwrapAmount, validateAmountOfType, validateGreaterThanZero } from '@/helpers/validateRadixTypes'
-import { TokenBalance } from '@radixdlt/application'
+import { defineComponent, PropType, Ref, ref, watch } from 'vue'
+import { safelyUnwrapAddress, safelyUnwrapAmount, validateAmountOfType } from '@/helpers/validateRadixTypes'
+import { Token, TokenBalance } from '@radixdlt/application'
 import { useForm } from 'vee-validate'
 import ClickToCopy from '@/components/ClickToCopy.vue'
 import FormErrorMessage from '@/components/FormErrorMessage.vue'
 import FormField from '@/components/FormField.vue'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
 import { asBigNumber } from '@/components/BigAmount.vue'
+import LoadingIcon from '@/components/LoadingIcon.vue'
 
 interface TransactionForm {
   recipient: string;
@@ -125,13 +131,34 @@ const WalletTransaction = defineComponent({
     ButtonSubmit,
     ClickToCopy,
     FormField,
-    FormErrorMessage
+    FormErrorMessage,
+    LoadingIcon
   },
 
-  setup () {
+  setup (props) {
     const { errors, values, meta, setErrors } = useForm<TransactionForm>()
+    const currency: Ref<string | null> = ref(null)
+    const tokenOptions: Ref<Array<TokenBalance>> = ref([])
 
-    return { errors, values, meta, setErrors }
+    // Set XRD as default and move to top of list of options. Ensure native token subscription has returned before doing so
+    const setXRDByDefault = (nativeToken: Token) => {
+      const nativeTokenBalance: TokenBalance | undefined = props.tokenBalances.find((tb: TokenBalance) => tb.token.rri.equals(nativeToken.rri))
+      if (nativeTokenBalance) currency.value = nativeTokenBalance.token.name
+
+      tokenOptions.value = props.tokenBalances
+        .reduce((acc: TokenBalance[], tb: TokenBalance) => {
+          if (tb.token.rri.equals(nativeToken.rri)) return [tb, ...acc]
+          return [...acc, tb]
+        }, [])
+    }
+
+    if (props.nativeToken) setXRDByDefault(props.nativeToken)
+
+    watch(() => props.nativeToken, (nativeToken: Token | undefined) => {
+      if (nativeToken) setXRDByDefault(nativeToken)
+    })
+
+    return { errors, values, meta, setErrors, currency, tokenOptions }
   },
 
   props: {
@@ -143,12 +170,15 @@ const WalletTransaction = defineComponent({
       type: Object as PropType<Array<TokenBalance>>,
       required: true,
       default: []
+    },
+    nativeToken: {
+      type: Object as PropType<Token>,
+      required: false
     }
   },
 
   data () {
     return {
-      currency: this.tokenBalances.length > 0 ? this.tokenBalances[0].token.name : '',
       messagesEnabled: false
     }
   },
@@ -187,7 +217,7 @@ const WalletTransaction = defineComponent({
             to: safeAddress,
             amount: safeAmount,
             tokenIdentifier: token.rri.toString()
-          })
+          }, this.selectedCurrency)
         }
       }
     }

@@ -19,12 +19,18 @@
 
         <div class="border-b border-rGray py-7 flex items-center">
           <div class="w-32 text-right text-rGrayDark mr-8">{{ $t('transaction.amountLabel') }}</div>
-          <div class="flex-1"><big-amount :amount="amount"></big-amount></div>
+          <div class="flex-1 flex flex-row items-center">
+            <big-amount :amount="amount" class="mr-4" />
+            <token-symbol>{{ selectedCurrency.token.symbol }}</token-symbol>
+          </div>
         </div>
 
         <div class="py-7 flex items-center">
           <div class="w-32 text-right text-rGrayDark mr-8">{{ $t('transaction.feeLabel') }}</div>
-          <div class="flex-1"><big-amount :amount="transactionFee"></big-amount></div>
+          <div class="flex-1 flex flex-row items-center">
+            <big-amount :amount="transactionFee" class="mr-4" />
+            <token-symbol>XRD</token-symbol>
+          </div>
         </div>
       </div>
 
@@ -55,13 +61,14 @@
 <script lang="ts">
 import { AccountAddressT } from '@radixdlt/account'
 import { AmountOrUnsafeInput, AmountT } from '@radixdlt/primitives'
-import { StakeTokensInput, TransferTokensInput } from '@radixdlt/application'
+import { StakeTokensInput, Token, TransferTokensInput } from '@radixdlt/application'
 import { defineComponent, PropType } from 'vue'
 import { useForm } from 'vee-validate'
 import BigAmount from '@/components/BigAmount.vue'
 import PinInput from '@/components/PinInput.vue'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
 import { validatePin } from '@/actions/vue/create-wallet'
+import TokenSymbol from '@/components/TokenSymbol.vue'
 
 interface ConfirmationForm {
   pin: string;
@@ -71,7 +78,8 @@ const WalletConfirmTransactionModal = defineComponent({
   components: {
     BigAmount,
     ButtonSubmit,
-    PinInput
+    PinInput,
+    TokenSymbol
   },
 
   setup () {
@@ -95,6 +103,10 @@ const WalletConfirmTransactionModal = defineComponent({
     },
     transactionFee: {
       type: Object as PropType<AmountT>,
+      required: true
+    },
+    selectedCurrency: {
+      type: Object as PropType<Token>,
       required: true
     }
   },

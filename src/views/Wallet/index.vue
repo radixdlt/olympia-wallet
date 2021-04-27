@@ -37,6 +37,7 @@
         :activeAddress="activeAddress"
         :tokenBalances="tokenBalances.tokenBalances"
         :shouldShowConfirmation="shouldShowConfirmation"
+        :nativeToken="nativeToken"
         @transferTokens="transferTokens"
         ref="walletTransactionComponent"
       >
@@ -72,6 +73,7 @@
         :transferInput="transferInput"
         :stakeInput="stakeInput"
         :transactionFee="transactionFee"
+        :selectedCurrency="selectedCurrency"
         @cancel="shouldShowConfirmation = false"
         @confirm="confirmTransaction"
       >
@@ -93,10 +95,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onBeforeMount, onUnmounted } from 'vue'
+import { defineComponent, onBeforeMount, onUnmounted, Ref } from 'vue'
 import { AccountT, AccountsT, AccountAddressT } from '@radixdlt/account'
 import { Subscription, interval, Subject, Observable, combineLatest, from } from 'rxjs'
-import { Radix, TransferTokensOptions, StakePositions, TokenBalances, UnstakePositions, ManualUserConfirmTX, mockedAPI, TransactionTracking, StakeTokensInput, UnstakeTokensInput, TransactionStateUpdate, TransactionIdentifierT, TransactionHistoryOfKnownAddressRequestInput, TransactionHistory, Token } from '@radixdlt/application'
+import { Radix, TransferTokensOptions, StakePositions, TokenBalances, UnstakePositions, ManualUserConfirmTX, mockedAPI, TransactionTracking, StakeTokensInput, UnstakeTokensInput, TransactionStateUpdate, TransactionIdentifierT, TransactionHistoryOfKnownAddressRequestInput, TransactionHistory, Token, TokenBalance } from '@radixdlt/application'
 import { ref } from '@nopr3d/vue-next-rx'
 import { useStore } from '@/store'
 import { useRouter } from 'vue-router'
@@ -155,6 +157,7 @@ const WalletIndex = defineComponent({
     const cursorStack = ref([])
     const canGoNext = ref(false)
     const nativeToken = ref(null)
+    const selectedCurrency: Ref<Token | null> = ref(null)
 
     const walletTransactionComponent = ref(null)
 
@@ -320,9 +323,10 @@ const WalletIndex = defineComponent({
     }
 
     // call transferTokens() with built options and subscribe to confirmation and results
-    const transferTokens = (data: TransferTokensOptions) => {
+    const transferTokens = (data: TransferTokensOptions, sc: Token) => {
       let pollTXStatusTrigger: Observable<unknown>
       transferInput.value = data
+      selectedCurrency.value = sc
 
       const buildTransferTokens = (): any => ({
         transferInput: data,
@@ -444,7 +448,8 @@ const WalletIndex = defineComponent({
       requestFreeTokens,
       canGoNext,
       walletTransactionComponent,
-      nativeToken
+      nativeToken,
+      selectedCurrency
     }
   },
 
