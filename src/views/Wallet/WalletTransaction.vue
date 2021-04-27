@@ -174,7 +174,6 @@ const WalletTransaction = defineComponent({
         const safeAmount = safelyUnwrapAmount(Number(this.values.amount))
         const token = this.selectedCurrency.token
         const validAmount = safeAmount && validateAmountOfType(safeAmount, token)
-        console.log('my token', token)
 
         if (!validAmount) {
           this.setErrors({

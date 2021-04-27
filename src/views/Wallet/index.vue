@@ -287,7 +287,6 @@ const WalletIndex = defineComponent({
       const trackingCompletion = transactionTracking.completion
         .subscribe({
           next: (txnID: TransactionIdentifierT) => {
-            // To Do: Offer a way for the user to "refetch" history to include new items
             pendingTransactions.value = pendingTransactions.value.filter((pendingTxn: any) => txnID.toString() !== pendingTxn.transactionState.txID.toString())
             transactionDidComplete.next(true)
           },

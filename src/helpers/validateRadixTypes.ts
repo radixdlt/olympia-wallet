@@ -14,24 +14,12 @@ export const safelyUnwrapAddress = (addressString: string): AccountAddressT | nu
 }
 
 export const safelyUnwrapAmount = (amount: number): AmountT | null => {
-  // let amountInput = amount
-  // console.log('input', amount)
-  // if (amount <= 0) {
-  //   const bigN = new BigNumber(amount).toFixed(18)
-  //   amountInput = 1_000_000_000_000_000 * Number(bigN) // 0.0123 -> 0.012300000000000000
-  //   console.log(amountInput)
-  // }
-  // const denomination = amount < 0 ? Denomination.Atto : Denomination.Whole
-
   const amountInput = amount * 1000000000000000000
   const amountResult = Amount.fromUnsafe(String(amountInput))
-  // returns error Error: Invalid character at assert
   if (amountResult && amountResult.isErr()) {
     console.log('Invalid amount string, did you input a number?')
     return null
   }
-
-  console.log('input', amount, amountInput, amountResult.value.toString())
 
   return amountResult ? amountResult.value : null
 }
