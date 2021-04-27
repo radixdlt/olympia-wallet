@@ -18,6 +18,8 @@ jobs:
     needs: [release-please]
     if: github.ref == 'refs/heads/main'
     runs-on: ${{ matrix.os }}
+    env: 
+      GITHUB_TOKEN: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
     strategy:
       matrix:
         os: [macos-latest, ubuntu-latest, windows-latest]
@@ -38,4 +40,4 @@ jobs:
           # (No need to define this secret in the repo settings)
           github_token: ${{ secrets.github_token }}
           use_vue_cli: true
-          release: true
+          release: ${{ startsWith(github.ref, 'refs/tags/v') }}
