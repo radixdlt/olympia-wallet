@@ -26,10 +26,10 @@ async function createWindow () {
   const win = new BrowserWindow({
     width: 1200,
     height: 850,
-    maxWidth: 1200,
-    maxHeight: 850,
-    minWidth: 1200,
-    minHeight: 850,
+    maxWidth: isDevelopment ? 9999 : 1200,
+    maxHeight: isDevelopment ? 9999 : 850,
+    minWidth: isDevelopment ? 9999 : 1200,
+    minHeight: isDevelopment ? 9999 : 850,
     webPreferences: {
 
       // Required for Spectron testing
@@ -40,7 +40,7 @@ async function createWindow () {
       nodeIntegration: (process.env
         .ELECTRON_NODE_INTEGRATION as unknown) as boolean,
       preload: path.join(__dirname, 'preload.js'),
-      devTools: false
+      devTools: isDevelopment
     }
   })
 
