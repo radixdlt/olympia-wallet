@@ -66,7 +66,7 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { ExecutedTransaction } from '@radixdlt/application'
-import { DateObject, DateTime } from 'luxon'
+import { DateTime } from 'luxon'
 import ActionListItemStakeTokens from '@/components/ActionListItemStakeTokens.vue'
 import ActionListItemUnstakeTokens from '@/components/ActionListItemUnstakeTokens.vue'
 import ActionListItemTransferTokens from '@/components/ActionListItemTransferTokens.vue'
@@ -102,7 +102,7 @@ export default defineComponent({
 
   computed: {
     sentAt (): string {
-      return DateTime.fromObject(this.transaction.sentAt as DateObject).toLocaleString(DateTime.DATETIME_SHORT)
+      return DateTime.fromJSDate(this.transaction.sentAt).toLocaleString(DateTime.DATETIME_SHORT)
     }
   }
 })
