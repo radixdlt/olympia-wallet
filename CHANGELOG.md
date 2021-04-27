@@ -18,10 +18,6 @@
 ### Dependencies
 
 * bump version and improve browser window ([259f414](https://www.github.com/township-agency/radixdlt-desktop-wallet/commit/259f41475ac2942261f9734ffa745d9b4789e60a))
-* release 0.2.1 ([91d19b0](https://www.github.com/township-agency/radixdlt-desktop-wallet/commit/91d19b0b8dd88dc3d74b708b17174340b26a95ef))
-* release 0.2.2 ([fcbf71c](https://www.github.com/township-agency/radixdlt-desktop-wallet/commit/fcbf71c6970c3f3599150ad6d34efe016ad2c4a4))
-* release 0.2.3 ([896f04c](https://www.github.com/township-agency/radixdlt-desktop-wallet/commit/896f04c7d5868073886ad5fcbde190b384c9aeab))
-* release 0.3.0 ([b0ec739](https://www.github.com/township-agency/radixdlt-desktop-wallet/commit/b0ec739571b2b2f57cc2f0c383f6cb402f78f013))
 * Update Release Please ([8e0b9e5](https://www.github.com/township-agency/radixdlt-desktop-wallet/commit/8e0b9e5185ae0b57ae3cb01bea6b0852f88c153c))
 
 ## [0.3.0](https://www.github.com/township-agency/radixdlt-desktop-wallet/compare/v1.1.0...v0.2.0) (2021-04-27)
