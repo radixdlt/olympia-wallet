@@ -15,8 +15,8 @@
       :name="name"
       type="number"
       class="opacity-0 absolute top-0 left-0 w-full h-full cursor-pointer"
-      maxlength="4"
       ref="inputRef"
+      v-on:keydown="handleKeyup($event.target)"
       v-model="value"
       :data-ci="dataCi"
       @blur="focusInput()"
@@ -75,8 +75,17 @@ const PinInput = defineComponent({
   },
 
   methods: {
+    handleKeyup (target: any) {
+      if (target.value.length > 4) {
+        target.value = target.value.slice(0, 4)
+      }
+    },
     handleChange (value: string) {
-      if (value.length === 4) this.$emit('finished', this.name)
+      if (value.length === 4) {
+        this.$emit('finished', this.name)
+      } else {
+        this.$emit('unfinished', this.name)
+      }
     }
   },
 
@@ -84,7 +93,7 @@ const PinInput = defineComponent({
     if (this.autofocus) this.focusInput()
   },
 
-  emits: ['finished']
+  emits: ['finished', 'unfinished']
 })
 
 export default PinInput

@@ -47,6 +47,7 @@
             class="mb-9 mx-auto"
             data-ci="validate-pin"
             @finished="handleValidatePin"
+            @unfinished="handleUnfinishedPin"
           >
           </pin-input>
           <ButtonSubmit
@@ -96,7 +97,8 @@ const SettingsRevealMnemonic = defineComponent({
 
   data () {
     return {
-      enteringPin: false
+      enteringPin: false,
+      isValidPin: false
     }
   },
 
@@ -108,7 +110,7 @@ const SettingsRevealMnemonic = defineComponent({
       return !this.mnemonic && !this.enteringPin
     },
     disableSubmit (): boolean {
-      return this.meta.dirty ? !this.meta.valid : true
+      return !this.isValidPin
     }
   },
 
@@ -116,12 +118,16 @@ const SettingsRevealMnemonic = defineComponent({
     handleValidatePin () {
       validatePin(this.values.pin)
         .then((isValid: boolean) => {
+          this.isValidPin = isValid
           if (!isValid) {
             this.setErrors({
               pin: this.$t('validations.invalidPin')
             })
           }
         })
+    },
+    handleUnfinishedPin () {
+      this.isValidPin = false
     },
     handleSubmit () {
       this.$emit('clickAccessMnemonic')
