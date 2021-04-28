@@ -8,6 +8,7 @@ module.exports = {
         rBlue: '#052CC0',
         rBlack: '#003057',
         rGreen: '#00C389',
+        rGreenDark: '#00AB84',
         rRed: '#EF4136',
         rOffwhite: '#F8F8FD',
         rGrayLightest: '#F7F7FD',
@@ -17,7 +18,9 @@ module.exports = {
         rGrayDark: '#7A99AC',
         translucent: {
           black: 'rgba(0, 0, 0, 0.1)',
-          gray: 'rgba(242, 242, 252, 0.3)'
+          gray: 'rgba(242, 242, 252, 0.3)',
+          greenLighter: 'rgba(0, 195, 137, 0.2)',
+          greenLight: 'rgba(0, 195, 137, 0.4)'
         }
       },
       height: {
@@ -42,7 +45,9 @@ module.exports = {
     })
   },
   variants: {
-    extend: {}
+    extend: {
+      backgroundColor: ['active']
+    }
   },
   plugins: [
     require('@tailwindcss/forms'),

@@ -87,7 +87,11 @@
 
             <div class="py-7 flex items-center">
               <div class="w-32 text-right text-rGrayDark mr-8">{{ $t('transaction.feeLabel') }}</div>
-              <div class="flex-1 text-2xl font-light">—</div>
+              <div class="flex-1 text-2xl font-light">
+                <div class="flex inline-block items-center">
+                0.1
+                <token-symbol class="ml-2">XRD</token-symbol></div>
+              </div>
             </div>
           </template>
           <div v-else class="p-4 flex items-center justify-center">
@@ -119,6 +123,7 @@ import FormField from '@/components/FormField.vue'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
 import { asBigNumber } from '@/components/BigAmount.vue'
 import LoadingIcon from '@/components/LoadingIcon.vue'
+import TokenSymbol from '@/components/TokenSymbol.vue'
 
 interface TransactionForm {
   recipient: string;
@@ -132,7 +137,8 @@ const WalletTransaction = defineComponent({
     ClickToCopy,
     FormField,
     FormErrorMessage,
-    LoadingIcon
+    LoadingIcon,
+    TokenSymbol
   },
 
   setup (props) {

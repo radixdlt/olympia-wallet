@@ -1,5 +1,5 @@
 <template>
-  <div class="w-52 mx-5 py-8 flex flex-col">
+  <div class="w-54 px-5 py-8 flex flex-col">
     <div>
       <img alt="Radix DLT Logo" src="../../assets/logo.svg" class="w-30 mb-10">
     </div>
