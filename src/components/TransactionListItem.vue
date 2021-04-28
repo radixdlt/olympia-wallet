@@ -53,12 +53,12 @@
       </div>
     </div>
     <div class="bg-rGrayLightest flex items-center justify-center px-3">
-      <div class="w-6 h-6 rounded-full border border-rGray flex items-center justify-center cursor-pointer">
+      <a :href="explorerURL" target="_blank" class="w-6 h-6 rounded-full border border-rGray flex items-center justify-center cursor-pointer">
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M3.66797 3.60449H10.9101V10.8466" stroke="#7A99AC" stroke-miterlimit="10"/>
         <path d="M10.9096 3.60449L3.60449 10.9097" stroke="#7A99AC" stroke-miterlimit="10"/>
         </svg>
-      </div>
+      </a>
     </div>
   </div>
 </template>
@@ -103,6 +103,9 @@ export default defineComponent({
   computed: {
     sentAt (): string {
       return DateTime.fromJSDate(this.transaction.sentAt).toLocaleString(DateTime.DATETIME_SHORT)
+    },
+    explorerURL (): string {
+      return `https://betanet-explorer.radixdlt.com/#/transactions/${this.transaction.txID}`
     }
   }
 })
