@@ -17,6 +17,7 @@
       class="mb-8 max-w-sm"
       data-ci="current-pin"
       @finished="handleValidatePin"
+      @unfinished="handleUnfinishedPin"
       @click="activePin = 0"
     >
     </pin-input>
@@ -78,13 +79,18 @@ const SettingsResetPin = defineComponent({
 
   data () {
     return {
-      activePin: 0
+      activePin: 0,
+      isValidPin: false
     }
   },
 
   computed: {
     disableSubmit (): boolean {
-      return this.meta.dirty ? !this.meta.valid : true
+      if (!this.isValidPin) {
+        return true
+      } else {
+        return this.meta.dirty ? !this.meta.valid : true
+      }
     }
   },
 
@@ -92,6 +98,7 @@ const SettingsResetPin = defineComponent({
     handleValidatePin () {
       validatePin(this.values.currentPin)
         .then((isValid: boolean) => {
+          this.isValidPin = isValid
           if (!isValid) {
             this.setErrors({
               currentPin: this.$t('validations.invalidPin')
@@ -101,6 +108,9 @@ const SettingsResetPin = defineComponent({
           }
         })
     },
+    handleUnfinishedPin () {
+      this.isValidPin = false
+    },
     handleResetPin () {
       if (this.values.pin !== this.values.confirmation) {
         this.setErrors({
@@ -108,6 +118,7 @@ const SettingsResetPin = defineComponent({
         })
         this.activePin = 2
       } else {
+        this.isValidPin = false
         storePin(this.values.pin)
           .then(() => this.resetForm())
       }
