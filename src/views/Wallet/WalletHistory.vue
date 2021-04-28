@@ -32,7 +32,7 @@
         :pending="false"
       />
 
-      <div class="flex flex-row items-center text-rGrayDark justify-between py-5">
+      <!-- <div class="flex flex-row items-center text-rGrayDark justify-between py-5">
         <button v-if="canGoBack" @click="$emit('previous')" class="flex flex-row items-center hover:text-rGreen transition-colors">
           <svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr-3">
             <g clip-path="url(#clip0)">
@@ -63,7 +63,7 @@
           </svg>
         </button>
         <div v-else></div>
-      </div>
+      </div> -->
     </div>
   </div>
 </template>
