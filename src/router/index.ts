@@ -1,4 +1,4 @@
-import { RouteRecordRaw, createRouter, createWebHashHistory, createWebHistory, RouterScrollBehavior } from 'vue-router'
+import { RouteRecordRaw, createRouter, createWebHashHistory, createWebHistory } from 'vue-router'
 import Home from '../views/Home/index.vue'
 import CreateWallet from '../views/CreateWallet/index.vue'
 import RestoreWallet from '../views/RestoreWallet/index.vue'
@@ -31,15 +31,9 @@ const routes: Array<RouteRecordRaw> = [
   }
 ]
 
-const scrollBehavior: RouterScrollBehavior = (to, from, savedPosition) => {
-  if (savedPosition) { return savedPosition }
-  return { top: 0, left: 0 }
-}
-
 const router = createRouter({
   history: process.env.IS_ELECTRON ? createWebHashHistory() : createWebHistory(process.env.BASE_URL),
-  routes,
-  scrollBehavior
+  routes
 })
 
 export default router
