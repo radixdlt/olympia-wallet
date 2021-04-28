@@ -2,14 +2,12 @@
   <div class="flex flex-col flex-1 min-w-0 overflow-y-scroll overflow-x-hidden bg-white">
     <div class="bg-rGrayLightest py-6 px-8">
       <div class="flex justify-between mb-6">
-        <h3 class="font-medium text-rBlack">{{ $t('wallet.balancesHeading') }}</h3>
-        <div v-if="activeAddress" class="flex flex-row items-center text-sm text-rGrayMed">
+        <h3 class="font-medium text-rBlack">{{ $t('transaction.transactionHeading') }}</h3>
+        <div class="flex items-center text-rBlack text-sm">
           <span class="text-rBlack mr-4">{{ $t('wallet.currentAddress') }} {{ activeAddress.toString() }}</span>
           <div class="hover:text-rGreen flex flex-row items-center cursor-pointer transition-colors">
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect x="7.5" y="7.5" width="7" height="7" class="stroke-current"/>
-              <path d="M13 5H5V13" class="stroke-current"/>
-            </svg>
+            <click-to-copy :text="activeAddress.toString()">
+            </click-to-copy>
           </div>
         </div>
       </div>
@@ -72,11 +70,13 @@ import { sumAmounts, subtract } from '@/helpers/arithmetic'
 import { Amount, AmountT } from '@radixdlt/primitives'
 import BigAmount from '@/components/BigAmount.vue'
 import TokenSymbol from '@/components/TokenSymbol.vue'
+import ClickToCopy from '@/components/ClickToCopy.vue'
 
 const WalletOverview = defineComponent({
   components: {
     BigAmount,
-    TokenSymbol
+    TokenSymbol,
+    ClickToCopy
   },
 
   props: {
