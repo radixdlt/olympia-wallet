@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.4.0](https://www.github.com/township-agency/radixdlt-desktop-wallet/compare/v0.3.3...v0.4.0) (2021-04-28)
+
+
+### Features
+
+* Include the package version number in the title of the builds ([#52](https://www.github.com/township-agency/radixdlt-desktop-wallet/issues/52)) ([706861f](https://www.github.com/township-agency/radixdlt-desktop-wallet/commit/706861f8b755888823b44be1eef53a326160357d))
+
+
+### Bug Fixes
+
+* Pin and confirmation must match when setting pin ([#56](https://www.github.com/township-agency/radixdlt-desktop-wallet/issues/56)) ([7dbdc68](https://www.github.com/township-agency/radixdlt-desktop-wallet/commit/7dbdc68ccdd81ec745569d25718ee704ffa6eda6))
+
 ### [0.3.3](https://www.github.com/township-agency/radixdlt-desktop-wallet/compare/v0.3.2...v0.3.3) (2021-04-28)
 
 
