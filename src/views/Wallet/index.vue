@@ -319,7 +319,7 @@ const WalletIndex = defineComponent({
       transactionDidComplete.subscribe((didComplete: boolean) => {
         if (didComplete) {
           cleanupTransactionSubs()
-          historyPagination.next({ size: 10 })
+          historyPagination.next({ size: 100 })
         }
       }).add(subs)
     }
@@ -382,16 +382,16 @@ const WalletIndex = defineComponent({
       confirmAndExecuteTransaction(unstakingTransactionTracking)
     }
 
-    historyPagination.next({ size: 10 })
+    historyPagination.next({ size: 100 })
 
     const refreshHistory = () => {
-      historyPagination.next({ size: 10 })
+      historyPagination.next({ size: 100 })
     }
 
     const nextPage = () => {
       cursorStack.value.push(transactionHistory.value.cursor)
       historyPagination.next({
-        size: 10,
+        size: 100,
         cursor: cursorStack.value[cursorStack.value.length - 1]
       })
     }
@@ -399,7 +399,7 @@ const WalletIndex = defineComponent({
     const previousPage = () => {
       cursorStack.value.pop()
       historyPagination.next({
-        size: 10,
+        size: 100,
         cursor: cursorStack.value.length > 0 ? cursorStack.value[cursorStack.value.length - 1] : ''
       })
     }
