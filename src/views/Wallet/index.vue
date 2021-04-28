@@ -180,12 +180,12 @@ const WalletIndex = defineComponent({
       .create()
       .__withAPI(mockedAPI)
       .withWallet(store.state.wallet)
-      .withTokenBalanceFetchTrigger(interval(30 * 1_000))
+      .withTokenBalanceFetchTrigger(interval(5 * 1_000))
 
     const wallet = Radix
       .create()
       .connect('https://betanet.radixdlt.com/rpc')
-      .withWallet(store.state.wallet) // wallet subscriptions don't work when we use the local wallet
+      .withWallet(store.state.wallet)
       .withTokenBalanceFetchTrigger(interval(5 * 1_000))
 
     const subs = new Subscription()
@@ -227,9 +227,15 @@ const WalletIndex = defineComponent({
 
     const cancelTransaction = () => userDidCancel.next(true)
 
-    // Update transaction history whenever params change
-    historyPagination
-      .pipe(mergeMap((params: TransactionHistoryOfKnownAddressRequestInput) => wallet.transactionHistory(params)))
+    // Fetch history when user navigates to next page and every 5 seconds
+    const fetchTXHistoryTrigger = combineLatest<[TransactionHistoryOfKnownAddressRequestInput, number]>([
+      historyPagination.asObservable(),
+      interval(5 * 1_000)
+    ])
+    fetchTXHistoryTrigger
+      .pipe(mergeMap(([params, i]: [TransactionHistoryOfKnownAddressRequestInput, number]) => {
+        return wallet.transactionHistory(params)
+      }))
       .subscribe((history: TransactionHistory) => {
         if (history.cursor) canGoNext.value = true
         else canGoNext.value = false
