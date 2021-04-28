@@ -12,7 +12,7 @@ import BigNumber from 'bignumber.js'
 export const asBigNumber = (amount: AmountT) => {
   const baseline = new BigNumber('1e-18')
   const bigNumber = new BigNumber(amount.toString())
-  return bigNumber.multipliedBy(baseline).toFixed(3)
+  return bigNumber.multipliedBy(baseline).toFixed(2)
 }
 
 const BigAmount = defineComponent({

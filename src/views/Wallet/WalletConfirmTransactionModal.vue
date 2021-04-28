@@ -41,6 +41,7 @@
         class="mb-4 mx-auto"
         data-ci="confirmation-pin"
         @finished="handleValidatePin"
+        @unfinished="handleUnfinishedPin"
       >
       </pin-input>
 
@@ -113,7 +114,8 @@ const WalletConfirmTransactionModal = defineComponent({
 
   data () {
     return {
-      canCancel: true
+      canCancel: true,
+      isValidPin: false
     }
   },
 
@@ -125,7 +127,7 @@ const WalletConfirmTransactionModal = defineComponent({
       return this.transferInput.amount ? this.transferInput.amount : this.stakeInput.amount
     },
     disableSubmit (): boolean {
-      return this.meta.dirty ? !this.meta.valid : true
+      return !this.isValidPin
     }
   },
 
@@ -137,12 +139,16 @@ const WalletConfirmTransactionModal = defineComponent({
     handleValidatePin () {
       validatePin(this.values.pin)
         .then((isValid: boolean) => {
+          this.isValidPin = isValid
           if (!isValid) {
             this.setErrors({
               pin: this.$t('validations.invalidPin')
             })
           }
         })
+    },
+    handleUnfinishedPin () {
+      this.isValidPin = false
     }
   },
 

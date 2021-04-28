@@ -1,5 +1,5 @@
 <template>
-  <div class="w-54 px-5 py-8 flex flex-col">
+  <div class="w-60 px-5 py-8 flex flex-col">
     <div>
       <img alt="Radix DLT Logo" src="../../assets/logo.svg" class="w-30 mb-10">
     </div>
@@ -79,7 +79,9 @@
     </div>
 
     <div class="flex flex-col">
-      <div
+      <a
+        href="https://learn.radixdlt.com/betanet-desktop-wallet-introduction"
+        target="__blank"
         class="flex flex-row items-center my-2 cursor-pointer transition-opacity"
       >
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr-3">
@@ -88,7 +90,7 @@
         </svg>
 
         <div class="font-normal text-white">{{ $t('wallet.navHelp') }}</div>
-      </div>
+      </a>
     </div>
 
     <div class="flex flex-col">
