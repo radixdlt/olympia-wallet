@@ -1,6 +1,6 @@
 <template>
   <div data-ci="create-wallet-create-pin-component">
-    <form @submit.prevent="$emit('confirm', this.values.pin)">
+    <form @submit.prevent="handleSubmit">
       <pin-input
         name="pin"
         :values="values.pin"
@@ -34,7 +34,7 @@ import ButtonSubmit from '@/components/ButtonSubmit.vue'
 
 interface PasswordForm {
   pin: string;
-  confirm: string;
+  confirmation: string;
 }
 
 const CreateWalletCreatePin = defineComponent({
@@ -44,13 +44,14 @@ const CreateWalletCreatePin = defineComponent({
   },
 
   setup () {
-    const { errors, values, meta, resetForm } = useForm<PasswordForm>()
+    const { errors, values, meta, resetForm, setErrors } = useForm<PasswordForm>()
 
     return {
       errors,
       values,
       meta,
-      resetForm
+      resetForm,
+      setErrors
     }
   },
 
@@ -74,6 +75,15 @@ const CreateWalletCreatePin = defineComponent({
       } else {
         this.updatingFirstInput = true
         this.$emit('enteredPin', false)
+      }
+    },
+    handleSubmit () {
+      if (this.values.pin !== this.values.confirmation) {
+        this.setErrors({
+          confirmation: this.$t('validations.pinMatch')
+        })
+      } else {
+        this.$emit('confirm', this.values.pin)
       }
     }
   },

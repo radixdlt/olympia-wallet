@@ -102,8 +102,15 @@ const SettingsResetPin = defineComponent({
         })
     },
     handleResetPin () {
-      storePin(this.values.pin)
-        .then((res) => this.resetForm())
+      if (this.values.pin !== this.values.confirmation) {
+        this.setErrors({
+          confirmation: this.$t('validations.pinMatch')
+        })
+        this.activePin = 2
+      } else {
+        storePin(this.values.pin)
+          .then(() => this.resetForm())
+      }
     }
   }
 })

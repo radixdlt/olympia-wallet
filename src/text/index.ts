@@ -14,7 +14,8 @@ const messages = {
       invalidPin: 'Your pin was not a match. Try again.',
       incorrectPassword: 'Your password is incorrect. Try again.',
       greaterThanZero: 'Must be greater than 0',
-      transactionFailed: 'Your transaction failed. Check that you have sufficient XRD to cover the transfer plus fee and that your amount is a multiple of the granularity.'
+      transactionFailed: 'Your transaction failed. Check that you have sufficient XRD to cover the transfer plus fee and that your amount is a multiple of the granularity.',
+      pinMatch: 'Your new pin doesn\'t match'
     },
     home: {
       welcomeOne: 'Welcome to the Radix Olympia Desktop Wallet.',
