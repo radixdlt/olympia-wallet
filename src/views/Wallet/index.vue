@@ -213,6 +213,7 @@ const WalletIndex = defineComponent({
       getDerivedAccountsIndex()
         .then((index: string) => {
           saveDerivedAccountsIndex(Number(index) + 1)
+          tokenBalances.value = []
           wallet.deriveNextAccount({ alsoSwitchTo: true })
         })
     }
