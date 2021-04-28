@@ -10,9 +10,9 @@ import { AmountT } from '@radixdlt/primitives'
 import BigNumber from 'bignumber.js'
 
 export const asBigNumber = (amount: AmountT) => {
-  const baseline = new BigNumber('0000000000000000001e-18')
+  const baseline = new BigNumber('1e-18')
   const bigNumber = new BigNumber(amount.toString())
-  return bigNumber.multipliedBy(baseline).precision(3).toFormat()
+  return bigNumber.multipliedBy(baseline).toFixed(3)
 }
 
 const BigAmount = defineComponent({
