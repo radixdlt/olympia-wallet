@@ -2,7 +2,7 @@
   <div class="flex flex-col flex-1 min-w-0 overflow-y-scroll overflow-x-hidden bg-white">
     <div class="bg-rGrayLightest py-6 px-8">
       <div class="flex justify-between mb-6">
-        <h3 class="font-medium text-rBlack">{{ $t('transaction.transactionHeading') }}</h3>
+        <h3 class="font-medium text-rBlack">{{ $t('wallet.balancesHeading') }}</h3>
         <div class="flex items-center text-rBlack text-sm">
           <span class="text-rBlack mr-4">{{ $t('wallet.currentAddress') }} {{ activeAddress.toString() }}</span>
           <div class="hover:text-rGreen flex flex-row items-center cursor-pointer transition-colors">
