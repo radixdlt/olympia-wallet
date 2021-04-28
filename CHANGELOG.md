@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.5.0](https://www.github.com/township-agency/radixdlt-desktop-wallet/compare/v0.4.0...v0.5.0) (2021-04-28)
+
+
+### Features
+
+* Scroll to top when navigating between routes ([#57](https://www.github.com/township-agency/radixdlt-desktop-wallet/issues/57)) ([c0ae2ef](https://www.github.com/township-agency/radixdlt-desktop-wallet/commit/c0ae2ef2fe27e475ac80c0d1f4499018dd0bfbbc))
+
+
+### Dependencies
+
+* bump to v0.5.0 ([#62](https://www.github.com/township-agency/radixdlt-desktop-wallet/issues/62)) ([7b646cc](https://www.github.com/township-agency/radixdlt-desktop-wallet/commit/7b646cc3d1107c241aac04302753bc3a4f1fa015))
+* Final final final round of release tweaks ([#60](https://www.github.com/township-agency/radixdlt-desktop-wallet/issues/60)) ([d0534dc](https://www.github.com/township-agency/radixdlt-desktop-wallet/commit/d0534dcfa1ad33c0e39bfce5405fedbe10ff1d6f))
+
 ## [0.4.0](https://www.github.com/township-agency/radixdlt-desktop-wallet/compare/v0.3.3...v0.4.0) (2021-04-28)
 
 
