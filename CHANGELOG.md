@@ -1,5 +1,13 @@
 # Changelog
 
+### [0.3.2](https://www.github.com/township-agency/radixdlt-desktop-wallet/compare/v0.3.1...v0.3.2) (2021-04-27)
+
+
+### Bug Fixes
+
+* explicit configs for publishing releases ([4c8b987](https://www.github.com/township-agency/radixdlt-desktop-wallet/commit/4c8b9872363949a68559076afbce83b6b1a5988e))
+* Force a more recent version of electron-builder ([f362b94](https://www.github.com/township-agency/radixdlt-desktop-wallet/commit/f362b9424e620952132d00edd6ec82807b6ce0b1))
+
 ### [0.3.1](https://www.github.com/township-agency/radixdlt-desktop-wallet/compare/v0.3.0...v0.3.1) (2021-04-27)
 
 
