@@ -101,7 +101,7 @@ const WalletOverview = defineComponent({
   computed: {
     totalXRD (): AmountT {
       if (!this.nativeToken) return Amount.fromUnsafe(0)._unsafeUnwrap()
-      // if (this.tokenBalances === null) return Amount.fromUnsafe(0)._unsafeUnwrap()
+      if (!this.tokenBalances.tokenBalances) return Amount.fromUnsafe(0)._unsafeUnwrap()
       console.log(this.tokenBalances)
       const xrdTokenBalance = this.tokenBalances.tokenBalances.find((tb: TokenBalance) => tb.token.rri.equals(this.nativeToken!.rri))
       if (!xrdTokenBalance) return Amount.fromUnsafe(0)._unsafeUnwrap()
