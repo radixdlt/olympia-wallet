@@ -1,5 +1,5 @@
 <template>
-  <div class="w-54 px-5 py-8 text-white overflow-y-scroll">
+  <div class="w-54 px-5 py-8 mt-2 text-white overflow-y-scroll">
     <div @click="$emit('back')" class="hover:text-rGreen cursor-pointer transition-colors inline-flex flex-row items-center mb-12">
       <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr-2">
         <circle cx="10" cy="10" r="9.5" transform="rotate(90 10 10)" fill="none" class="stroke-current" />
