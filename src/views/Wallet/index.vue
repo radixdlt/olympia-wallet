@@ -184,7 +184,7 @@ const WalletIndex = defineComponent({
 
     const wallet = Radix
       .create()
-      .connect('https://18.168.73.103/rpc')
+      .connect('https://betanet.radixdlt.com/rpc')
       .withWallet(store.state.wallet) // wallet subscriptions don't work when we use the local wallet
       .withTokenBalanceFetchTrigger(interval(5 * 1_000))
 
@@ -213,6 +213,7 @@ const WalletIndex = defineComponent({
       getDerivedAccountsIndex()
         .then((index: string) => {
           saveDerivedAccountsIndex(Number(index) + 1)
+          tokenBalances.value = []
           wallet.deriveNextAccount({ alsoSwitchTo: true })
         })
     }
@@ -410,7 +411,7 @@ const WalletIndex = defineComponent({
         }
       }
       from(
-        fetch('https://18.134.217.54/faucet/request', {
+        fetch('https://betanet-faucet.radixdlt.com/faucet/request', {
           method: 'POST',
           mode: 'no-cors',
           headers: { 'Content-Type': 'application/json' },

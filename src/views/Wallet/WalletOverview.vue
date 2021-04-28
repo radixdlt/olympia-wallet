@@ -14,7 +14,7 @@
         </div>
       </div>
 
-      <div class="border border-rGray rounded-md flex flex-row mb-7 overflow-y-scroll">
+      <div class="border border-rGray bg-white rounded-md flex flex-row mb-7 overflow-y-scroll">
         <img src="@/assets/token.svg" alt="token symbol" class="p-3 border-r border-rGray" />
         <div class="flex flex-col my-3 px-5 border-r border-rGray flex-1">
           <span class="text-sm text-rGrayDark">{{ $t('wallet.totalTokens') }}</span>
@@ -43,7 +43,7 @@
     <div class="bg-white text-rBlack py-7 px-8 flex-1">
       <div class="font-medium mb-8 flex items-center justify-between">
         {{ $t('wallet.additionalBalancesHeading') }}
-        <button @click="$emit('requestFreeTokens')" class="text-rGreen py-2 px-4 border border-rGreen rounded-md">Get free tokens</button>
+        <button @click="$emit('requestFreeTokens')" class="focus:outline-none text-rGreen py-2 px-4 border border-rGreen rounded-md hover:bg-translucent-greenLighter active:bg-translucent-greenLight">Get free tokens</button>
       </div>
 
       <div class="flex flex-row flex-wrap justify-between -mx-9">
@@ -101,6 +101,8 @@ const WalletOverview = defineComponent({
   computed: {
     totalXRD (): AmountT {
       if (!this.nativeToken) return Amount.fromUnsafe(0)._unsafeUnwrap()
+      if (!this.tokenBalances.tokenBalances) return Amount.fromUnsafe(0)._unsafeUnwrap()
+      console.log(this.tokenBalances)
       const xrdTokenBalance = this.tokenBalances.tokenBalances.find((tb: TokenBalance) => tb.token.rri.equals(this.nativeToken!.rri))
       if (!xrdTokenBalance) return Amount.fromUnsafe(0)._unsafeUnwrap()
       const xrdAmount = Amount.fromUnsafe(xrdTokenBalance.amount)
