@@ -62,7 +62,7 @@ const SettingsIndex = defineComponent({
       .subscribe(([m, didRequest]: [MnemomicT, boolean]) => {
         if (didRequest) { mnemonic.value = m }
       })
-    watchUserDidRequstMnemonic.add(subs)
+    subs.add(watchUserDidRequstMnemonic)
 
     const handleAccessMnemonic = () => userRequestedMnemonic.next(true)
 

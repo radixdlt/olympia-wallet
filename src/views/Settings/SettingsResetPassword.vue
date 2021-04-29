@@ -98,7 +98,7 @@ const SettingsResetPassword = defineComponent({
             .then(() => getMnemonicForPassword.unsubscribe())
         })
 
-      getMnemonicForPassword.add(subs)
+      subs.add(getMnemonicForPassword)
     }
 
     onUnmounted(() => subs.unsubscribe())

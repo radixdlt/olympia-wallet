@@ -29,10 +29,9 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue'
+import { defineComponent, onUnmounted, PropType } from 'vue'
 import { AccountT, AccountAddressT } from '@radixdlt/account'
 import ClickToCopy from '@/components/ClickToCopy.vue'
-import { Subscription } from 'rxjs'
 import { ref } from '@nopr3d/vue-next-rx'
 import { getAccountName } from '@/actions/vue/data-store'
 import { formatAddressForDisplay } from '@/helpers/formatter'
@@ -60,13 +59,16 @@ const AccountListItem = defineComponent({
   setup (props) {
     const address = ref(null)
     const name = ref('')
-    const subs = new Subscription()
 
-    props.account.deriveAddress().subscribe((a: AccountAddressT) => {
+    const sub = props.account.deriveAddress().subscribe((a: AccountAddressT) => {
       address.value = a
       getAccountName(a.toString())
         .then((storedName: string) => { name.value = storedName || a.toString() })
-    }).add(subs)
+    })
+
+    onUnmounted(() => {
+      sub.unsubscribe()
+    })
 
     const displayAddress = formatAddressForDisplay(address.value)
     return { address, displayAddress, name }

@@ -190,13 +190,13 @@ const WalletIndex = defineComponent({
 
     const subs = new Subscription()
 
-    wallet.tokenBalances.subscribe((tokenBalancesRes: TokenBalances) => { tokenBalances.value = tokenBalancesRes }).add(subs)
-    wallet.activeAccount.subscribe((accountRes: AccountT) => { activeAccount.value = accountRes }).add(subs)
-    radix.stakingPositions.subscribe((stakes: StakePositions) => { activeStakes.value = stakes }).add(subs)
-    radix.unstakingPositions.subscribe((unstakes: UnstakePositions) => { activeUnstakes.value = unstakes }).add(subs)
-    wallet.accounts.subscribe((accountsRes: AccountsT) => { accounts.value = accountsRes }).add(subs)
-    wallet.activeAddress.subscribe((addressRes: AccountAddressT) => { activeAddress.value = addressRes }).add(subs)
-    wallet.ledger.nativeToken().subscribe((nativeTokenRes: Token) => { nativeToken.value = nativeTokenRes }).add(subs)
+    subs.add(wallet.tokenBalances.subscribe((tokenBalancesRes: TokenBalances) => { tokenBalances.value = tokenBalancesRes }))
+    subs.add(wallet.activeAccount.subscribe((accountRes: AccountT) => { activeAccount.value = accountRes }))
+    subs.add(radix.stakingPositions.subscribe((stakes: StakePositions) => { activeStakes.value = stakes }))
+    subs.add(radix.unstakingPositions.subscribe((unstakes: UnstakePositions) => { activeUnstakes.value = unstakes }))
+    subs.add(wallet.accounts.subscribe((accountsRes: AccountsT) => { accounts.value = accountsRes }))
+    subs.add(wallet.activeAddress.subscribe((addressRes: AccountAddressT) => { activeAddress.value = addressRes }))
+    subs.add(wallet.ledger.nativeToken().subscribe((nativeTokenRes: Token) => { nativeToken.value = nativeTokenRes }))
 
     getDerivedAccountsIndex()
       .then((accountsIndex: string) => {
@@ -232,7 +232,7 @@ const WalletIndex = defineComponent({
       historyPagination.asObservable(),
       interval(5 * 1_000)
     ])
-    fetchTXHistoryTrigger
+    subs.add(fetchTXHistoryTrigger
       .pipe(mergeMap(([params, i]: [TransactionHistoryOfKnownAddressRequestInput, number]) => {
         return wallet.transactionHistory(params)
       }))
@@ -240,14 +240,12 @@ const WalletIndex = defineComponent({
         if (history.cursor) canGoNext.value = true
         else canGoNext.value = false
         transactionHistory.value = history
-      })
-      .add(subs)
+      }))
 
     // This isn't firing the way I want it to
-    faucetParams
+    subs.add(faucetParams
       .pipe(mergeMap((params: number) => wallet.tokenBalances))
-      .subscribe((tokenBalancesRes: TokenBalances) => { tokenBalances.value = tokenBalancesRes })
-      .add(subs)
+      .subscribe((tokenBalancesRes: TokenBalances) => { tokenBalances.value = tokenBalancesRes }))
 
     const confirmAndExecuteTransaction = (transactionTracking: TransactionTracking) => {
       const transactionDidComplete = new Subject<boolean>()
@@ -262,20 +260,20 @@ const WalletIndex = defineComponent({
           shouldShowConfirmation.value = true
           transactionFee.value = txnToConfirm.txToConfirm.fee
         })
-      createUserConfirmation.add(subs)
+      subs.add(createUserConfirmation)
 
       // Confirm transaction and move user to history view after they press confirm
       const watchUserDidConfirm = combineLatest<[ManualUserConfirmTX, boolean]>([userConfirmation, userDidConfirm])
         .subscribe(([txnToConfirm, didConfirm]: [ManualUserConfirmTX, boolean]) => {
           if (didConfirm) { txnToConfirm.confirm() }
         })
-      watchUserDidConfirm.add(subs)
+      subs.add(watchUserDidConfirm)
 
       // Store draft transaction actions
       const trackingInitiated = transactionTracking.events
         .pipe(filter((trackingEvent) => trackingEvent.eventUpdateType === 'INITIATED'))
         .subscribe((res) => { draftTransaction.value = res })
-      trackingInitiated.add(subs)
+      subs.add(trackingInitiated)
 
       // Track pending transactions augmented with actions array
       const trackingSubmittedEvents = transactionTracking.events
@@ -289,7 +287,7 @@ const WalletIndex = defineComponent({
           shouldShowConfirmation.value = false
           view.value = 'history'
         })
-      trackingSubmittedEvents.add(subs)
+      subs.add(trackingSubmittedEvents)
 
       // Log transaction completed/error to console for now
       const trackingCompletion = transactionTracking.completion
@@ -305,7 +303,7 @@ const WalletIndex = defineComponent({
             })
           }
         })
-      trackingCompletion.add(subs)
+      subs.add(trackingCompletion)
 
       // Cleanup subscriptions on cancel and complete
       const cleanupTransactionSubs = () => {
@@ -322,12 +320,12 @@ const WalletIndex = defineComponent({
         }
       })
 
-      transactionDidComplete.subscribe((didComplete: boolean) => {
+      subs.add(transactionDidComplete.subscribe((didComplete: boolean) => {
         if (didComplete) {
           cleanupTransactionSubs()
           historyPagination.next({ size: 100 })
         }
-      }).add(subs)
+      }))
     }
 
     // call transferTokens() with built options and subscribe to confirmation and results
@@ -416,14 +414,14 @@ const WalletIndex = defineComponent({
           address: activeAddress.value.toString()
         }
       }
-      from(
+      subs.add(from(
         fetch('https://betanet-faucet.radixdlt.com/faucet/request', {
           method: 'POST',
           mode: 'no-cors',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(request)
         })
-      ).subscribe(() => { faucetParams.next(Math.random()) }).add(subs)
+      ).subscribe(() => { faucetParams.next(Math.random()) }))
     }
 
     onUnmounted(() => subs.unsubscribe())
