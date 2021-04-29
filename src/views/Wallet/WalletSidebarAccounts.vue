@@ -36,7 +36,7 @@ import { defineComponent, PropType } from 'vue'
 import { AccountsT, AccountT } from '@radixdlt/account'
 import AccountListItem from '@/components/AccountListItem.vue'
 
-const WalletSidebarDefault = defineComponent({
+const WalletSidebarAccounts = defineComponent({
   components: {
     AccountListItem
   },
@@ -55,5 +55,5 @@ const WalletSidebarDefault = defineComponent({
   emits: ['back', 'addAccount', 'switchAccount', 'editName']
 })
 
-export default WalletSidebarDefault
+export default WalletSidebarAccounts
 </script>
