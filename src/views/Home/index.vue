@@ -85,10 +85,10 @@ const CreateWallet = defineComponent({
       )
 
     // Move user to wallet when a wallet is successfully retrieved
-    radix.__wallet.subscribe((wallet: WalletT) => {
+    subs.add(radix.__wallet.subscribe((wallet: WalletT) => {
       store.commit('setWallet', wallet)
       router.push('/wallet')
-    }).add(subs)
+    }))
 
     // Login with password and path to keystore
     const loginWithWallet = (password: string) => {

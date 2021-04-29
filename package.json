@@ -18,8 +18,8 @@
   "dependencies": {
     "@babel/core": "^7.13.10",
     "@nopr3d/vue-next-rx": "^1.0.6",
-    "@radixdlt/account": "^1.0.29",
-    "@radixdlt/application": "^1.0.38",
+    "@radixdlt/account": "^1.0.31",
+    "@radixdlt/application": "^1.0.42",
     "@radixdlt/crypto": "^1.0.26",
     "@radixdlt/data-formats": "^1.0.19",
     "@radixdlt/hardware-wallet": "^1.0.10",
