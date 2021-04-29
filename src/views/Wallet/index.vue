@@ -201,7 +201,7 @@ const WalletIndex = defineComponent({
     getDerivedAccountsIndex()
       .then((accountsIndex: string) => {
         if ((Number(accountsIndex)) > 0) {
-          wallet.restoreAccountsUpToIndex(Number(accountsIndex))
+          wallet.restoreAccountsUpToIndex(Number(accountsIndex) + 1)
             .subscribe(
               (accountRes: AccountsT) => { accounts.value = accountRes })
         } else {
