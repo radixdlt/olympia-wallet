@@ -97,7 +97,7 @@
 <script lang="ts">
 import { defineComponent, onBeforeMount, onUnmounted, Ref } from 'vue'
 import { AccountT, AccountsT, AccountAddressT } from '@radixdlt/account'
-import { Subscription, interval, Subject, Observable, combineLatest, from } from 'rxjs'
+import { Subscription, interval, Subject, Observable, combineLatest, from, BehaviorSubject } from 'rxjs'
 import { Radix, TransferTokensOptions, StakePositions, TokenBalances, UnstakePositions, ManualUserConfirmTX, mockedAPI, TransactionTracking, StakeTokensInput, UnstakeTokensInput, TransactionStateUpdate, TransactionIdentifierT, TransactionHistoryOfKnownAddressRequestInput, TransactionHistory, Token, TokenBalance } from '@radixdlt/application'
 import { ref } from '@nopr3d/vue-next-rx'
 import { useStore } from '@/store'
@@ -248,8 +248,7 @@ const WalletIndex = defineComponent({
       .subscribe((tokenBalancesRes: TokenBalances) => { tokenBalances.value = tokenBalancesRes }))
 
     const confirmAndExecuteTransaction = (transactionTracking: TransactionTracking) => {
-      const transactionDidComplete = new Subject<boolean>()
-      transactionDidComplete.next(false)
+      const transactionDidComplete = new BehaviorSubject<boolean>(false)
       userDidCancel.next(false)
 
       // Subscribe to initial userConfirmation and display modal
@@ -270,10 +269,9 @@ const WalletIndex = defineComponent({
       subs.add(watchUserDidConfirm)
 
       // Store draft transaction actions
-      const trackingInitiated = transactionTracking.events
+      subs.add(transactionTracking.events
         .pipe(filter((trackingEvent) => trackingEvent.eventUpdateType === 'INITIATED'))
-        .subscribe((res) => { draftTransaction.value = res })
-      subs.add(trackingInitiated)
+        .subscribe((res) => { draftTransaction.value = res }))
 
       // Track pending transactions augmented with actions array
       const trackingSubmittedEvents = transactionTracking.events
@@ -290,7 +288,7 @@ const WalletIndex = defineComponent({
       subs.add(trackingSubmittedEvents)
 
       // Log transaction completed/error to console for now
-      const trackingCompletion = transactionTracking.completion
+      subs.add(transactionTracking.completion
         .subscribe({
           next: (txnID: TransactionIdentifierT) => {
             pendingTransactions.value = pendingTransactions.value.filter((pendingTxn: any) => txnID.toString() !== pendingTxn.transactionState.txID.toString())
@@ -302,16 +300,13 @@ const WalletIndex = defineComponent({
               amount: t('validations.transactionFailed')
             })
           }
-        })
-      subs.add(trackingCompletion)
+        }))
 
       // Cleanup subscriptions on cancel and complete
       const cleanupTransactionSubs = () => {
         createUserConfirmation.unsubscribe()
         watchUserDidConfirm.unsubscribe()
-        trackingInitiated.unsubscribe()
         trackingSubmittedEvents.unsubscribe()
-        trackingCompletion.unsubscribe()
       }
       userDidCancel.subscribe((didCancel: boolean) => {
         if (didCancel) {
