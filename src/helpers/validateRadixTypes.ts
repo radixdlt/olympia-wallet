@@ -7,7 +7,6 @@ import { tokenBalancesErr } from '@radixdlt/application/src/errors'
 export const safelyUnwrapAddress = (addressString: string): AccountAddressT | null => {
   const recipientAddressResult = AccountAddress.fromUnsafe(addressString)
   if (recipientAddressResult.isErr()) {
-    // console.log(`Invalid addres string, error: ${recipientAddressResult.error.message}`)
     return null
   }
   return recipientAddressResult.value
