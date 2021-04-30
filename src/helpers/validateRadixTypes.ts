@@ -14,9 +14,8 @@ export const safelyUnwrapAddress = (addressString: string): AccountAddressT | nu
 }
 
 export const safelyUnwrapAmount = (amount: number): AmountT | null => {
-  const attoMultiplier = new BigNumber('1000000000000000000')
   const bigAmount = new BigNumber(amount)
-  const amountInput = bigAmount.times(attoMultiplier)
+  const amountInput = bigAmount.shiftedBy(18) // Atto
   const amountResult = Amount.fromUnsafe(amountInput.toFixed())
   if (amountResult && amountResult.isErr()) {
     console.log('Invalid amount string, did you input a number?')
