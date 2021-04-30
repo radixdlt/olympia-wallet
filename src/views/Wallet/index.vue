@@ -22,7 +22,7 @@
 
     <template v-if="activeAddress">
       <wallet-loading
-      v-if="loading"
+        v-if="loading"
       >
       </wallet-loading>
 
