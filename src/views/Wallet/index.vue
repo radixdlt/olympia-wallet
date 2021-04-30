@@ -21,8 +21,13 @@
     </wallet-sidebar-accounts>
 
     <template v-if="activeAddress">
+      <wallet-loading
+        v-if="loading"
+      >
+      </wallet-loading>
+
       <wallet-overview
-        v-if="view == 'overview'"
+        v-if="view == 'overview' && !loading"
         :activeAddress="activeAddress"
         :activeStakes="activeStakes"
         :activeUnstakes="activeUnstakes"
@@ -109,6 +114,7 @@ import WalletSidebarAccounts from './WalletSidebarAccounts.vue'
 import WalletSidebarDefault from './WalletSidebarDefault.vue'
 import WalletStaking from './WalletStaking.vue'
 import WalletTransaction from './WalletTransaction.vue'
+import WalletLoading from './WalletLoading.vue'
 import AccountEditName from '@/views/Account/AccountEditName.vue'
 import SettingsIndex from '@/views/Settings/index.vue'
 import { filter, mergeMap } from 'rxjs/operators'
@@ -125,7 +131,8 @@ const WalletIndex = defineComponent({
     WalletSidebarAccounts,
     WalletSidebarDefault,
     WalletStaking,
-    WalletTransaction
+    WalletTransaction,
+    WalletLoading
   },
 
   props: {
@@ -138,7 +145,7 @@ const WalletIndex = defineComponent({
     const router = useRouter()
     const { t } = useI18n({ useScope: 'global' })
 
-    const activeAccount = ref(null)
+    const activeAccount: Ref<AccountT | null> = ref(null)
     const activeAddress = ref(null)
     const activeStakes = ref(null)
     const activeUnstakes = ref(null)
@@ -158,6 +165,7 @@ const WalletIndex = defineComponent({
     const canGoNext = ref(false)
     const nativeToken = ref(null)
     const selectedCurrency: Ref<Token | null> = ref(null)
+    const loading = ref(true)
 
     const walletTransactionComponent = ref(null)
 
@@ -190,7 +198,10 @@ const WalletIndex = defineComponent({
 
     const subs = new Subscription()
 
-    subs.add(wallet.tokenBalances.subscribe((tokenBalancesRes: TokenBalances) => { tokenBalances.value = tokenBalancesRes }))
+    subs.add(wallet.tokenBalances.subscribe((tokenBalancesRes: TokenBalances) => {
+      loading.value = false
+      tokenBalances.value = tokenBalancesRes
+    }))
     subs.add(wallet.activeAccount.subscribe((accountRes: AccountT) => { activeAccount.value = accountRes }))
     subs.add(radix.stakingPositions.subscribe((stakes: StakePositions) => { activeStakes.value = stakes }))
     subs.add(radix.unstakingPositions.subscribe((unstakes: UnstakePositions) => { activeUnstakes.value = unstakes }))
@@ -209,17 +220,24 @@ const WalletIndex = defineComponent({
         }
       })
 
+    const startLoading = () => {
+      loading.value = true
+      setTimeout(() => { loading.value = false }, 5000)
+    }
+
     const addAccount = () => {
       getDerivedAccountsIndex()
         .then((index: string) => {
           saveDerivedAccountsIndex(Number(index) + 1)
           tokenBalances.value = []
+          startLoading()
           wallet.deriveNextAccount({ alsoSwitchTo: true })
         })
     }
 
     const switchAccount = (account: AccountT) => {
       tokenBalances.value = []
+      startLoading()
       wallet.switchAccount({ toAccount: account })
     }
 
@@ -437,6 +455,7 @@ const WalletIndex = defineComponent({
       cursorStack,
       nativeToken,
       selectedCurrency,
+      loading,
 
       // view flags
       view,
