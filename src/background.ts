@@ -24,12 +24,12 @@ protocol.registerSchemesAsPrivileged([
 async function createWindow () {
   // Create the browser window.
   const win = new BrowserWindow({
-    width: 1200,
-    height: 850,
-    maxWidth: isDevelopment ? 1600 : 1200,
-    maxHeight: 850,
-    minWidth: isDevelopment ? 1600 : 1200,
-    minHeight: 850,
+    width: 1050,
+    height: 700,
+    maxWidth: 1250,
+    maxHeight: 800,
+    minWidth: 1050,
+    minHeight: 700,
     webPreferences: {
 
       // Required for Spectron testing
