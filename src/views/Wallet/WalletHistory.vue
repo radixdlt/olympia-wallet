@@ -13,7 +13,7 @@
       </div>
     </div>
 
-    <div class="text-rBlack py-6 px-8 min-h-full">
+    <div class="text-rBlack py-6 min-h-full">
       <transaction-list-item
         v-for="(txn, i) in pendingTransactions"
         :key="i"

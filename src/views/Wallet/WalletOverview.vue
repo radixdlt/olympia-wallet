@@ -41,7 +41,7 @@
     <div class="bg-white text-rBlack py-7 px-8 flex-1">
       <div class="font-medium mb-8 flex items-center justify-between">
         {{ $t('wallet.additionalBalancesHeading') }}
-        <button @click="$emit('requestFreeTokens')" class="focus:outline-none text-rGreen py-2 px-4 border border-rGreen rounded-md hover:bg-translucent-greenLighter active:bg-translucent-greenLight">Get free tokens</button>
+        <button @click="$emit('requestFreeTokens')" class="focus:outline-none text-rGreen py-2 px-4 border border-rGreen rounded-md hover:bg-translucent-greenLighter active:bg-translucent-greenLight">Get free betanet tokens</button>
       </div>
 
       <div class="flex flex-row flex-wrap justify-between -mx-9">
@@ -57,6 +57,15 @@
             </div>
           </div>
         </div>
+      </div>
+    </div>
+
+    <div class="fixed bottom-0 bg-rGrayLightest flex p-4">
+      <div class="border-2 rounded-md border-rRed text-rRed p-4 flex self-center font-bold">
+        <span> WARNING </span>
+      </div>
+      <div class="p-4 text-sm text-rBlack">
+        This wallet connects to a temporary Radix betanet test network only. All tokens and transactions in this wallet are for testing purposes only. Tokens you see in this wallet have no value, and you cannot use it to hold real eXRD or XRD tokens.
       </div>
     </div>
   </div>
@@ -102,7 +111,6 @@ const WalletOverview = defineComponent({
     totalXRD (): AmountT {
       if (!this.nativeToken) return Amount.fromUnsafe(0)._unsafeUnwrap()
       if (!this.tokenBalances.tokenBalances) return Amount.fromUnsafe(0)._unsafeUnwrap()
-      console.log(this.tokenBalances)
       const xrdTokenBalance = this.tokenBalances.tokenBalances.find((tb: TokenBalance) => tb.token.rri.equals(this.nativeToken!.rri))
       if (!xrdTokenBalance) return Amount.fromUnsafe(0)._unsafeUnwrap()
       const xrdAmount = Amount.fromUnsafe(xrdTokenBalance.amount)

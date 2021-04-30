@@ -21,7 +21,7 @@ export const storePin = (event: IpcMainInvokeEvent, pin: string) =>
   digestPin(pin).then((hash: string) => { store.set('pin', hash) })
 
 export const copyToClipboard = (event: IpcMainEvent, text: string) => {
-  clipboard.writeText(text, 'selection')
+  clipboard.writeText(text)
 }
 
 export const validatePin = (event: IpcMainInvokeEvent, pin: string) =>
