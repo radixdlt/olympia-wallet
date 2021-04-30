@@ -222,7 +222,7 @@ const WalletIndex = defineComponent({
 
     const startLoading = () => {
       loading.value = true
-      setTimeout(() => { loading.value = false }, 5000)
+      setTimeout(() => { loading.value = false }, 10000)
     }
 
     const addAccount = () => {
