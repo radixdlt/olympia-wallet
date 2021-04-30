@@ -114,7 +114,7 @@
 <script lang="ts">
 import { AccountAddressT } from '@radixdlt/account'
 import { defineComponent, PropType, Ref, ref, watch } from 'vue'
-import { safelyUnwrapAddress, safelyUnwrapAmount, validateAmountOfType } from '@/helpers/validateRadixTypes'
+import { safelyUnwrapAddress, safelyUnwrapAmount, validateAmountOfType, validateGreaterThanZero } from '@/helpers/validateRadixTypes'
 import { Token, TokenBalance } from '@radixdlt/application'
 import { useForm } from 'vee-validate'
 import ClickToCopy from '@/components/ClickToCopy.vue'
@@ -212,9 +212,14 @@ const WalletTransaction = defineComponent({
         const safeAddress = safelyUnwrapAddress(this.values.recipient)
         const safeAmount = safelyUnwrapAmount(Number(this.values.amount))
         const token = this.selectedCurrency.token
-        const validAmount = safeAmount && validateAmountOfType(safeAmount, token)
+        const greaterThanZero = safeAmount && validateGreaterThanZero(safeAmount)
+        const validAmount = safeAmount && validateAmountOfType(safeAmount, token) && validateGreaterThanZero(safeAmount)
 
-        if (!validAmount) {
+        if (!greaterThanZero){
+          this.setErrors({
+            amount: this.$t('validations.greaterThanZero')
+          })
+        } else if (!validAmount) {
           this.setErrors({
             amount: this.$t('validations.amountOfType', { granularity: token.granularity.toString() })
           })
