@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.5.2](https://www.github.com/township-agency/radixdlt-desktop-wallet/compare/v0.5.1...v0.5.2) (2021-04-30)
+
+
+### Bug Fixes
+
+* tweak loading timeout and size ([#68](https://www.github.com/township-agency/radixdlt-desktop-wallet/issues/68)) ([b5636dc](https://www.github.com/township-agency/radixdlt-desktop-wallet/commit/b5636dc35fcddfdf8aea0769b05cd0ec19c596d5))
+
 ### [0.5.1](https://www.github.com/township-agency/radixdlt-desktop-wallet/compare/v0.5.0...v0.5.1) (2021-04-30)
 
 
