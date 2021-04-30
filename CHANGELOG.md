@@ -1,5 +1,19 @@
 # Changelog
 
+### [0.5.1](https://www.github.com/township-agency/radixdlt-desktop-wallet/compare/v0.5.0...v0.5.1) (2021-04-30)
+
+
+### Bug Fixes
+
+* account list not getting last index ([#65](https://www.github.com/township-agency/radixdlt-desktop-wallet/issues/65)) ([c902a21](https://www.github.com/township-agency/radixdlt-desktop-wallet/commit/c902a21e87d189416d2859e2b13d26c51fc6d3da))
+* subscriptions teardown ([#63](https://www.github.com/township-agency/radixdlt-desktop-wallet/issues/63)) ([6ccfea7](https://www.github.com/township-agency/radixdlt-desktop-wallet/commit/6ccfea7664e16ed8518a35142331c07bf2ec74c4))
+
+
+### Dependencies
+
+* enhanced decimal formatting rules ([#67](https://www.github.com/township-agency/radixdlt-desktop-wallet/issues/67)) ([401504f](https://www.github.com/township-agency/radixdlt-desktop-wallet/commit/401504f045a9ae00f91cd7188433589954a5c1a6))
+* Post launch clean up ([#66](https://www.github.com/township-agency/radixdlt-desktop-wallet/issues/66)) ([8976074](https://www.github.com/township-agency/radixdlt-desktop-wallet/commit/897607417934a529b22d29c6cf69781bbf762a7b))
+
 ## [0.5.0](https://www.github.com/township-agency/radixdlt-desktop-wallet/compare/v0.4.0...v0.5.0) (2021-04-28)
 
 
