@@ -215,7 +215,7 @@ const WalletTransaction = defineComponent({
         const greaterThanZero = safeAmount && validateGreaterThanZero(safeAmount)
         const validAmount = safeAmount && validateAmountOfType(safeAmount, token) && validateGreaterThanZero(safeAmount)
 
-        if (!greaterThanZero){
+        if (!greaterThanZero) {
           this.setErrors({
             amount: this.$t('validations.greaterThanZero')
           })

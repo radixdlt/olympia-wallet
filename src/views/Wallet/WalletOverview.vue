@@ -59,6 +59,15 @@
         </div>
       </div>
     </div>
+
+    <div class="fixed bottom-0 bg-rGrayLightest flex p-4">
+      <div class="border-2 rounded-md border-rRed text-rRed p-4 flex self-center font-bold">
+        <span> WARNING </span>
+      </div>
+      <div class="p-4 text-sm text-rBlack">
+        This wallet connects to a temporary Radix betanet test network only. All tokens and transactions in this wallet are for testing purposes only. Tokens you see in this wallet have no value, and you cannot use it to hold real eXRD or XRD tokens.
+      </div>
+    </div>
   </div>
 </template>
 
