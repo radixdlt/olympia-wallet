@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.5.4](https://www.github.com/township-agency/radixdlt-desktop-wallet/compare/v0.5.3...v0.5.4) (2021-05-01)
+
+
+### Bug Fixes
+
+* don't show loading side by side ([#72](https://www.github.com/township-agency/radixdlt-desktop-wallet/issues/72)) ([7b2a473](https://www.github.com/township-agency/radixdlt-desktop-wallet/commit/7b2a47359af853c5129035910a755c8133a60d6e))
+
 ### [0.5.3](https://www.github.com/township-agency/radixdlt-desktop-wallet/compare/v0.5.2...v0.5.3) (2021-05-01)
 
 
