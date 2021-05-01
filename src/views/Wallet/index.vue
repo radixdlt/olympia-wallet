@@ -38,7 +38,7 @@
       </wallet-overview>
 
       <wallet-transaction
-        v-if="view == 'transaction'"
+        v-if="view == 'transaction' && !loading"
         :activeAddress="activeAddress"
         :tokenBalances="tokenBalances.tokenBalances"
         :shouldShowConfirmation="shouldShowConfirmation"
@@ -49,7 +49,7 @@
       </wallet-transaction>
 
       <wallet-staking
-        v-if="view == 'staking'"
+        v-if="view == 'staking' && !loading"
         :activeAddress="activeAddress"
         :activeStakes="activeStakes"
         :activeUnstakes="activeUnstakes"
@@ -60,7 +60,7 @@
       </wallet-staking>
 
       <wallet-history
-        v-if="view == 'history'"
+        v-if="view == 'history' && !loading"
         :transactions="transactionHistory.transactions"
         :activeAddress="activeAddress"
         :pendingTransactions="pendingTransactions"
@@ -92,7 +92,7 @@
       </account-edit-name>
 
       <settings-index
-        v-if="view == 'settings'"
+        v-if="view == 'settings' && !loading"
       >
       </settings-index>
     </template>
