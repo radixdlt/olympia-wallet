@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.5.3](https://www.github.com/township-agency/radixdlt-desktop-wallet/compare/v0.5.2...v0.5.3) (2021-05-01)
+
+
+### Bug Fixes
+
+* correct loading indicator view states ([#70](https://www.github.com/township-agency/radixdlt-desktop-wallet/issues/70)) ([3ac7dd9](https://www.github.com/township-agency/radixdlt-desktop-wallet/commit/3ac7dd9c8017a79602a34666d61538489d08c806))
+
 ### [0.5.2](https://www.github.com/township-agency/radixdlt-desktop-wallet/compare/v0.5.1...v0.5.2) (2021-04-30)
 
 
