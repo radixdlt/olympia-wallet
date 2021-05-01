@@ -22,7 +22,7 @@
 
     <template v-if="activeAddress">
       <wallet-loading
-        v-if="loading"
+        v-if="loading && view !== 'editName'"
       >
       </wallet-loading>
 
@@ -100,7 +100,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onBeforeMount, onUnmounted, Ref } from 'vue'
+import { defineComponent, onBeforeMount, onMounted, onUnmounted, Ref } from 'vue'
 import { AccountT, AccountsT, AccountAddressT } from '@radixdlt/account'
 import { Subscription, interval, Subject, Observable, combineLatest, from, BehaviorSubject } from 'rxjs'
 import { Radix, TransferTokensOptions, StakePositions, TokenBalances, UnstakePositions, ManualUserConfirmTX, mockedAPI, TransactionTracking, StakeTokensInput, UnstakeTokensInput, TransactionStateUpdate, TransactionIdentifierT, TransactionHistoryOfKnownAddressRequestInput, TransactionHistory, Token } from '@radixdlt/application'
@@ -181,6 +181,15 @@ const WalletIndex = defineComponent({
       if (props.initialSidebar) sidebar.value = props.initialSidebar
     })
 
+    const startLoading = () => {
+      loading.value = true
+      setTimeout(() => { loading.value = false }, 10000)
+    }
+
+    onMounted(() => {
+      setTimeout(() => { loading.value = false }, 5000)
+    })
+
     // Return home if wallet is undefined
     if (!store.state.wallet) router.push('/')
 
@@ -219,11 +228,6 @@ const WalletIndex = defineComponent({
           saveDerivedAccountsIndex(0)
         }
       })
-
-    const startLoading = () => {
-      loading.value = true
-      setTimeout(() => { loading.value = false }, 10000)
-    }
 
     const addAccount = () => {
       getDerivedAccountsIndex()
