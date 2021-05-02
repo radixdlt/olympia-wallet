@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.5.5](https://www.github.com/township-agency/radixdlt-desktop-wallet/compare/v0.5.4...v0.5.5) (2021-05-02)
+
+
+### Dependencies
+
+* import everything from @radixdlt/application ([#74](https://www.github.com/township-agency/radixdlt-desktop-wallet/issues/74)) ([0d48570](https://www.github.com/township-agency/radixdlt-desktop-wallet/commit/0d48570924bfe6ea8195614871ff299a3805db8d))
+
 ### [0.5.4](https://www.github.com/township-agency/radixdlt-desktop-wallet/compare/v0.5.3...v0.5.4) (2021-05-01)
 
 
