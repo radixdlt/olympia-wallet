@@ -116,7 +116,7 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import AccountListItem from '@/components/AccountListItem.vue'
-import { AccountT } from '@radixdlt/account'
+import { AccountT } from '@radixdlt/application'
 
 const WalletSidebarDefault = defineComponent({
   components: {

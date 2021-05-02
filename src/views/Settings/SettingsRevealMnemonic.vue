@@ -63,7 +63,7 @@
 </template>
 
 <script lang="ts">
-import { MnemomicT } from '@radixdlt/account'
+import { MnemomicT } from '@radixdlt/application'
 import { defineComponent, PropType } from 'vue'
 import { useForm } from 'vee-validate'
 import MnemonicDisplay from '@/components/MnemonicDisplay.vue'

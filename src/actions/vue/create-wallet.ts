@@ -1,6 +1,5 @@
-import { MnemomicT, Wallet, WalletT } from '@radixdlt/account'
+import { MnemomicT, Wallet, WalletT, KeystoreT } from '@radixdlt/application'
 import { Result } from 'neverthrow'
-import { KeystoreT } from '@radixdlt/crypto'
 
 export const createWalletFromMnemonicAndPasscode = (mnemonic: MnemomicT, passcode: string): Promise<WalletT> => new Promise((resolve, reject) => {
   Wallet.byEncryptingMnemonicAndSavingKeystore({

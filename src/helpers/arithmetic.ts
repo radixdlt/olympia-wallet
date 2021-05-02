@@ -1,4 +1,4 @@
-import { AmountT } from '@radixdlt/primitives'
+import { AmountT } from '@radixdlt/application'
 
 export const add = (lhs: AmountT, rhs: AmountT): AmountT => lhs.add(rhs)
 

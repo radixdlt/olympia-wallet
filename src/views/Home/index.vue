@@ -47,8 +47,7 @@
 
 <script lang="ts">
 import { defineComponent, reactive } from 'vue'
-import { Radix, ErrorNotification, WalletErrorCause } from '@radixdlt/application'
-import { WalletT } from '@radixdlt/account'
+import { Radix, ErrorNotification, WalletErrorCause, WalletT } from '@radixdlt/application'
 import { hasKeystore, touchKeystore } from '@/actions/vue/create-wallet'
 import { useStore } from '@/store'
 import HomeCreateAndRestore from './HomeCreateAndRestore.vue'

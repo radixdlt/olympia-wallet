@@ -23,7 +23,7 @@
 <script lang="ts">
 import { defineComponent, PropType, watch } from 'vue'
 import { getAccountName, saveAccountName } from '@/actions/vue/data-store'
-import { AccountAddressT } from '@radixdlt/account'
+import { AccountAddressT } from '@radixdlt/application'
 import { ref } from '@nopr3d/vue-next-rx'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
 

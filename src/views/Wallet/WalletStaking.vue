@@ -84,12 +84,10 @@
 </template>
 
 <script lang="ts">
-import { AccountAddressT } from '@radixdlt/account'
-import { StakePosition, TokenBalance, TokenBalances, UnstakePosition } from '@radixdlt/application'
+import { StakePosition, TokenBalance, TokenBalances, UnstakePosition, AccountAddressT, Amount, AmountT } from '@radixdlt/application'
 import { defineComponent, PropType } from 'vue'
 import { useForm } from 'vee-validate'
 import StakeListItem from '@/components/StakeListItem.vue'
-import { Amount, AmountT } from '@radixdlt/primitives'
 import { safelyUnwrapAddress, safelyUnwrapAmount, validateAmountOfType } from '@/helpers/validateRadixTypes'
 import TabsTab from '@/components/TabsTab.vue'
 import TabsContent from '@/components/TabsContent.vue'

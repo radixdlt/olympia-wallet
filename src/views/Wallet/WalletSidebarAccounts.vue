@@ -33,7 +33,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { AccountsT, AccountT } from '@radixdlt/account'
+import { AccountsT, AccountT } from '@radixdlt/application'
 import AccountListItem from '@/components/AccountListItem.vue'
 
 const WalletSidebarAccounts = defineComponent({

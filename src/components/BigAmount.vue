@@ -6,7 +6,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { AmountT } from '@radixdlt/primitives'
+import { AmountT } from '@radixdlt/application'
 import BigNumber from 'bignumber.js'
 
 BigNumber.set({

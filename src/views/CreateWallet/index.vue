@@ -93,7 +93,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { Mnemonic, MnemomicT, WalletT } from '@radixdlt/account'
+import { Mnemonic, MnemomicT, WalletT } from '@radixdlt/application'
 import CreateWalletCreatePasscode from './CreateWalletCreatePasscode.vue'
 import CreateWalletCreatePin from './CreateWalletCreatePin.vue'
 import CreateWalletViewMnemonic from './CreateWalletViewMnemonic.vue'

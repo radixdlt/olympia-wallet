@@ -112,10 +112,9 @@
 </template>
 
 <script lang="ts">
-import { AccountAddressT } from '@radixdlt/account'
 import { defineComponent, PropType, Ref, ref, watch } from 'vue'
 import { safelyUnwrapAddress, safelyUnwrapAmount, validateAmountOfType, validateGreaterThanZero } from '@/helpers/validateRadixTypes'
-import { Token, TokenBalance } from '@radixdlt/application'
+import { Token, TokenBalance, AccountAddressT } from '@radixdlt/application'
 import { useForm } from 'vee-validate'
 import ClickToCopy from '@/components/ClickToCopy.vue'
 import FormErrorMessage from '@/components/FormErrorMessage.vue'

@@ -26,8 +26,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { ExecutedTransferTokensAction } from '@radixdlt/application'
-import { AccountAddressT } from '@radixdlt/account'
+import { ExecutedTransferTokensAction, AccountAddressT } from '@radixdlt/application'
 import ClickToCopy from '@/components/ClickToCopy.vue'
 import { formatAddressForDisplay } from '@/helpers/formatter'
 import BigAmount from '@/components/BigAmount.vue'

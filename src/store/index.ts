@@ -1,7 +1,7 @@
 import { createStore, useStore as baseUseStore } from 'vuex'
 import { Store } from 'vuex/types'
 import { InjectionKey } from 'vue'
-import { WalletT } from '@radixdlt/account'
+import { WalletT } from '@radixdlt/application'
 
 interface State {
   wallet: WalletT | null;

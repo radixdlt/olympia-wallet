@@ -25,7 +25,7 @@
 
 <script lang="ts">
 import { defineComponent, onUnmounted } from 'vue'
-import { Radix, mockedAPI } from '@radixdlt/application'
+import { Radix, mockedAPI, MnemomicT } from '@radixdlt/application'
 import { combineLatest, Subject, Subscription } from 'rxjs'
 import TabsTab from '@/components/TabsTab.vue'
 import TabsContent from '@/components/TabsContent.vue'
@@ -33,7 +33,6 @@ import SettingsResetPin from './SettingsResetPin.vue'
 import SettingsRevealMnemonic from './SettingsRevealMnemonic.vue'
 import SettingsResetPassword from './SettingsResetPassword.vue'
 import { useStore } from '@/store'
-import { MnemomicT } from '@radixdlt/account'
 import { ref } from '@nopr3d/vue-next-rx'
 
 const SettingsIndex = defineComponent({
