@@ -1,4 +1,4 @@
-import { AccountAddressT } from '@radixdlt/account'
+import { AccountAddressT } from '@radixdlt/application'
 
 export const formatAddressForDisplay = function (address: AccountAddressT) {
   const s = address.toString()

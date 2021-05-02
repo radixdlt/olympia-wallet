@@ -30,7 +30,7 @@
 
 <script lang="ts">
 import { defineComponent, onUnmounted, PropType } from 'vue'
-import { AccountT, AccountAddressT } from '@radixdlt/account'
+import { AccountT, AccountAddressT } from '@radixdlt/application'
 import ClickToCopy from '@/components/ClickToCopy.vue'
 import { ref } from '@nopr3d/vue-next-rx'
 import { getAccountName } from '@/actions/vue/data-store'

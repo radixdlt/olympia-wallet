@@ -1,8 +1,5 @@
-import { AccountAddress, AccountAddressT } from '@radixdlt/account'
-import { Amount, AmountT } from '@radixdlt/primitives'
-import { Token } from '@radixdlt/application/src/dto/_types'
+import { AccountAddress, AccountAddressT, Amount, AmountT, Token } from '@radixdlt/application'
 import BigNumber from 'bignumber.js'
-import { tokenBalancesErr } from '@radixdlt/application/src/errors'
 
 export const safelyUnwrapAddress = (addressString: string): AccountAddressT | null => {
   const recipientAddressResult = AccountAddress.fromUnsafe(addressString)

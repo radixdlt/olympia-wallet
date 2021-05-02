@@ -51,9 +51,7 @@
 <script lang="ts">
 import { defineComponent, onUnmounted } from 'vue'
 import { useForm } from 'vee-validate'
-import { Keystore, KeystoreT } from '@radixdlt/crypto'
-import { Radix, mockedAPI } from '@radixdlt/application'
-import { MnemomicT, WalletT } from '@radixdlt/account'
+import { Radix, mockedAPI, Keystore, KeystoreT, MnemomicT, WalletT } from '@radixdlt/application'
 import { Result } from 'neverthrow'
 import { Subscription } from 'rxjs'
 import { ref } from '@nopr3d/vue-next-rx'

@@ -60,9 +60,7 @@
 </template>
 
 <script lang="ts">
-import { AccountAddressT } from '@radixdlt/account'
-import { AmountOrUnsafeInput, AmountT } from '@radixdlt/primitives'
-import { StakeTokensInput, Token, TransferTokensInput } from '@radixdlt/application'
+import { AccountAddressT, AmountOrUnsafeInput, AmountT, StakeTokensInput, Token, TransferTokensInput } from '@radixdlt/application'
 import { defineComponent, PropType } from 'vue'
 import { useForm } from 'vee-validate'
 import BigAmount from '@/components/BigAmount.vue'

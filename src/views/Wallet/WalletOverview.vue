@@ -73,10 +73,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { StakePosition, Token, TokenBalance, TokenBalances } from '@radixdlt/application'
-import { AccountAddressT } from '@radixdlt/account'
-import { sumAmounts, subtract } from '@/helpers/arithmetic'
-import { Amount, AmountT } from '@radixdlt/primitives'
+import { StakePosition, Token, TokenBalance, TokenBalances, AccountAddressT, Amount, AmountT } from '@radixdlt/application'
 import BigAmount from '@/components/BigAmount.vue'
 import TokenSymbol from '@/components/TokenSymbol.vue'
 import ClickToCopy from '@/components/ClickToCopy.vue'

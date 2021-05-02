@@ -81,7 +81,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { Mnemonic, WalletT } from '@radixdlt/account'
+import { Mnemonic, WalletT } from '@radixdlt/application'
 import WizardHeading from '@/components/WizardHeading.vue'
 import { createWalletFromMnemonicAndPasscode, storePin } from '@/actions/vue/create-wallet'
 import RestoreWalletEnterMnemonic from './RestoreWalletEnterMnemonic.vue'

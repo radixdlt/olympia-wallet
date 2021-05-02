@@ -18,10 +18,9 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { ExecutedUnstakeTokensAction } from '@radixdlt/application'
+import { ExecutedUnstakeTokensAction, AccountAddressT } from '@radixdlt/application'
 import ClickToCopy from '@/components/ClickToCopy.vue'
 import { formatAddressForDisplay } from '@/helpers/formatter'
-import { AccountAddressT } from '@radixdlt/account'
 import BigAmount from '@/components/BigAmount.vue'
 
 const ActionListItemUnstakeTokens = defineComponent({

@@ -65,13 +65,12 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { ExecutedTransaction } from '@radixdlt/application'
+import { ExecutedTransaction, AccountAddressT } from '@radixdlt/application'
 import { DateTime } from 'luxon'
 import ActionListItemStakeTokens from '@/components/ActionListItemStakeTokens.vue'
 import ActionListItemUnstakeTokens from '@/components/ActionListItemUnstakeTokens.vue'
 import ActionListItemTransferTokens from '@/components/ActionListItemTransferTokens.vue'
 import ActionListItemOther from '@/components/ActionListItemOther.vue'
-import { AccountAddressT } from '@radixdlt/account'
 
 export default defineComponent({
   components: {

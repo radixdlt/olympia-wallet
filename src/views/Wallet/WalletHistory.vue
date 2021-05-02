@@ -70,8 +70,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { ExecutedTransaction } from '@radixdlt/application'
-import { AccountAddressT } from '@radixdlt/account'
+import { ExecutedTransaction, AccountAddressT } from '@radixdlt/application'
 import TransactionListItem from '@/components/TransactionListItem.vue'
 import ClickToCopy from '@/components/ClickToCopy.vue'
 
