@@ -182,12 +182,7 @@ const WalletIndex = defineComponent({
 
     const startLoading = () => {
       loading.value = true
-      setTimeout(() => { loading.value = false }, 10000)
     }
-
-    onMounted(() => {
-      setTimeout(() => { loading.value = false }, 5000)
-    })
 
     // Return home if wallet is undefined
     if (!store.state.wallet) router.push('/')
