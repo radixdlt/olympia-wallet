@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.5.6](https://www.github.com/township-agency/radixdlt-desktop-wallet/compare/v0.5.5...v0.5.6) (2021-05-04)
+
+
+### Dependencies
+
+* update copy capitalization ([#78](https://www.github.com/township-agency/radixdlt-desktop-wallet/issues/78)) ([2dea9b1](https://www.github.com/township-agency/radixdlt-desktop-wallet/commit/2dea9b179cbb9019717b15e4f1ce78075fb77a1e))
+
 ### [0.5.5](https://www.github.com/township-agency/radixdlt-desktop-wallet/compare/v0.5.4...v0.5.5) (2021-05-02)
 
 
