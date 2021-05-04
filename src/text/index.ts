@@ -104,7 +104,7 @@ const messages = {
       confirmButton: 'Confirm',
       sendButton: 'Send',
       insufficientFunds: 'Sorry, but you don\'t have any tokens to send!',
-      recipientPlaceholder: 'enter address',
+      recipientPlaceholder: 'Enter address',
       amountPlaceholder: 'Available balance ...',
       messagePlaceholder: 'Add an optional message'
     },
@@ -124,7 +124,7 @@ const messages = {
       stakeDisclaimer: 'Holders of XRD tokens may stake them to validator nodes of their choice to receive potential incentive rewards. Note that once XRD tokens are staked, unstaking them again will be subject to a lengthy unstaking delay. Please visit http://learn.radixdlt.com for more information about staking, unstaking, and selecting good validator nodes.',
       unstakeDisclaimer: 'Your current stakes are shown at right. You may request an unstake of some or all of your XRD tokens from a validator. Once the request transaction has been processed, your tokens will be subject to a lengthy unstaking delay, after which they will become available for transfer once more. Please visit http://learn.radixdlt.com for more information about unstaking.',
       availableBalancePlaceholder: 'Available balance ...',
-      validatorPlaceholder: 'enter validator address'
+      validatorPlaceholder: 'Enter validator address'
     },
     account: {
       editNameHeading: 'Let’s set the name of your account',
