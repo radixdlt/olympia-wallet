@@ -93,13 +93,13 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { Mnemonic, MnemomicT, WalletT } from '@radixdlt/application'
+import { Mnemonic, MnemomicT, NetworkT, IdentityManagerT } from '@radixdlt/application'
 import CreateWalletCreatePasscode from './CreateWalletCreatePasscode.vue'
 import CreateWalletCreatePin from './CreateWalletCreatePin.vue'
 import CreateWalletViewMnemonic from './CreateWalletViewMnemonic.vue'
 import CreateWalletEnterMnemonic from './CreateWalletEnterMnemonic.vue'
 import WizardHeading from '@/components/WizardHeading.vue'
-import { createWalletFromMnemonicAndPasscode, storePin } from '@/actions/vue/create-wallet'
+import { createIdentityManager, storePin } from '@/actions/vue/create-wallet'
 import { useStore } from '@/store'
 import { ref } from '@nopr3d/vue-next-rx'
 import { saveDerivedAccountsIndex } from '@/actions/vue/data-store'
@@ -121,9 +121,9 @@ const CreateWallet = defineComponent({
 
     // Create wallet with password and path to keystore
     const createWallet = (pass: string) => {
-      createWalletFromMnemonicAndPasscode(mnemonic, pass)
-        .then((wallet: WalletT) => {
-          store.commit('setWallet', wallet)
+      createIdentityManager(mnemonic, pass, NetworkT.BETANET) // TEMP: Hardcoded for betanet
+        .then((identityManager: IdentityManagerT) => {
+          store.commit('setIdentityManager', identityManager)
           saveDerivedAccountsIndex(0)
           step.value = 3
           passcode.value = pass

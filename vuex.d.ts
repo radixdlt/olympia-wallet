@@ -1,10 +1,10 @@
 import { ComponentCustomProperties } from 'vue'
 import { Store } from 'vuex'
-import { WalletT } from '@radixdlt/application'
+import { IdentityManagerT } from '@radixdlt/application'
 
 declare module '@vue/runtime-core' {
   interface State {
-    wallet: WalletT
+    identityManager: IdentityManagerT
   }
 
   // provide typings for `this.$store`

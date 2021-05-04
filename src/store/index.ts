@@ -1,10 +1,10 @@
 import { createStore, useStore as baseUseStore } from 'vuex'
 import { Store } from 'vuex/types'
 import { InjectionKey } from 'vue'
-import { WalletT } from '@radixdlt/application'
+import { IdentityManagerT } from '@radixdlt/application'
 
 interface State {
-  wallet: WalletT | null;
+  identityManager: IdentityManagerT | null;
 }
 
 // Create a new store instance.
@@ -15,8 +15,8 @@ export const store = createStore<State>({
     }
   },
   mutations: {
-    setWallet (state: State, wallet: WalletT) {
-      state.wallet = wallet
+    setIdentityManager (state: State, IdentityManager: IdentityManagerT) {
+      state.identityManager = IdentityManager
     }
   }
 })

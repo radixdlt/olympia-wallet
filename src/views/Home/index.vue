@@ -47,7 +47,7 @@
 
 <script lang="ts">
 import { defineComponent, reactive } from 'vue'
-import { Radix, ErrorNotification, WalletErrorCause, WalletT } from '@radixdlt/application'
+import { Radix, ErrorNotification, WalletErrorCause, IdentityManagerT } from '@radixdlt/application'
 import { hasKeystore, touchKeystore } from '@/actions/vue/create-wallet'
 import { useStore } from '@/store'
 import HomeCreateAndRestore from './HomeCreateAndRestore.vue'
@@ -90,8 +90,8 @@ const CreateWallet = defineComponent({
       )
 
     // Move user to wallet when a wallet is successfully retrieved
-    subs.add(radix.__wallet.subscribe((wallet: WalletT) => {
-      store.commit('setWallet', wallet)
+    subs.add(radix.__identityManager.subscribe((wallet: IdentityManagerT) => {
+      store.commit('setIdentityManager', wallet)
       router.push('/wallet')
     }))
 

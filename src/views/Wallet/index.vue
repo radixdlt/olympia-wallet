@@ -102,7 +102,7 @@
 <script lang="ts">
 import { defineComponent, onBeforeMount, onMounted, onUnmounted, Ref } from 'vue'
 import { Subscription, interval, Subject, Observable, combineLatest, from, BehaviorSubject } from 'rxjs'
-import { AccountT, AccountsT, AccountAddressT, Radix, TransferTokensOptions, StakePositions, TokenBalances, UnstakePositions, ManualUserConfirmTX, mockedAPI, TransactionTracking, StakeTokensInput, UnstakeTokensInput, TransactionStateUpdate, TransactionIdentifierT, TransactionHistoryOfKnownAddressRequestInput, TransactionHistory, Token, LogLevel } from '@radixdlt/application'
+import { AccountT, AccountsT, AccountAddressT, Radix, TransferTokensOptions, StakePositions, TokenBalances, UnstakePositions, ManualUserConfirmTX, mockedAPI, TransactionTracking, StakeTokensInput, UnstakeTokensInput, TransactionStateUpdate, TransactionIdentifierT, TransactionHistoryOfKnownAddressRequestInput, TransactionHistory, Token, LogLevel, IdentityT, IdentitiesT } from '@radixdlt/application'
 import { ref } from '@nopr3d/vue-next-rx'
 import { useStore } from '@/store'
 import { useRouter } from 'vue-router'
@@ -144,11 +144,11 @@ const WalletIndex = defineComponent({
     const router = useRouter()
     const { t } = useI18n({ useScope: 'global' })
 
-    const activeAccount: Ref<AccountT | null> = ref(null)
+    const activeIdentity: Ref<IdentityT | null> = ref(null)
     const activeAddress = ref(null)
     const activeStakes = ref(null)
     const activeUnstakes = ref(null)
-    const accounts = ref(null)
+    const identities = ref(null)
     const tokenBalances = ref({ tokenBalances: [] })
     const transactionHistory = ref({ transactions: [] })
     const shouldShowConfirmation = ref(false)
@@ -190,14 +190,15 @@ const WalletIndex = defineComponent({
     const radix = Radix
       .create()
       .__withAPI(mockedAPI)
-      .withWallet(store.state.wallet)
+      .withIdentityManager(store.state.wallet)
       .withTokenBalanceFetchTrigger(interval(5 * 1_000))
 
     const wallet = Radix
       .create()
       .connect('https://betanet.radixdlt.com/rpc')
-      .withWallet(store.state.wallet)
+      .withIdentityManager(store.state.identityManager)
       .withTokenBalanceFetchTrigger(interval(5 * 1_000))
+      .logLevel(LogLevel.INFO)
 
     const subs = new Subscription()
 
@@ -205,38 +206,38 @@ const WalletIndex = defineComponent({
       loading.value = false
       tokenBalances.value = tokenBalancesRes
     }))
-    subs.add(wallet.activeAccount.subscribe((accountRes: AccountT) => { activeAccount.value = accountRes }))
+    subs.add(wallet.activeIdentity.subscribe((identity: IdentityT) => { activeIdentity.value = identity }))
     subs.add(radix.stakingPositions.subscribe((stakes: StakePositions) => { activeStakes.value = stakes }))
     subs.add(radix.unstakingPositions.subscribe((unstakes: UnstakePositions) => { activeUnstakes.value = unstakes }))
-    subs.add(wallet.accounts.subscribe((accountsRes: AccountsT) => { accounts.value = accountsRes }))
+    subs.add(wallet.identities.subscribe((identitiesRes: IdentitiesT) => { identities.value = identitiesRes }))
     subs.add(wallet.activeAddress.subscribe((addressRes: AccountAddressT) => { activeAddress.value = addressRes }))
     subs.add(wallet.ledger.nativeToken().subscribe((nativeTokenRes: Token) => { nativeToken.value = nativeTokenRes }))
 
     getDerivedAccountsIndex()
       .then((accountsIndex: string) => {
         if ((Number(accountsIndex)) > 0) {
-          wallet.restoreAccountsUpToIndex(Number(accountsIndex) + 1)
+          wallet.restoreIdentitiesForLocalHDAccountsUpToIndex(Number(accountsIndex) + 1)
             .subscribe(
-              (accountRes: AccountsT) => { accounts.value = accountRes })
+              (identitiesRes: IdentitiesT) => { identities.value = identitiesRes })
         } else {
           saveDerivedAccountsIndex(0)
         }
       })
 
-    const addAccount = () => {
+    const addIdentity = () => {
       getDerivedAccountsIndex()
         .then((index: string) => {
           saveDerivedAccountsIndex(Number(index) + 1)
           tokenBalances.value = []
           startLoading()
-          wallet.deriveNextAccount({ alsoSwitchTo: true })
+          wallet.deriveNextIdentity({ alsoSwitchTo: true })
         })
     }
 
-    const switchAccount = (account: AccountT) => {
+    const switchIdentity = (identity: IdentityT) => {
       tokenBalances.value = []
       startLoading()
-      wallet.switchAccount({ toAccount: account })
+      wallet.switchIdentity({ toIdentity: identity })
     }
 
     const confirmTransaction = () => userDidConfirm.next(true)
@@ -439,8 +440,8 @@ const WalletIndex = defineComponent({
 
     return {
       // data
-      accounts,
-      activeAccount,
+      identities,
+      activeIdentity,
       activeAddress,
       activeStakes,
       activeUnstakes,
@@ -464,10 +465,10 @@ const WalletIndex = defineComponent({
       shouldShowConfirmation,
 
       // methods
-      switchAccount,
+      switchIdentity,
       confirmTransaction,
       cancelTransaction,
-      addAccount,
+      addIdentity,
       transferTokens,
       stakeTokens,
       unstakeTokens,

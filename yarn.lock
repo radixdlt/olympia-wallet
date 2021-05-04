@@ -1378,6 +1378,24 @@
     prelude-ts "^1.0.2"
     rxjs "7.0.0-beta.13"
 
+"@radixdlt/application@/home/aleworm/radixdlt-javascript/packages/application":
+  version "1.0.47"
+  dependencies:
+    "@open-rpc/mock-server" "^1.7.2"
+    "@open-rpc/schema-utils-js" "^1.14.3"
+    "@radixdlt/account" "^1.0.32"
+    "@radixdlt/crypto" "^1.0.27"
+    "@radixdlt/data-formats" "^1.0.20"
+    "@radixdlt/networking" "^1.0.24"
+    "@radixdlt/primitives" "^1.0.23"
+    "@radixdlt/util" "^1.0.19"
+    jest "^26.6.3"
+    json-schema-faker "^0.5.0-rcv.34"
+    neverthrow "^4.0.1"
+    node-fetch "^2.6.1"
+    ramda "^0.27.1"
+    rxjs "7.0.0-beta.13"
+
 "@radixdlt/application@^1.0.47":
   version "1.0.47"
   resolved "https://registry.yarnpkg.com/@radixdlt/application/-/application-1.0.47.tgz#1aae983fbe8bf390b6bd9e7735079ec3afcc7265"
