@@ -62,17 +62,11 @@ const AccountListItem = defineComponent({
     const displayAddress = ref(null)
     const name = ref('')
 
-    const subs = new Subscription()
-
     address.value = props.account.address.toString()
     displayAddress.value = formatAddressForDisplay(address.value)
 
     getAccountName(props.account.address.toString())
       .then((storedName: string) => { name.value = storedName || props.account.address.toString() })
-
-    onUnmounted(() => {
-      subs.unsubscribe()
-    })
 
     return { address, displayAddress, name }
   },
