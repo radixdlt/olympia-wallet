@@ -62,25 +62,27 @@ const AccountListItem = defineComponent({
     const displayAddress = ref(null)
     const name = ref('')
 
-    const isActive = ref(false)
-
     const subs = new Subscription()
 
-    if (props.account !== undefined && props.account !== null) {
-      isActive.value = props.activeAccount.equals(props.account)
+    address.value = props.account.address.toString()
+    displayAddress.value = formatAddressForDisplay(address.value)
 
-      address.value = props.account.address.toString()
-      displayAddress.value = formatAddressForDisplay(address.value)
-
-      getAccountName(props.account.address.toString())
-        .then((storedName: string) => { name.value = storedName || props.account.address.toString() })
-    }
+    getAccountName(props.account.address.toString())
+      .then((storedName: string) => { name.value = storedName || props.account.address.toString() })
 
     onUnmounted(() => {
       subs.unsubscribe()
     })
 
-    return { address, displayAddress, name, isActive }
+    return { address, displayAddress, name }
+  },
+
+  computed: {
+    isActive () {
+      const activeAccountKey: string = this.activeAccount?.hdPath ? this.activeAccount.hdPath.toString() : 'active'
+      const accountKey: string = this.account?.hdPath ? this.account.hdPath.toString() : 'account'
+      return activeAccountKey === accountKey
+    }
   },
 
   emits: ['edit']
