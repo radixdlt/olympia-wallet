@@ -23,18 +23,19 @@
     <div class="text-xs text-white relative z-20 flex justify-between">
       <span class="mr-2">{{ $t('wallet.addressLabel') }}</span>
       <span class="flex-1 w-full truncate">{{ displayAddress }}</span>
-      <click-to-copy :text="address.toString()" class="hover:text-rGreen active:text-rGreenDark" />
+      <click-to-copy :text="address" class="hover:text-rGreen active:text-rGreenDark" />
     </div>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, onUnmounted, PropType } from 'vue'
-import { AccountT, AccountAddressT } from '@radixdlt/application'
+import { AccountT } from '@radixdlt/application'
 import ClickToCopy from '@/components/ClickToCopy.vue'
 import { ref } from '@nopr3d/vue-next-rx'
 import { getAccountName } from '@/actions/vue/data-store'
 import { formatAddressForDisplay } from '@/helpers/formatter'
+import { Subscription } from 'rxjs'
 
 const AccountListItem = defineComponent({
   components: {
@@ -58,28 +59,28 @@ const AccountListItem = defineComponent({
 
   setup (props) {
     const address = ref(null)
+    const displayAddress = ref(null)
     const name = ref('')
 
-    const sub = props.account.deriveAddress().subscribe((a: AccountAddressT) => {
-      address.value = a
-      getAccountName(a.toString())
-        .then((storedName: string) => { name.value = storedName || a.toString() })
-    })
+    const isActive = ref(false)
+
+    const subs = new Subscription()
+
+    if (props.account !== undefined && props.account !== null) {
+      isActive.value = props.activeAccount.equals(props.account)
+
+      address.value = props.account.address.toString()
+      displayAddress.value = formatAddressForDisplay(address.value)
+
+      getAccountName(props.account.address.toString())
+        .then((storedName: string) => { name.value = storedName || props.account.address.toString() })
+    }
 
     onUnmounted(() => {
-      sub.unsubscribe()
+      subs.unsubscribe()
     })
 
-    const displayAddress = formatAddressForDisplay(address.value)
-    return { address, displayAddress, name }
-  },
-
-  computed: {
-    isActive () {
-      const activeAccountKey: string = this.activeAccount ? this.activeAccount.hdPath.toString() : 'active'
-      const accountKey: string = this.account ? this.account.hdPath.toString() : 'account'
-      return activeAccountKey === accountKey
-    }
+    return { address, displayAddress, name, isActive }
   },
 
   emits: ['edit']

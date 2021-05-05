@@ -51,12 +51,12 @@
 <script lang="ts">
 import { defineComponent, onUnmounted } from 'vue'
 import { useForm } from 'vee-validate'
-import { Radix, mockedAPI, Keystore, KeystoreT, MnemomicT, NetworkT, IdentityManagerT } from '@radixdlt/application'
+import { Radix, mockedAPI, Keystore, KeystoreT, MnemomicT, NetworkT, WalletT } from '@radixdlt/application'
 import { Result } from 'neverthrow'
 import { Subscription } from 'rxjs'
 import { ref } from '@nopr3d/vue-next-rx'
 import { useStore } from '@/store'
-import { touchKeystore, createIdentityManager } from '@/actions/vue/create-wallet'
+import { touchKeystore, initWallet } from '@/actions/vue/create-wallet'
 import FormErrorMessage from '@/components/FormErrorMessage.vue'
 import FormField from '@/components/FormField.vue'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
@@ -83,14 +83,14 @@ const SettingsResetPassword = defineComponent({
     const radix = Radix
       .create()
       .__withAPI(mockedAPI)
-      .withIdentityManager(store.state.identityManager)
+      .withWallet(store.state.wallet)
 
     const handleResetPassword = (newPassword: string) => {
       const getMnemonicForPassword = radix.revealMnemonic()
         .subscribe((m: MnemomicT) => {
-          createIdentityManager(m, newPassword, NetworkT.BETANET) // Temporarily hardcoded for betanet
-            .then((identityManager: IdentityManagerT) => {
-              store.commit('setIdentityManager', identityManager)
+          initWallet(m, newPassword, NetworkT.BETANET) // Temporarily hardcoded for betanet
+            .then(wallet => {
+              store.commit('setWallet', wallet)
               resetForm()
             })
             .then(() => getMnemonicForPassword.unsubscribe())

@@ -1,7 +1,7 @@
-import { MnemomicT, Wallet, WalletT, KeystoreT, IdentityManager, NetworkT, IdentityManagerT } from '@radixdlt/application'
+import { MnemomicT, Wallet, WalletT, KeystoreT, NetworkT, SigningKeychain, SigningKeychainT } from '@radixdlt/application'
 
-export const createIdentityManager = async (mnemonic: MnemomicT, passcode: string, network: NetworkT): Promise<IdentityManagerT> => {
-  const walletResult = await Wallet.byEncryptingMnemonicAndSavingKeystore({
+export const initWallet = async (mnemonic: MnemomicT, passcode: string, network: NetworkT): Promise<WalletT> => {
+  const walletResult = await SigningKeychain.byEncryptingMnemonicAndSavingKeystore({
     mnemonic,
     password: passcode,
     save: (keystore: KeystoreT): Promise<void> => {
@@ -14,10 +14,10 @@ export const createIdentityManager = async (mnemonic: MnemomicT, passcode: strin
     throw walletResult.error
   }
 
-  const wallet: WalletT = walletResult.value
+  const signingKeychain = walletResult.value
 
-  return IdentityManager.create({
-    wallet,
+  return Wallet.create({
+    signingKeychain,
     network
   })
 }

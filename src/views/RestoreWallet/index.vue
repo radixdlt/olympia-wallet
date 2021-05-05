@@ -81,9 +81,9 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { IdentityManagerT, Mnemonic, NetworkT } from '@radixdlt/application'
+import { WalletT, Mnemonic, NetworkT } from '@radixdlt/application'
 import WizardHeading from '@/components/WizardHeading.vue'
-import { createIdentityManager, storePin } from '@/actions/vue/create-wallet'
+import { initWallet, storePin } from '@/actions/vue/create-wallet'
 import RestoreWalletEnterMnemonic from './RestoreWalletEnterMnemonic.vue'
 import CreateWalletCreatePasscode from '@/views/CreateWallet/CreateWalletCreatePasscode.vue'
 import CreateWalletCreatePin from '@/views/CreateWallet/CreateWalletCreatePin.vue'
@@ -107,9 +107,9 @@ const RestoreWallet = defineComponent({
 
     // Create wallet with password and path to keystore
     const createWallet = (pass: string) => {
-      createIdentityManager(mnemonic.value, pass, NetworkT.BETANET) // Temporarily hardcoded for betanet
-        .then((identityManager: IdentityManagerT) => {
-          store.commit('setIdentityManager', identityManager)
+      initWallet(mnemonic.value, pass, NetworkT.BETANET) // Temporarily hardcoded for betanet
+        .then(wallet => {
+          store.commit('setWallet', wallet)
           saveDerivedAccountsIndex(0)
           step.value = 2
           passcode.value = pass

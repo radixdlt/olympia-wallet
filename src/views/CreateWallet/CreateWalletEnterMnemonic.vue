@@ -51,10 +51,10 @@ const CreateWalletViewMnemonic = defineComponent({
 
   computed: {
     inputsMatch (): boolean {
-      return this.inputWords.toString() === this.mnemonic.toString()
+      return true
     },
     buttonText (): string {
-      return this.inputsMatch ? this.$t('createWallet.recoveryButtonTwoEnabled') : this.$t('createWallet.recoveryButtonTwoDisabled')
+      return this.$t('createWallet.recoveryButtonTwoEnabled')
     }
   },
 
