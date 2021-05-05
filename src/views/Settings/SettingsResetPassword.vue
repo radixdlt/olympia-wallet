@@ -30,7 +30,7 @@
       <FormErrorMessage name="password" />
     </div>
 
-    <div class="mb-56">
+    <div class="mb-16">
       <FormField
         type="password"
         name="confirmation"
