@@ -21,56 +21,77 @@
     </wallet-sidebar-accounts>
 
     <template v-if="activeAddress">
-      <wallet-loading
-        v-if="loading && view !== 'editName'"
-      >
-      </wallet-loading>
 
-      <wallet-overview
-        v-if="view == 'overview' && !loading"
-        :activeAddress="activeAddress"
-        :activeStakes="activeStakes"
-        :activeUnstakes="activeUnstakes"
-        :tokenBalances="tokenBalances"
-        :nativeToken="nativeToken"
-        @requestFreeTokens="requestFreeTokens"
-      >
-      </wallet-overview>
+      <template v-if="view == 'overview'">
+        <wallet-overview
+          v-if="!loadingBalances"
+          :activeAddress="activeAddress"
+          :activeStakes="activeStakes"
+          :activeUnstakes="activeUnstakes"
+          :tokenBalances="tokenBalances"
+          :nativeToken="nativeToken"
+          @requestFreeTokens="requestFreeTokens"
+        >
+        </wallet-overview>
+         <wallet-loading
+          v-else
+        >
+        </wallet-loading>
+      </template>
 
-      <wallet-transaction
-        v-if="view == 'transaction' && !loading"
-        :activeAddress="activeAddress"
-        :tokenBalances="tokenBalances.tokenBalances"
-        :shouldShowConfirmation="shouldShowConfirmation"
-        :nativeToken="nativeToken"
-        @transferTokens="transferTokens"
-        ref="walletTransactionComponent"
-      >
-      </wallet-transaction>
+      <template v-if="view == 'transaction'">
+        <wallet-transaction
+          v-if="!loadingBalances"
+          :activeAddress="activeAddress"
+          :tokenBalances="tokenBalances.tokenBalances"
+          :shouldShowConfirmation="shouldShowConfirmation"
+          :nativeToken="nativeToken"
+          @transferTokens="transferTokens"
+          ref="walletTransactionComponent"
+        >
+        </wallet-transaction>
+        <wallet-loading
+          v-else
+        >
+        </wallet-loading>
+      </template>
 
-      <wallet-staking
-        v-if="view == 'staking' && !loading"
-        :activeAddress="activeAddress"
-        :activeStakes="activeStakes"
-        :activeUnstakes="activeUnstakes"
-        :tokenBalances="tokenBalances"
-        @stakeTokens="stakeTokens"
-        @unstakeTokens="unstakeTokens"
-      >
-      </wallet-staking>
+      <template v-if="view == 'staking'">
+        <wallet-staking
+          v-if="!loadingBalances"
+          :activeAddress="activeAddress"
+          :activeStakes="activeStakes"
+          :activeUnstakes="activeUnstakes"
+          :tokenBalances="tokenBalances"
+          @stakeTokens="stakeTokens"
+          @unstakeTokens="unstakeTokens"
+        >
+        </wallet-staking>
+        <wallet-loading
+          v-else
+        >
+        </wallet-loading>
 
-      <wallet-history
-        v-if="view == 'history' && !loading"
-        :transactions="transactionHistory.transactions"
-        :activeAddress="activeAddress"
-        :pendingTransactions="pendingTransactions"
-        :canGoBack="cursorStack.length > 0"
-        :canGoNext="canGoNext"
-        @refresh="refreshHistory"
-        @next="nextPage"
-        @previous="previousPage"
-      >
-      </wallet-history>
+      </template>
+
+      <template v-if="view == 'history'">
+        <wallet-history
+          v-if="!loadingHistory"
+          :transactions="transactionHistory.transactions"
+          :activeAddress="activeAddress"
+          :pendingTransactions="pendingTransactions"
+          :canGoBack="cursorStack.length > 0"
+          :canGoNext="canGoNext"
+          @refresh="refreshHistory"
+          @next="nextPage"
+          @previous="previousPage"
+        >
+        </wallet-history>
+        <wallet-loading
+          v-else
+        >
+        </wallet-loading>
+      </template>
 
       <wallet-confirm-transaction-modal
         v-if="shouldShowConfirmation"
@@ -164,7 +185,9 @@ const WalletIndex = defineComponent({
     const canGoNext = ref(false)
     const nativeToken = ref(null)
     const selectedCurrency: Ref<Token | null> = ref(null)
-    const loading = ref(true)
+
+    const loadingBalances = ref(true)
+    const loadingHistory = ref(true)
 
     const walletTransactionComponent = ref(null)
 
@@ -181,7 +204,8 @@ const WalletIndex = defineComponent({
     })
 
     const startLoading = () => {
-      loading.value = true
+      loadingBalances.value = true
+      loadingHistory.value = true
     }
 
     // Return home if wallet is undefined
@@ -202,7 +226,7 @@ const WalletIndex = defineComponent({
     const subs = new Subscription()
 
     subs.add(wallet.tokenBalances.subscribe((tokenBalancesRes: TokenBalances) => {
-      loading.value = false
+      loadingBalances.value = false
       tokenBalances.value = tokenBalancesRes
     }))
     subs.add(wallet.activeAccount.subscribe((accountRes: AccountT) => { activeAccount.value = accountRes }))
@@ -253,6 +277,7 @@ const WalletIndex = defineComponent({
         return wallet.transactionHistory(params)
       }))
       .subscribe((history: TransactionHistory) => {
+        loadingHistory.value = false
         if (history.cursor) canGoNext.value = true
         else canGoNext.value = false
         transactionHistory.value = history
@@ -453,7 +478,8 @@ const WalletIndex = defineComponent({
       cursorStack,
       nativeToken,
       selectedCurrency,
-      loading,
+      loadingBalances,
+      loadingHistory,
 
       // view flags
       view,
