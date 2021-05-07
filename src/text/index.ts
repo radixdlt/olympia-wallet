@@ -140,6 +140,7 @@ const messages = {
       mnemonicDisclaimerThree: 'Please do not view it in a public place, and remember to not store it digitally.',
       mnemonicModalHeading: 'Enter your pin to access your seed phrase',
       accessMnemonicButton: 'Access Seed Phrase',
+      accessMnemonicCancelPin: 'Cancel',
       resetPasswordDisclaimer: 'Your password is required each time you open the wallet application, and provides access to your secret seed phrase. We recommend you choose a strong, unguessable password that you have not used elsewhere.',
       resetPasswordInstructions: 'Please enter your current password before choosing a new one.',
       resetPinDisclaimer: 'Your PIN is required each time you wish to submit a transaction.',

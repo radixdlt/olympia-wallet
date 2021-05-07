@@ -13,15 +13,16 @@
     </div>
     <input
       :name="name"
-      type="number"
+      type="string"
       class="opacity-0 absolute top-0 left-0 w-full h-full cursor-pointer"
       ref="inputRef"
-      v-on:keydown="handleKeyup($event.target)"
       v-model="value"
       :data-ci="dataCi"
       @blur="focusInput()"
-      @input="handleChange($event.target.value)"
+      @input="handleChange"
+      :maxlength="4"
     />
+
     <div v-if="errorMessage" class="flex flex-row items-center justify-center text-rRed mt-4">
       <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr-3">
       <circle cx="7" cy="7" r="6.5" transform="rotate(90 7 7)" fill="#EF4136" stroke="#EF4136"/>
@@ -75,13 +76,8 @@ const PinInput = defineComponent({
   },
 
   methods: {
-    handleKeyup (target: any) {
-      if (target.value.length > 4) {
-        target.value = target.value.slice(0, 4)
-      }
-    },
-    handleChange (value: string) {
-      if (value.length === 4) {
+    handleChange (event: any) {
+      if (event.target.value.length === 4) {
         this.$emit('finished', this.name)
       } else {
         this.$emit('unfinished', this.name)

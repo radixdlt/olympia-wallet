@@ -30,11 +30,6 @@
       </ButtonSubmit>
 
       <template v-if="enteringPin">
-        <div
-          class="fixed inset-0 w-full h-full flex items-center justify-center"
-          @click="enteringPin = false"
-        >
-        </div>
         <form
           class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white border border-rGray rounded-md flex flex-col items-center px-11 pt-9 pb-7"
           @submit.prevent="handleSubmit"
@@ -56,6 +51,13 @@
           >
             {{ $t('settings.accessMnemonicButton') }}
           </ButtonSubmit>
+
+          <button
+              class="text-rGrayDark py-4 px-4text-sm mx-auto"
+              @click="() => enteringPin = false"
+            >
+              {{ $t('settings.accessMnemonicCancelPin') }}
+          </button>
         </form>
       </template>
     </div>
@@ -135,7 +137,7 @@ const SettingsRevealMnemonic = defineComponent({
     }
   },
 
-  emits: ['clickAccessMnemonic']
+  emits: ['clickAccessMnemonic', 'cancel']
 })
 
 export default SettingsRevealMnemonic
