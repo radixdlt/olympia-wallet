@@ -13,14 +13,13 @@
     </div>
     <input
       :name="name"
-      type="string"
+      type="number"
       class="opacity-0 absolute top-0 left-0 w-full h-full cursor-pointer"
       ref="inputRef"
       v-model="value"
       :data-ci="dataCi"
       @blur="focusInput()"
       @input="handleChange"
-      :maxlength="4"
     />
 
     <div v-if="errorMessage" class="flex flex-row items-center justify-center text-rRed mt-4">
@@ -77,7 +76,8 @@ const PinInput = defineComponent({
 
   methods: {
     handleChange (event: any) {
-      if (event.target.value.length === 4) {
+      if (this.value.length > 4) this.value = this.value.slice(0, 4)
+      if (event.target.value.length >= 4) {
         this.$emit('finished', this.name)
       } else {
         this.$emit('unfinished', this.name)
