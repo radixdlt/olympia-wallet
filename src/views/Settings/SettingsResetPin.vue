@@ -13,7 +13,7 @@
     <pin-input
       name="currentPin"
       :values="values.currentPin"
-      :autofocus="activePin == 0"
+      :autofocus="activePin === 0"
       class="mb-8 max-w-sm"
       data-ci="current-pin"
       @finished="handleValidatePin"
@@ -26,7 +26,7 @@
     <pin-input
       name="pin"
       :values="values.pin"
-      :autofocus="activePin == 1"
+      :autofocus="activePin === 1"
       class="mb-8 max-w-sm"
       data-ci="pin"
       @finished="activePin = 2"
@@ -38,10 +38,11 @@
     <pin-input
       name="confirmation"
       :values="values.confirmation"
-      :autofocus="activePin == 2"
+      :autofocus="activePin === 2"
       class="mb-8 max-w-sm"
       data-ci="confirmation"
-      @finished="activePin = 3"
+      @finished="handleComparePin"
+      @unfinished="handleUnfinishedPin"
       @click="activePin = 2"
     >
     </pin-input>
@@ -98,7 +99,6 @@ const SettingsResetPin = defineComponent({
     handleValidatePin () {
       validatePin(this.values.currentPin)
         .then((isValid: boolean) => {
-          this.isValidPin = isValid
           if (!isValid) {
             this.setErrors({
               currentPin: this.$t('validations.invalidPin')
@@ -111,6 +111,17 @@ const SettingsResetPin = defineComponent({
     handleUnfinishedPin () {
       this.isValidPin = false
     },
+
+    handleComparePin () {
+      if (this.values.pin === this.values.confirmation) {
+        this.isValidPin = true
+      } else {
+        this.setErrors({
+          confirmation: this.$t('validations.pinMatch')
+        })
+      }
+    },
+
     handleResetPin () {
       if (this.values.pin !== this.values.confirmation) {
         this.setErrors({
