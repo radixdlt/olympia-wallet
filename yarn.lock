@@ -1360,12 +1360,12 @@
     node-ipc "^9.1.1"
     ws "^7.3.1"
 
-"@radixdlt/account@^1.0.32":
-  version "1.0.32"
-  resolved "https://registry.yarnpkg.com/@radixdlt/account/-/account-1.0.32.tgz#2270f88e27873fb8527a5dc679cbede3f990ecaf"
-  integrity sha512-iRRQ520s5WGXkYEiZu5kt62cZlkkvslSOcgQ+w/yxPsK0LXuveAYJgLUbLe827dRRBp8dLlHQJoTZigkAbkchw==
+"@radixdlt/account@^1.0.33":
+  version "1.0.33"
+  resolved "https://registry.yarnpkg.com/@radixdlt/account/-/account-1.0.33.tgz#19486281cb369b9aee4f66e3e3a31894ba5ef911"
+  integrity sha512-GrvVrj0PogZtgV0dExpTalueHNN9WqfuUVPbvL+ZRs5ZrFpYEzKtga+KvUW6D7LrBov4JPyph0bbif/UFzkl9Q==
   dependencies:
-    "@radixdlt/crypto" "^1.0.27"
+    "@radixdlt/crypto" "^1.0.28"
     "@radixdlt/data-formats" "^1.0.20"
     "@radixdlt/primitives" "^1.0.23"
     "@radixdlt/uint256" "^1.1.0"
@@ -1378,15 +1378,15 @@
     prelude-ts "^1.0.2"
     rxjs "7.0.0-beta.13"
 
-"@radixdlt/application@^1.0.47":
-  version "1.0.47"
-  resolved "https://registry.yarnpkg.com/@radixdlt/application/-/application-1.0.47.tgz#1aae983fbe8bf390b6bd9e7735079ec3afcc7265"
-  integrity sha512-syzQyj8hSfIUEmllupSNcHEYE6iPO9W9ZhpqeuIfeZOiEpBaZa1MhqcppIJtFBNhxT0n2zYE7hhIV3AKYd4stQ==
+"@radixdlt/application@^1.0.48":
+  version "1.0.48"
+  resolved "https://registry.yarnpkg.com/@radixdlt/application/-/application-1.0.48.tgz#0ad8321a7817261bb3b964eb1f04550009e0a891"
+  integrity sha512-X4BfqhYuZmKUYFj6AUXMlAs36sjXrZR1rNb+aLJAquC2RWE/spo/Rwzf692K7Fdi3M7QLAfJMUHvtoRmrnqW1A==
   dependencies:
     "@open-rpc/mock-server" "^1.7.2"
     "@open-rpc/schema-utils-js" "^1.14.3"
-    "@radixdlt/account" "^1.0.32"
-    "@radixdlt/crypto" "^1.0.27"
+    "@radixdlt/account" "^1.0.33"
+    "@radixdlt/crypto" "^1.0.28"
     "@radixdlt/data-formats" "^1.0.20"
     "@radixdlt/networking" "^1.0.24"
     "@radixdlt/primitives" "^1.0.23"
@@ -1398,10 +1398,10 @@
     ramda "^0.27.1"
     rxjs "7.0.0-beta.13"
 
-"@radixdlt/crypto@^1.0.27":
-  version "1.0.27"
-  resolved "https://registry.yarnpkg.com/@radixdlt/crypto/-/crypto-1.0.27.tgz#e38a7d518d99315a5bc265bd4cae4b965b542a80"
-  integrity sha512-ffWXQSw7xb8cxc9fj5VBjL2E7RTw1M6wE0NGd1i8wg976Isf7G0GhGlkRgjTvNoyLUjekHwylCb43EDXa04Qgw==
+"@radixdlt/crypto@^1.0.28":
+  version "1.0.28"
+  resolved "https://registry.yarnpkg.com/@radixdlt/crypto/-/crypto-1.0.28.tgz#eb0eb36577fefd88c69cf5a2ef1ee6bfc14b9e67"
+  integrity sha512-vrzGBhAMAxc2TbyZMEmThq80svM2eEpLN8K+6/FlfZZTbfg4AoKKP7q9OsXb7lst7SHIAnykwvyZr3AzSqfrrg==
   dependencies:
     "@radixdlt/data-formats" "^1.0.20"
     "@radixdlt/primitives" "^1.0.23"

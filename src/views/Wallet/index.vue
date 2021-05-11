@@ -121,9 +121,9 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onBeforeMount, onMounted, onUnmounted, Ref } from 'vue'
+import { defineComponent, onBeforeMount, onUnmounted, Ref } from 'vue'
 import { Subscription, interval, Subject, Observable, combineLatest, from, BehaviorSubject } from 'rxjs'
-import { AccountT, AccountsT, AccountAddressT, Radix, TransferTokensOptions, StakePositions, TokenBalances, UnstakePositions, ManualUserConfirmTX, mockedAPI, TransactionTracking, StakeTokensInput, UnstakeTokensInput, TransactionStateUpdate, TransactionIdentifierT, TransactionHistoryOfKnownAddressRequestInput, TransactionHistory, Token, LogLevel } from '@radixdlt/application'
+import { AccountAddressT, Radix, TransferTokensOptions, StakePositions, TokenBalances, UnstakePositions, ManualUserConfirmTX, mockedAPI, TransactionTracking, StakeTokensInput, UnstakeTokensInput, TransactionStateUpdate, TransactionIdentifierT, TransactionHistoryOfKnownAddressRequestInput, TransactionHistory, Token, LogLevel, AccountT, AccountsT } from '@radixdlt/application'
 import { ref } from '@nopr3d/vue-next-rx'
 import { useStore } from '@/store'
 import { useRouter } from 'vue-router'
@@ -229,7 +229,7 @@ const WalletIndex = defineComponent({
       loadingBalances.value = false
       tokenBalances.value = tokenBalancesRes
     }))
-    subs.add(wallet.activeAccount.subscribe((accountRes: AccountT) => { activeAccount.value = accountRes }))
+    subs.add(wallet.activeAccount.subscribe((account: AccountT) => { activeAccount.value = account }))
     subs.add(radix.stakingPositions.subscribe((stakes: StakePositions) => { activeStakes.value = stakes }))
     subs.add(radix.unstakingPositions.subscribe((unstakes: UnstakePositions) => { activeUnstakes.value = unstakes }))
     subs.add(wallet.accounts.subscribe((accountsRes: AccountsT) => { accounts.value = accountsRes }))
@@ -239,9 +239,9 @@ const WalletIndex = defineComponent({
     getDerivedAccountsIndex()
       .then((accountsIndex: string) => {
         if ((Number(accountsIndex)) > 0) {
-          wallet.restoreAccountsUpToIndex(Number(accountsIndex) + 1)
+          wallet.restoreLocalHDAccountsToIndex(Number(accountsIndex) + 1)
             .subscribe(
-              (accountRes: AccountsT) => { accounts.value = accountRes })
+              (accountsRes: AccountsT) => { accounts.value = accountsRes })
         } else {
           saveDerivedAccountsIndex(0)
         }

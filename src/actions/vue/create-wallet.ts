@@ -1,24 +1,26 @@
-import { MnemomicT, Wallet, WalletT, KeystoreT } from '@radixdlt/application'
-import { Result } from 'neverthrow'
+import { MnemomicT, Wallet, WalletT, KeystoreT, NetworkT, SigningKeychain, SigningKeychainT } from '@radixdlt/application'
 
-export const createWalletFromMnemonicAndPasscode = (mnemonic: MnemomicT, passcode: string): Promise<WalletT> => new Promise((resolve, reject) => {
-  Wallet.byEncryptingMnemonicAndSavingKeystore({
+export const initWallet = async (mnemonic: MnemomicT, passcode: string, network: NetworkT): Promise<WalletT> => {
+  const walletResult = await SigningKeychain.byEncryptingMnemonicAndSavingKeystore({
     mnemonic,
     password: passcode,
     save: (keystore: KeystoreT): Promise<void> => {
       return window.ipcRenderer.invoke('save-keystores-message', JSON.stringify(keystore, null, '\t'))
     }
   })
-    .then((walletResult: Result<WalletT, Error>) => {
-      if (walletResult.isErr()) {
-        console.log(`🤷‍♂️ Failed to create wallet: ${walletResult.error}`)
-        reject(walletResult.error)
-      } else {
-        const wallet: WalletT = walletResult.value
-        resolve(wallet)
-      }
-    })
-})
+
+  if (walletResult.isErr()) {
+    console.log(`🤷‍♂️ Failed to create wallet: ${walletResult.error}`)
+    throw walletResult.error
+  }
+
+  const signingKeychain = walletResult.value
+
+  return Wallet.create({
+    signingKeychain,
+    network
+  })
+}
 
 export const hasKeystore = (): Promise<boolean> => new Promise((resolve) => {
   window.ipcRenderer.invoke('get-keystore-message')
