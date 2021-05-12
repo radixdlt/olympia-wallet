@@ -5,7 +5,7 @@ const messages = {
     validations: {
       default: '%{field} is invalid',
       required: '%{field} is required',
-      confirmed: '%{field} doesn\'t match',
+      confirmed: '%{field} do not match',
       length: '%{field} is the wrong length',
       validAddress: 'Enter a valid address',
       validAmount: 'Enter a valid amount',
@@ -144,7 +144,11 @@ const messages = {
       resetPasswordDisclaimer: 'Your password is required each time you open the wallet application, and provides access to your secret seed phrase. We recommend you choose a strong, unguessable password that you have not used elsewhere.',
       resetPasswordInstructions: 'Please enter your current password before choosing a new one.',
       resetPinDisclaimer: 'Your PIN is required each time you wish to submit a transaction.',
-      resetPinDisclaimerTwo: 'Please enter your current PIN before choosing a new one.'
+      resetPinDisclaimerTwo: 'Please enter your current PIN before choosing a new one.',
+      currentPasswordLabel: 'Enter Current Password',
+      newPasswordLabel: 'Enter New Password',
+      confirmPasswordLabel: 'Confirm New Password',
+      changePasswordLabel: 'Change password'
     }
   }
 }

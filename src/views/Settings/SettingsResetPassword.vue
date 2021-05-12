@@ -11,7 +11,7 @@
         type="password"
         name="currentPassword"
         class="w-full"
-        :placeholder="$t('createWallet.passwordPlaceholder')"
+        :placeholder="$t('settings.currentPasswordLabel')"
         rules="required"
         data-ci="create-wallet-passcode-input"
       />
@@ -23,19 +23,19 @@
         type="password"
         name="password"
         class="w-full"
-        :placeholder="$t('createWallet.passwordPlaceholder')"
+        :placeholder="$t('settings.newPasswordLabel')"
         rules="required"
         data-ci="create-wallet-passcode-input"
       />
       <FormErrorMessage name="password" />
     </div>
 
-    <div class="mb-16">
+    <div class="mb-14">
       <FormField
         type="password"
-        name="confirmation"
+        name="Passwords"
         class="w-full"
-        :placeholder="$t('createWallet.passwordConfirmationPlaceholder')"
+        :placeholder="$t('settings.confirmPasswordLabel')"
         rules="required|confirmed:@password"
         data-ci="create-wallet-confirm-input"
       />
