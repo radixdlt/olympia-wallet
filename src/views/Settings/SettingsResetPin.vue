@@ -115,7 +115,6 @@ const SettingsResetPin = defineComponent({
     },
 
     handleResetPin () {
-      console.log('PIN', this.values.pin)
       if (this.values.pin !== this.values.confirmationPin) {
         this.setErrors({
           confirmationPin: this.$t('validations.pinMatch')
@@ -129,7 +128,6 @@ const SettingsResetPin = defineComponent({
             })
           )
           .then((res: Result<Buffer, Error>) => {
-            console.log('PIN', this.values.pin)
             if (res.isOk()) {
               storePin(this.values.pin)
                 .then(() => this.resetForm())
