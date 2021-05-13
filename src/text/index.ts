@@ -5,7 +5,7 @@ const messages = {
     validations: {
       default: '%{field} is invalid',
       required: '%{field} is required',
-      confirmed: '%{field} doesn\'t match',
+      confirmed: '%{field} do not match',
       length: '%{field} is the wrong length',
       validAddress: 'Enter a valid address',
       validAmount: 'Enter a valid amount',
