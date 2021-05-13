@@ -123,7 +123,7 @@
 <script lang="ts">
 import { defineComponent, onBeforeMount, onUnmounted, Ref } from 'vue'
 import { Subscription, interval, Subject, Observable, combineLatest, from, BehaviorSubject } from 'rxjs'
-import { AccountAddressT, Radix, TransferTokensOptions, StakePositions, TokenBalances, UnstakePositions, ManualUserConfirmTX, mockedAPI, TransactionTracking, StakeTokensInput, UnstakeTokensInput, TransactionStateUpdate, TransactionIdentifierT, TransactionHistoryOfKnownAddressRequestInput, TransactionHistory, Token, LogLevel, AccountT, AccountsT } from '@radixdlt/application'
+import { AccountAddressT, Radix, TransferTokensOptions, StakePositions, TokenBalances, UnstakePositions, ManualUserConfirmTX, mockedAPI, TransactionTracking, StakeTokensInput, UnstakeTokensInput, TransactionStateUpdate, TransactionIdentifierT, TransactionHistoryOfKnownAddressRequestInput, TransactionHistory, Token, AmountT, AccountT, AccountsT, TransactionIntent, FinalizedTransaction, IntendedAction, TransactionStateSuccess } from '@radixdlt/application'
 import { ref } from '@nopr3d/vue-next-rx'
 import { useStore } from '@/store'
 import { useRouter } from 'vue-router'
@@ -140,6 +140,10 @@ import SettingsIndex from '@/views/Settings/index.vue'
 import { filter, mergeMap } from 'rxjs/operators'
 import { getDerivedAccountsIndex, saveDerivedAccountsIndex } from '@/actions/vue/data-store'
 import { useI18n } from 'vue-i18n'
+
+interface PendingTransaction extends TransactionStateSuccess {
+  actions: IntendedAction[];
+}
 
 const WalletIndex = defineComponent({
   components: {
@@ -166,28 +170,28 @@ const WalletIndex = defineComponent({
     const { t } = useI18n({ useScope: 'global' })
 
     const activeAccount: Ref<AccountT | null> = ref(null)
-    const activeAddress = ref(null)
-    const activeStakes = ref(null)
-    const activeUnstakes = ref(null)
-    const accounts = ref(null)
-    const tokenBalances = ref({ tokenBalances: [] })
-    const transactionHistory = ref({ transactions: [] })
-    const shouldShowConfirmation = ref(false)
-    const transferInput = ref({})
-    const stakeInput = ref({})
-    const transactionFee = ref(0)
-    const transactionToConfirm = ref(null)
-    const pendingTransactions = ref([])
-    const view = ref('overview')
+    const activeAddress: Ref<AccountAddressT | null> = ref(null)
+    const activeStakes: Ref<StakePositions | null> = ref(null)
+    const activeUnstakes: Ref<UnstakePositions | null> = ref(null)
+    const accounts: Ref<AccountsT | null> = ref(null)
+    const tokenBalances: Ref<TokenBalances | null> = ref(null)
+    const transactionHistory: Ref<TransactionHistory> = ref({ transactions: [] })
+    const shouldShowConfirmation: Ref<boolean> = ref(false)
+    const transferInput: Ref<TransferTokensOptions> = ref({})
+    const stakeInput: Ref<StakeTokensInput> = ref({})
+    const transactionFee: Ref<AmountT> = ref(0)
+    const transactionToConfirm: Ref<ManualUserConfirmTX | null> = ref(null)
+    const pendingTransactions: Ref<Array<PendingTransaction>> = ref([])
+    const view: Ref<string> = ref('overview')
     const sidebar = ref('default')
-    const draftTransaction = ref(null)
+    const draftTransaction: Ref<TransactionIntent | null> = ref(null)
     const cursorStack = ref([])
-    const canGoNext = ref(false)
-    const nativeToken = ref(null)
+    const canGoNext: Ref<boolean> = ref(false)
+    const nativeToken: Ref<Token | null> = ref(null)
     const selectedCurrency: Ref<Token | null> = ref(null)
 
-    const loadingBalances = ref(true)
-    const loadingHistory = ref(true)
+    const loadingBalances: Ref<boolean> = ref(true)
+    const loadingHistory: Ref<boolean> = ref(true)
 
     const walletTransactionComponent = ref(null)
 
@@ -251,14 +255,14 @@ const WalletIndex = defineComponent({
       getDerivedAccountsIndex()
         .then((index: string) => {
           saveDerivedAccountsIndex(Number(index) + 1)
-          tokenBalances.value = []
+          tokenBalances.value = null
           startLoading()
           wallet.deriveNextAccount({ alsoSwitchTo: true })
         })
     }
 
     const switchAccount = (account: AccountT) => {
-      tokenBalances.value = []
+      tokenBalances.value = null
       startLoading()
       wallet.switchAccount({ toAccount: account })
     }
@@ -273,7 +277,7 @@ const WalletIndex = defineComponent({
       interval(5 * 1_000)
     ])
     subs.add(fetchTXHistoryTrigger
-      .pipe(mergeMap(([params, i]: [TransactionHistoryOfKnownAddressRequestInput, number]) => {
+      .pipe(mergeMap(([params]: [TransactionHistoryOfKnownAddressRequestInput, number]) => {
         return wallet.transactionHistory(params)
       }))
       .subscribe((history: TransactionHistory) => {
@@ -285,7 +289,7 @@ const WalletIndex = defineComponent({
 
     // This isn't firing the way I want it to
     subs.add(faucetParams
-      .pipe(mergeMap((params: number) => wallet.tokenBalances))
+      .pipe(mergeMap(() => wallet.tokenBalances))
       .subscribe((tokenBalancesRes: TokenBalances) => { tokenBalances.value = tokenBalancesRes }))
 
     const confirmAndExecuteTransaction = (transactionTracking: TransactionTracking) => {
@@ -311,16 +315,20 @@ const WalletIndex = defineComponent({
 
       // Store draft transaction actions
       subs.add(transactionTracking.events
-        .pipe(filter((trackingEvent) => trackingEvent.eventUpdateType === 'INITIATED'))
-        .subscribe((res) => { draftTransaction.value = res }))
+        .pipe(filter((trackingEvent: TransactionStateUpdate) => trackingEvent.eventUpdateType === 'INITIATED'))
+        .subscribe((res: TransactionStateUpdate) => {
+          const transactionIntent = res as unknown as TransactionIntent
+          draftTransaction.value = transactionIntent
+        }))
 
       // Track pending transactions augmented with actions array
       const trackingSubmittedEvents = transactionTracking.events
         .pipe(filter((trackingEvent: TransactionStateUpdate) => trackingEvent.eventUpdateType === 'SUBMITTED'))
         .subscribe((res: TransactionStateUpdate) => {
+          const finalizedTransaction = res as unknown as TransactionStateSuccess
           pendingTransactions.value = pendingTransactions.value.concat([{
-            ...res,
-            actions: draftTransaction.value.actions
+            ...finalizedTransaction,
+            actions: draftTransaction.value ? draftTransaction.value.actions : []
           }])
           draftTransaction.value = null
           shouldShowConfirmation.value = false
@@ -332,7 +340,10 @@ const WalletIndex = defineComponent({
       subs.add(transactionTracking.completion
         .subscribe({
           next: (txnID: TransactionIdentifierT) => {
-            pendingTransactions.value = pendingTransactions.value.filter((pendingTxn: any) => txnID.toString() !== pendingTxn.transactionState.txID.toString())
+            pendingTransactions.value = pendingTransactions.value.filter((pendingTxn: TransactionStateSuccess) => {
+              const transactionState = pendingTxn.transactionState as unknown as FinalizedTransaction
+              return txnID.toString() !== transactionState.txID.toString()
+            })
             transactionDidComplete.next(true)
           },
           error: () => {
@@ -447,7 +458,7 @@ const WalletIndex = defineComponent({
     const requestFreeTokens = () => {
       const request = {
         params: {
-          address: activeAddress.value.toString()
+          address: activeAddress.value ? activeAddress.value.toString() : ''
         }
       }
       subs.add(from(
