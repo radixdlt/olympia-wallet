@@ -85,9 +85,9 @@ const SettingsRevealMnemonic = defineComponent({
   },
 
   setup () {
-    const { errors, meta, values, setErrors } = useForm<RevealMnemonicForm>()
+    const { errors, meta, values, setErrors, resetForm } = useForm<RevealMnemonicForm>()
 
-    return { errors, meta, values, setErrors }
+    return { errors, meta, values, setErrors, resetForm }
   },
 
   props: {
@@ -122,6 +122,7 @@ const SettingsRevealMnemonic = defineComponent({
         .then((isValid: boolean) => {
           this.isValidPin = isValid
           if (!isValid) {
+            this.resetForm()
             this.setErrors({
               pin: this.$t('validations.invalidPin')
             })

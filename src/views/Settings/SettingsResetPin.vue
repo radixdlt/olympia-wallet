@@ -100,6 +100,7 @@ const SettingsResetPin = defineComponent({
       validatePin(this.values.currentPin)
         .then((isValid: boolean) => {
           if (!isValid) {
+            this.resetForm()
             this.setErrors({
               currentPin: this.$t('validations.invalidPin')
             })
