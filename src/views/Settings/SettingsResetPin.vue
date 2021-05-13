@@ -19,7 +19,6 @@
       data-ci="create-wallet-passcode-input"
       @blur="activePin = 1"
       @click="activePin = 0"
-      :autofocus="activePin === 0"
     />
     <FormErrorMessage name="password" />
 
