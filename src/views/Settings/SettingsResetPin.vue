@@ -11,7 +11,7 @@
     <div class="text-rGrayDark mb-4">{{ $t('settings.currentPinLabel') }}</div>
 
     <pin-input
-      name="currentPin"
+      name="Current PIN"
       :values="values.currentPin"
       :autofocus="activePin === 0"
       class="mb-8 max-w-sm"
@@ -24,7 +24,7 @@
 
     <div class="text-rGrayDark mb-4">{{ $t('settings.pinLabel') }}</div>
     <pin-input
-      name="pin"
+      name="New PIN"
       :values="values.pin"
       :autofocus="activePin === 1"
       class="mb-8 max-w-sm"
@@ -36,7 +36,7 @@
 
     <div class="text-rGrayDark mb-4">{{ $t('settings.confirmationPinLabel') }}</div>
     <pin-input
-      name="confirmation"
+      name="Confirmation PIN"
       :values="values.confirmation"
       :autofocus="activePin === 2"
       class="mb-8 max-w-sm"
