@@ -44,7 +44,7 @@ const messages = {
       passwordHelp: 'Please enter a secure password here. This password secures your seed phrase, and will be required every time you open this application.',
       passwordPlaceholder: 'enter password',
       passwordConfirmationPlaceholder: 'confirm password',
-      passwordButton: 'Confirm password',
+      passwordButton: 'Confirm',
       pinTitle: 'PIN',
       pinHelpOne: 'Please enter a secure PIN. This will be used to verify all transactions made in the Wallet.',
       pinHelpTwo: 'Please confirm your PIN.',
@@ -149,7 +149,7 @@ const messages = {
       newPasswordLabel: 'Enter New Password',
       confirmPasswordLabel: 'Confirm New Password',
       changePasswordLabel: 'Change password',
-      passwordRequiredLabel: 'Enter your password to edit settings',
+      passwordRequiredLabel: 'Enter your password your PIN',
       passwordPlaceholder: 'password',
       accessSettingsButton: 'Access Settings'
     }
