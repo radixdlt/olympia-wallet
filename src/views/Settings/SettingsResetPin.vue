@@ -8,23 +8,24 @@
       <br /><br />
       {{ $t('settings.resetPinDisclaimerTwo') }}
     </div>
-    <div class="text-rGrayDark mb-4">{{ $t('settings.currentPinLabel') }}</div>
+    <div class="text-rGrayDark mb-4">{{ $t('settings.passwordRequiredLabel') }}</div>
 
-    <pin-input
-      name="Current PIN"
-      :values="values.currentPin"
-      :autofocus="activePin === 0"
-      class="mb-8 max-w-sm"
-      data-ci="current-pin"
-      @finished="handleValidatePin"
-      @unfinished="handleUnfinishedPin"
+    <FormField
+      type="password"
+      name="password"
+      class="w-96 mb-9"
+      :placeholder="$t('settings.passwordPlaceholder')"
+      rules="required"
+      data-ci="create-wallet-passcode-input"
+      @blur="activePin = 1"
       @click="activePin = 0"
-    >
-    </pin-input>
+      :autofocus="activePin === 0"
+    />
+    <FormErrorMessage name="password" />
 
     <div class="text-rGrayDark mb-4">{{ $t('settings.pinLabel') }}</div>
     <pin-input
-      name="New PIN"
+      name="pin"
       :values="values.pin"
       :autofocus="activePin === 1"
       class="mb-8 max-w-sm"
@@ -36,7 +37,7 @@
 
     <div class="text-rGrayDark mb-4">{{ $t('settings.confirmationPinLabel') }}</div>
     <pin-input
-      name="Confirmation PIN"
+      name="confirmationPin"
       :values="values.confirmation"
       :autofocus="activePin === 2"
       class="mb-8 max-w-sm"
@@ -57,19 +58,25 @@
 import { defineComponent } from 'vue'
 import { useForm } from 'vee-validate'
 import PinInput from '@/components/PinInput.vue'
-import { storePin, validatePin } from '@/actions/vue/create-wallet'
+import { storePin, touchKeystore } from '@/actions/vue/create-wallet'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
+import FormField from '@/components/FormField.vue'
+import { Result } from 'neverthrow'
+import FormErrorMessage from '@/components/FormErrorMessage.vue'
+import { Keystore, KeystoreT } from '@radixdlt/application'
 
 interface ResetPinForm {
-  currentPin: string;
+  password: string;
   pin: string;
-  confirmation: string;
+  confirmationPin: string;
 }
 
 const SettingsResetPin = defineComponent({
   components: {
     ButtonSubmit,
-    PinInput
+    PinInput,
+    FormField,
+    FormErrorMessage
   },
 
   setup () {
@@ -87,52 +94,56 @@ const SettingsResetPin = defineComponent({
 
   computed: {
     disableSubmit (): boolean {
-      if (!this.isValidPin) {
-        return true
-      } else {
-        return this.meta.dirty ? !this.meta.valid : true
-      }
+      return this.meta.dirty ? !this.meta.valid : true
     }
   },
 
   methods: {
-    handleValidatePin () {
-      validatePin(this.values.currentPin)
-        .then((isValid: boolean) => {
-          if (!isValid) {
-            this.resetForm()
-            this.setErrors({
-              currentPin: this.$t('validations.invalidPin')
-            })
-          } else {
-            this.activePin = 1
-          }
-        })
-    },
-    handleUnfinishedPin () {
-      this.isValidPin = false
-    },
-
     handleComparePin () {
-      if (this.values.pin === this.values.confirmation) {
+      this.activePin = 0
+      if (this.values.pin === this.values.confirmationPin) {
         this.isValidPin = true
       } else {
         this.setErrors({
-          confirmation: this.$t('validations.pinMatch')
+          confirmationPin: this.$t('validations.pinMatch')
         })
       }
     },
 
+    handleUnfinishedPin () {
+      this.isValidPin = false
+    },
+
     handleResetPin () {
-      if (this.values.pin !== this.values.confirmation) {
+      console.log('PIN', this.values.pin)
+      if (this.values.pin !== this.values.confirmationPin) {
         this.setErrors({
-          confirmation: this.$t('validations.pinMatch')
+          confirmationPin: this.$t('validations.pinMatch')
         })
-        this.activePin = 2
       } else {
-        this.isValidPin = false
-        storePin(this.values.pin)
-          .then(() => this.resetForm())
+        touchKeystore()
+          .then((keystore: KeystoreT) =>
+            Keystore.decrypt({
+              keystore,
+              password: this.values.password
+            })
+          )
+          .then((res: Result<Buffer, Error>) => {
+            console.log('PIN', this.values.pin)
+            if (res.isOk()) {
+              storePin(this.values.pin)
+                .then(() => this.resetForm())
+            } else {
+              this.setErrors({
+                password: this.$t('validations.incorrectPassword')
+              })
+            }
+          })
+          .catch(() => {
+            this.setErrors({
+              password: this.$t('validations.incorrectPassword')
+            })
+          })
       }
     }
   }
