@@ -149,7 +149,7 @@ const messages = {
       newPasswordLabel: 'Enter New Password',
       confirmPasswordLabel: 'Confirm New Password',
       changePasswordLabel: 'Change password',
-      passwordRequiredLabel: 'Enter your password your PIN',
+      passwordRequiredLabel: 'Enter your password',
       passwordPlaceholder: 'password',
       accessSettingsButton: 'Access Settings'
     }
