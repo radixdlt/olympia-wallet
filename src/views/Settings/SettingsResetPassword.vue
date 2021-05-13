@@ -9,13 +9,13 @@
     <div class="mb-14">
       <FormField
         type="password"
-        name="Current Password"
+        name="currentPassword"
         class="w-full"
         :placeholder="$t('settings.currentPasswordLabel')"
         rules="required"
         data-ci="create-wallet-passcode-input"
       />
-      <FormErrorMessage name="Current Password" />
+      <FormErrorMessage name="currentPassword" />
     </div>
 
     <div class="mb-14">
@@ -33,13 +33,13 @@
     <div class="mb-14">
       <FormField
         type="password"
-        name="Confirmation Password"
+        name="confirmation"
         class="w-full"
         :placeholder="$t('settings.confirmPasswordLabel')"
         rules="required|confirmed:@password"
         data-ci="create-wallet-confirm-input"
       />
-      <FormErrorMessage name="Confirmation Password" />
+      <FormErrorMessage name="confirmation" />
     </div>
 
     <ButtonSubmit class="w-96" :disabled="disableSubmit">
@@ -64,7 +64,7 @@ import ButtonSubmit from '@/components/ButtonSubmit.vue'
 interface PasswordForm {
   currentPassword: string;
   password: string;
-  confirm: string;
+  confirmation: string;
 }
 
 const SettingsResetPassword = defineComponent({
