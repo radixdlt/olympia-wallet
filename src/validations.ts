@@ -16,8 +16,13 @@ interface FieldContext {
 configure({
   generateMessage: (context: FieldContext) => {
     // Pass validation messages through i18n
-    if (context.rule) return i18n.global.t(`validations.${context.rule.name}`, { field: context.field, params: context.rule.params })
-    return i18n.global.t('validations.default', { field: context.field })
+    let field = context.field
+    if (field === 'confirmation') {
+      field = 'Passwords'
+    }
+
+    if (context.rule) return i18n.global.t(`validations.${context.rule.name}`, { field: field, params: context.rule.params })
+    return i18n.global.t('validations.default', { field: field })
   }
 })
 
