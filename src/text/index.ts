@@ -5,7 +5,7 @@ const messages = {
     validations: {
       default: '%{field} is invalid',
       required: '%{field} is required',
-      confirmed: '%{field} do not match',
+      confirmed: '%{field} doesn\'t match',
       length: '%{field} is the wrong length',
       validAddress: 'Enter a valid address',
       validAmount: 'Enter a valid amount',
@@ -148,7 +148,10 @@ const messages = {
       currentPasswordLabel: 'Enter Current Password',
       newPasswordLabel: 'Enter New Password',
       confirmPasswordLabel: 'Confirm New Password',
-      changePasswordLabel: 'Change password'
+      changePasswordLabel: 'Change password',
+      passwordRequiredLabel: 'Enter your password to edit settings',
+      passwordPlaceholder: 'password',
+      accessSettingsButton: 'Access Settings'
     }
   }
 }

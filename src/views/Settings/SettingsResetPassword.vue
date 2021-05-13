@@ -9,13 +9,13 @@
     <div class="mb-14">
       <FormField
         type="password"
-        name="currentPassword"
+        name="Current Password"
         class="w-full"
         :placeholder="$t('settings.currentPasswordLabel')"
         rules="required"
         data-ci="create-wallet-passcode-input"
       />
-      <FormErrorMessage name="currentPassword" />
+      <FormErrorMessage name="Current Password" />
     </div>
 
     <div class="mb-14">
@@ -33,13 +33,13 @@
     <div class="mb-14">
       <FormField
         type="password"
-        name="Passwords"
+        name="Confirmation Password"
         class="w-full"
         :placeholder="$t('settings.confirmPasswordLabel')"
         rules="required|confirmed:@password"
         data-ci="create-wallet-confirm-input"
       />
-      <FormErrorMessage name="confirmation" />
+      <FormErrorMessage name="Confirmation Password" />
     </div>
 
     <ButtonSubmit class="w-96" :disabled="disableSubmit">
