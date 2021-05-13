@@ -138,7 +138,7 @@ const messages = {
       mnemonicDisclaimer: 'Your seed phrase is a secret list of 12 words that uniquely provide access to your wallet. As long as you have them, you will always be able to recover access to your accounts within this wallet. You may view it here if you need to back it up for future recovery.',
       mnemonicDisclaimerTwo: 'This seed phrase grants full access to all accounts in your wallet!',
       mnemonicDisclaimerThree: 'Please do not view it in a public place, and remember to not store it digitally.',
-      mnemonicModalHeading: 'Enter your pin to access your seed phrase',
+      mnemonicModalHeading: 'Enter your password to access your seed phrase',
       accessMnemonicButton: 'Access Seed Phrase',
       accessMnemonicCancelPin: 'Cancel',
       resetPasswordDisclaimer: 'Your password is required each time you open the wallet application, and provides access to your secret seed phrase. We recommend you choose a strong, unguessable password that you have not used elsewhere.',
