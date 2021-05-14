@@ -1,5 +1,23 @@
 # Changelog
 
+### [0.5.7](https://www.github.com/township-agency/radixdlt-desktop-wallet/compare/v0.5.6...v0.5.7) (2021-05-14)
+
+
+### Features
+
+* A number of smallish updates addressing post launch feedback. ([#87](https://www.github.com/township-agency/radixdlt-desktop-wallet/issues/87)) ([c769ce3](https://www.github.com/township-agency/radixdlt-desktop-wallet/commit/c769ce33f4a78d691e1af1e1c0cad9dbd88a1b1f))
+
+
+### Bug Fixes
+
+* add cancel to pin modal, and fix input ([#49](https://www.github.com/township-agency/radixdlt-desktop-wallet/issues/49) / [#52](https://www.github.com/township-agency/radixdlt-desktop-wallet/issues/52)) ([#82](https://www.github.com/township-agency/radixdlt-desktop-wallet/issues/82)) ([b21709c](https://www.github.com/township-agency/radixdlt-desktop-wallet/commit/b21709ca50a5bc4c404e8a9f3e652b0033c226ae))
+* implement latest account/wallet changes ([#81](https://www.github.com/township-agency/radixdlt-desktop-wallet/issues/81)) ([46f45aa](https://www.github.com/township-agency/radixdlt-desktop-wallet/commit/46f45aa26966a3feb15a2004272f7793d97781ef))
+
+
+### Dependencies
+
+* Cleanup ref typing ([#85](https://www.github.com/township-agency/radixdlt-desktop-wallet/issues/85)) ([2399621](https://www.github.com/township-agency/radixdlt-desktop-wallet/commit/2399621a1ed73bacc05736557470ce3488e96e96))
+
 ### [0.5.6](https://www.github.com/township-agency/radixdlt-desktop-wallet/compare/v0.5.5...v0.5.6) (2021-05-04)
 
 
