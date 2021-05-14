@@ -47,7 +47,7 @@ const PinInput = defineComponent({
       }
     }
 
-    const { value, errorMessage } = useField<string>(props.name, 'required')
+    const { value, errorMessage } = props.required ? useField<string>(props.name, 'required') : useField<string>(props.name)
 
     return {
       inputRef,
@@ -67,6 +67,11 @@ const PinInput = defineComponent({
     dataCi: {
       type: String,
       required: true
+    },
+    required: {
+      type: Boolean,
+      required: false,
+      default: true
     }
   },
 
@@ -85,7 +90,7 @@ const PinInput = defineComponent({
     }
   },
 
-  beforeUpdate () {
+  updated () {
     if (this.autofocus) this.focusInput()
   },
 

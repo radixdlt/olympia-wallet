@@ -23,38 +23,37 @@
       <ButtonSubmit
         v-if="mnemonicNotRequested"
         :disabled="false"
-        @click="enteringPin = true"
+        @click="enteringPassword = true"
         class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
       >
         {{ $t('settings.accessMnemonicButton') }}
       </ButtonSubmit>
 
-      <template v-if="enteringPin">
+      <template v-if="enteringPassword">
         <form
           class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white border border-rGray rounded-md flex flex-col items-center px-11 pt-9 pb-7"
           @submit.prevent="handleSubmit"
         >
           <div class="text-rGrayDark mb-9">{{ $t('settings.mnemonicModalHeading') }}</div>
-          <pin-input
-            name="pin"
-            :values="values.pin"
-            :autofocus="true"
-            class="mb-9 mx-auto"
-            data-ci="validate-pin"
-            @finished="handleValidatePin"
-            @unfinished="handleUnfinishedPin"
-          >
-          </pin-input>
+          <FormField
+          type="password"
+          name="password"
+          class="w-full"
+          :placeholder="$t('settings.passwordPlaceholder')"
+          rules="required"
+          data-ci="create-wallet-passcode-input"
+          />
+          <FormErrorMessage name="password" />
           <ButtonSubmit
             :disabled="disableSubmit"
-            class="mb-9"
+            class="mb-9 mt-9"
           >
             {{ $t('settings.accessMnemonicButton') }}
           </ButtonSubmit>
 
           <button
               class="text-rGrayDark py-4 px-4text-sm mx-auto"
-              @click="() => enteringPin = false"
+              @click="() => enteringPassword = false"
             >
               {{ $t('settings.accessMnemonicCancelPin') }}
           </button>
@@ -65,29 +64,32 @@
 </template>
 
 <script lang="ts">
-import { MnemomicT } from '@radixdlt/application'
+import { MnemomicT, Keystore, KeystoreT } from '@radixdlt/application'
 import { defineComponent, PropType } from 'vue'
 import { useForm } from 'vee-validate'
 import MnemonicDisplay from '@/components/MnemonicDisplay.vue'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
-import PinInput from '@/components/PinInput.vue'
-import { validatePin } from '@/actions/vue/create-wallet'
+import FormField from '@/components/FormField.vue'
+import { touchKeystore } from '@/actions/vue/create-wallet'
+import { Result } from 'neverthrow'
+import FormErrorMessage from '@/components/FormErrorMessage.vue'
 
 interface RevealMnemonicForm {
-  pin: string;
+  password: string;
 }
 
 const SettingsRevealMnemonic = defineComponent({
   components: {
     ButtonSubmit,
     MnemonicDisplay,
-    PinInput
+    FormField,
+    FormErrorMessage
   },
 
   setup () {
-    const { errors, meta, values, setErrors } = useForm<RevealMnemonicForm>()
+    const { errors, meta, values, setErrors, resetForm } = useForm<RevealMnemonicForm>()
 
-    return { errors, meta, values, setErrors }
+    return { errors, meta, values, setErrors, resetForm }
   },
 
   props: {
@@ -99,8 +101,7 @@ const SettingsRevealMnemonic = defineComponent({
 
   data () {
     return {
-      enteringPin: false,
-      isValidPin: false
+      enteringPassword: false
     }
   },
 
@@ -109,31 +110,37 @@ const SettingsRevealMnemonic = defineComponent({
       return this.mnemonic ? this.mnemonic.words : Array(12).fill('noop')
     },
     mnemonicNotRequested (): boolean {
-      return !this.mnemonic && !this.enteringPin
+      return !this.mnemonic && !this.enteringPassword
     },
     disableSubmit (): boolean {
-      return !this.isValidPin
+      return this.meta.dirty ? !this.meta.valid : true
     }
   },
 
   methods: {
-    handleValidatePin () {
-      validatePin(this.values.pin)
-        .then((isValid: boolean) => {
-          this.isValidPin = isValid
-          if (!isValid) {
+    handleSubmit () {
+      touchKeystore()
+        .then((keystore: KeystoreT) =>
+          Keystore.decrypt({
+            keystore,
+            password: this.values.password
+          })
+        )
+        .then((res: Result<Buffer, Error>) => {
+          if (res.isOk()) {
+            this.$emit('clickAccessMnemonic')
+            this.enteringPassword = false
+          } else {
             this.setErrors({
-              pin: this.$t('validations.invalidPin')
+              password: this.$t('validations.incorrectPassword')
             })
           }
         })
-    },
-    handleUnfinishedPin () {
-      this.isValidPin = false
-    },
-    handleSubmit () {
-      this.$emit('clickAccessMnemonic')
-      this.enteringPin = false
+        .catch(() => {
+          this.setErrors({
+            password: this.$t('validations.incorrectPassword')
+          })
+        })
     }
   },
 

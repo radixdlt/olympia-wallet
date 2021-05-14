@@ -2,8 +2,8 @@
   <div class="bg-rGrayLightest p-5 flex-1 overflow-y-scroll">
     <div class="flex flex-col">
       <div class="flex flex-row">
-        <tabs-tab :isActive="activeForm == 'password'" @click="() => handleClickTab('password')">Reset Password</tabs-tab>
-        <tabs-tab :isActive="activeForm == 'pin'" @click="() => handleClickTab('pin')">Reset PIN</tabs-tab>
+        <tabs-tab :isActive="activeForm == 'password'" @click="() => handleClickTab('password')">Change Password</tabs-tab>
+        <tabs-tab :isActive="activeForm == 'pin'" @click="() => handleClickTab('pin')">Change PIN</tabs-tab>
         <tabs-tab :isActive="activeForm == 'mnemonic'" @click="() => handleClickTab('mnemonic')">Reveal Seed Phrase</tabs-tab>
       </div>
       <tabs-content :leftTabIsActive="activeForm == 'password'">

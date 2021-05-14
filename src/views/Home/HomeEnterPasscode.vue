@@ -15,6 +15,7 @@
           :placeholder="$t('home.passwordPlaceholder')"
           rules="required"
           data-ci="create-wallet-passcode-input"
+          id="password"
         />
         <FormErrorMessage name="password" class="mt-4 text-sm text-red-400" />
       </div>
@@ -64,6 +65,11 @@ const HomeEnterPasscode = defineComponent({
     disableSubmit (): boolean {
       return this.meta.dirty ? !this.meta.valid : true
     }
+  },
+
+  mounted () {
+    const passEl = document.getElementById('password')
+    if (passEl) passEl.focus()
   },
 
   emits: ['submit']

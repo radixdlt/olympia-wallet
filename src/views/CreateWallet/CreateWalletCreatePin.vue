@@ -11,7 +11,7 @@
       >
       </pin-input>
       <pin-input
-        name="confirmation"
+        name="pinConfirmation"
         :values="values.confirmation"
         :autofocus="!updatingFirstInput"
         class="mb-48 max-w-sm"
@@ -34,7 +34,7 @@ import ButtonSubmit from '@/components/ButtonSubmit.vue'
 
 interface PasswordForm {
   pin: string;
-  confirmation: string;
+  pinConfirmation: string;
 }
 
 const CreateWalletCreatePin = defineComponent({
@@ -78,9 +78,9 @@ const CreateWalletCreatePin = defineComponent({
       }
     },
     handleSubmit () {
-      if (this.values.pin !== this.values.confirmation) {
+      if (this.values.pin !== this.values.pinConfirmation) {
         this.setErrors({
-          confirmation: this.$t('validations.pinMatch')
+          pinConfirmation: this.$t('validations.pinMatch')
         })
       } else {
         this.$emit('confirm', this.values.pin)

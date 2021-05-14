@@ -5,7 +5,7 @@ const messages = {
     validations: {
       default: '%{field} is invalid',
       required: '%{field} is required',
-      confirmed: '%{field} doesn\'t match',
+      confirmed: '%{field} do not match',
       length: '%{field} is the wrong length',
       validAddress: 'Enter a valid address',
       validAmount: 'Enter a valid amount',
@@ -44,7 +44,7 @@ const messages = {
       passwordHelp: 'Please enter a secure password here. This password secures your seed phrase, and will be required every time you open this application.',
       passwordPlaceholder: 'enter password',
       passwordConfirmationPlaceholder: 'confirm password',
-      passwordButton: 'Confirm password',
+      passwordButton: 'Confirm',
       pinTitle: 'PIN',
       pinHelpOne: 'Please enter a secure PIN. This will be used to verify all transactions made in the Wallet.',
       pinHelpTwo: 'Please confirm your PIN.',
@@ -138,13 +138,22 @@ const messages = {
       mnemonicDisclaimer: 'Your seed phrase is a secret list of 12 words that uniquely provide access to your wallet. As long as you have them, you will always be able to recover access to your accounts within this wallet. You may view it here if you need to back it up for future recovery.',
       mnemonicDisclaimerTwo: 'This seed phrase grants full access to all accounts in your wallet!',
       mnemonicDisclaimerThree: 'Please do not view it in a public place, and remember to not store it digitally.',
-      mnemonicModalHeading: 'Enter your pin to access your seed phrase',
+      mnemonicModalHeading: 'Enter your password to access your seed phrase',
       accessMnemonicButton: 'Access Seed Phrase',
       accessMnemonicCancelPin: 'Cancel',
       resetPasswordDisclaimer: 'Your password is required each time you open the wallet application, and provides access to your secret seed phrase. We recommend you choose a strong, unguessable password that you have not used elsewhere.',
       resetPasswordInstructions: 'Please enter your current password before choosing a new one.',
       resetPinDisclaimer: 'Your PIN is required each time you wish to submit a transaction.',
-      resetPinDisclaimerTwo: 'Please enter your current PIN before choosing a new one.'
+      resetPinDisclaimerTwo: 'Please enter your password to change your PIN.',
+      currentPasswordLabel: 'Enter Current Password',
+      newPasswordLabel: 'Enter New Password',
+      confirmPasswordLabel: 'Confirm New Password',
+      changePasswordLabel: 'Change password',
+      passwordRequiredLabel: 'Enter your password',
+      passwordPlaceholder: 'password',
+      accessSettingsButton: 'Access Settings',
+      updatedPassword: 'You\'ve successfully updated your password.',
+      updatedPIN: 'You\'ve successfully updated your PIN.'
     }
   }
 }

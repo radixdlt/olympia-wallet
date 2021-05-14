@@ -8,19 +8,19 @@
       <br /><br />
       {{ $t('settings.resetPinDisclaimerTwo') }}
     </div>
-    <div class="text-rGrayDark mb-4">{{ $t('settings.currentPinLabel') }}</div>
+    <div class="text-rGrayDark mb-4">{{ $t('settings.passwordRequiredLabel') }}</div>
 
-    <pin-input
-      name="currentPin"
-      :values="values.currentPin"
-      :autofocus="activePin === 0"
-      class="mb-8 max-w-sm"
-      data-ci="current-pin"
-      @finished="handleValidatePin"
-      @unfinished="handleUnfinishedPin"
+    <FormField
+      type="password"
+      name="password"
+      class="w-96 mb-9"
+      :placeholder="$t('settings.passwordPlaceholder')"
+      rules="required"
+      data-ci="create-wallet-passcode-input"
+      @blur="activePin = 1"
       @click="activePin = 0"
-    >
-    </pin-input>
+    />
+    <FormErrorMessage name="password" />
 
     <div class="text-rGrayDark mb-4">{{ $t('settings.pinLabel') }}</div>
     <pin-input
@@ -31,12 +31,13 @@
       data-ci="pin"
       @finished="activePin = 2"
       @click="activePin = 1"
+      :required=false
     >
     </pin-input>
 
     <div class="text-rGrayDark mb-4">{{ $t('settings.confirmationPinLabel') }}</div>
     <pin-input
-      name="confirmation"
+      name="confirmationPin"
       :values="values.confirmation"
       :autofocus="activePin === 2"
       class="mb-8 max-w-sm"
@@ -44,12 +45,16 @@
       @finished="handleComparePin"
       @unfinished="handleUnfinishedPin"
       @click="activePin = 2"
+      :required=false
     >
     </pin-input>
 
     <ButtonSubmit class="w-72 mx-auto" :disabled="disableSubmit">
       {{ $t('transaction.confirmButton') }}
     </ButtonSubmit>
+    <div v-if="updatedPin" class="text-rGrayDark text-sm mt-4">
+      {{ $t('settings.updatedPIN') }}
+    </div>
   </form>
 </template>
 
@@ -57,19 +62,25 @@
 import { defineComponent } from 'vue'
 import { useForm } from 'vee-validate'
 import PinInput from '@/components/PinInput.vue'
-import { storePin, validatePin } from '@/actions/vue/create-wallet'
+import { storePin, touchKeystore } from '@/actions/vue/create-wallet'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
+import FormField from '@/components/FormField.vue'
+import { Result } from 'neverthrow'
+import FormErrorMessage from '@/components/FormErrorMessage.vue'
+import { Keystore, KeystoreT } from '@radixdlt/application'
 
 interface ResetPinForm {
-  currentPin: string;
+  password: string;
   pin: string;
-  confirmation: string;
+  confirmationPin: string;
 }
 
 const SettingsResetPin = defineComponent({
   components: {
     ButtonSubmit,
-    PinInput
+    PinInput,
+    FormField,
+    FormErrorMessage
   },
 
   setup () {
@@ -81,57 +92,69 @@ const SettingsResetPin = defineComponent({
   data () {
     return {
       activePin: 0,
-      isValidPin: false
+      isValidPin: false,
+      updatedPin: false
     }
   },
 
   computed: {
     disableSubmit (): boolean {
-      if (!this.isValidPin) {
-        return true
-      } else {
-        return this.meta.dirty ? !this.meta.valid : true
-      }
+      return this.meta.dirty ? !this.meta.valid : true
     }
   },
 
   methods: {
-    handleValidatePin () {
-      validatePin(this.values.currentPin)
-        .then((isValid: boolean) => {
-          if (!isValid) {
-            this.setErrors({
-              currentPin: this.$t('validations.invalidPin')
-            })
-          } else {
-            this.activePin = 1
-          }
-        })
+    resetFormForNonmatchingPins () {
+      const values = { password: this.values.password, pin: '', confirmationPin: '' }
+      const errors = { confirmationPin: this.$t('validations.pinMatch') }
+      this.resetForm({
+        values: values,
+        errors: errors
+      })
+      this.activePin = 1
     },
+
+    handleComparePin () {
+      if (this.values.pin === this.values.confirmationPin) {
+        this.isValidPin = true
+      } else {
+        this.resetFormForNonmatchingPins()
+      }
+    },
+
     handleUnfinishedPin () {
       this.isValidPin = false
     },
 
-    handleComparePin () {
-      if (this.values.pin === this.values.confirmation) {
-        this.isValidPin = true
-      } else {
-        this.setErrors({
-          confirmation: this.$t('validations.pinMatch')
-        })
-      }
-    },
-
     handleResetPin () {
-      if (this.values.pin !== this.values.confirmation) {
-        this.setErrors({
-          confirmation: this.$t('validations.pinMatch')
-        })
-        this.activePin = 2
+      if (this.values.pin !== this.values.confirmationPin) {
+        this.resetFormForNonmatchingPins()
       } else {
-        this.isValidPin = false
-        storePin(this.values.pin)
-          .then(() => this.resetForm())
+        touchKeystore()
+          .then((keystore: KeystoreT) =>
+            Keystore.decrypt({
+              keystore,
+              password: this.values.password
+            })
+          )
+          .then((res: Result<Buffer, Error>) => {
+            if (res.isOk()) {
+              storePin(this.values.pin)
+                .then(() => {
+                  this.resetForm()
+                  this.updatedPin = true
+                })
+            } else {
+              this.setErrors({
+                password: this.$t('validations.incorrectPassword')
+              })
+            }
+          })
+          .catch(() => {
+            this.setErrors({
+              password: this.$t('validations.incorrectPassword')
+            })
+          })
       }
     }
   }

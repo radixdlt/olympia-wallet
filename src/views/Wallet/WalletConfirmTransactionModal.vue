@@ -82,9 +82,9 @@ const WalletConfirmTransactionModal = defineComponent({
   },
 
   setup () {
-    const { errors, meta, values, setErrors } = useForm<ConfirmationForm>()
+    const { errors, meta, values, setErrors, resetForm } = useForm<ConfirmationForm>()
 
-    return { errors, meta, values, setErrors }
+    return { errors, meta, values, setErrors, resetForm }
   },
 
   props: {
@@ -139,6 +139,7 @@ const WalletConfirmTransactionModal = defineComponent({
         .then((isValid: boolean) => {
           this.isValidPin = isValid
           if (!isValid) {
+            this.resetForm()
             this.setErrors({
               pin: this.$t('validations.invalidPin')
             })
