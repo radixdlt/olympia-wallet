@@ -151,7 +151,9 @@ const messages = {
       changePasswordLabel: 'Change password',
       passwordRequiredLabel: 'Enter your password',
       passwordPlaceholder: 'password',
-      accessSettingsButton: 'Access Settings'
+      accessSettingsButton: 'Access Settings',
+      updatedPassword: 'You\'ve successfully updated your password.',
+      updatedPIN: 'You\'ve successfully updated your PIN.'
     }
   }
 }

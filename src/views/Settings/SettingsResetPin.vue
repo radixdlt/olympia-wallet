@@ -50,6 +50,9 @@
     <ButtonSubmit class="w-72 mx-auto" :disabled="disableSubmit">
       {{ $t('transaction.confirmButton') }}
     </ButtonSubmit>
+    <div v-if="updatedPin" class="text-rGrayDark text-sm mt-4">
+      {{ $t('settings.updatedPIN') }}
+    </div>
   </form>
 </template>
 
@@ -87,7 +90,8 @@ const SettingsResetPin = defineComponent({
   data () {
     return {
       activePin: 0,
-      isValidPin: false
+      isValidPin: false,
+      updatedPin: false
     }
   },
 
@@ -129,7 +133,10 @@ const SettingsResetPin = defineComponent({
           .then((res: Result<Buffer, Error>) => {
             if (res.isOk()) {
               storePin(this.values.pin)
-                .then(() => this.resetForm())
+                .then(() => {
+                  this.resetForm()
+                  this.updatedPin = true
+                })
             } else {
               this.setErrors({
                 password: this.$t('validations.incorrectPassword')

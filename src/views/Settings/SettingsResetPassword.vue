@@ -45,13 +45,16 @@
     <ButtonSubmit class="w-96" :disabled="disableSubmit">
       {{ $t('createWallet.passwordButton') }}
     </ButtonSubmit>
+    <div v-if="updatedPassword" class="text-rGrayDark text-sm mt-4">
+      {{ $t('settings.updatedPassword') }}
+    </div>
   </form>
 </template>
 
 <script lang="ts">
-import { defineComponent, onUnmounted } from 'vue'
+import { defineComponent, onUnmounted, Ref } from 'vue'
 import { useForm } from 'vee-validate'
-import { Radix, mockedAPI, Keystore, KeystoreT, MnemomicT, NetworkT, WalletT } from '@radixdlt/application'
+import { Radix, mockedAPI, Keystore, KeystoreT, MnemomicT, NetworkT } from '@radixdlt/application'
 import { Result } from 'neverthrow'
 import { Subscription } from 'rxjs'
 import { ref } from '@nopr3d/vue-next-rx'
@@ -79,6 +82,7 @@ const SettingsResetPassword = defineComponent({
     const store = useStore()
     const subs = new Subscription()
     const isLoading = ref(false)
+    const updatedPassword: Ref<boolean> = ref(false)
 
     const radix = Radix
       .create()
@@ -92,6 +96,7 @@ const SettingsResetPassword = defineComponent({
             .then(wallet => {
               store.commit('setWallet', wallet)
               resetForm()
+              updatedPassword.value = true
             })
             .then(() => getMnemonicForPassword.unsubscribe())
         })
@@ -107,7 +112,8 @@ const SettingsResetPassword = defineComponent({
       meta,
       setErrors,
       handleResetPassword,
-      isLoading
+      isLoading,
+      updatedPassword
     }
   },
 
@@ -128,8 +134,9 @@ const SettingsResetPassword = defineComponent({
           })
         )
         .then((res: Result<Buffer, Error>) => {
-          if (res.isOk()) this.handleResetPassword(this.values.password)
-          else {
+          if (res.isOk()) {
+            this.handleResetPassword(this.values.password)
+          } else {
             this.isLoading = false
             this.setErrors({
               currentPassword: this.$t('validations.incorrectPassword')
