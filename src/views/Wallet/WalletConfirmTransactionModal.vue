@@ -137,9 +137,9 @@ const WalletConfirmTransactionModal = defineComponent({
     handleValidatePin () {
       validatePin(this.values.pin)
         .then((isValid: boolean) => {
-          this.resetForm()
           this.isValidPin = isValid
           if (!isValid) {
+            this.resetForm()
             this.setErrors({
               pin: this.$t('validations.invalidPin')
             })
