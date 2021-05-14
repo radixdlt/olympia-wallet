@@ -3,7 +3,7 @@
     <div class="flex flex-col">
       <div class="flex flex-row">
         <tabs-tab :isActive="activeForm == 'password'" @click="() => handleClickTab('password')">Change Password</tabs-tab>
-        <tabs-tab :isActive="activeForm == 'pin'" @click="() => handleClickTab('pin')">Reset PIN</tabs-tab>
+        <tabs-tab :isActive="activeForm == 'pin'" @click="() => handleClickTab('pin')">Change PIN</tabs-tab>
         <tabs-tab :isActive="activeForm == 'mnemonic'" @click="() => handleClickTab('mnemonic')">Reveal Seed Phrase</tabs-tab>
       </div>
       <tabs-content :leftTabIsActive="activeForm == 'password'">
