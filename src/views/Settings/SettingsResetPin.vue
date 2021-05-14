@@ -31,6 +31,7 @@
       data-ci="pin"
       @finished="activePin = 2"
       @click="activePin = 1"
+      :required=false
     >
     </pin-input>
 
@@ -44,6 +45,7 @@
       @finished="handleComparePin"
       @unfinished="handleUnfinishedPin"
       @click="activePin = 2"
+      :required=false
     >
     </pin-input>
 
@@ -102,14 +104,21 @@ const SettingsResetPin = defineComponent({
   },
 
   methods: {
+    resetFormForNonmatchingPins () {
+      const values = { password: this.values.password, pin: '', confirmationPin: '' }
+      const errors = { confirmationPin: this.$t('validations.pinMatch') }
+      this.resetForm({
+        values: values,
+        errors: errors
+      })
+      this.activePin = 1
+    },
+
     handleComparePin () {
-      this.activePin = 0
       if (this.values.pin === this.values.confirmationPin) {
         this.isValidPin = true
       } else {
-        this.setErrors({
-          confirmationPin: this.$t('validations.pinMatch')
-        })
+        this.resetFormForNonmatchingPins()
       }
     },
 
@@ -119,9 +128,7 @@ const SettingsResetPin = defineComponent({
 
     handleResetPin () {
       if (this.values.pin !== this.values.confirmationPin) {
-        this.setErrors({
-          confirmationPin: this.$t('validations.pinMatch')
-        })
+        this.resetFormForNonmatchingPins()
       } else {
         touchKeystore()
           .then((keystore: KeystoreT) =>
