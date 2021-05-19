@@ -5,7 +5,7 @@
         <img src="@/assets/unstakeTokens.svg" alt="receive tokens" />
         <span class="ml-2 text-sm">{{ $t('history.unstakeAction') }}</span>
       </div>
-      <div><big-amount :amount="action.amount" class="text-rBlack"/> {{ this.action.rri.name.toUpperCase() }}</div>
+      <div><big-amount :amount="action.amount" class="text-rBlack"/> XRD</div>
     </div>
     <div class="flex flex-col items-end">
       <div class="flex flex-row flex-1 min-w-0">

@@ -63,6 +63,7 @@
           :activeStakes="activeStakes"
           :activeUnstakes="activeUnstakes"
           :tokenBalances="tokenBalances"
+          :nativeToken="nativeToken"
           @stakeTokens="stakeTokens"
           @unstakeTokens="unstakeTokens"
         >
@@ -123,7 +124,30 @@
 <script lang="ts">
 import { defineComponent, onBeforeMount, onUnmounted, Ref } from 'vue'
 import { Subscription, interval, Subject, Observable, combineLatest, from, BehaviorSubject } from 'rxjs'
-import { AccountAddressT, Radix, TransferTokensOptions, StakePositions, TokenBalances, UnstakePositions, ManualUserConfirmTX, mockedAPI, TransactionTracking, StakeTokensInput, UnstakeTokensInput, TransactionStateUpdate, TransactionIdentifierT, TransactionHistoryOfKnownAddressRequestInput, TransactionHistory, Token, AmountT, AccountT, AccountsT, TransactionIntent, FinalizedTransaction, IntendedAction, TransactionStateSuccess } from '@radixdlt/application'
+import {
+  AccountAddressT,
+  Radix,
+  TransferTokensOptions,
+  StakePositions,
+  TokenBalances,
+  UnstakePositions,
+  ManualUserConfirmTX,
+  TransactionTracking,
+  StakeTokensInput,
+  UnstakeTokensInput,
+  TransactionStateUpdate,
+  TransactionIdentifierT,
+  TransactionHistoryOfKnownAddressRequestInput,
+  TransactionHistory,
+  Token,
+  AmountT,
+  AccountT,
+  AccountsT,
+  TransactionIntent,
+  FinalizedTransaction,
+  IntendedAction,
+  TransactionStateSuccess
+} from '@radixdlt/application'
 import { ref } from '@nopr3d/vue-next-rx'
 import { useStore } from '@/store'
 import { useRouter } from 'vue-router'
@@ -215,17 +239,12 @@ const WalletIndex = defineComponent({
     // Return home if wallet is undefined
     if (!store.state.wallet) router.push('/')
 
-    const radix = Radix
-      .create()
-      .__withAPI(mockedAPI)
-      .withWallet(store.state.wallet)
-      .withTokenBalanceFetchTrigger(interval(5 * 1_000))
-
     const wallet = Radix
       .create()
       .connect('https://betanet.radixdlt.com/rpc')
       .withWallet(store.state.wallet)
       .withTokenBalanceFetchTrigger(interval(5 * 1_000))
+      .withStakingFetchTrigger(interval(5 * 1_000))
 
     const subs = new Subscription()
 
@@ -234,8 +253,8 @@ const WalletIndex = defineComponent({
       tokenBalances.value = tokenBalancesRes
     }))
     subs.add(wallet.activeAccount.subscribe((account: AccountT) => { activeAccount.value = account }))
-    subs.add(radix.stakingPositions.subscribe((stakes: StakePositions) => { activeStakes.value = stakes }))
-    subs.add(radix.unstakingPositions.subscribe((unstakes: UnstakePositions) => { activeUnstakes.value = unstakes }))
+    subs.add(wallet.stakingPositions.subscribe((stakes: StakePositions) => { activeStakes.value = stakes }))
+    subs.add(wallet.unstakingPositions.subscribe((unstakes: UnstakePositions) => { activeUnstakes.value = unstakes }))
     subs.add(wallet.accounts.subscribe((accountsRes: AccountsT) => { accounts.value = accountsRes }))
     subs.add(wallet.activeAddress.subscribe((addressRes: AccountAddressT) => { activeAddress.value = addressRes }))
     subs.add(wallet.ledger.nativeToken().subscribe((nativeTokenRes: Token) => { nativeToken.value = nativeTokenRes }))
@@ -396,9 +415,10 @@ const WalletIndex = defineComponent({
     }
 
     // call stakeTokens() with built options and subscribe to confirmation and results
-    const stakeTokens = (data: StakeTokensInput) => {
+    const stakeTokens = (data: StakeTokensInput, sc: Token) => {
       let pollTXStatusTrigger: Observable<unknown>
       stakeInput.value = data
+      selectedCurrency.value = sc
 
       const buildTransferTokens = (): any => ({
         stakeInput: data,
@@ -406,7 +426,7 @@ const WalletIndex = defineComponent({
         pollTXStatusTrigger: pollTXStatusTrigger
       })
 
-      const stakingTransactionTracking: TransactionTracking = radix.stakeTokens({
+      const stakingTransactionTracking: TransactionTracking = wallet.stakeTokens({
         ...buildTransferTokens(),
         userConfirmation
       })
@@ -415,9 +435,10 @@ const WalletIndex = defineComponent({
     }
 
     // call unstakeTokens() with built options and subscribe to confirmation and results
-    const unstakeTokens = (data: UnstakeTokensInput) => {
+    const unstakeTokens = (data: UnstakeTokensInput, sc: Token) => {
       let pollTXStatusTrigger: Observable<unknown>
       stakeInput.value = data
+      selectedCurrency.value = sc
 
       const buildTransferTokens = (): any => ({
         unstakeInput: data,
@@ -425,7 +446,7 @@ const WalletIndex = defineComponent({
         pollTXStatusTrigger: pollTXStatusTrigger
       })
 
-      const unstakingTransactionTracking: TransactionTracking = radix.unstakeTokens({
+      const unstakingTransactionTracking: TransactionTracking = wallet.unstakeTokens({
         ...buildTransferTokens(),
         userConfirmation
       })
