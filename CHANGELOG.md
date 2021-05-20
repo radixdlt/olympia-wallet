@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.5.8](https://www.github.com/township-agency/radixdlt-desktop-wallet/compare/v0.5.7...v0.5.8) (2021-05-20)
+
+
+### Dependencies
+
+* update lib and typescript ([#86](https://www.github.com/township-agency/radixdlt-desktop-wallet/issues/86)) ([3c6a8f3](https://www.github.com/township-agency/radixdlt-desktop-wallet/commit/3c6a8f3138da0866f0c840cc527e1683f1f9a4a5))
+
 ### [0.5.7](https://www.github.com/township-agency/radixdlt-desktop-wallet/compare/v0.5.6...v0.5.7) (2021-05-14)
 
 
