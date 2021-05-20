@@ -60,7 +60,7 @@
 </template>
 
 <script lang="ts">
-import { AccountAddressT, AmountOrUnsafeInput, AmountT, StakeTokensInput, Token, TransferTokensInput } from '@radixdlt/application'
+import { AccountAddressT, AmountOrUnsafeInput, AmountT, StakeTokensInput, TokenBalance, TransferTokensInput } from '@radixdlt/application'
 import { defineComponent, PropType } from 'vue'
 import { useForm } from 'vee-validate'
 import BigAmount from '@/components/BigAmount.vue'
@@ -105,7 +105,7 @@ const WalletConfirmTransactionModal = defineComponent({
       required: true
     },
     selectedCurrency: {
-      type: Object as PropType<Token>,
+      type: Object as PropType<TokenBalance>,
       required: true
     }
   },
