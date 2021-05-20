@@ -34,7 +34,7 @@
     "fs.promises": "^0.1.2",
     "loglevel": "^1.7.1",
     "luxon": "^1.26.0",
-    "postcss": "^7",
+    "postcss": "^8",
     "rxjs": "7.0.0",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.1.0",
     "tailwindcss-filters": "^3.0.0",
