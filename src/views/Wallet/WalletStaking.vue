@@ -71,6 +71,7 @@
         :key="i"
         :stake="stake"
         :activeUnstakes="activeUnstakes"
+        :nativeToken="nativeToken"
         @addToValidator="handleAddToValidator"
         @reduceFromValidator="handleReduceFromValidator"
       >
@@ -80,7 +81,7 @@
 </template>
 
 <script lang="ts">
-import { StakePosition, TokenBalance, TokenBalances, UnstakePosition, AccountAddressT, Amount, AmountT } from '@radixdlt/application'
+import { StakePosition, TokenBalance, TokenBalances, UnstakePosition, AccountAddressT, Amount, AmountT, Token } from '@radixdlt/application'
 import { defineComponent, PropType } from 'vue'
 import { useForm } from 'vee-validate'
 import StakeListItem from '@/components/StakeListItem.vue'
@@ -126,6 +127,10 @@ const WalletStaking = defineComponent({
     },
     tokenBalances: {
       type: Object as PropType<TokenBalances>,
+      required: true
+    },
+    nativeToken: {
+      type: Object as PropType<Token>,
       required: true
     },
     nativeTokenBalance: {

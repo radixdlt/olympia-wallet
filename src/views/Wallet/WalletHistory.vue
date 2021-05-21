@@ -21,6 +21,7 @@
         :index="i"
         :activeAddress="activeAddress"
         :pending="true"
+        :nativeToken="nativeToken"
       />
 
       <transaction-list-item
@@ -30,6 +31,7 @@
         :index="i"
         :activeAddress="activeAddress"
         :pending="false"
+        :nativeToken="nativeToken"
       />
 
       <!-- <div class="flex flex-row items-center text-rGrayDark justify-between py-5">
@@ -70,9 +72,10 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { ExecutedTransaction, AccountAddressT } from '@radixdlt/application'
+import { ExecutedTransaction, AccountAddressT, Token } from '@radixdlt/application'
 import TransactionListItem from '@/components/TransactionListItem.vue'
 import ClickToCopy from '@/components/ClickToCopy.vue'
+import { PendingTransaction } from '@/views/Wallet/index.vue'
 
 const WalletHistory = defineComponent({
   components: {
@@ -91,7 +94,7 @@ const WalletHistory = defineComponent({
       required: true
     },
     pendingTransactions: {
-      type: Array as PropType<Array<any>>,
+      type: Array as PropType<Array<PendingTransaction>>,
       required: true,
       default: []
     },
@@ -101,6 +104,10 @@ const WalletHistory = defineComponent({
     },
     canGoNext: {
       type: Boolean,
+      required: true
+    },
+    nativeToken: {
+      type: Object as PropType<Token>,
       required: true
     }
   },

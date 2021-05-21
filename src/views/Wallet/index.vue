@@ -63,6 +63,7 @@
           :activeStakes="activeStakes"
           :activeUnstakes="activeUnstakes"
           :tokenBalances="tokenBalances"
+          :nativeToken="nativeToken"
           :nativeTokenBalance="nativeTokenBalance"
           @stakeTokens="stakeTokens"
           @unstakeTokens="unstakeTokens"
@@ -83,6 +84,7 @@
           :pendingTransactions="pendingTransactions"
           :canGoBack="cursorStack.length > 0"
           :canGoNext="canGoNext"
+          :nativeToken="nativeToken"
           @refresh="refreshHistory"
           @next="nextPage"
           @previous="previousPage"
@@ -101,6 +103,7 @@
         :stakeInput="stakeInput"
         :transactionFee="transactionFee"
         :selectedCurrency="selectedCurrency"
+        :nativeToken="nativeToken"
         @cancel="cancelTransaction"
         @confirm="confirmTransaction"
       >
@@ -169,7 +172,7 @@ import { filter, mergeMap } from 'rxjs/operators'
 import { getDerivedAccountsIndex, saveDerivedAccountsIndex } from '@/actions/vue/data-store'
 import { useI18n } from 'vue-i18n'
 
-interface PendingTransaction extends TransactionStateSuccess {
+export interface PendingTransaction extends TransactionStateSuccess {
   actions: IntendedAction[];
 }
 

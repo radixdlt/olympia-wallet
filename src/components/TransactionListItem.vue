@@ -31,11 +31,13 @@
             v-if="action.type === 'StakeTokens'"
             :action="action"
             :index="i"
+            :nativeToken="nativeToken"
           />
           <action-list-item-unstake-tokens
             v-else-if="action.type === 'UnstakeTokens'"
             :action="action"
             :index="i"
+            :nativeToken="nativeToken"
           />
           <action-list-item-transfer-tokens
             v-else-if="action.type === 'TokenTransfer'"
@@ -65,7 +67,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { ExecutedTransaction, AccountAddressT } from '@radixdlt/application'
+import { ExecutedTransaction, AccountAddressT, Token } from '@radixdlt/application'
 import { DateTime } from 'luxon'
 import ActionListItemStakeTokens from '@/components/ActionListItemStakeTokens.vue'
 import ActionListItemUnstakeTokens from '@/components/ActionListItemUnstakeTokens.vue'
@@ -95,6 +97,10 @@ export default defineComponent({
     },
     pending: {
       type: Boolean,
+      required: true
+    },
+    nativeToken: {
+      type: Object as PropType<Token>,
       required: true
     }
   },

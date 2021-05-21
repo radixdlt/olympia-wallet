@@ -12,14 +12,14 @@
         <click-to-copy :text="stake.validator.toString()" class="hover:text-rGreen active:text-rGreenDark" />
       </div>
       <div class="text-sm text-rBlack flex flex-row items-center">
-        <big-amount :amount="stake.amount" /> <span class="text-rGrayDark ml-1">XRD</span>
+        <big-amount :amount="stake.amount" /> <span class="text-rGrayDark ml-1 uppercase">{{ nativeToken.symbol }}</span>
       </div>
       <div
         v-for="(unstake, i) in unstakesForValidator"
         :key="i"
         class="text-sm text-rBlack flex flex-row items-center"
       >
-        <big-amount :amount="unstake.amount" /> <span class="text-rGrayDark ml-1">XRD</span>
+        <big-amount :amount="unstake.amount" /> <span class="text-rGrayDark ml-1 uppercase">{{ nativeToken.symbol }}</span>
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" class="animate-spin ml-3 mr-1">
           <g clip-path="url(#clip0)">
           <path d="M6.81934 0V4" stroke="#003057" stroke-width="1.0485" stroke-miterlimit="10"/>
@@ -61,7 +61,7 @@
 </template>
 
 <script lang="ts">
-import { Radix, StakePosition, UnstakePosition, Validator } from '@radixdlt/application'
+import { Radix, StakePosition, Token, UnstakePosition, Validator } from '@radixdlt/application'
 import { defineComponent, PropType, Ref, ref } from 'vue'
 import BigAmount from '@/components/BigAmount.vue'
 import ClickToCopy from '@/components/ClickToCopy.vue'
@@ -80,6 +80,10 @@ const StakeListItem = defineComponent({
     },
     activeUnstakes: {
       type: Object as PropType<Array<UnstakePosition>>,
+      required: true
+    },
+    nativeToken: {
+      type: Object as PropType<Token>,
       required: true
     }
   },

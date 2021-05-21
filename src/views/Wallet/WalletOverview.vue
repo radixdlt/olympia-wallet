@@ -18,21 +18,21 @@
           <span class="text-sm text-rGrayDark">{{ $t('wallet.totalTokens') }}</span>
           <div class="flex flex-row items-end">
             <big-amount :amount="totalXRD" class="text-4xl font-light mr-4 text-rGreen" />
-            <token-symbol>XRD</token-symbol>
+            <token-symbol>{{ nativeToken.symbol }}</token-symbol>
           </div>
         </div>
         <div class="flex flex-col my-3 px-5 border-r border-rGray flex-1">
           <span class="text-sm text-rGrayDark">{{ $t('wallet.availableTokens') }}</span>
           <div class="flex flex-row items-end">
             <big-amount :amount="availableXRD" class="text-4xl font-light mr-4 text-rBlack" />
-            <token-symbol>XRD</token-symbol>
+            <token-symbol>{{ nativeToken.symbol }}</token-symbol>
           </div>
         </div>
         <div class="flex flex-col my-3 px-5 flex-1">
           <span class="text-sm text-rGrayDark">{{ $t('wallet.stakedTokens') }}</span>
           <div class="flex flex-row items-end">
             <big-amount :amount="totalStaked" class="text-4xl font-light mr-4 text-rBlack" />
-            <token-symbol>XRD</token-symbol>
+            <token-symbol>{{ nativeToken.symbol }}</token-symbol>
           </div>
         </div>
       </div>
