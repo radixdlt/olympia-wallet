@@ -109,7 +109,7 @@ const StakeListItem = defineComponent({
   computed: {
     validatorAddress (): string {
       const address = this.stake.validator.toString()
-      return `${address.slice(0, 14)}...${address.slice(-13)}`
+      return `${address.slice(0, 8)}...${address.slice(-7)}`
     },
     unstakesForValidator (): UnstakePosition[] {
       return this.activeUnstakes.filter((unstake: UnstakePosition) => unstake.validator.equals(this.stake.validator))
