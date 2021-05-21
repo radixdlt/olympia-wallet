@@ -21,7 +21,6 @@
     </wallet-sidebar-accounts>
 
     <template v-if="activeAddress">
-
       <template v-if="view == 'overview'">
         <wallet-overview
           v-if="!loadingBalances"
@@ -30,6 +29,7 @@
           :activeUnstakes="activeUnstakes"
           :tokenBalances="tokenBalances"
           :nativeToken="nativeToken"
+          :nativeTokenBalance="nativeTokenBalance"
           @requestFreeTokens="requestFreeTokens"
         >
         </wallet-overview>
@@ -63,7 +63,7 @@
           :activeStakes="activeStakes"
           :activeUnstakes="activeUnstakes"
           :tokenBalances="tokenBalances"
-          :nativeToken="nativeToken"
+          :nativeTokenBalance="nativeTokenBalance"
           @stakeTokens="stakeTokens"
           @unstakeTokens="unstakeTokens"
         >
@@ -217,6 +217,7 @@ const WalletIndex = defineComponent({
     const canGoNext: Ref<boolean> = ref(false)
     const nativeToken: Ref<Token | null> = ref(null)
     const selectedCurrency: Ref<TokenBalance | null> = ref(null)
+    const nativeTokenBalance: Ref<TokenBalance | null> = ref(null)
 
     const loadingBalances: Ref<boolean> = ref(true)
     const loadingHistory: Ref<boolean> = ref(true)
@@ -262,6 +263,17 @@ const WalletIndex = defineComponent({
     subs.add(radix.accounts.subscribe((accountsRes: AccountsT) => { accounts.value = accountsRes }))
     subs.add(radix.activeAddress.subscribe((addressRes: AccountAddressT) => { activeAddress.value = addressRes }))
     subs.add(radix.ledger.nativeToken().subscribe((nativeTokenRes: Token) => { nativeToken.value = nativeTokenRes }))
+
+    const fetchNativeTokenBalanceTrigger = combineLatest<[TokenBalances, Token]>([
+      radix.tokenBalances,
+      radix.ledger.nativeToken()
+    ])
+    subs.add(fetchNativeTokenBalanceTrigger
+      .subscribe(([tokenBalancesRes, nativeTokenRes]: [TokenBalances, Token]) => {
+        if (nativeTokenRes && tokenBalancesRes.tokenBalances && tokenBalancesRes.tokenBalances.length > 0) {
+          nativeTokenBalance.value = tokenBalancesRes.tokenBalances.find((tb: TokenBalance) => tb.token.rri.equals(nativeTokenRes.rri)) || null
+        }
+      }))
 
     getDerivedAccountsIndex()
       .then((accountsIndex: string) => {
@@ -419,10 +431,10 @@ const WalletIndex = defineComponent({
     }
 
     // call stakeTokens() with built options and subscribe to confirmation and results
-    const stakeTokens = (stakeTokensInput: StakeTokensInput, sc: TokenBalance) => {
+    const stakeTokens = (stakeTokensInput: StakeTokensInput) => {
       let pollTXStatusTrigger: Observable<unknown>
       stakeInput.value = stakeTokensInput
-      selectedCurrency.value = sc
+      selectedCurrency.value = nativeTokenBalance.value
 
       const buildTransferTokens = (): StakeOptions => ({
         stakeInput: stakeTokensInput,
@@ -439,10 +451,10 @@ const WalletIndex = defineComponent({
     }
 
     // call unstakeTokens() with built options and subscribe to confirmation and results
-    const unstakeTokens = (unstakeTokensInput: UnstakeTokensInput, sc: TokenBalance) => {
+    const unstakeTokens = (unstakeTokensInput: UnstakeTokensInput) => {
       let pollTXStatusTrigger: Observable<unknown>
       stakeInput.value = unstakeTokensInput
-      selectedCurrency.value = sc
+      selectedCurrency.value = nativeTokenBalance.value
 
       const buildTransferTokens = (): UnstakeOptions => ({
         unstakeInput: unstakeTokensInput,
@@ -513,6 +525,7 @@ const WalletIndex = defineComponent({
       pendingTransactions,
       cursorStack,
       nativeToken,
+      nativeTokenBalance,
       selectedCurrency,
       loadingBalances,
       loadingHistory,

@@ -100,17 +100,18 @@ const WalletOverview = defineComponent({
     },
     nativeToken: {
       type: Object as PropType<Token>,
+      required: true
+    },
+    nativeTokenBalance: {
+      type: Object as PropType<TokenBalance>,
       required: false
     }
   },
 
   computed: {
     totalXRD (): AmountT {
-      if (!this.nativeToken) return Amount.fromUnsafe(0)._unsafeUnwrap()
-      if (!this.tokenBalances.tokenBalances) return Amount.fromUnsafe(0)._unsafeUnwrap()
-      const xrdTokenBalance = this.tokenBalances.tokenBalances.find((tb: TokenBalance) => tb.token.rri.equals(this.nativeToken!.rri))
-      if (!xrdTokenBalance) return Amount.fromUnsafe(0)._unsafeUnwrap()
-      const xrdAmount = Amount.fromUnsafe(xrdTokenBalance.amount)
+      if (!this.nativeTokenBalance) return Amount.fromUnsafe(0)._unsafeUnwrap()
+      const xrdAmount = Amount.fromUnsafe(this.nativeTokenBalance.amount)
       return xrdAmount.isErr() ? Amount.fromUnsafe(0)._unsafeUnwrap() : xrdAmount.value
     },
     totalStaked (): AmountT {
@@ -132,9 +133,8 @@ const WalletOverview = defineComponent({
       // }
     },
     otherTokenBalances (): TokenBalance[] {
-      return this.tokenBalances.tokenBalances
-        ? this.tokenBalances.tokenBalances.filter((item: TokenBalance) => item.token.symbol !== 'xrd')
-        : []
+      if (!this.nativeToken || !this.tokenBalances.tokenBalances) return []
+      else return this.tokenBalances.tokenBalances.filter((tb: TokenBalance) => !tb.token.rri.equals(this.nativeToken.rri))
     }
   },
 

@@ -80,7 +80,7 @@
 </template>
 
 <script lang="ts">
-import { StakePosition, TokenBalance, TokenBalances, UnstakePosition, AccountAddressT, Amount, AmountT, Token } from '@radixdlt/application'
+import { StakePosition, TokenBalance, TokenBalances, UnstakePosition, AccountAddressT, Amount, AmountT } from '@radixdlt/application'
 import { defineComponent, PropType } from 'vue'
 import { useForm } from 'vee-validate'
 import StakeListItem from '@/components/StakeListItem.vue'
@@ -128,8 +128,8 @@ const WalletStaking = defineComponent({
       type: Object as PropType<TokenBalances>,
       required: true
     },
-    nativeToken: {
-      type: Object as PropType<Token>,
+    nativeTokenBalance: {
+      type: Object as PropType<TokenBalance>,
       required: false
     }
   },
@@ -144,20 +144,8 @@ const WalletStaking = defineComponent({
     stakingDisclaimer (): string {
       return this.activeForm === 'stake' ? this.$t('staking.stakeDisclaimer') : this.$t('staking.unstakeDisclaimer')
     },
-    xrdToken (): TokenBalance | null {
-      if (this.nativeToken && this.tokenBalances.tokenBalances && this.tokenBalances.tokenBalances.length > 0) {
-        return this.tokenBalances.tokenBalances.find((tb: TokenBalance) => tb.token.rri.equals(this.nativeToken!.rri)) || null
-      }
-      return null
-    },
     xrdBalance (): AmountT {
-      if (this.tokenBalances.tokenBalances &&
-        this.tokenBalances.tokenBalances.length > 0 &&
-        this.tokenBalances.tokenBalances.find((tb: TokenBalance) => tb.token.rri.equals(this.nativeToken!.rri))
-      ) {
-        const xrdBalance = this.tokenBalances.tokenBalances.find((tb: TokenBalance) => tb.token.rri.equals(this.nativeToken!.rri))
-        return xrdBalance ? xrdBalance.amount : Amount.fromUnsafe(0)._unsafeUnwrap()
-      } else return Amount.fromUnsafe(0)._unsafeUnwrap()
+      return this.nativeTokenBalance ? this.nativeTokenBalance.amount : Amount.fromUnsafe(0)._unsafeUnwrap()
     },
     submitMethod (): 'stakeTokens' | 'unstakeTokens' {
       return this.activeForm === 'stake' ? 'stakeTokens' : 'unstakeTokens'
@@ -181,11 +169,11 @@ const WalletStaking = defineComponent({
       this.values.validator = validator.toString()
     },
     handleSubmitStake () {
-      if (this.meta.valid && this.xrdToken) {
+      if (this.meta.valid && this.nativeTokenBalance) {
         const safeAddress = safelyUnwrapValidator(this.values.validator)
         const safeAmount = safelyUnwrapAmount(Number(this.values.amount))
         const greaterThanZero = safeAmount && validateGreaterThanZero(safeAmount)
-        const validAmount = safeAmount && validateAmountOfType(safeAmount, this.xrdToken.token)
+        const validAmount = safeAmount && validateAmountOfType(safeAmount, this.nativeTokenBalance.token)
 
         if (!greaterThanZero) {
           this.setErrors({
@@ -193,13 +181,13 @@ const WalletStaking = defineComponent({
           })
         } else if (!validAmount) {
           this.setErrors({
-            amount: this.$t('validations.amountOfType', { granularity: this.xrdToken.token.granularity.toString() })
+            amount: this.$t('validations.amountOfType', { granularity: this.nativeTokenBalance.token.granularity.toString() })
           })
         } else {
           this.$emit(this.submitMethod, {
             validator: safeAddress,
             amount: safeAmount
-          }, this.xrdToken)
+          })
         }
       }
     }
