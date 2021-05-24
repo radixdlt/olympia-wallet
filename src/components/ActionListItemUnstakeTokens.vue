@@ -5,7 +5,7 @@
         <img src="@/assets/unstakeTokens.svg" alt="receive tokens" />
         <span class="ml-2 text-sm">{{ $t('history.unstakeAction') }}</span>
       </div>
-      <div><big-amount :amount="action.amount" class="text-rBlack"/> {{ this.action.rri.name.toUpperCase() }}</div>
+      <div><big-amount :amount="action.amount" class="text-rBlack"/> {{ nativeToken.symbol.toUpperCase() }}</div>
     </div>
     <div class="flex flex-col items-end">
       <div class="flex flex-row flex-1 min-w-0">
@@ -18,7 +18,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { ExecutedUnstakeTokensAction, AccountAddressT } from '@radixdlt/application'
+import { ExecutedUnstakeTokensAction, AccountAddressT, Token } from '@radixdlt/application'
 import ClickToCopy from '@/components/ClickToCopy.vue'
 import { formatAddressForDisplay } from '@/helpers/formatter'
 import BigAmount from '@/components/BigAmount.vue'
@@ -36,6 +36,10 @@ const ActionListItemUnstakeTokens = defineComponent({
     },
     index: {
       type: Number,
+      required: true
+    },
+    nativeToken: {
+      type: Object as PropType<Token>,
       required: true
     }
   },

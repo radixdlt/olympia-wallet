@@ -8,6 +8,7 @@ const messages = {
       confirmed: '%{field} do not match',
       length: '%{field} is the wrong length',
       validAddress: 'Enter a valid address',
+      validValidator: 'Enter a valid validator',
       validAmount: 'Enter a valid amount',
       insufficientFunds: '%{field} cannot be greater than account balance',
       amountOfType: 'Requested amount to send is not a mulltiple of token granularity (%{granularity}), will be unable to send',
@@ -110,11 +111,12 @@ const messages = {
     },
     staking: {
       currentStakesHeading: 'Current Stakes',
+      viewAllValidators: 'View all Validators',
       stakeTab: 'Stake Tokens',
       unstakeTab: 'Unstake Tokens',
       unstakingLabel: 'Unstaking',
-      addButton: 'Add',
-      reduceButton: 'Reduce',
+      addButton: 'add',
+      reduceButton: 'reduce',
       fromLabel: 'Staking Account',
       validatorLabel: 'Validator',
       amountLabel: 'Amount',
@@ -123,7 +125,7 @@ const messages = {
       unstakeButton: 'Request Unstake',
       stakeDisclaimer: 'Holders of XRD tokens may stake them to validator nodes of their choice to receive potential incentive rewards. Note that once XRD tokens are staked, unstaking them again will be subject to a lengthy unstaking delay. Please visit http://learn.radixdlt.com for more information about staking, unstaking, and selecting good validator nodes.',
       unstakeDisclaimer: 'Your current stakes are shown at right. You may request an unstake of some or all of your XRD tokens from a validator. Once the request transaction has been processed, your tokens will be subject to a lengthy unstaking delay, after which they will become available for transfer once more. Please visit http://learn.radixdlt.com for more information about unstaking.',
-      availableBalancePlaceholder: 'Available balance ...',
+      availableBalancePlaceholder: 'Enter amount',
       validatorPlaceholder: 'Enter validator address'
     },
     account: {

@@ -21,7 +21,6 @@
     </wallet-sidebar-accounts>
 
     <template v-if="activeAddress">
-
       <template v-if="view == 'overview'">
         <wallet-overview
           v-if="!loadingBalances"
@@ -30,6 +29,7 @@
           :activeUnstakes="activeUnstakes"
           :tokenBalances="tokenBalances"
           :nativeToken="nativeToken"
+          :nativeTokenBalance="nativeTokenBalance"
           @requestFreeTokens="requestFreeTokens"
         >
         </wallet-overview>
@@ -63,6 +63,8 @@
           :activeStakes="activeStakes"
           :activeUnstakes="activeUnstakes"
           :tokenBalances="tokenBalances"
+          :nativeToken="nativeToken"
+          :nativeTokenBalance="nativeTokenBalance"
           @stakeTokens="stakeTokens"
           @unstakeTokens="unstakeTokens"
         >
@@ -82,6 +84,7 @@
           :pendingTransactions="pendingTransactions"
           :canGoBack="cursorStack.length > 0"
           :canGoNext="canGoNext"
+          :nativeToken="nativeToken"
           @refresh="refreshHistory"
           @next="nextPage"
           @previous="previousPage"
@@ -100,6 +103,7 @@
         :stakeInput="stakeInput"
         :transactionFee="transactionFee"
         :selectedCurrency="selectedCurrency"
+        :nativeToken="nativeToken"
         @cancel="cancelTransaction"
         @confirm="confirmTransaction"
       >
@@ -122,8 +126,35 @@
 
 <script lang="ts">
 import { defineComponent, onBeforeMount, onUnmounted, Ref } from 'vue'
-import { Subscription, interval, Subject, Observable, combineLatest, from, BehaviorSubject } from 'rxjs'
-import { AccountAddressT, Radix, TransferTokensOptions, StakePositions, TokenBalances, UnstakePositions, ManualUserConfirmTX, mockedAPI, TransactionTracking, StakeTokensInput, UnstakeTokensInput, TransactionStateUpdate, TransactionIdentifierT, TransactionHistoryOfKnownAddressRequestInput, TransactionHistory, Token, AmountT, AccountT, AccountsT, TransactionIntent, FinalizedTransaction, IntendedAction, TransactionStateSuccess } from '@radixdlt/application'
+import { Subscription, interval, Subject, Observable, combineLatest, from, BehaviorSubject, ReplaySubject } from 'rxjs'
+import {
+  AccountAddressT,
+  Radix,
+  TransferTokensOptions,
+  StakePositions,
+  TokenBalances,
+  UnstakePositions,
+  ManualUserConfirmTX,
+  TransactionTracking,
+  StakeTokensInput,
+  UnstakeTokensInput,
+  TransactionStateUpdate,
+  TransactionIdentifierT,
+  TransactionHistoryOfKnownAddressRequestInput,
+  TransactionHistory,
+  Token,
+  AmountT,
+  AccountT,
+  AccountsT,
+  TransactionIntent,
+  FinalizedTransaction,
+  IntendedAction,
+  TransactionStateSuccess,
+  StakeOptions,
+  UnstakeOptions,
+  TransferTokensInput,
+  TokenBalance
+} from '@radixdlt/application'
 import { ref } from '@nopr3d/vue-next-rx'
 import { useStore } from '@/store'
 import { useRouter } from 'vue-router'
@@ -141,7 +172,7 @@ import { filter, mergeMap } from 'rxjs/operators'
 import { getDerivedAccountsIndex, saveDerivedAccountsIndex } from '@/actions/vue/data-store'
 import { useI18n } from 'vue-i18n'
 
-interface PendingTransaction extends TransactionStateSuccess {
+export interface PendingTransaction extends TransactionStateSuccess {
   actions: IntendedAction[];
 }
 
@@ -177,7 +208,7 @@ const WalletIndex = defineComponent({
     const tokenBalances: Ref<TokenBalances | null> = ref(null)
     const transactionHistory: Ref<TransactionHistory> = ref({ transactions: [] })
     const shouldShowConfirmation: Ref<boolean> = ref(false)
-    const transferInput: Ref<TransferTokensOptions> = ref({})
+    const transferInput: Ref<TransferTokensInput> = ref({})
     const stakeInput: Ref<StakeTokensInput> = ref({})
     const transactionFee: Ref<AmountT> = ref(0)
     const transactionToConfirm: Ref<ManualUserConfirmTX | null> = ref(null)
@@ -188,7 +219,8 @@ const WalletIndex = defineComponent({
     const cursorStack = ref([])
     const canGoNext: Ref<boolean> = ref(false)
     const nativeToken: Ref<Token | null> = ref(null)
-    const selectedCurrency: Ref<Token | null> = ref(null)
+    const selectedCurrency: Ref<TokenBalance | null> = ref(null)
+    const nativeTokenBalance: Ref<TokenBalance | null> = ref(null)
 
     const loadingBalances: Ref<boolean> = ref(true)
     const loadingHistory: Ref<boolean> = ref(true)
@@ -197,7 +229,7 @@ const WalletIndex = defineComponent({
 
     const userDidConfirm = new Subject<boolean>()
     const userDidCancel = new Subject<boolean>()
-    const userConfirmation = new Subject<ManualUserConfirmTX>()
+    const userConfirmation = new ReplaySubject<ManualUserConfirmTX>()
     const historyPagination = new Subject<TransactionHistoryOfKnownAddressRequestInput>()
     const faucetParams = new Subject<number>()
 
@@ -217,33 +249,39 @@ const WalletIndex = defineComponent({
 
     const radix = Radix
       .create()
-      .__withAPI(mockedAPI)
-      .withWallet(store.state.wallet)
-      .withTokenBalanceFetchTrigger(interval(5 * 1_000))
-
-    const wallet = Radix
-      .create()
       .connect('https://betanet.radixdlt.com/rpc')
       .withWallet(store.state.wallet)
       .withTokenBalanceFetchTrigger(interval(5 * 1_000))
+      .withStakingFetchTrigger(interval(5 * 1_000))
 
     const subs = new Subscription()
 
-    subs.add(wallet.tokenBalances.subscribe((tokenBalancesRes: TokenBalances) => {
+    subs.add(radix.tokenBalances.subscribe((tokenBalancesRes: TokenBalances) => {
       loadingBalances.value = false
       tokenBalances.value = tokenBalancesRes
     }))
-    subs.add(wallet.activeAccount.subscribe((account: AccountT) => { activeAccount.value = account }))
+    subs.add(radix.activeAccount.subscribe((account: AccountT) => { activeAccount.value = account }))
     subs.add(radix.stakingPositions.subscribe((stakes: StakePositions) => { activeStakes.value = stakes }))
     subs.add(radix.unstakingPositions.subscribe((unstakes: UnstakePositions) => { activeUnstakes.value = unstakes }))
-    subs.add(wallet.accounts.subscribe((accountsRes: AccountsT) => { accounts.value = accountsRes }))
-    subs.add(wallet.activeAddress.subscribe((addressRes: AccountAddressT) => { activeAddress.value = addressRes }))
-    subs.add(wallet.ledger.nativeToken().subscribe((nativeTokenRes: Token) => { nativeToken.value = nativeTokenRes }))
+    subs.add(radix.accounts.subscribe((accountsRes: AccountsT) => { accounts.value = accountsRes }))
+    subs.add(radix.activeAddress.subscribe((addressRes: AccountAddressT) => { activeAddress.value = addressRes }))
+    subs.add(radix.ledger.nativeToken().subscribe((nativeTokenRes: Token) => { nativeToken.value = nativeTokenRes }))
+
+    const fetchNativeTokenBalanceTrigger = combineLatest<[TokenBalances, Token]>([
+      radix.tokenBalances,
+      radix.ledger.nativeToken()
+    ])
+    subs.add(fetchNativeTokenBalanceTrigger
+      .subscribe(([tokenBalancesRes, nativeTokenRes]: [TokenBalances, Token]) => {
+        if (nativeTokenRes && tokenBalancesRes.tokenBalances && tokenBalancesRes.tokenBalances.length > 0) {
+          nativeTokenBalance.value = tokenBalancesRes.tokenBalances.find((tb: TokenBalance) => tb.token.rri.equals(nativeTokenRes.rri)) || null
+        }
+      }))
 
     getDerivedAccountsIndex()
       .then((accountsIndex: string) => {
         if ((Number(accountsIndex)) > 0) {
-          wallet.restoreLocalHDAccountsToIndex(Number(accountsIndex) + 1)
+          radix.restoreLocalHDAccountsToIndex(Number(accountsIndex) + 1)
             .subscribe(
               (accountsRes: AccountsT) => { accounts.value = accountsRes })
         } else {
@@ -257,14 +295,14 @@ const WalletIndex = defineComponent({
           saveDerivedAccountsIndex(Number(index) + 1)
           tokenBalances.value = null
           startLoading()
-          wallet.deriveNextAccount({ alsoSwitchTo: true })
+          radix.deriveNextAccount({ alsoSwitchTo: true })
         })
     }
 
     const switchAccount = (account: AccountT) => {
       tokenBalances.value = null
       startLoading()
-      wallet.switchAccount({ toAccount: account })
+      radix.switchAccount({ toAccount: account })
     }
 
     const confirmTransaction = () => userDidConfirm.next(true)
@@ -278,7 +316,7 @@ const WalletIndex = defineComponent({
     ])
     subs.add(fetchTXHistoryTrigger
       .pipe(mergeMap(([params]: [TransactionHistoryOfKnownAddressRequestInput, number]) => {
-        return wallet.transactionHistory(params)
+        return radix.transactionHistory(params)
       }))
       .subscribe((history: TransactionHistory) => {
         loadingHistory.value = false
@@ -289,7 +327,7 @@ const WalletIndex = defineComponent({
 
     // This isn't firing the way I want it to
     subs.add(faucetParams
-      .pipe(mergeMap(() => wallet.tokenBalances))
+      .pipe(mergeMap(() => radix.tokenBalances))
       .subscribe((tokenBalancesRes: TokenBalances) => { tokenBalances.value = tokenBalancesRes }))
 
     const confirmAndExecuteTransaction = (transactionTracking: TransactionTracking) => {
@@ -376,18 +414,18 @@ const WalletIndex = defineComponent({
     }
 
     // call transferTokens() with built options and subscribe to confirmation and results
-    const transferTokens = (data: TransferTokensOptions, sc: Token) => {
+    const transferTokens = (transferTokensInput: TransferTokensInput, sc: TokenBalance) => {
       let pollTXStatusTrigger: Observable<unknown>
-      transferInput.value = data
+      transferInput.value = transferTokensInput
       selectedCurrency.value = sc
 
-      const buildTransferTokens = (): any => ({
-        transferInput: data,
+      const buildTransferTokens = (): TransferTokensOptions => ({
+        transferInput: transferTokensInput,
         userConfirmation: userConfirmation,
         pollTXStatusTrigger: pollTXStatusTrigger
       })
 
-      const transactionTracking: TransactionTracking = wallet.transferTokens({
+      const transactionTracking: TransactionTracking = radix.transferTokens({
         ...buildTransferTokens(),
         userConfirmation
       })
@@ -396,12 +434,13 @@ const WalletIndex = defineComponent({
     }
 
     // call stakeTokens() with built options and subscribe to confirmation and results
-    const stakeTokens = (data: StakeTokensInput) => {
+    const stakeTokens = (stakeTokensInput: StakeTokensInput) => {
       let pollTXStatusTrigger: Observable<unknown>
-      stakeInput.value = data
+      stakeInput.value = stakeTokensInput
+      selectedCurrency.value = nativeTokenBalance.value
 
-      const buildTransferTokens = (): any => ({
-        stakeInput: data,
+      const buildTransferTokens = (): StakeOptions => ({
+        stakeInput: stakeTokensInput,
         userConfirmation: userConfirmation,
         pollTXStatusTrigger: pollTXStatusTrigger
       })
@@ -415,12 +454,13 @@ const WalletIndex = defineComponent({
     }
 
     // call unstakeTokens() with built options and subscribe to confirmation and results
-    const unstakeTokens = (data: UnstakeTokensInput) => {
+    const unstakeTokens = (unstakeTokensInput: UnstakeTokensInput) => {
       let pollTXStatusTrigger: Observable<unknown>
-      stakeInput.value = data
+      stakeInput.value = unstakeTokensInput
+      selectedCurrency.value = nativeTokenBalance.value
 
-      const buildTransferTokens = (): any => ({
-        unstakeInput: data,
+      const buildTransferTokens = (): UnstakeOptions => ({
+        unstakeInput: unstakeTokensInput,
         userConfirmation: userConfirmation,
         pollTXStatusTrigger: pollTXStatusTrigger
       })
@@ -488,6 +528,7 @@ const WalletIndex = defineComponent({
       pendingTransactions,
       cursorStack,
       nativeToken,
+      nativeTokenBalance,
       selectedCurrency,
       loadingBalances,
       loadingHistory,

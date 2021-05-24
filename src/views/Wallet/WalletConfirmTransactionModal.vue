@@ -29,7 +29,7 @@
           <div class="w-32 text-right text-rGrayDark mr-8">{{ $t('transaction.feeLabel') }}</div>
           <div class="flex-1 flex flex-row items-center">
             <big-amount :amount="transactionFee" class="mr-4" />
-            <token-symbol>XRD</token-symbol>
+            <token-symbol>{{ nativeToken.symbol }}</token-symbol>
           </div>
         </div>
       </div>
@@ -60,7 +60,7 @@
 </template>
 
 <script lang="ts">
-import { AccountAddressT, AmountOrUnsafeInput, AmountT, StakeTokensInput, Token, TransferTokensInput } from '@radixdlt/application'
+import { AccountAddressT, AmountOrUnsafeInput, AmountT, StakeTokensInput, Token, TokenBalance, TransferTokensInput } from '@radixdlt/application'
 import { defineComponent, PropType } from 'vue'
 import { useForm } from 'vee-validate'
 import BigAmount from '@/components/BigAmount.vue'
@@ -105,6 +105,10 @@ const WalletConfirmTransactionModal = defineComponent({
       required: true
     },
     selectedCurrency: {
+      type: Object as PropType<TokenBalance>,
+      required: true
+    },
+    nativeToken: {
       type: Object as PropType<Token>,
       required: true
     }

@@ -90,7 +90,7 @@
               <div class="flex-1 text-2xl font-light">
                 <div class="flex inline-block items-center">
                 0.1
-                <token-symbol class="ml-2">XRD</token-symbol></div>
+                <token-symbol class="ml-2">{{ nativeToken.symbol }}</token-symbol></div>
               </div>
             </div>
           </template>

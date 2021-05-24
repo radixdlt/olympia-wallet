@@ -1,4 +1,4 @@
-import { AccountAddress, AccountAddressT, Amount, AmountT, Token } from '@radixdlt/application'
+import { AccountAddress, AccountAddressT, Amount, AmountT, Token, ValidatorAddress, ValidatorAddressT } from '@radixdlt/application'
 import BigNumber from 'bignumber.js'
 
 export const safelyUnwrapAddress = (addressString: string): AccountAddressT | null => {
@@ -7,6 +7,14 @@ export const safelyUnwrapAddress = (addressString: string): AccountAddressT | nu
     return null
   }
   return recipientAddressResult.value
+}
+
+export const safelyUnwrapValidator = (validatorString: string): ValidatorAddressT | null => {
+  const validatorAddressRes = ValidatorAddress.fromUnsafe(validatorString)
+  if (validatorAddressRes.isErr()) {
+    return null
+  }
+  return validatorAddressRes.value
 }
 
 export const safelyUnwrapAmount = (amount: number): AmountT | null => {

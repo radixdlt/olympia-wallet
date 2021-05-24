@@ -18,21 +18,21 @@
           <span class="text-sm text-rGrayDark">{{ $t('wallet.totalTokens') }}</span>
           <div class="flex flex-row items-end">
             <big-amount :amount="totalXRD" class="text-4xl font-light mr-4 text-rGreen" />
-            <token-symbol>XRD</token-symbol>
+            <token-symbol>{{ nativeToken.symbol }}</token-symbol>
           </div>
         </div>
         <div class="flex flex-col my-3 px-5 border-r border-rGray flex-1">
           <span class="text-sm text-rGrayDark">{{ $t('wallet.availableTokens') }}</span>
           <div class="flex flex-row items-end">
             <big-amount :amount="availableXRD" class="text-4xl font-light mr-4 text-rBlack" />
-            <token-symbol>XRD</token-symbol>
+            <token-symbol>{{ nativeToken.symbol }}</token-symbol>
           </div>
         </div>
         <div class="flex flex-col my-3 px-5 flex-1">
           <span class="text-sm text-rGrayDark">{{ $t('wallet.stakedTokens') }}</span>
           <div class="flex flex-row items-end">
             <big-amount :amount="totalStaked" class="text-4xl font-light mr-4 text-rBlack" />
-            <token-symbol>XRD</token-symbol>
+            <token-symbol>{{ nativeToken.symbol }}</token-symbol>
           </div>
         </div>
       </div>
@@ -100,17 +100,18 @@ const WalletOverview = defineComponent({
     },
     nativeToken: {
       type: Object as PropType<Token>,
+      required: true
+    },
+    nativeTokenBalance: {
+      type: Object as PropType<TokenBalance>,
       required: false
     }
   },
 
   computed: {
     totalXRD (): AmountT {
-      if (!this.nativeToken) return Amount.fromUnsafe(0)._unsafeUnwrap()
-      if (!this.tokenBalances.tokenBalances) return Amount.fromUnsafe(0)._unsafeUnwrap()
-      const xrdTokenBalance = this.tokenBalances.tokenBalances.find((tb: TokenBalance) => tb.token.rri.equals(this.nativeToken!.rri))
-      if (!xrdTokenBalance) return Amount.fromUnsafe(0)._unsafeUnwrap()
-      const xrdAmount = Amount.fromUnsafe(xrdTokenBalance.amount)
+      if (!this.nativeTokenBalance) return Amount.fromUnsafe(0)._unsafeUnwrap()
+      const xrdAmount = Amount.fromUnsafe(this.nativeTokenBalance.amount)
       return xrdAmount.isErr() ? Amount.fromUnsafe(0)._unsafeUnwrap() : xrdAmount.value
     },
     totalStaked (): AmountT {
@@ -132,9 +133,8 @@ const WalletOverview = defineComponent({
       // }
     },
     otherTokenBalances (): TokenBalance[] {
-      return this.tokenBalances.tokenBalances
-        ? this.tokenBalances.tokenBalances.filter((item: TokenBalance) => item.token.symbol !== 'xrd')
-        : []
+      if (!this.nativeToken || !this.tokenBalances.tokenBalances) return []
+      else return this.tokenBalances.tokenBalances.filter((tb: TokenBalance) => !tb.token.rri.equals(this.nativeToken.rri))
     }
   },
 

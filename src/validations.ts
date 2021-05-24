@@ -1,7 +1,7 @@
 import { defineRule, configure } from 'vee-validate'
 import { required, confirmed, length } from '@vee-validate/rules'
 import { i18n } from '@/text'
-import { safelyUnwrapAddress, safelyUnwrapAmount } from '@/helpers/validateRadixTypes'
+import { safelyUnwrapAddress, safelyUnwrapAmount, safelyUnwrapValidator } from '@/helpers/validateRadixTypes'
 
 interface FieldContext {
   field: string;
@@ -36,6 +36,11 @@ defineRule('insufficientFunds', (value: number, [max]: [string]) => {
 
 defineRule('validAddress', (addressString: string) => {
   const safeAddress = safelyUnwrapAddress(addressString)
+  return !!safeAddress
+})
+
+defineRule('validValidator', (validatorString: string) => {
+  const safeAddress = safelyUnwrapValidator(validatorString)
   return !!safeAddress
 })
 
