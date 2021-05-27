@@ -43,7 +43,8 @@ async function createWindow () {
       nodeIntegration: (process.env
         .ELECTRON_NODE_INTEGRATION as unknown) as boolean,
       preload: path.join(__dirname, 'preload.js'),
-      devTools: isDevelopment
+      devTools: isDevelopment,
+      sandbox: true
     }
   })
 

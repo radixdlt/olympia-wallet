@@ -1,4 +1,5 @@
 import { contextBridge, ipcRenderer, IpcRenderer } from 'electron'
+const _process = process
 
 declare global {
   interface Window {
@@ -13,6 +14,10 @@ contextBridge.exposeInMainWorld('ipcRenderer', {
   },
   invoke: (channel: string, args: string[]) =>
     ipcRenderer.invoke(channel, args)
+})
+
+contextBridge.exposeInMainWorld('process', {
+  process: _process
 })
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'

@@ -244,6 +244,8 @@ const WalletIndex = defineComponent({
       loadingHistory.value = true
     }
 
+    console.log('Process', window.process)
+
     // Return home if wallet is undefined
     if (!store.state.wallet) router.push('/')
 
