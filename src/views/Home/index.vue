@@ -76,7 +76,7 @@ const CreateWallet = defineComponent({
 
     const radix = Radix
       .create()
-      .connect(process.env.VUE_APP_API || '')
+      .connect('https://sandpitnet.radixdlt.com')
     const subs = new Subscription()
 
     radix.errors
@@ -98,6 +98,7 @@ const CreateWallet = defineComponent({
     // Login with password and path to keystore
     const loginWithWallet = (password: string) => {
       radix.login(password, touchKeystore)
+      // login(password, touchKeystore)
     }
 
     // Check if keystore exists

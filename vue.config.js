@@ -23,12 +23,10 @@ module.exports = {
     }
   },
   chainWebpack: config => {
-    config
-      .plugin('html')
-      .tap(args => {
-        const package = require('./package.json')
-        args[0].title = `${package.description} (v${package.version})`
-        return args
-      })
+    config.plugin('html').tap(args => {
+      const package = require('./package.json')
+      args[0].title = `${package.description} (v${package.version})`
+      return args
+    })
   }
 }
