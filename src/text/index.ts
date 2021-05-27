@@ -69,7 +69,7 @@ const messages = {
     wallet: {
       addressLabel: 'Address:',
       back: 'back',
-      addAccount: 'Add Account',
+      addAccount: '+ Add Account',
       balancesHeading: 'XRD Balances',
       additionalBalancesHeading: 'Additional Balances',
       currentAddress: 'Current Address:',
@@ -81,7 +81,9 @@ const messages = {
       navTransaction: 'Send Tokens',
       navStake: 'Stake & Unstake',
       navSettings: 'Wallet Settings',
-      navHelp: 'Help'
+      navHelp: 'Help',
+      navAddHWWallet: '+ Add Hardware Wallet',
+      hardwareWalletHeading: 'Hardware Wallet'
     },
     history: {
       historyHeading: 'History',
