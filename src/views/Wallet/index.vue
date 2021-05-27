@@ -4,6 +4,7 @@
       v-if="sidebar == 'default'"
       :activeAccount="activeAccount"
       :activeView="view"
+      @connectHW="connectHardwareWallet"
       @open="sidebar = 'accounts'"
       @setView="setView"
     >
@@ -153,7 +154,8 @@ import {
   StakeOptions,
   UnstakeOptions,
   TransferTokensInput,
-  TokenBalance
+  TokenBalance,
+  LogLevel
 } from '@radixdlt/application'
 import { ref } from '@nopr3d/vue-next-rx'
 import { useStore } from '@/store'
@@ -171,6 +173,7 @@ import SettingsIndex from '@/views/Settings/index.vue'
 import { filter, mergeMap } from 'rxjs/operators'
 import { getDerivedAccountsIndex, saveDerivedAccountsIndex } from '@/actions/vue/data-store'
 import { useI18n } from 'vue-i18n'
+import { ipcRenderer } from 'electron'
 
 export interface PendingTransaction extends TransactionStateSuccess {
   actions: IntendedAction[];
@@ -511,6 +514,13 @@ const WalletIndex = defineComponent({
       ).subscribe(() => { faucetParams.next(Math.random()) }))
     }
 
+    const connectHardwareWallet = () => {
+      console.log('fetching hw account...')
+      radix.deriveHWAccount('next').subscribe((hwAccount: any) => {
+        console.log('got hw account: ', hwAccount.address.toString())
+      })
+    }
+
     onUnmounted(() => subs.unsubscribe())
 
     return {
@@ -553,6 +563,7 @@ const WalletIndex = defineComponent({
       nextPage,
       previousPage,
       requestFreeTokens,
+      connectHardwareWallet,
 
       // child component refs
       walletTransactionComponent
