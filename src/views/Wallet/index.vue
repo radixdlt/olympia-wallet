@@ -11,11 +11,15 @@
       v-if="sidebar == 'accounts'"
       :accounts="accounts"
       :activeAccount="activeAccount"
+      :hardwareAddress="hardwareAddress"
       @back="sidebar = 'default'"
       @addAccount="() => { addAccount() ; view = 'editName' }"
       @switchAccount="switchAccount"
+      @switchToHardwareAccount="connectHardwareWallet"
       @editName="setView('editName')"
+      @connectHardwareWallet="connectHardwareWallet"
     />
+
     <template v-if="loaded">
       <template v-if="view == 'overview'">
         <wallet-overview
@@ -111,7 +115,7 @@
 
 <script lang="ts">
 import { defineComponent, onBeforeMount, onUnmounted, Ref } from 'vue'
-import { Subscription, interval, Subject, Observable, combineLatest, from, BehaviorSubject, ReplaySubject, firstValueFrom } from 'rxjs'
+import { Subscription, interval, Subject, Observable, combineLatest, from, BehaviorSubject, ReplaySubject, of, firstValueFrom } from 'rxjs'
 import {
   AccountAddressT,
   Radix,
@@ -141,7 +145,12 @@ import {
   TokenBalance,
   MessageInTransaction,
   ExecutedTransaction,
-  Message
+  Message,
+  LogLevel,
+  HDPathRadixT,
+  Signature,
+  PublicKey,
+  ECPointOnCurve
 } from '@radixdlt/application'
 import { safelyUnwrapAmount } from '@/helpers/validateRadixTypes'
 import { ref } from '@nopr3d/vue-next-rx'
@@ -158,13 +167,21 @@ import WalletLoading from './WalletLoading.vue'
 import AccountEditName from '@/views/Account/AccountEditName.vue'
 import SettingsIndex from '@/views/Settings/index.vue'
 import { filter, mergeMap, map, switchMap } from 'rxjs/operators'
-import { getDerivedAccountsIndex, saveDerivedAccountsIndex } from '@/actions/vue/data-store'
+import {
+  getDerivedAccountsIndex,
+  saveDerivedAccountsIndex,
+  saveHardwareWalletAddress,
+  getHardwareWalletAddress,
+  saveAccountName
+} from '@/actions/vue/data-store'
 import { useI18n } from 'vue-i18n'
+import { sendAPDU } from '@/actions/vue/create-wallet'
+import { HardwareWalletLedger } from '@radixdlt/hardware-ledger'
 
 const PAGE_SIZE = 50
 
 export interface PendingTransaction extends TransactionStateSuccess {
-  actions: IntendedAction[];
+  actions: IntendedAction[]
 }
 
 const WalletIndex = defineComponent({
@@ -192,6 +209,7 @@ const WalletIndex = defineComponent({
     const { t } = useI18n({ useScope: 'global' })
 
     const activeAccount: Ref<AccountT | null> = ref(null)
+    const hardwareAccount: Ref<AccountT | null> = ref(null)
     const activeAddress: Ref<AccountAddressT | null> = ref(null)
     const activeStakes: Ref<StakePositions | null> = ref(null)
     const activeUnstakes: Ref<UnstakePositions | null> = ref(null)
@@ -234,6 +252,9 @@ const WalletIndex = defineComponent({
     const historyPagination = new Subject<TransactionHistoryOfKnownAddressRequestInput>()
     const faucetParams = new Subject<number>()
 
+    const hardwareAddress: Ref<string> = ref('')
+    getHardwareWalletAddress().then(a => { hardwareAddress.value = a })
+
     // Set initial view if provided in props
     onBeforeMount(() => {
       if (props.initialView) view.value = props.initialView
@@ -251,7 +272,7 @@ const WalletIndex = defineComponent({
 
     const radix = Radix
       .create()
-      .connect(process.env.VUE_APP_API || '')
+      .connect('https://sandpitnet.radixdlt.com')
       .withWallet(store.state.wallet)
       .withTokenBalanceFetchTrigger(interval(5 * 1_000))
       .withStakingFetchTrigger(interval(5 * 1_000))
@@ -609,12 +630,39 @@ const WalletIndex = defineComponent({
       ).subscribe(() => { faucetParams.next(Math.random()) }))
     }
 
+    const connectHardwareWallet = () => {
+      if (hardwareAccount.value) {
+        switchAccount(hardwareAccount.value)
+        return
+      }
+
+      console.log('fetching hw account...')
+      radix.deriveHWAccount({
+        keyDerivation: 'next',
+        hardwareWalletConnection: HardwareWalletLedger.create({
+          send: sendAPDU,
+          close: () => Promise.resolve()
+        }),
+        alsoSwitchTo: true
+      }).subscribe((hwAccount: AccountT) => {
+        activeAccount.value = hwAccount
+        hardwareAccount.value = hwAccount
+        if (!hardwareAddress.value) {
+          saveHardwareWalletAddress(hwAccount.address.toString())
+          saveAccountName(hwAccount.address.toString(), 'Hardware Wallet')
+          hardwareAddress.value = hwAccount.address.toString()
+        }
+        console.log('got hw account: ', hwAccount.address.toString())
+      })
+    }
+
     onUnmounted(() => subs.unsubscribe())
 
     return {
       // data
       accounts,
       activeAccount,
+      hardwareAccount,
       activeAddress,
       activeStakes,
       activeUnstakes,
@@ -638,6 +686,7 @@ const WalletIndex = defineComponent({
       radix,
       hasCalculatedFee,
       confirmationMode,
+      hardwareAddress,
 
       // view flags
       view,
@@ -659,6 +708,7 @@ const WalletIndex = defineComponent({
       nextPage,
       previousPage,
       requestFreeTokens,
+      connectHardwareWallet,
 
       // child component refs
       walletTransactionComponent,

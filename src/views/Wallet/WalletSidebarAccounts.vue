@@ -20,13 +20,38 @@
     >
     </account-list-item>
 
-    <div @click="$emit('addAccount')" class="mt-3 inline-flex flex-row items-center cursor-pointer hover:text-rGreen transition-colors">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-rGreen mr-2">
-        <circle cx="12" cy="12" r="11.5" class="stroke-current"/>
-        <line x1="12" y1="6" x2="12" y2="18" class="stroke-current"/>
-        <line x1="6" y1="12.5" x2="18" y2="12.5" class="stroke-current"/>
-      </svg>
+    <div @click="$emit('addAccount')" class="mt-3 mb-4 inline-flex flex-row items-center cursor-pointer hover:text-rGreen transition-colors">
       {{ $t('wallet.addAccount') }}
+    </div>
+    <br />
+
+    <div class="border-t border-rGray border-opacity-50 pt-4">
+      <a class="flex cursor-pointer"
+        v-if="hardwareAddress" @click="$emit('switchToHardwareAccount')"
+        @mouseover="showHardwareHelper = true"
+        @mouseleave="showHardwareHelper = false">
+        <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M18.7382 10.6172H7.26074V18.4568H18.7382V10.6172Z" stroke="white" stroke-miterlimit="10"/>
+          <path d="M10.6592 12.5947V16.4793" stroke="white" stroke-miterlimit="10"/>
+          <path d="M15.3408 12.5947V16.4793" stroke="white" stroke-miterlimit="10"/>
+          <path d="M1.45508 19H24.5456V21.4507C24.5456 23.4598 22.9169 25.0886 20.9078 25.0886H5.09289C3.08379 25.0886 1.45508 23.4598 1.45508 21.4507V19Z" fill="none" stroke="white" stroke-miterlimit="10"/>
+          <path d="M24.5449 7L1.45437 7V4.54926C1.45437 2.54016 3.08309 0.91145 5.09219 0.91145L20.9071 0.91145C22.9162 0.91145 24.5449 2.54016 24.5449 4.54926V7Z" fill="none" stroke="white" stroke-miterlimit="10"/>
+        </svg>
+
+        <span class="text-white ml-2"> {{ $t('wallet.hardwareWalletHeading') }} </span>
+      </a>
+
+      <div v-else
+        @click="$emit('connectHardwareWallet')"
+        @mouseover="showHardwareHelper = true"
+        @mouseleave="showHardwareHelper = false"
+        class="inline-flex flex-row items-center cursor-pointer hover:text-rGreen transition-colors">
+        {{ $t('wallet.navAddHWWallet') }}
+      </div>
+
+      <div v-if="showHardwareHelper" class="w-48 text-xs mt-4">
+        Please ensure your Ledger is connected and the Radix application is selected.
+      </div>
     </div>
   </div>
 </template>
@@ -49,10 +74,20 @@ const WalletSidebarAccounts = defineComponent({
     activeAccount: {
       type: Object as PropType<AccountT>,
       required: true
+    },
+    hardwareAddress: {
+      type: String,
+      required: false
     }
   },
 
-  emits: ['back', 'addAccount', 'switchAccount', 'editName']
+  data () {
+    return {
+      showHardwareHelper: false
+    }
+  },
+
+  emits: ['back', 'addAccount', 'switchAccount', 'editName', 'addHardwareWallet', 'connectHardwareWallet', 'switchToHardwareAccount']
 })
 
 export default WalletSidebarAccounts
