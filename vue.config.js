@@ -1,6 +1,10 @@
 module.exports = {
   pluginOptions: {
     electronBuilder: {
+      nodeIntegration: true,
+      chainWebpackRendererProcess: config => {
+        config.target('web');
+      },
       builderOptions: {
         publish: {
           provider: 'github',

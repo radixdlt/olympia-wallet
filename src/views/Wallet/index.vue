@@ -256,6 +256,7 @@ const WalletIndex = defineComponent({
       .withWallet(store.state.wallet)
       .withTokenBalanceFetchTrigger(interval(5 * 1_000))
       .withStakingFetchTrigger(interval(5 * 1_000))
+      .logLevel(LogLevel.INFO)
 
     const subs = new Subscription()
 

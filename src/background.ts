@@ -13,6 +13,11 @@ import {
   saveDerivedAccountsIndex
 } from './actions/electron/data-store'
 const isDevelopment = process.env.NODE_ENV !== 'production'
+import fs from 'fs'
+
+process.on('uncaughtException', function (err) {
+  fs.writeFileSync('crash.log', err + '\n' + err.stack)
+})
 
 app.commandLine.appendSwitch('ignore-certificate-errors')
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0
@@ -40,8 +45,7 @@ async function createWindow () {
 
       // Use pluginOptions.nodeIntegration, leave this alone
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
-      nodeIntegration: (process.env
-        .ELECTRON_NODE_INTEGRATION as unknown) as boolean,
+      nodeIntegration: true,
       preload: path.join(__dirname, 'preload.js'),
       devTools: isDevelopment
     }
