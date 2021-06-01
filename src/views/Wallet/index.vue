@@ -180,7 +180,7 @@ import SettingsIndex from '@/views/Settings/index.vue'
 import { filter, mergeMap, map } from 'rxjs/operators'
 import { getDerivedAccountsIndex, saveDerivedAccountsIndex } from '@/actions/vue/data-store'
 import { useI18n } from 'vue-i18n'
-import { ipcRenderer } from 'electron'
+import { deriveHWAccount } from '@/actions/vue/create-wallet'
 
 const PAGE_SIZE = 50
 
@@ -611,8 +611,8 @@ const WalletIndex = defineComponent({
 
     const connectHardwareWallet = () => {
       console.log('fetching hw account...')
-      radix.deriveHWAccount('next').subscribe((hwAccount: any) => {
-        console.log('got hw account: ', hwAccount.address.toString())
+      deriveHWAccount().then((something: any) => {
+        console.log(something)
       })
     }
 

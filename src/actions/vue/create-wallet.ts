@@ -1,4 +1,4 @@
-import { MnemomicT, Wallet, WalletT, KeystoreT, NetworkT, SigningKeychain, SigningKeychainT } from '@radixdlt/application'
+import { MnemomicT, Wallet, WalletT, KeystoreT, NetworkT, SigningKeychain } from '@radixdlt/application'
 
 export const initWallet = async (mnemonic: MnemomicT, passcode: string, network: NetworkT): Promise<WalletT> => {
   const walletResult = await SigningKeychain.byEncryptingMnemonicAndSavingKeystore({
@@ -44,4 +44,8 @@ export const storePin = (pin: string): Promise<string> => new Promise((resolve) 
 
 export const validatePin = (pin: string): Promise<boolean> => new Promise((resolve) => {
   resolve(window.ipcRenderer.invoke('validate-pin-message', pin))
+})
+
+export const deriveHWAccount = (): Promise<boolean> => new Promise((resolve) => {
+  resolve(window.ipcRenderer.invoke('derive-hw-account'))
 })
