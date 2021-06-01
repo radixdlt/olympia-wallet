@@ -3,6 +3,10 @@ import { clipboard } from 'electron'
 import crypto from 'crypto'
 import { store } from '@/actions/electron/data-store'
 
+import {
+  Radix,
+} from '@radixdlt/application'
+
 export const writeKeystoreFile = (event: IpcMainInvokeEvent, encodedWallet: string) => {
   return store.set('seed', encodedWallet)
 }
@@ -26,3 +30,16 @@ export const copyToClipboard = (event: IpcMainEvent, text: string) => {
 
 export const validatePin = (event: IpcMainInvokeEvent, pin: string) =>
   digestPin(pin).then((inputHash: string) => store.get('pin') === inputHash)
+
+  export const deriveHWAccount = (event: IpcMainInvokeEvent) => {
+    const radix = Radix
+    .create()
+    .connect('https://betanet.radixdlt.com/rpc')
+
+    console.log('RADIX', radix)
+    console.log('DERIVE HARDWARE ACCOUNT FUNC', radix.deriveHWAccount)
+
+    radix.deriveHWAccount('next').subscribe((hwAccount: any) => { 
+      console.log('got hw account: ', hwAccount.address.toString())
+    })
+  }
