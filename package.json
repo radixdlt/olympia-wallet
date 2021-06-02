@@ -19,6 +19,8 @@
     "@babel/core": "^7.13.10",
     "@nopr3d/vue-next-rx": "^1.0.6",
     "@radixdlt/application": "^1.0.63",
+    "@radixdlt/hardware-ledger": "/home/aleworm/radixdlt-javascript/packages/hardware-ledger",
+    "@radixdlt/hardware-wallet": "^1.0.19",
     "@tailwindcss/forms": "^0.2.1",
     "@tailwindcss/postcss7-compat": "^2.0.2",
     "@types/bn.js": "^5.1.0",

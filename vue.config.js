@@ -1,9 +1,22 @@
+const TerserPlugin = require('terser-webpack-plugin')
+
 module.exports = {
   pluginOptions: {
     electronBuilder: {
       nodeIntegration: true,
       chainWebpackRendererProcess: config => {
-        config.target('web');
+        config.target('web')
+      },
+      chainWebpackMainProcess: config => {
+        config.optimization.minimizer(0).use(TerserPlugin, [{
+          cache: true,
+          parallel: true,
+          terserOptions: {
+              compress: {
+                  reduce_vars: false
+              }
+          }
+        }])
       },
       builderOptions: {
         publish: {
@@ -21,12 +34,10 @@ module.exports = {
     }
   },
   chainWebpack: config => {
-    config
-      .plugin('html')
-      .tap(args => {
-        const package = require('./package.json')
-        args[0].title = `${package.description} (v${package.version})`
-        return args
-      })
+    config.plugin('html').tap(args => {
+      const package = require('./package.json')
+      args[0].title = `${package.description} (v${package.version})`
+      return args
+    })
   }
 }

@@ -13,13 +13,9 @@ import {
   saveDerivedAccountsIndex
 } from './actions/electron/data-store'
 const isDevelopment = process.env.NODE_ENV !== 'production'
-import fs from 'fs'
-
-process.on('uncaughtException', function (err) {
-  fs.writeFileSync('crash.log', err + '\n' + err.stack)
-})
 
 app.commandLine.appendSwitch('ignore-certificate-errors')
+
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0
 
 // Scheme must be registered before the app is ready
