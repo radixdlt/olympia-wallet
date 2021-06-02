@@ -7,36 +7,19 @@
   resolved "https://registry.yarnpkg.com/7zip-bin/-/7zip-bin-5.0.3.tgz#bc5b5532ecafd923a61f2fb097e3b108c0106a3f"
   integrity sha512-GLyWIFBbGvpKPGo55JyRZAo4lVbnBiD52cKlw/0Vt+wnmKvWJkpZvsjVoaIolyBXDeAQKSicRtqFNPem9w0WYA==
 
-"@aleworm/bindings@^1.5.4":
-  version "1.5.4"
-  resolved "https://registry.yarnpkg.com/@aleworm/bindings/-/bindings-1.5.4.tgz#1081ed9571f8911f5e50600526a2a3da5f6e94cd"
-  integrity sha512-jVR/KCHne3kcXVudN8v/tKpM11UlIjlzMSKnc0OgDdVValtIXvCIRVzTgaCZpq6uqr+GlyPXAnlhoTvtxVFS2Q==
+"@aleworm/hw-transport-node-hid@^5.51.7":
+  version "5.51.7"
+  resolved "https://registry.yarnpkg.com/@aleworm/hw-transport-node-hid/-/hw-transport-node-hid-5.51.7.tgz#b6d6f84611c289cb5a4b275e30fdcfe4d5415d75"
+  integrity sha512-YMPqzNliWRtSdYOvTv2JZbbVlFAXebJrG+czpU4pSeXlRr6s8++XAFlmm7JHOhFAMZsmO2RO4QFsC+PrkjqiYA==
   dependencies:
-    file-uri-to-path "1.0.0"
-
-"@aleworm/hw-transport-node-hid@^5.51.5":
-  version "5.51.5"
-  resolved "https://registry.yarnpkg.com/@aleworm/hw-transport-node-hid/-/hw-transport-node-hid-5.51.5.tgz#fd279f731976f0ea8cd7db614336a2f679c93273"
-  integrity sha512-HDzHXSTo8mRTDuutHfyfAn7Ks4QGRbkBgKDfpKG4Xl+CZ1g1+JzzVVWE0Vumb/BEFXrFQgeIfK+54Kuav9tx4Q==
-  dependencies:
-    "@aleworm/usb2" "^1.7.5"
     "@ledgerhq/devices" "^5.51.1"
     "@ledgerhq/errors" "^5.50.0"
     "@ledgerhq/hw-transport" "^5.51.1"
     "@ledgerhq/hw-transport-node-hid-noevents" "^5.51.1"
     "@ledgerhq/logs" "^5.50.0"
+    "@zoltu/usb" "^1.6.5"
     lodash "^4.17.21"
     node-hid "2.1.1"
-    usb "^1.7.1"
-
-"@aleworm/usb2@^1.7.5":
-  version "1.7.5"
-  resolved "https://registry.yarnpkg.com/@aleworm/usb2/-/usb2-1.7.5.tgz#41a6d4d9037eb1fdbac601a7b2b06d7bc26d380f"
-  integrity sha512-indTySyh4P9a/HDhheUK9MDwbwYaS3qypDGpXYjsGIhn6AD/0I5Z8fLlG+axk9fSf2MykvuiY2LphyAUnlVmfA==
-  dependencies:
-    "@aleworm/bindings" "^1.5.4"
-    node-addon-api "3.0.2"
-    prebuild-install "^5.3.3"
 
 "@babel/code-frame@^7.0.0", "@babel/code-frame@^7.12.13", "@babel/code-frame@^7.8.3":
   version "7.12.13"
@@ -1311,6 +1294,20 @@
     "@ledgerhq/logs" "^5.50.0"
     node-hid "2.1.1"
 
+"@ledgerhq/hw-transport-node-hid@^5.50.0", "@ledgerhq/hw-transport-node-hid@^5.51.1":
+  version "5.51.1"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport-node-hid/-/hw-transport-node-hid-5.51.1.tgz#fe8eb81e18929663540698c80905952cdbe542d5"
+  integrity sha512-Y2eVCCdhVs2Lfr7N2x2cNb+ogcZ24ZATO4QxaQ7LogjiPwYmzmvuXFn8zFjMSrKUCn9CtbptXcuiu0NkGsjWlw==
+  dependencies:
+    "@ledgerhq/devices" "^5.51.1"
+    "@ledgerhq/errors" "^5.50.0"
+    "@ledgerhq/hw-transport" "^5.51.1"
+    "@ledgerhq/hw-transport-node-hid-noevents" "^5.51.1"
+    "@ledgerhq/logs" "^5.50.0"
+    lodash "^4.17.21"
+    node-hid "2.1.1"
+    usb "^1.7.0"
+
 "@ledgerhq/hw-transport@^5.51.1":
   version "5.51.1"
   resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport/-/hw-transport-5.51.1.tgz#8dd14a8e58cbee4df0c29eaeef983a79f5f22578"
@@ -1439,13 +1436,15 @@
     node-ipc "^9.1.1"
     ws "^7.3.1"
 
-"@radixdlt/account@file:../radixdlt-javascript/packages/account":
-  version "1.0.41"
+"@radixdlt/account@^1.0.42":
+  version "1.0.42"
+  resolved "https://registry.yarnpkg.com/@radixdlt/account/-/account-1.0.42.tgz#775f97a346a8d8cbab9a223b2678518b74b91d02"
+  integrity sha512-/xRcSakJcveqkjq9IAkgTHO1O5hziC0n3/Sc+T3q3eEslGfBsM8eqggzlRJz3dp/h1pZxXibxWMD/A0oSy2c/Q==
   dependencies:
-    "@radixdlt/crypto" "^1.0.35"
+    "@radixdlt/crypto" "^1.0.36"
     "@radixdlt/data-formats" "^1.0.25"
-    "@radixdlt/hardware-wallet" "file:../radixdlt-javascript/packages/hardware-wallet"
-    "@radixdlt/primitives" "file:../radixdlt-javascript/packages/primitives"
+    "@radixdlt/hardware-wallet" "^1.0.19"
+    "@radixdlt/primitives" "^1.0.29"
     "@radixdlt/uint256" "^1.1.0"
     "@radixdlt/util" "^1.0.25"
     bech32 "^2.0.0"
@@ -1456,17 +1455,19 @@
     prelude-ts "^1.0.2"
     rxjs "7.0.0"
 
-"@radixdlt/application@/home/aleworm/radixdlt-javascript/packages/application":
-  version "1.0.56"
+"@radixdlt/application@^1.0.57":
+  version "1.0.57"
+  resolved "https://registry.yarnpkg.com/@radixdlt/application/-/application-1.0.57.tgz#211f68000575534b8bc6236d122c90b18ebbaaa3"
+  integrity sha512-+gHFGKtdXAOwGW44dVAdWpWBnzQN6nlkUuAKkyqSJ7xJU2jt485eYJ8ge9yh4GnbFpcTtlvg9XkJ5Lbxx001DA==
   dependencies:
     "@open-rpc/mock-server" "^1.7.2"
     "@open-rpc/schema-utils-js" "^1.14.3"
-    "@radixdlt/account" "file:../radixdlt-javascript/packages/account"
-    "@radixdlt/crypto" "^1.0.35"
+    "@radixdlt/account" "^1.0.42"
+    "@radixdlt/crypto" "^1.0.36"
     "@radixdlt/data-formats" "^1.0.25"
     "@radixdlt/networking" "^1.0.30"
     "@radixdlt/open-rpc-spec" "^1.0.1"
-    "@radixdlt/primitives" "file:../radixdlt-javascript/packages/primitives"
+    "@radixdlt/primitives" "^1.0.29"
     "@radixdlt/util" "^1.0.25"
     jest "^26.6.3"
     json-schema-faker "^0.5.0-rcv.34"
@@ -1475,32 +1476,13 @@
     ramda "^0.27.1"
     rxjs "7.0.0"
 
-"@radixdlt/application@file:../radixdlt-javascript/packages/application":
-  version "1.0.56"
-  dependencies:
-    "@open-rpc/mock-server" "^1.7.2"
-    "@open-rpc/schema-utils-js" "^1.14.3"
-    "@radixdlt/account" "file:../radixdlt-javascript/packages/account"
-    "@radixdlt/crypto" "^1.0.35"
-    "@radixdlt/data-formats" "^1.0.25"
-    "@radixdlt/networking" "^1.0.30"
-    "@radixdlt/open-rpc-spec" "^1.0.1"
-    "@radixdlt/primitives" "file:../radixdlt-javascript/packages/primitives"
-    "@radixdlt/util" "^1.0.25"
-    jest "^26.6.3"
-    json-schema-faker "^0.5.0-rcv.34"
-    neverthrow "^4.0.1"
-    node-fetch "^2.6.1"
-    ramda "^0.27.1"
-    rxjs "7.0.0"
-
-"@radixdlt/crypto@^1.0.35":
-  version "1.0.35"
-  resolved "https://registry.yarnpkg.com/@radixdlt/crypto/-/crypto-1.0.35.tgz#f41bc9a53d216e966cd31c224d8deb2e51368742"
-  integrity sha512-FgdHH0X10oFJNx+2VleDFv4mcXbLy4ryGFiVJY7Li1tVErYslATPt0Cuk0A6q/ahMdv74B01xRCCiQiGV2e26Q==
+"@radixdlt/crypto@^1.0.36":
+  version "1.0.36"
+  resolved "https://registry.yarnpkg.com/@radixdlt/crypto/-/crypto-1.0.36.tgz#3f01189b7a883efa1d0cc29f8546283730b62eeb"
+  integrity sha512-ZNqwJMjG2viPIzyYIqbzO5R9rlLEBkCzHSogbtIwVFphLRT4SOK7G9WvvN8G8gOl1iqRE8iQDwjUcfDKsf8hdQ==
   dependencies:
     "@radixdlt/data-formats" "^1.0.25"
-    "@radixdlt/primitives" "^1.0.28"
+    "@radixdlt/primitives" "^1.0.29"
     "@radixdlt/uint256" "^1.1.0"
     "@radixdlt/util" "^1.0.25"
     base-x "^3.0.8"
@@ -1519,12 +1501,42 @@
     neverthrow "^4.0.1"
     ramda "^0.27.1"
 
-"@radixdlt/hardware-wallet@file:../radixdlt-javascript/packages/hardware-wallet":
-  version "1.0.18"
+"@radixdlt/hardware-ledger@/home/aleworm/radixdlt-javascript/packages/hardware-ledger":
+  version "1.0.1"
   dependencies:
-    "@aleworm/hw-transport-node-hid" "^5.51.5"
-    "@radixdlt/crypto" "^1.0.35"
-    "@radixdlt/primitives" "^1.0.28"
+    "@aleworm/hw-transport-node-hid" "^5.51.7"
+    "@ledgerhq/hw-transport-node-hid" "^5.51.1"
+    "@radixdlt/crypto" "^1.0.36"
+    "@radixdlt/hardware-wallet" "^1.0.19"
+    "@radixdlt/primitives" "^1.0.29"
+    "@radixdlt/util" "^1.0.25"
+    neverthrow "4.0.1"
+    prelude-ts "^1.0.2"
+    rxjs "7.0.0"
+    uuid "^8.3.2"
+
+"@radixdlt/hardware-ledger@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@radixdlt/hardware-ledger/-/hardware-ledger-1.0.1.tgz#75abbb67c858d51b35e2a4627fbfc0b98da0fa7a"
+  integrity sha512-L5rDH17WiJO9W8qTS0cg2HfJAGmU/paetLJzGP3uiIrXa1ATo2sR8yD5hJdKFynUHHkVHD0YxBVq4hTz0d90AQ==
+  dependencies:
+    "@ledgerhq/hw-transport-node-hid" "^5.50.0"
+    "@radixdlt/crypto" "^1.0.36"
+    "@radixdlt/hardware-wallet" "^1.0.19"
+    "@radixdlt/primitives" "^1.0.29"
+    "@radixdlt/util" "^1.0.25"
+    neverthrow "4.0.1"
+    prelude-ts "^1.0.2"
+    rxjs "7.0.0"
+    uuid "^8.3.2"
+
+"@radixdlt/hardware-wallet@^1.0.19":
+  version "1.0.19"
+  resolved "https://registry.yarnpkg.com/@radixdlt/hardware-wallet/-/hardware-wallet-1.0.19.tgz#85ba461cf7ece9e36c19924509c94ea7244f7b9c"
+  integrity sha512-rpP+3IBW7aGxSoTpLBJBfBjkowI5+WXfvfxH+MhiqqLkk3SylUGUXyATIcrkcWu2oviceQ+41SWeJP/5h7UFIQ==
+  dependencies:
+    "@radixdlt/crypto" "^1.0.36"
+    "@radixdlt/primitives" "^1.0.29"
     "@radixdlt/util" "^1.0.25"
     neverthrow "4.0.1"
     prelude-ts "^1.0.2"
@@ -1548,20 +1560,10 @@
   resolved "https://registry.yarnpkg.com/@radixdlt/open-rpc-spec/-/open-rpc-spec-1.0.1.tgz#607e569476a8ff07b0fbc9deb7ba25d1222f835e"
   integrity sha512-rc9sMR4gbVqUL4ol+Uv/EjAWirgWJATIDhULy0CHdHiSzKijcPJJmzpPkofox1nQFobSpuJQTVgLPlRqA+Symw==
 
-"@radixdlt/primitives@^1.0.28":
-  version "1.0.28"
-  resolved "https://registry.yarnpkg.com/@radixdlt/primitives/-/primitives-1.0.28.tgz#c4f7174c207022783a23306021ae4e26a479d2a8"
-  integrity sha512-D5m8VdnS3LAMHbZKX5LLVx7Q0TAaTcP4zZvTKFcROsCG/AOsjjzdPz4JhvBBqAHM9p5DCmHLrPdsabvWaw84HQ==
-  dependencies:
-    "@radixdlt/data-formats" "^1.0.25"
-    "@radixdlt/uint256" "^1.1.0"
-    "@radixdlt/util" "^1.0.25"
-    bn.js "^5.1.3"
-    long "^4.0.0"
-    neverthrow "^4.0.1"
-
-"@radixdlt/primitives@file:../radixdlt-javascript/packages/primitives":
-  version "1.0.28"
+"@radixdlt/primitives@^1.0.29":
+  version "1.0.29"
+  resolved "https://registry.yarnpkg.com/@radixdlt/primitives/-/primitives-1.0.29.tgz#fb0beeb59f73935bd17913e456ca5cc1787a1733"
+  integrity sha512-9iDR/BtAXKvGWNaZ4S55svpJCFlUqPO1vbegPGmwN1hVgN1/dc7HQTcKLwKFK2iSzPQOsp+6uddlcW1fmptseg==
   dependencies:
     "@radixdlt/data-formats" "^1.0.25"
     "@radixdlt/uint256" "^1.1.0"
@@ -2725,6 +2727,15 @@
   version "4.2.2"
   resolved "https://registry.yarnpkg.com/@xtuc/long/-/long-4.2.2.tgz#d291c6a4e97989b5c61d9acf396ae4fe133a718d"
   integrity sha512-NuHqBY1PB/D8xU6s/thBgOAiAP7HOYDQ32+BFZILJ8ivkUkAHQnWfn6WhL79Owj1qmUnoN/YPhktdIoucipkAQ==
+
+"@zoltu/usb@^1.6.5":
+  version "1.6.5"
+  resolved "https://registry.yarnpkg.com/@zoltu/usb/-/usb-1.6.5.tgz#4e184aa3f745c9ed3716415306488bcb2b11c4db"
+  integrity sha512-MobSwV0JprtNE1k3D4dslUdVeXVn/SFyzszji8loAL1wvapCKJ5jOCUvX85SrLGOfz3F00+SuF8xhqIQSQUhvw==
+  dependencies:
+    bindings "^1.4.0"
+    nan "2.13.2"
+    prebuild-install "^5.3.3"
 
 abab@^2.0.0, abab@^2.0.3, abab@^2.0.5:
   version "2.0.5"
@@ -9715,6 +9726,11 @@ mz@^2.4.0:
     object-assign "^4.0.1"
     thenify-all "^1.0.0"
 
+nan@2.13.2:
+  version "2.13.2"
+  resolved "https://registry.yarnpkg.com/nan/-/nan-2.13.2.tgz#f51dc7ae66ba7d5d55e1e6d4d8092e802c9aefe7"
+  integrity sha512-TghvYc72wlMGMVMluVo9WRJc0mB8KxxF/gZ4YYFy7V2ZQX9l7rgbPg7vjS9mt6U5HXODVFVI2bOduCzwOMv/lw==
+
 nan@^2.12.1:
   version "2.14.2"
   resolved "https://registry.yarnpkg.com/nan/-/nan-2.14.2.tgz#f5376400695168f4cc694ac9393d0c9585eeea19"
@@ -9785,9 +9801,9 @@ no-case@^2.2.0:
     lower-case "^1.1.1"
 
 node-abi@^2.21.0, node-abi@^2.7.0:
-  version "2.26.0"
-  resolved "https://registry.yarnpkg.com/node-abi/-/node-abi-2.26.0.tgz#355d5d4bc603e856f74197adbf3f5117a396ba40"
-  integrity sha512-ag/Vos/mXXpWLLAYWsAoQdgS+gW7IwvgMLOgqopm/DbzAjazLltzgzpVMsFlgmo9TzG5hGXeaBZx2AI731RIsQ==
+  version "2.30.0"
+  resolved "https://registry.yarnpkg.com/node-abi/-/node-abi-2.30.0.tgz#8be53bf3e7945a34eea10e0fc9a5982776cf550b"
+  integrity sha512-g6bZh3YCKQRdwuO/tSZZYJAw622SjsRfJ2X0Iy4sSOHZ34/sPPdVBn8fev2tj7njzLwuqPw9uMtGsGkO5kIQvg==
   dependencies:
     semver "^5.4.1"
 
@@ -9807,9 +9823,9 @@ node-addon-api@^2.0.0:
   integrity sha512-Ntyt4AIXyaLIuMHF6IOoTakB3K+RWxwtsHNRxllEoA6vPwP9o4866g6YWDLUdnucilZhmkxiHwHr11gAENw+QA==
 
 node-addon-api@^3.0.2:
-  version "3.2.0"
-  resolved "https://registry.yarnpkg.com/node-addon-api/-/node-addon-api-3.2.0.tgz#7028b56a7eb572b73873aed731a7f9c9365f5ee4"
-  integrity sha512-kcwSAWhPi4+QzAtsL2+2s/awvDo2GKLsvMCwNRxb5BUshteXU8U97NCyvQDsGKs/m0He9WcG4YWew/BnuLx++w==
+  version "3.2.1"
+  resolved "https://registry.yarnpkg.com/node-addon-api/-/node-addon-api-3.2.1.tgz#81325e0a2117789c0128dab65e7e38f07ceba161"
+  integrity sha512-mmcei9JghVNDYydghQmeDX8KoAm0FAiYyIcUt/N4nhyAipB17pllZQDOJD2fotxABnt4Mdz+dKTO7eftLg4d0A==
 
 node-emoji@^1.8.1:
   version "1.10.0"
@@ -13660,7 +13676,7 @@ url@^0.11.0:
     punycode "1.3.2"
     querystring "0.2.0"
 
-usb@^1.7.1:
+usb@^1.7.0:
   version "1.7.1"
   resolved "https://registry.yarnpkg.com/usb/-/usb-1.7.1.tgz#d723223ec517b802c4d2082e31a4649c65c491c5"
   integrity sha512-HTCfx6NnNRhv5y98t04Y8j2+A8dmQnEGxCMY2/zN/0gkiioLYfTZ5w/PEKlWRVUY+3qLe9xwRv9pHLkjQYNw/g==

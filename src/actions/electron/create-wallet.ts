@@ -2,6 +2,7 @@ import { IpcMainEvent, IpcMainInvokeEvent } from 'electron/main'
 import { clipboard } from 'electron'
 import crypto from 'crypto'
 import { store } from '@/actions/electron/data-store'
+import { HardwareWalletLedger } from '@radixdlt/hardware-ledger'
 
 import {
   Radix,
@@ -31,15 +32,15 @@ export const copyToClipboard = (event: IpcMainEvent, text: string) => {
 export const validatePin = (event: IpcMainInvokeEvent, pin: string) =>
   digestPin(pin).then((inputHash: string) => store.get('pin') === inputHash)
 
-  export const deriveHWAccount = (event: IpcMainInvokeEvent) => {
-    const radix = Radix
+export const deriveHWAccount = (event: IpcMainInvokeEvent) => {
+  const radix = Radix
     .create()
     .connect('https://betanet.radixdlt.com/rpc')
 
-    console.log('RADIX', radix)
-    console.log('DERIVE HARDWARE ACCOUNT FUNC', radix.deriveHWAccount)
-
-    radix.deriveHWAccount('next').subscribe((hwAccount: any) => { 
-      console.log('got hw account: ', hwAccount.address.toString())
-    })
-  }
+  radix.deriveHWAccount({
+    keyDerivation: 'next',
+    hardwareWalletConnection: HardwareWalletLedger.create()
+  }).subscribe((hwAccount: any) => {
+    console.log('got hw account: ', hwAccount.address.toString())
+  })
+}
