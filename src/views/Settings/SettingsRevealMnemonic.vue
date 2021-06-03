@@ -1,6 +1,6 @@
 <template>
-  <div class="p-10">
-    <div class="text-rGrayDark text-sm mb-11 w-full max-w-md">
+  <div class="pt-6 px-6 pb-4">
+    <div class="text-rGrayDark text-sm mb-11 w-full max-w-lg">
       {{ $t('settings.mnemonicDisclaimer') }}
       <br /><br />
       <span class="font-bold"> {{ $t('settings.mnemonicDisclaimerTwo') }} </span>
@@ -11,7 +11,7 @@
       <div
         v-for="(word, i) in displayMnemonic"
         :key="i"
-        class="w-1/4 mb-14"
+        class="w-1/4 mb-8"
       >
         <mnemonic-display
           :word="word"
@@ -24,14 +24,14 @@
         v-if="mnemonicNotRequested"
         :disabled="false"
         @click="enteringPassword = true"
-        class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+        class="absolute top-1/3 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
       >
         {{ $t('settings.accessMnemonicButton') }}
       </ButtonSubmit>
 
       <template v-if="enteringPassword">
         <form
-          class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white border border-rGray rounded-md flex flex-col items-center px-11 pt-9 pb-7"
+          class="absolute top-1/3 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white border border-rGray rounded-md flex flex-col items-center px-11 pt-9 pb-7"
           @submit.prevent="handleSubmit"
         >
           <div class="text-rGrayDark mb-9">{{ $t('settings.mnemonicModalHeading') }}</div>
@@ -52,7 +52,7 @@
           </ButtonSubmit>
 
           <button
-              class="text-rGrayDark py-4 px-4text-sm mx-auto"
+              class="text-rGrayDark py-4 px-4 text-sm mx-auto"
               @click="() => enteringPassword = false"
             >
               {{ $t('settings.accessMnemonicCancelPin') }}

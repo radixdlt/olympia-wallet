@@ -15,7 +15,7 @@ const messages = {
       invalidPin: 'Your pin was not a match. Try again.',
       incorrectPassword: 'Your password is incorrect. Try again.',
       greaterThanZero: 'Must be greater than 0',
-      transactionFailed: 'Your transaction failed. Check that you have sufficient XRD to cover the transfer plus fee and that your amount is a multiple of the granularity.',
+      transactionFailed: 'Your transaction failed. Check that you have sufficient XRD to cover the transfer plus fee.',
       pinMatch: 'Your new pin doesn\'t match'
     },
     home: {
@@ -134,9 +134,9 @@ const messages = {
       updateNameButton: 'Save'
     },
     settings: {
-      currentPinLabel: 'enter current PIN',
-      pinLabel: 'enter new PIN',
-      confirmationPinLabel: 'confirm new PIN',
+      currentPinLabel: 'Enter current PIN',
+      pinLabel: 'Enter new PIN',
+      confirmationPinLabel: 'Confirm new PIN',
       mnemonicDisclaimer: 'Your seed phrase is a secret list of 12 words that uniquely provide access to your wallet. As long as you have them, you will always be able to recover access to your accounts within this wallet. You may view it here if you need to back it up for future recovery.',
       mnemonicDisclaimerTwo: 'This seed phrase grants full access to all accounts in your wallet!',
       mnemonicDisclaimerThree: 'Please do not view it in a public place, and remember to not store it digitally.',

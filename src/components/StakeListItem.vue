@@ -5,7 +5,8 @@
         v-if="validator"
         class="text-sm"
       >
-        {{ validator.name }}
+        <a class="text-rBlue" v-if="validator.infoURL" :href="validator.infoURL" target="__blank"> {{ validator.name }} </a>
+        <span v-else> {{ validator.name }} </span>
       </div>
       <div class="text-sm flex items-center text-rGrayMed">
         {{ validatorAddress }}
