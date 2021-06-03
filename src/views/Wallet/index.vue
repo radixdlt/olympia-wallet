@@ -66,6 +66,7 @@
           :nativeTokenBalance="nativeTokenBalance"
           @stakeTokens="stakeTokens"
           @unstakeTokens="unstakeTokens"
+          ref="walletStakingComponent"
         >
         </wallet-staking>
         <wallet-loading
@@ -230,6 +231,7 @@ const WalletIndex = defineComponent({
     const transactionState: Ref<string> = ref('confirm')
 
     const walletTransactionComponent = ref(null)
+    const walletStakingComponent = ref(null)
 
     const userDidConfirm = new Subject<boolean>()
     const userDidCancel = new Subject<boolean>()
@@ -393,9 +395,15 @@ const WalletIndex = defineComponent({
           error: () => {
             userDidCancel.next(true)
             shouldShowConfirmation.value = false
-            walletTransactionComponent.value.setErrors({
-              amount: t('validations.transactionFailed')
-            })
+            if (view.value === 'transaction') {
+              walletTransactionComponent.value.setErrors({
+                amount: t('validations.transactionFailed')
+              })
+            } else {
+              walletStakingComponent.value.setErrors({
+                amount: t('validations.transactionFailed')
+              })
+            }
           }
         }))
 
@@ -563,7 +571,8 @@ const WalletIndex = defineComponent({
       requestFreeTokens,
 
       // child component refs
-      walletTransactionComponent
+      walletTransactionComponent,
+      walletStakingComponent
     }
   },
 
