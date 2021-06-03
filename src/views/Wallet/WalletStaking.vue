@@ -15,7 +15,7 @@
             <div class="text-rGrayDark mb-3">{{ $t('staking.fromLabel')}}</div>
             <div class="text-rBlack">{{ activeAddress.toString() }}</div>
           </div>
-          <div class="py-3 px-4 text-sm border-b border-rGray">
+          <div class="pt-3 pb-6 px-4 text-sm border-b border-rGray">
             <div class="text-rGrayDark mb-3">{{ $t('staking.validatorLabel')}}</div>
             <FormField
               name="validator"
@@ -24,9 +24,9 @@
               :placeholder="$t('staking.validatorPlaceholder')"
               rules="required|validValidator"
             />
-            <FormErrorMessage name="validator" class="mt-4 text-sm text-red-400" />
+            <FormErrorMessage name="validator" class="text-sm text-red-400" />
           </div>
-          <div class="py-3 px-4 text-sm">
+          <div class="pt-3 pb-6 px-4 text-sm">
             <div class="flex flex-row">
               <div class="flex flex-col mr-3 flex-1">
                 <div class="text-rGrayDark mb-3">{{ $t('staking.amountLabel')}}</div>
@@ -38,7 +38,7 @@
                   :placeholder="$t('staking.availableBalancePlaceholder')"
                   rules="required|validAmount"
                 />
-                <FormErrorMessage name="amount" class="mt-4 text-sm text-red-400" />
+                <FormErrorMessage name="amount" class="text-sm text-red-400" />
               </div>
               <div class="flex flex-col w-32 ">
                 <div class="text-rGrayDark mb-3">{{ $t('staking.feeLabel')}}</div>
