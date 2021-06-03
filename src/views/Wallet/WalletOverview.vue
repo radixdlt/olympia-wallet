@@ -103,6 +103,7 @@ import BigAmount from '@/components/BigAmount.vue'
 import TokenSymbol from '@/components/TokenSymbol.vue'
 import ClickToCopy from '@/components/ClickToCopy.vue'
 import { ref } from '@nopr3d/vue-next-rx'
+import { sumAmounts, subtract } from '@/helpers/arithmetic'
 
 const WalletOverview = defineComponent({
   components: {
@@ -147,22 +148,16 @@ const WalletOverview = defineComponent({
       return xrdAmount.isErr() ? Amount.fromUnsafe(0)._unsafeUnwrap() : xrdAmount.value
     },
     totalStaked (): AmountT {
-      return Amount.fromUnsafe(0)._unsafeUnwrap()
-      // return sumAmounts(this.activeStakes.flatMap((item: StakePosition) => item.amount)) || Amount.fromUnsafe(0)._unsafeUnwrap()
+      return sumAmounts(this.activeStakes.flatMap((item: StakePosition) => item.amount)) || Amount.fromUnsafe(0)._unsafeUnwrap()
     },
     availableXRD (): AmountT {
-      // TODO: remove this when staking is implemented
-      return this.totalXRD
-
-      // if (!this.totalStaked) return this.totalXRD
-      // if (!this.totalXRD) return Amount.fromUnsafe(0)._unsafeUnwrap()
-      // else {
-      //   const totalXRD: AmountT = this.totalXRD
-      //   const totalStaked: AmountT = this.totalStaked
-      //   return subtract(totalXRD, totalStaked)
-      //   // if (res.isOk()) return res.value
-      //   // else return Amount.fromUnsafe(0)._unsafeUnwrap()
-      // }
+      if (!this.totalStaked) return this.totalXRD
+      if (!this.totalXRD) return Amount.fromUnsafe(0)._unsafeUnwrap()
+      else {
+        const totalXRD: AmountT = this.totalXRD
+        const totalStaked: AmountT = this.totalStaked
+        return subtract(totalXRD, totalStaked)
+      }
     },
     otherTokenBalances (): TokenBalance[] {
       if (!this.nativeToken || !this.tokenBalances.tokenBalances) return []
