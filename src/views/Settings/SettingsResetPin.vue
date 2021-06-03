@@ -1,20 +1,19 @@
 <template>
   <form
     @submit.prevent="handleResetPin"
-    class="p-10"
+    class="p-6"
   >
-    <div class="text-rGrayDark text-sm mb-11 w-full max-w-md">
+    <div class="text-rGrayDark text-sm mb-6 w-full max-w-md">
       {{ $t('settings.resetPinDisclaimer') }}
-      <br /><br />
+      <br />
       {{ $t('settings.resetPinDisclaimerTwo') }}
     </div>
-    <div class="text-rGrayDark mb-4">{{ $t('settings.passwordRequiredLabel') }}</div>
 
     <FormField
       type="password"
       name="password"
-      class="w-96 mb-9"
-      :placeholder="$t('settings.passwordPlaceholder')"
+      class="w-96 mb-6"
+      :placeholder="$t('settings.passwordRequiredLabel')"
       rules="required"
       data-ci="create-wallet-passcode-input"
       @blur="activePin = 1"
@@ -27,7 +26,7 @@
       name="pin"
       :values="values.pin"
       :autofocus="activePin === 1"
-      class="mb-8 max-w-sm"
+      class="mb-6 max-w-sm"
       data-ci="pin"
       @finished="activePin = 2"
       @click="activePin = 1"
@@ -40,7 +39,7 @@
       name="confirmationPin"
       :values="values.confirmation"
       :autofocus="activePin === 2"
-      class="mb-8 max-w-sm"
+      class="mb-6 max-w-sm"
       data-ci="confirmation"
       @finished="handleComparePin"
       @unfinished="handleUnfinishedPin"

@@ -2,11 +2,11 @@
   <div class="flex flex-row text-rGrayMed">
     <div class="flex flex-row flex-1 items-center">
       <div v-if="isRecipient" class="flex flex-row items-center w-24">
-        <img src="@/assets/receiveTokens.svg" alt="receive tokens" />
+        <img src="@/assets/receiveTokens.svg" alt="receive tokens" class="w-6 h-auto" />
         <span class="ml-2 text-sm">{{ $t('history.receivedAction') }}</span>
       </div>
       <div v-else class="flex flex-row items-center w-24">
-        <img src="@/assets/sendTokens.svg" alt="send tokens" />
+        <img src="@/assets/sendTokens.svg" alt="send tokens" class="w-6 h-auto" />
         <span class="ml-2 text-sm">{{ $t('history.sentAction') }}</span>
       </div>
       <div><big-amount :amount="action.amount" class="text-rBlack"/> {{ this.action.rri.name.toUpperCase() }}</div>

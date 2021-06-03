@@ -41,17 +41,16 @@
 
       <template v-if="view == 'transaction'">
         <wallet-transaction
-          v-if="!loadingBalances"
+          v-show="!loadingBalances"
           :activeAddress="activeAddress"
           :tokenBalances="tokenBalances.tokenBalances"
-          :shouldShowConfirmation="shouldShowConfirmation"
           :nativeToken="nativeToken"
           @transferTokens="transferTokens"
           ref="walletTransactionComponent"
         >
         </wallet-transaction>
         <wallet-loading
-          v-else
+          v-if="loadingBalances"
         >
         </wallet-loading>
       </template>
@@ -67,6 +66,7 @@
           :nativeTokenBalance="nativeTokenBalance"
           @stakeTokens="stakeTokens"
           @unstakeTokens="unstakeTokens"
+          ref="walletStakingComponent"
         >
         </wallet-staking>
         <wallet-loading
@@ -104,6 +104,7 @@
         :transactionFee="transactionFee"
         :selectedCurrency="selectedCurrency"
         :nativeToken="nativeToken"
+        :transactionState="transactionState"
         @cancel="cancelTransaction"
         @confirm="confirmTransaction"
       >
@@ -172,6 +173,8 @@ import { filter, mergeMap } from 'rxjs/operators'
 import { getDerivedAccountsIndex, saveDerivedAccountsIndex } from '@/actions/vue/data-store'
 import { useI18n } from 'vue-i18n'
 
+const PAGE_SIZE = 100
+
 export interface PendingTransaction extends TransactionStateSuccess {
   actions: IntendedAction[];
 }
@@ -224,12 +227,15 @@ const WalletIndex = defineComponent({
 
     const loadingBalances: Ref<boolean> = ref(true)
     const loadingHistory: Ref<boolean> = ref(true)
+    // can be building, confirm, submitting
+    const transactionState: Ref<string> = ref('confirm')
 
     const walletTransactionComponent = ref(null)
+    const walletStakingComponent = ref(null)
 
     const userDidConfirm = new Subject<boolean>()
     const userDidCancel = new Subject<boolean>()
-    const userConfirmation = new ReplaySubject<ManualUserConfirmTX>()
+    let userConfirmation = new ReplaySubject<ManualUserConfirmTX>()
     const historyPagination = new Subject<TransactionHistoryOfKnownAddressRequestInput>()
     const faucetParams = new Subject<number>()
 
@@ -333,13 +339,14 @@ const WalletIndex = defineComponent({
     const confirmAndExecuteTransaction = (transactionTracking: TransactionTracking) => {
       const transactionDidComplete = new BehaviorSubject<boolean>(false)
       userDidCancel.next(false)
-
+      transactionState.value = 'building'
+      shouldShowConfirmation.value = true
       // Subscribe to initial userConfirmation and display modal
       const createUserConfirmation = userConfirmation
         .subscribe((txnToConfirm: ManualUserConfirmTX) => {
           transactionToConfirm.value = txnToConfirm
           userDidConfirm.next(false)
-          shouldShowConfirmation.value = true
+          transactionState.value = 'confirm'
           transactionFee.value = txnToConfirm.txToConfirm.fee
         })
       subs.add(createUserConfirmation)
@@ -369,8 +376,7 @@ const WalletIndex = defineComponent({
             actions: draftTransaction.value ? draftTransaction.value.actions : []
           }])
           draftTransaction.value = null
-          shouldShowConfirmation.value = false
-          view.value = 'history'
+          transactionState.value = 'submitting'
         })
       subs.add(trackingSubmittedEvents)
 
@@ -382,18 +388,28 @@ const WalletIndex = defineComponent({
               const transactionState = pendingTxn.transactionState as unknown as FinalizedTransaction
               return txnID.toString() !== transactionState.txID.toString()
             })
+            shouldShowConfirmation.value = false
+            view.value = 'history'
             transactionDidComplete.next(true)
           },
           error: () => {
             userDidCancel.next(true)
-            walletTransactionComponent.value.setErrors({
-              amount: t('validations.transactionFailed')
-            })
+            shouldShowConfirmation.value = false
+            if (view.value === 'transaction') {
+              walletTransactionComponent.value.setErrors({
+                amount: t('validations.transactionFailed')
+              })
+            } else {
+              walletStakingComponent.value.setErrors({
+                amount: t('validations.transactionFailed')
+              })
+            }
           }
         }))
 
       // Cleanup subscriptions on cancel and complete
       const cleanupTransactionSubs = () => {
+        userConfirmation = new ReplaySubject<ManualUserConfirmTX>()
         createUserConfirmation.unsubscribe()
         watchUserDidConfirm.unsubscribe()
         trackingSubmittedEvents.unsubscribe()
@@ -408,7 +424,7 @@ const WalletIndex = defineComponent({
       subs.add(transactionDidComplete.subscribe((didComplete: boolean) => {
         if (didComplete) {
           cleanupTransactionSubs()
-          historyPagination.next({ size: 100 })
+          historyPagination.next({ size: PAGE_SIZE })
         }
       }))
     }
@@ -418,7 +434,6 @@ const WalletIndex = defineComponent({
       let pollTXStatusTrigger: Observable<unknown>
       transferInput.value = transferTokensInput
       selectedCurrency.value = sc
-
       const buildTransferTokens = (): TransferTokensOptions => ({
         transferInput: transferTokensInput,
         userConfirmation: userConfirmation,
@@ -473,16 +488,16 @@ const WalletIndex = defineComponent({
       confirmAndExecuteTransaction(unstakingTransactionTracking)
     }
 
-    historyPagination.next({ size: 100 })
+    historyPagination.next({ size: PAGE_SIZE })
 
     const refreshHistory = () => {
-      historyPagination.next({ size: 100 })
+      historyPagination.next({ size: PAGE_SIZE })
     }
 
     const nextPage = () => {
       cursorStack.value.push(transactionHistory.value.cursor)
       historyPagination.next({
-        size: 100,
+        size: PAGE_SIZE,
         cursor: cursorStack.value[cursorStack.value.length - 1]
       })
     }
@@ -490,7 +505,7 @@ const WalletIndex = defineComponent({
     const previousPage = () => {
       cursorStack.value.pop()
       historyPagination.next({
-        size: 100,
+        size: PAGE_SIZE,
         cursor: cursorStack.value.length > 0 ? cursorStack.value[cursorStack.value.length - 1] : ''
       })
     }
@@ -532,6 +547,7 @@ const WalletIndex = defineComponent({
       selectedCurrency,
       loadingBalances,
       loadingHistory,
+      transactionState,
 
       // view flags
       view,
@@ -555,7 +571,8 @@ const WalletIndex = defineComponent({
       requestFreeTokens,
 
       // child component refs
-      walletTransactionComponent
+      walletTransactionComponent,
+      walletStakingComponent
     }
   },
 

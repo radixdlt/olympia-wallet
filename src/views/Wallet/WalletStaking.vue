@@ -48,7 +48,7 @@
           </div>
         </tabs-content>
 
-        <ButtonSubmit class="mt-12" :disabled="false">
+        <ButtonSubmit class="mt-4" :disabled="disableSubmit">
           {{ stakeButtonCopy }}
         </ButtonSubmit>
       </form>
@@ -67,7 +67,7 @@
       </div>
 
       <stake-list-item
-        v-for="(stake, i) in activeStakes"
+        v-for="(stake, i) in sortedStakes"
         :key="i"
         :stake="stake"
         :activeUnstakes="activeUnstakes"
@@ -81,7 +81,7 @@
 </template>
 
 <script lang="ts">
-import { StakePosition, TokenBalance, TokenBalances, UnstakePosition, AccountAddressT, Amount, AmountT, Token } from '@radixdlt/application'
+import { StakePosition, TokenBalance, TokenBalances, UnstakePosition, AccountAddressT, Amount, AmountT, Token, ValidatorAddressT } from '@radixdlt/application'
 import { defineComponent, PropType } from 'vue'
 import { useForm } from 'vee-validate'
 import StakeListItem from '@/components/StakeListItem.vue'
@@ -157,6 +157,17 @@ const WalletStaking = defineComponent({
     },
     stakeButtonCopy (): string {
       return this.activeForm === 'stake' ? this.$t('staking.stakeButton') : this.$t('staking.unstakeButton')
+    },
+    sortedStakes (): Array<StakePosition> {
+      const stakes = this.activeStakes
+      return stakes.sort((a, b) => {
+        if (a.amount > b.amount) return -1
+        if (b.amount > a.amount) return 1
+        return 0
+      }).filter(s => s.amount.gt(0))
+    },
+    disableSubmit (): boolean {
+      return this.meta.dirty ? !this.meta.valid : true
     }
   },
 
@@ -172,6 +183,17 @@ const WalletStaking = defineComponent({
     handleReduceFromValidator (validator: AccountAddressT) {
       this.activeForm = 'unstake'
       this.values.validator = validator.toString()
+    },
+    validAmountForValidator (amount: AmountT, validator: ValidatorAddressT | null, method: string) {
+      if (method === 'stakeTokens') {
+        return true
+      } else {
+        if (!validator) return false
+        const stakedValidator = this.activeStakes.find(stake => stake.validator.toString() === validator.toString())
+        if (!stakedValidator) return false
+        if (amount > stakedValidator.amount) return false
+        return true
+      }
     },
     handleSubmitStake () {
       if (this.meta.valid && this.nativeTokenBalance) {
