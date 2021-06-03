@@ -172,6 +172,8 @@ import { filter, mergeMap } from 'rxjs/operators'
 import { getDerivedAccountsIndex, saveDerivedAccountsIndex } from '@/actions/vue/data-store'
 import { useI18n } from 'vue-i18n'
 
+const PAGE_SIZE = 100
+
 export interface PendingTransaction extends TransactionStateSuccess {
   actions: IntendedAction[];
 }
@@ -231,7 +233,7 @@ const WalletIndex = defineComponent({
 
     const userDidConfirm = new Subject<boolean>()
     const userDidCancel = new Subject<boolean>()
-    const userConfirmation = new ReplaySubject<ManualUserConfirmTX>()
+    let userConfirmation = new ReplaySubject<ManualUserConfirmTX>()
     const historyPagination = new Subject<TransactionHistoryOfKnownAddressRequestInput>()
     const faucetParams = new Subject<number>()
 
@@ -399,6 +401,7 @@ const WalletIndex = defineComponent({
 
       // Cleanup subscriptions on cancel and complete
       const cleanupTransactionSubs = () => {
+        userConfirmation = new ReplaySubject<ManualUserConfirmTX>()
         createUserConfirmation.unsubscribe()
         watchUserDidConfirm.unsubscribe()
         trackingSubmittedEvents.unsubscribe()
@@ -413,7 +416,7 @@ const WalletIndex = defineComponent({
       subs.add(transactionDidComplete.subscribe((didComplete: boolean) => {
         if (didComplete) {
           cleanupTransactionSubs()
-          historyPagination.next({ size: 100 })
+          historyPagination.next({ size: PAGE_SIZE })
         }
       }))
     }
@@ -423,7 +426,6 @@ const WalletIndex = defineComponent({
       let pollTXStatusTrigger: Observable<unknown>
       transferInput.value = transferTokensInput
       selectedCurrency.value = sc
-
       const buildTransferTokens = (): TransferTokensOptions => ({
         transferInput: transferTokensInput,
         userConfirmation: userConfirmation,
@@ -478,16 +480,16 @@ const WalletIndex = defineComponent({
       confirmAndExecuteTransaction(unstakingTransactionTracking)
     }
 
-    historyPagination.next({ size: 100 })
+    historyPagination.next({ size: PAGE_SIZE })
 
     const refreshHistory = () => {
-      historyPagination.next({ size: 100 })
+      historyPagination.next({ size: PAGE_SIZE })
     }
 
     const nextPage = () => {
       cursorStack.value.push(transactionHistory.value.cursor)
       historyPagination.next({
-        size: 100,
+        size: PAGE_SIZE,
         cursor: cursorStack.value[cursorStack.value.length - 1]
       })
     }
@@ -495,7 +497,7 @@ const WalletIndex = defineComponent({
     const previousPage = () => {
       cursorStack.value.pop()
       historyPagination.next({
-        size: 100,
+        size: PAGE_SIZE,
         cursor: cursorStack.value.length > 0 ? cursorStack.value[cursorStack.value.length - 1] : ''
       })
     }
