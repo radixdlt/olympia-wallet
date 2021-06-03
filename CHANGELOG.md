@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.6.0](https://www.github.com/township-agency/radixdlt-desktop-wallet/compare/v0.5.7...v0.6.0) (2021-06-03)
+
+
+### Features
+
+* Connect staking and unstaking to api ([#88](https://www.github.com/township-agency/radixdlt-desktop-wallet/issues/88)) ([b6ee5ac](https://www.github.com/township-agency/radixdlt-desktop-wallet/commit/b6ee5acb4a0dea482b3cfd38ebf0aaca7871d65d))
+* Much Cleanup ([#96](https://www.github.com/township-agency/radixdlt-desktop-wallet/issues/96)) ([db05a74](https://www.github.com/township-agency/radixdlt-desktop-wallet/commit/db05a74f4d812c774467fc3e88088624569b3f67))
+
+
+### Bug Fixes
+
+* update form errors to use existing space ([#95](https://www.github.com/township-agency/radixdlt-desktop-wallet/issues/95)) ([b4d0239](https://www.github.com/township-agency/radixdlt-desktop-wallet/commit/b4d0239d88e746945b6bd01f68b4ce73bd82929a))
+
+
+### Dependencies
+
+* update lib and typescript ([#86](https://www.github.com/township-agency/radixdlt-desktop-wallet/issues/86)) ([3c6a8f3](https://www.github.com/township-agency/radixdlt-desktop-wallet/commit/3c6a8f3138da0866f0c840cc527e1683f1f9a4a5))
+
 ### [0.5.7](https://www.github.com/township-agency/radixdlt-desktop-wallet/compare/v0.5.6...v0.5.7) (2021-05-14)
 
 
