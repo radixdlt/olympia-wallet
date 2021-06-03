@@ -41,17 +41,16 @@
 
       <template v-if="view == 'transaction'">
         <wallet-transaction
-          v-if="!loadingBalances"
+          v-show="!loadingBalances"
           :activeAddress="activeAddress"
           :tokenBalances="tokenBalances.tokenBalances"
-          :shouldShowConfirmation="shouldShowConfirmation"
           :nativeToken="nativeToken"
           @transferTokens="transferTokens"
           ref="walletTransactionComponent"
         >
         </wallet-transaction>
         <wallet-loading
-          v-else
+          v-if="loadingBalances"
         >
         </wallet-loading>
       </template>
@@ -104,6 +103,7 @@
         :transactionFee="transactionFee"
         :selectedCurrency="selectedCurrency"
         :nativeToken="nativeToken"
+        :transactionState="transactionState"
         @cancel="cancelTransaction"
         @confirm="confirmTransaction"
       >
@@ -224,6 +224,8 @@ const WalletIndex = defineComponent({
 
     const loadingBalances: Ref<boolean> = ref(true)
     const loadingHistory: Ref<boolean> = ref(true)
+    // can be building, confirm, submitting
+    const transactionState: Ref<string> = ref('confirm')
 
     const walletTransactionComponent = ref(null)
 
@@ -333,13 +335,14 @@ const WalletIndex = defineComponent({
     const confirmAndExecuteTransaction = (transactionTracking: TransactionTracking) => {
       const transactionDidComplete = new BehaviorSubject<boolean>(false)
       userDidCancel.next(false)
-
+      transactionState.value = 'building'
+      shouldShowConfirmation.value = true
       // Subscribe to initial userConfirmation and display modal
       const createUserConfirmation = userConfirmation
         .subscribe((txnToConfirm: ManualUserConfirmTX) => {
           transactionToConfirm.value = txnToConfirm
           userDidConfirm.next(false)
-          shouldShowConfirmation.value = true
+          transactionState.value = 'confirm'
           transactionFee.value = txnToConfirm.txToConfirm.fee
         })
       subs.add(createUserConfirmation)
@@ -369,8 +372,7 @@ const WalletIndex = defineComponent({
             actions: draftTransaction.value ? draftTransaction.value.actions : []
           }])
           draftTransaction.value = null
-          shouldShowConfirmation.value = false
-          view.value = 'history'
+          transactionState.value = 'submitting'
         })
       subs.add(trackingSubmittedEvents)
 
@@ -382,10 +384,13 @@ const WalletIndex = defineComponent({
               const transactionState = pendingTxn.transactionState as unknown as FinalizedTransaction
               return txnID.toString() !== transactionState.txID.toString()
             })
+            shouldShowConfirmation.value = false
+            view.value = 'history'
             transactionDidComplete.next(true)
           },
           error: () => {
             userDidCancel.next(true)
+            shouldShowConfirmation.value = false
             walletTransactionComponent.value.setErrors({
               amount: t('validations.transactionFailed')
             })
@@ -532,6 +537,7 @@ const WalletIndex = defineComponent({
       selectedCurrency,
       loadingBalances,
       loadingHistory,
+      transactionState,
 
       // view flags
       view,

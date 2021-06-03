@@ -1,6 +1,6 @@
 <template>
-  <form class="p-10 flex flex-col max-w-lg w-full" @submit.prevent="handleSubmit">
-    <div class="text-rGrayDark text-sm mb-11 w-full max-w-md">
+  <form class="p-6 flex flex-col max-w-lg w-full" @submit.prevent="handleSubmit">
+    <div class="text-rGrayDark text-sm mb-8 w-full max-w-lg">
       {{ $t('settings.resetPasswordDisclaimer') }}
       <br /><br />
       {{ $t('settings.resetPasswordInstructions') }}
@@ -30,7 +30,7 @@
       <FormErrorMessage name="password" />
     </div>
 
-    <div class="mb-14">
+    <div class="mb-8">
       <FormField
         type="password"
         name="confirmation"

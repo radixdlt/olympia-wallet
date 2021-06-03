@@ -24,7 +24,8 @@ module.exports = {
         }
       },
       height: {
-        tallest: '99999999999px'
+        tallest: '99999999999px',
+        modal: '600px'
       },
       padding: {
         headerHeight: '6.4rem'
@@ -47,7 +48,11 @@ module.exports = {
   variants: {
     extend: {
       backgroundColor: ['active'],
-      textColor: ['active']
+      textColor: ['active'],
+      padding: ['odd'],
+      padding: ['even'],
+      margin: ['odd'],
+      margin: ['even']
     }
   },
   plugins: [

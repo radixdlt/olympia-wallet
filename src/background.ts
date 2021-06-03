@@ -28,11 +28,11 @@ async function createWindow () {
   contextMenu({})
   const win = new BrowserWindow({
     width: 1150,
-    height: 728,
+    height: 650,
     maxWidth: 1250,
     maxHeight: 800,
     minWidth: 1150,
-    minHeight: 728,
+    minHeight: 650,
     webPreferences: {
 
       // Required for Spectron testing
