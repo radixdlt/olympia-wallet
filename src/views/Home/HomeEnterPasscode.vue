@@ -17,7 +17,7 @@
           data-ci="create-wallet-passcode-input"
           id="password"
         />
-        <FormErrorMessage name="password" class="mt-4 text-sm text-red-400" />
+        <FormErrorMessage name="password" class="text-sm text-red-400" />
       </div>
 
       <div class="text-rBlack pb-6 text-xs">

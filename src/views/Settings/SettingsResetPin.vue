@@ -12,7 +12,7 @@
     <FormField
       type="password"
       name="password"
-      class="w-96 mb-6"
+      class="w-96 mb-2"
       :placeholder="$t('settings.passwordRequiredLabel')"
       rules="required"
       data-ci="create-wallet-passcode-input"
@@ -21,7 +21,7 @@
     />
     <FormErrorMessage name="password" />
 
-    <div class="text-rGrayDark mb-4">{{ $t('settings.pinLabel') }}</div>
+    <div class="text-rGrayDark mt-12 mb-2">{{ $t('settings.pinLabel') }}</div>
     <pin-input
       name="pin"
       :values="values.pin"
@@ -48,7 +48,7 @@
     >
     </pin-input>
 
-    <ButtonSubmit class="w-72 mx-auto" :disabled="disableSubmit">
+    <ButtonSubmit class="w-72 mx-auto mt-8" :disabled="disableSubmit">
       {{ $t('transaction.confirmButton') }}
     </ButtonSubmit>
     <div v-if="updatedPin" class="text-rGrayDark text-sm mt-4">

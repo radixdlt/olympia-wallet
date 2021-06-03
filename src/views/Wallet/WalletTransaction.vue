@@ -34,7 +34,7 @@
                   :placeholder="$t('transaction.recipientPlaceholder')"
                   rules="required|validAddress"
                 />
-                <FormErrorMessage name="recipient" class="mt-4 text-sm text-red-400" />
+                <FormErrorMessage name="recipient" class="text-sm text-red-400" />
               </div>
             </div>
 
@@ -54,7 +54,7 @@
                       insufficientFunds: this.selectedCurrency.amount.toString()
                     }"
                   />
-                  <FormErrorMessage name="amount" class="mt-4 text-sm text-red-400" />
+                  <FormErrorMessage name="amount" class="text-sm text-red-400" />
                 </div>
                 <select
                   class="border-t-0 border-r-0 border-l-0 py-2 border-rBlack focus:ring-0 focus:outline-none focus:border-rGreen"
@@ -81,7 +81,7 @@
                   :placeholder="$t('transaction.messagePlaceholder')"
                   rules=""
                 />
-                <FormErrorMessage name="message" class="mt-4 text-sm text-red-400" />
+                <FormErrorMessage name="message" class="text-sm text-red-400" />
               </div>
             </div>
 
