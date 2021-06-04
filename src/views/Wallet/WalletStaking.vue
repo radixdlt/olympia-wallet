@@ -35,7 +35,7 @@
                   type="number"
                   step="any"
                   class="w-full text-sm"
-                  :placeholder="$t('staking.availableBalancePlaceholder')"
+                  :placeholder="amountPlaceholder"
                   rules="required|validAmount"
                 />
                 <FormErrorMessage name="amount" class="text-sm text-red-400" />
@@ -91,6 +91,7 @@ import TabsContent from '@/components/TabsContent.vue'
 import FormErrorMessage from '@/components/FormErrorMessage.vue'
 import FormField from '@/components/FormField.vue'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
+import { asBigNumber } from '@/components/BigAmount.vue'
 
 interface StakeForm {
   validator: string;
@@ -168,6 +169,13 @@ const WalletStaking = defineComponent({
     },
     disableSubmit (): boolean {
       return this.meta.dirty ? !this.meta.valid : true
+    },
+    amountPlaceholder (): string {
+      if (this.xrdBalance && this.activeForm === 'stake') {
+        return `${this.$t('transaction.amountPlaceholder')} ${asBigNumber(this.xrdBalance)} `
+      }
+
+      return this.$t('staking.availableBalancePlaceholder')
     }
   },
 
