@@ -10,23 +10,23 @@
         class="flex flex-col flex-1 mr-6"
       >
         <tabs-content :leftTabIsActive="activeForm == 'stake'">
-          <div class="py-6 px-4 text-sm text-rGrayDark border-b border-rGray">{{ stakingDisclaimer }}</div>
+          <div class="py-4 px-4 text-sm text-rGrayDark border-b border-rGray">{{ stakingDisclaimer }}</div>
           <div class="py-3 px-4 text-sm text-rGrayDark border-b border-rGray">
-            <div class="text-rGrayDark mb-3">{{ $t('staking.fromLabel')}}</div>
+            <div class="text-rGrayDark mb-2">{{ $t('staking.fromLabel')}}</div>
             <div class="text-rBlack">{{ activeAddress.toString() }}</div>
           </div>
           <div class="pt-3 pb-6 px-4 text-sm border-b border-rGray">
-            <div class="text-rGrayDark mb-3">{{ $t('staking.validatorLabel')}}</div>
+            <div class="text-rGrayDark mb-2">{{ $t('staking.validatorLabel')}}</div>
             <FormField
               name="validator"
               type="text"
-              class="w-full"
+              class="w-full text-sm"
               :placeholder="$t('staking.validatorPlaceholder')"
               rules="required|validValidator"
             />
             <FormErrorMessage name="validator" class="text-sm text-red-400" />
           </div>
-          <div class="pt-3 pb-6 px-4 text-sm">
+          <div class="pt-3 pb-8 px-4 text-sm">
             <div class="flex flex-row">
               <div class="flex flex-col mr-3 flex-1">
                 <div class="text-rGrayDark mb-3">{{ $t('staking.amountLabel')}}</div>
