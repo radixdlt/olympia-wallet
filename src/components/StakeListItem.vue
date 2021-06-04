@@ -1,12 +1,12 @@
 <template>
-  <div class="border border-rGray rounded-md py-2 px-4 flex flex-row mb-1 text-rBlack flex-wrap">
-    <div class="flex flex-col flex-1">
+  <div class="border border-rGray rounded-md flex flex-row mb-1 text-rBlack flex-wrap justify-end">
+    <div class="flex flex-col flex-1 py-2 pl-4">
       <div
         v-if="validator"
-        class="text-sm"
+        class="text-sm flex items-center"
       >
         <a class="text-rBlue" v-if="validator.infoURL" :href="validator.infoURL" target="__blank"> {{ validator.name }} </a>
-        <span v-else> {{ validator.name }} </span>
+        <span v-else> {{ validator.name}}</span>
       </div>
       <div class="text-sm flex items-center text-rGrayMed">
         {{ validatorAddress }}
@@ -43,7 +43,7 @@
         <span class="text-rGrayDark">{{ $t('staking.unstakingLabel') }}</span>
       </div>
     </div>
-    <div class="flex flex-row items-end mb-px text-rGrayDark text-sm">
+    <div class="flex flex-row items-end mb-px text-rGrayDark text-sm py-2 pr-4">
       <button
         class="text-rBlue hover:text-rGreen transition-colors cursor-pointer pointer-events-auto mr-px outline-none focus:outline-none"
         @click="$emit('addToValidator', stake.validator)"
@@ -58,6 +58,14 @@
         {{ $t('staking.reduceButton') }}
       </button>
     </div>
+    <a :href="explorerUrl" target="_blank" class="bg-rGrayLightest flex items-center justify-center px-2 hover:text-rGreen transition-colors text-rGrayMed w-full lg:w-auto py-1">
+      <div class=" rounded-full border border-solid border-rGray w-6 h-6 flex items-center justify-center">
+        <svg width="8" height="8" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M1.08789 1H11.1344V11.0465" class="stroke-current" stroke-miterlimit="10"/>
+          <path d="M11.1339 1L1 11.134" class="stroke-current" stroke-miterlimit="10"/>
+        </svg>
+      </div>
+    </a>
   </div>
 </template>
 
@@ -114,6 +122,9 @@ const StakeListItem = defineComponent({
     },
     unstakesForValidator (): UnstakePosition[] {
       return this.activeUnstakes.filter((unstake: UnstakePosition) => unstake.validator.equals(this.stake.validator))
+    },
+    explorerUrl (): string {
+      return this.validator ? `https://betanet-explorer.radixdlt.com/#/validators/${this.validator.address.toString()}` : 'https://betanet-explorer.radixdlt.com/#/validators/'
     }
   },
 
