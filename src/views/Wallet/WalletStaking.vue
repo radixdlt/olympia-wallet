@@ -57,7 +57,7 @@
     <div class="bg-white border border-rGray rounded-md flex flex-col overflow-y-scroll w-full h-full max-w-md py-5 px-8">
       <div class="flex items-center justify-between mb-5">
         <h3 class="font-medium text-rBlack">{{ $t('staking.currentStakesHeading') }}</h3>
-        <a href="https://betanet-explorer.radixdlt.com/#/validators" target="_blank" class="text-rBlue text-sm inline-flex items-center">
+        <a href="https://releasenet-explorer.radixdlt.com/#/validators" target="_blank" class="text-rBlue text-sm inline-flex items-center">
           {{ $t('staking.viewAllValidators') }}
           <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" class="ml-3">
             <path d="M1.08789 1H11.1344V11.0465" stroke="#7A99AC" stroke-miterlimit="10"/>

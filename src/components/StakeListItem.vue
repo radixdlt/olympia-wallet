@@ -102,7 +102,7 @@ const StakeListItem = defineComponent({
 
     const radix = Radix
       .create()
-      .connect('https://betanet.radixdlt.com/rpc')
+      .connect('https://releasenet.radixdlt.com/rpc')
 
     const subs = new Subscription()
 
@@ -124,7 +124,7 @@ const StakeListItem = defineComponent({
       return this.activeUnstakes.filter((unstake: UnstakePosition) => unstake.validator.equals(this.stake.validator))
     },
     explorerUrl (): string {
-      return this.validator ? `https://betanet-explorer.radixdlt.com/#/validators/${this.validator.address.toString()}` : 'https://betanet-explorer.radixdlt.com/#/validators/'
+      return this.validator ? `https://releasenet-explorer.radixdlt.com/#/validators/${this.validator.address.toString()}` : 'https://releasenet-explorer.radixdlt.com/#/validators/'
     }
   },
 
