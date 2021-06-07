@@ -26,9 +26,10 @@
         />
 
         <transaction-list-item
-          v-for="(txn, i) in transactions"
+          v-for="(txn, i) in transactionsWithMessages"
           :key="i"
-          :transaction="txn"
+          :transaction="txn.tx"
+          :message="txn.message"
           :index="i"
           :activeAddress="activeAddress"
           :pending="false"
@@ -74,7 +75,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { ExecutedTransaction, AccountAddressT, Token } from '@radixdlt/application'
+import { ExecutedTransaction, AccountAddressT, Token, Radix } from '@radixdlt/application'
 import TransactionListItem from '@/components/TransactionListItem.vue'
 import ClickToCopy from '@/components/ClickToCopy.vue'
 import { PendingTransaction } from '@/views/Wallet/index.vue'
@@ -88,6 +89,11 @@ const WalletHistory = defineComponent({
   props: {
     transactions: {
       type: Array as PropType<Array<ExecutedTransaction>>,
+      required: true,
+      default: []
+    },
+    messages: {
+      type: Array as PropType<Array<{id: string, message: string | null}>>,
       required: true,
       default: []
     },
@@ -118,7 +124,19 @@ const WalletHistory = defineComponent({
     }
   },
 
-  emits: ['next', 'previous']
+  emits: ['next', 'previous'],
+
+  computed: {
+    transactionsWithMessages (): {tx: ExecutedTransaction, message: string | null}[] {
+      return this.transactions.map((tx) => {
+        const msg = this.messages.find((msg) => msg.id === tx.txID.toString())
+        return {
+          tx: tx,
+          message: msg ? msg.message : null
+        }
+      })
+    }
+  }
 })
 
 export default WalletHistory

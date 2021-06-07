@@ -36,24 +36,42 @@
         class="flex flex-col items-end"
         @submit.prevent="handleConfirm"
       >
-        <h3 class="font-medium text-rBlack mb-6 w-full">{{ $t('transaction.modalHeading') }}</h3>
+        <h3 class="font-medium text-rBlack mb-4 w-full">{{ $t('transaction.modalHeading') }}</h3>
 
         <div class="bg-translucent-gray rounded-md border border-rGray text-rBlack mb-4 w-full">
-          <div class="border-b border-rGray py-7 flex items-center">
+          <div class="border-b border-rGray py-5 flex items-center">
             <div class="w-24 text-right text-rGrayDark mr-8">{{ $t('transaction.fromLabel') }}</div>
             <div class="flex-1">{{ activeAddress.toString() }}</div>
           </div>
 
-          <div class="border-b border-rGray py-4 flex items-center">
+          <div class="border-b border-rGray py-3.5 flex items-center">
             <div class="w-24 text-right text-rGrayDark mr-8">{{ $t('transaction.toLabel') }}</div>
             <div class="flex-1">{{ toContent }}</div>
           </div>
 
-          <div class="border-b border-rGray py-4 flex items-center">
+          <div class="border-b border-rGray py-3.5 flex items-center">
             <div class="w-24 text-right text-rGrayDark mr-8">{{ $t('transaction.amountLabel') }}</div>
             <div class="flex-1 flex flex-row items-center">
               <big-amount :amount="amount" class="mr-4" />
               <token-symbol>{{ selectedCurrency.token.symbol }}</token-symbol>
+            </div>
+          </div>
+
+          <div class="border-b border-rGray py-3.5 flex items-center">
+            <div class="w-24 text-right text-rGrayDark mr-8">{{ $t('transaction.messageLabel') }}</div>
+            <div class="flex-1">
+              <div class="flex">
+                <div class="flex-1 text-sm">
+                  {{ activeMessage.plaintext }}
+                </div>
+                <div class="flex-grow-0" v-if="activeMessage.encrypt">
+                  <svg width="10" height="12" viewBox="0 0 10 12" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-5 mr-3.5">
+                    <path d="M2.04883 4.93512V3.79987C2.04883 2.25355 3.30238 1 4.8487 1C6.39502 1 7.64857 2.25355 7.64857 3.79987V4.93512" stroke="#7A99AC" stroke-width="1.5" stroke-miterlimit="10"/>
+                    <path d="M1 11.4001V4.84473H2.13447H7.58739H8.72185V11.0556H2.60558" stroke="#7A99AC" stroke-width="1.5" stroke-miterlimit="10"/>
+                  </svg>
+
+                </div>
+              </div>
             </div>
           </div>
 
@@ -77,24 +95,25 @@
           @unfinished="handleUnfinishedPin"
         >
         </pin-input>
+        <div class="flex justify-end items-center mt-4">
+          <button
+            class="text-rGrayDark py-4 px-4text-sm mx-auto mr-8"
+            @click="canCancel && $emit('cancel')"
+          >
+            {{ $t('transaction.cancelButton') }}
+          </button>
 
-        <ButtonSubmit class="w-72 mx-auto mt-2" :disabled="disableSubmit">
-          {{ $t('transaction.confirmButton') }}
-        </ButtonSUbmit>
-
-        <button
-          class="text-rGrayDark py-4 px-4text-sm mx-auto"
-          @click="canCancel && $emit('cancel')"
-        >
-          {{ $t('transaction.cancelButton') }}
-        </button>
+          <ButtonSubmit class="w-72 mx-auto mt-2" :disabled="disableSubmit">
+            {{ $t('transaction.confirmButton') }}
+          </ButtonSUbmit>
+        </div>
       </form>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { AccountAddressT, AmountOrUnsafeInput, AmountT, StakeTokensInput, Token, TokenBalance, TransferTokensInput } from '@radixdlt/application'
+import { AccountAddressT, AmountOrUnsafeInput, AmountT, MessageInTransaction, StakeTokensInput, Token, TokenBalance, TransferTokensInput } from '@radixdlt/application'
 import { defineComponent, PropType } from 'vue'
 import { useForm } from 'vee-validate'
 import BigAmount from '@/components/BigAmount.vue'
@@ -115,8 +134,10 @@ const WalletConfirmTransactionModal = defineComponent({
     TokenSymbol
   },
 
-  setup () {
+  setup (props) {
     const { errors, meta, values, setErrors, resetForm } = useForm<ConfirmationForm>()
+
+    console.log('here', props)
 
     return { errors, meta, values, setErrors, resetForm }
   },
@@ -149,6 +170,10 @@ const WalletConfirmTransactionModal = defineComponent({
     transactionState: {
       type: String,
       required: true
+    },
+    activeMessage: {
+      type: Object as PropType<MessageInTransaction>,
+      required: false
     }
   },
 
