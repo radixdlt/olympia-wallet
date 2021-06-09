@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.7.1](https://www.github.com/township-agency/radixdlt-desktop-wallet/compare/v0.7.0...v0.7.1) (2021-06-09)
+
+
+### Bug Fixes
+
+* Release Cycle needs Environment Variables ([#106](https://www.github.com/township-agency/radixdlt-desktop-wallet/issues/106)) ([682f0ba](https://www.github.com/township-agency/radixdlt-desktop-wallet/commit/682f0bac5d175c23b3bf5a6b1c931e568098f1b5))
+
 ## [0.7.0](https://www.github.com/township-agency/radixdlt-desktop-wallet/compare/v0.6.2...v0.7.0) (2021-06-09)
 
 
