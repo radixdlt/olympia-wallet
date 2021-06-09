@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.0](https://www.github.com/township-agency/radixdlt-desktop-wallet/compare/v0.6.2...v0.7.0) (2021-06-09)
+
+
+### Features
+
+* Set urls as env variables ([#104](https://www.github.com/township-agency/radixdlt-desktop-wallet/issues/104)) ([67c6013](https://www.github.com/township-agency/radixdlt-desktop-wallet/commit/67c60137588b84643bed9dccf88f391bc5b5bc2a))
+
 ### [0.6.2](https://www.github.com/township-agency/radixdlt-desktop-wallet/compare/v0.6.1...v0.6.2) (2021-06-07)
 
 
