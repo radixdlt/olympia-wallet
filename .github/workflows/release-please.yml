@@ -35,6 +35,9 @@ jobs:
 
       - name: Build/release Electron app
         uses: samuelmeuli/action-electron-builder@v1
+        env:
+          VUE_APP_API: https://betanet.radixdlt.com/rpc
+          VUE_APP_EXPLORER: https://betanet-explorer.radixdlt.com
         with:
           # GitHub token, automatically provided to the action
           # (No need to define this secret in the repo settings)
