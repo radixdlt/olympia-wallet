@@ -281,6 +281,8 @@ const WalletIndex = defineComponent({
       .subscribe(([tokenBalancesRes, nativeTokenRes]: [TokenBalances, Token]) => {
         if (nativeTokenRes && tokenBalancesRes.tokenBalances && tokenBalancesRes.tokenBalances.length > 0) {
           nativeTokenBalance.value = tokenBalancesRes.tokenBalances.find((tb: TokenBalance) => tb.token.rri.equals(nativeTokenRes.rri)) || null
+        } else {
+          nativeTokenBalance.value = null
         }
       }))
 
