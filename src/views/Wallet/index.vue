@@ -255,7 +255,7 @@ const WalletIndex = defineComponent({
 
     const radix = Radix
       .create()
-      .connect('https://betanet.radixdlt.com/rpc')
+      .connect(process.env.VUE_APP_API || '')
       .withWallet(store.state.wallet)
       .withTokenBalanceFetchTrigger(interval(5 * 1_000))
       .withStakingFetchTrigger(interval(5 * 1_000))
