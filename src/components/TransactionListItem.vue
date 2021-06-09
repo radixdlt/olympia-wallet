@@ -110,7 +110,7 @@ export default defineComponent({
       return DateTime.fromJSDate(this.transaction.sentAt).toLocaleString(DateTime.DATETIME_SHORT)
     },
     explorerURL (): string {
-      return `https://betanet-explorer.radixdlt.com/#/transactions/${this.transaction.txID}`
+      return `${process.env.VUE_APP_EXPLORER}/#/transactions/${this.transaction.txID}`
     }
   }
 })

@@ -76,7 +76,7 @@ const CreateWallet = defineComponent({
 
     const radix = Radix
       .create()
-      .connect('https://betanet.radixdlt.com/rpc')
+      .connect(process.env.VUE_APP_API || '')
     const subs = new Subscription()
 
     radix.errors
