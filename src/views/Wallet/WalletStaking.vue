@@ -38,7 +38,7 @@
                   :placeholder="amountPlaceholder"
                   rules="required|validAmount"
                 />
-                <FormErrorMessage name="amount" class="text-sm text-red-400" />
+                <FormErrorMessage name="amount" class="text-sm text-red-400" errorClass="w-120" />
               </div>
               <div class="flex flex-col w-32 ">
                 <div class="text-rGrayDark mb-3">{{ $t('staking.feeLabel')}}</div>

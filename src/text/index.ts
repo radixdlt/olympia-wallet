@@ -16,6 +16,8 @@ const messages = {
       incorrectPassword: 'Your password is incorrect. Try again.',
       greaterThanZero: 'Must be greater than 0',
       transactionFailed: 'Your transaction failed. Check that you have sufficient XRD to cover the transfer plus fee.',
+      stakeFailed: 'Your transaction failed. Check that you have sufficient XRD to cover your stake plus fee.',
+      unstakeFailed: 'Your transaction failed. Check that you are not unstaking more than your total current stake and that you have sufficient XRD to cover the fee.',
       pinMatch: 'Your new pin doesn\'t match'
     },
     home: {

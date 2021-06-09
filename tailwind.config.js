@@ -29,6 +29,9 @@ module.exports = {
       },
       padding: {
         headerHeight: '6.4rem'
+      },
+      width: {
+        '120':'30rem'
       }
     },
     filter: {
