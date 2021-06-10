@@ -84,7 +84,7 @@ const messages = {
     },
     history: {
       historyHeading: 'History',
-      unstakeAction: 'Unstake',
+      unstakeAction: 'Request Unstake',
       validatorLabel: 'Validator',
       receivedAction: 'Received',
       sentAction: 'Sent',
@@ -115,7 +115,7 @@ const messages = {
       currentStakesHeading: 'Current Stakes',
       viewAllValidators: 'View all Validators',
       stakeTab: 'Stake Tokens',
-      unstakeTab: 'Unstake Tokens',
+      unstakeTab: 'Request Unstake',
       unstakingLabel: 'Unstaking',
       addButton: 'add',
       reduceButton: 'reduce',
