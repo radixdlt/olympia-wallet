@@ -10,3 +10,4 @@ export const sumAmounts = (amounts: AmountT[]): AmountT | null =>
       return add(accum, a)
     } else return a
   }, null)
+ 
