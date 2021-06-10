@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.7.2](https://www.github.com/township-agency/radixdlt-desktop-wallet/compare/v0.7.1...v0.7.2) (2021-06-10)
+
+
+### Dependencies
+
+* rebuild release ([#109](https://www.github.com/township-agency/radixdlt-desktop-wallet/issues/109)) ([712ff0b](https://www.github.com/township-agency/radixdlt-desktop-wallet/commit/712ff0b4d7576fcb496ae912e269362f2f6a593f))
+
 ### [0.7.1](https://www.github.com/township-agency/radixdlt-desktop-wallet/compare/v0.7.0...v0.7.1) (2021-06-09)
 
 
