@@ -17,14 +17,14 @@
         <div class="flex flex-col my-3 px-5 border-r border-rGray flex-1">
           <span class="text-sm text-rGrayDark">{{ $t('wallet.totalTokens') }}</span>
           <div class="flex flex-row items-end">
-            <big-amount :amount="totalXRD" class="text-4xl font-light mr-4 text-rGreen" />
+            <big-amount :amount="availablePlusStakedXRD" class="text-4xl font-light mr-4 text-rGreen" />
             <token-symbol>{{ nativeToken.symbol }}</token-symbol>
           </div>
         </div>
         <div class="flex flex-col my-3 px-5 border-r border-rGray flex-1">
           <span class="text-sm text-rGrayDark">{{ $t('wallet.availableTokens') }}</span>
           <div class="flex flex-row items-end">
-            <big-amount :amount="availableXRD" class="text-4xl font-light mr-4 text-rBlack" />
+            <big-amount :amount="totalXRD" class="text-4xl font-light mr-4 text-rBlack" />
             <token-symbol>{{ nativeToken.symbol }}</token-symbol>
           </div>
         </div>
@@ -103,7 +103,7 @@ import BigAmount from '@/components/BigAmount.vue'
 import TokenSymbol from '@/components/TokenSymbol.vue'
 import ClickToCopy from '@/components/ClickToCopy.vue'
 import { ref } from '@nopr3d/vue-next-rx'
-import { sumAmounts, subtract } from '@/helpers/arithmetic'
+import { sumAmounts, subtract, add } from '@/helpers/arithmetic'
 
 const WalletOverview = defineComponent({
   components: {
@@ -150,13 +150,13 @@ const WalletOverview = defineComponent({
     totalStaked (): AmountT {
       return sumAmounts(this.activeStakes.flatMap((item: StakePosition) => item.amount)) || Amount.fromUnsafe(0)._unsafeUnwrap()
     },
-    availableXRD (): AmountT {
+    availablePlusStakedXRD (): AmountT {
       if (!this.totalStaked) return this.totalXRD
       if (!this.totalXRD) return Amount.fromUnsafe(0)._unsafeUnwrap()
       else {
         const totalXRD: AmountT = this.totalXRD
         const totalStaked: AmountT = this.totalStaked
-        return subtract(totalXRD, totalStaked)
+        return add(totalXRD, totalStaked)
       }
     },
     otherTokenBalances (): TokenBalance[] {

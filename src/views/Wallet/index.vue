@@ -154,7 +154,8 @@ import {
   StakeOptions,
   UnstakeOptions,
   TransferTokensInput,
-  TokenBalance
+  TokenBalance,
+  TransactionStateError
 } from '@radixdlt/application'
 import { ref } from '@nopr3d/vue-next-rx'
 import { useStore } from '@/store'
@@ -359,6 +360,28 @@ const WalletIndex = defineComponent({
           if (didConfirm) { txnToConfirm.confirm() }
         })
       subs.add(watchUserDidConfirm)
+
+      // Catch errors that were silently failing
+      const trackingSubmittedEventErrors = transactionTracking.events
+        .pipe(filter((trackingEvent: any) => trackingEvent.error != null)) // This is really returning TransactionStateError
+        .subscribe((res: TransactionStateError) => {
+          userDidCancel.next(true)
+          shouldShowConfirmation.value = false
+          if (view.value === 'transaction') {
+            walletTransactionComponent.value.setErrors({
+              amount: t('validations.transactionFailed')
+            })
+          } else if (walletStakingComponent.value.currentForm === 'stake') {
+            walletStakingComponent.value.setErrors({
+              amount: t('validations.stakeFailed')
+            })
+          } else {
+            walletStakingComponent.value.setErrors({
+              amount: t('validations.unstakeFailed')
+            })
+          }
+        })
+      subs.add(trackingSubmittedEventErrors)
 
       // Store draft transaction actions
       subs.add(transactionTracking.events
