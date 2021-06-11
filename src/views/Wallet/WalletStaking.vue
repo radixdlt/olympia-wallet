@@ -160,7 +160,18 @@ const WalletStaking = defineComponent({
       return this.activeForm === 'stake' ? this.$t('staking.stakeButton') : this.$t('staking.unstakeButton')
     },
     sortedStakes (): Array<StakePosition> {
+      // If more than 1 stake exists for the same validator, only display the validator once and sum their amounts
       const stakes = this.activeStakes
+        .reduce((accum: StakePosition[], el: StakePosition) => {
+          const existingValidatorIndex = accum.findIndex((sp: StakePosition) => sp.validator.equals(el.validator))
+          if (existingValidatorIndex === -1) return [...accum, el]
+          const existingValidator = accum[existingValidatorIndex]
+          accum[existingValidatorIndex] = {
+            ...existingValidator,
+            amount: existingValidator.amount.add(el.amount)
+          }
+          return accum
+        }, [])
       return stakes.sort((a, b) => {
         if (a.amount > b.amount) return -1
         if (b.amount > a.amount) return 1
