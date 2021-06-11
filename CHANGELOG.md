@@ -1,5 +1,21 @@
 # Changelog
 
+### [0.7.3](https://www.github.com/township-agency/radixdlt-desktop-wallet/compare/v0.7.2...v0.7.3) (2021-06-11)
+
+
+### Bug Fixes
+
+* Catch transaction errors that were silently failing ([fdacb0e](https://www.github.com/township-agency/radixdlt-desktop-wallet/commit/fdacb0e410d6a4959866e776a757496ce8ae1ba2))
+* Cleanup StakeListItem UI on smaller screens ([fdacb0e](https://www.github.com/township-agency/radixdlt-desktop-wallet/commit/fdacb0e410d6a4959866e776a757496ce8ae1ba2))
+* Correctly compute user’s total XRD as the addition between api’s totalXRD and api’s totalStaked ([fdacb0e](https://www.github.com/township-agency/radixdlt-desktop-wallet/commit/fdacb0e410d6a4959866e776a757496ce8ae1ba2))
+
+
+### Dependencies
+
+* Cleanup staking UI ([fdacb0e](https://www.github.com/township-agency/radixdlt-desktop-wallet/commit/fdacb0e410d6a4959866e776a757496ce8ae1ba2))
+* rebuild release ([#111](https://www.github.com/township-agency/radixdlt-desktop-wallet/issues/111)) ([fdacb0e](https://www.github.com/township-agency/radixdlt-desktop-wallet/commit/fdacb0e410d6a4959866e776a757496ce8ae1ba2))
+* Staking validation cleanup ([ca0296f](https://www.github.com/township-agency/radixdlt-desktop-wallet/commit/ca0296f243e8069b46562836392793030b42c365))
+
 ### [0.7.2](https://www.github.com/township-agency/radixdlt-desktop-wallet/compare/v0.7.1...v0.7.2) (2021-06-10)
 
 
