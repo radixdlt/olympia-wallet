@@ -183,7 +183,7 @@ const WalletStaking = defineComponent({
     },
     amountPlaceholder (): string {
       if (this.xrdBalance && this.activeForm === 'stake') {
-        return `${this.$t('transaction.amountPlaceholder')} ${asBigNumber(this.xrdBalance)} `
+        return `${this.$t('staking.amountPlaceholder')} ${asBigNumber(this.xrdBalance)} `
       }
 
       return this.$t('staking.availableBalancePlaceholder')

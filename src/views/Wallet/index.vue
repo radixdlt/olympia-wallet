@@ -371,7 +371,7 @@ const WalletIndex = defineComponent({
             walletTransactionComponent.value.setErrors({
               amount: t('validations.transactionFailed')
             })
-          } else if (walletStakingComponent.value.currentForm === 'stake') {
+          } else if (walletStakingComponent.value.$data.activeForm === 'stake') {
             walletStakingComponent.value.setErrors({
               amount: t('validations.stakeFailed')
             })
@@ -424,7 +424,7 @@ const WalletIndex = defineComponent({
               walletTransactionComponent.value.setErrors({
                 amount: t('validations.transactionFailed')
               })
-            } else if (walletStakingComponent.value.currentForm === 'stake') {
+            } else if (walletStakingComponent.value.$data.activeForm === 'stake') {
               walletStakingComponent.value.setErrors({
                 amount: t('validations.stakeFailed')
               })
