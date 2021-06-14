@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.7.4](https://www.github.com/township-agency/radixdlt-desktop-wallet/compare/v0.7.3...v0.7.4) (2021-06-14)
+
+
+### Bug Fixes
+
+* Treat unstakes as a separate count of XRD that are mine but unavailable ([#114](https://www.github.com/township-agency/radixdlt-desktop-wallet/issues/114)) ([750d81f](https://www.github.com/township-agency/radixdlt-desktop-wallet/commit/750d81fedf069c152f2bded17ba5cf4712cc444a))
+
 ### [0.7.3](https://www.github.com/township-agency/radixdlt-desktop-wallet/compare/v0.7.2...v0.7.3) (2021-06-11)
 
 
