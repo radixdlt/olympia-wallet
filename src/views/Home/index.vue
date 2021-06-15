@@ -48,7 +48,7 @@
 <script lang="ts">
 import { defineComponent, reactive } from 'vue'
 import { Radix, ErrorNotification, WalletErrorCause, WalletT } from '@radixdlt/application'
-import { hasKeystore, touchKeystore } from '@/actions/vue/create-wallet'
+import { hasKeystore, login, touchKeystore } from '@/actions/vue/create-wallet'
 import { useStore } from '@/store'
 import HomeCreateAndRestore from './HomeCreateAndRestore.vue'
 import HomeEnterPasscode from './HomeEnterPasscode.vue'
@@ -98,6 +98,7 @@ const CreateWallet = defineComponent({
     // Login with password and path to keystore
     const loginWithWallet = (password: string) => {
       radix.login(password, touchKeystore)
+      login(password, touchKeystore)
     }
 
     // Check if keystore exists
