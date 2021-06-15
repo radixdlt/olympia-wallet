@@ -27,11 +27,11 @@ async function createWindow () {
 
   contextMenu({})
   const win = new BrowserWindow({
-    width: 1150,
+    width: 1200,
     height: 650,
-    maxWidth: 1250,
+    maxWidth: 1300,
     maxHeight: 800,
-    minWidth: 1150,
+    minWidth: 1200,
     minHeight: 650,
     webPreferences: {
 
