@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.7.5](https://www.github.com/township-agency/radixdlt-desktop-wallet/compare/v0.7.4...v0.7.5) (2021-06-15)
+
+
+### Bug Fixes
+
+* final staking tweaks ([#116](https://www.github.com/township-agency/radixdlt-desktop-wallet/issues/116)) ([7e912a9](https://www.github.com/township-agency/radixdlt-desktop-wallet/commit/7e912a98082684591083e371da3a6ad4b93c4ccd))
+
 ### [0.7.4](https://www.github.com/township-agency/radixdlt-desktop-wallet/compare/v0.7.3...v0.7.4) (2021-06-14)
 
 
