@@ -5,16 +5,12 @@ import { store } from '@/actions/electron/data-store'
 import { HardwareWalletLedger } from '@radixdlt/hardware-ledger'
 
 import {
-  Radix,
+  Radix, RadixT,
 } from '@radixdlt/application'
 
-export const writeKeystoreFile = (event: IpcMainInvokeEvent, encodedWallet: string) => {
-  return store.set('seed', encodedWallet)
-}
+export const writeKeystoreFile = (event: IpcMainInvokeEvent, encodedWallet: string) => store.set('seed', encodedWallet)
 
-export const getKeystoreFile = () => {
-  return store.get('seed')
-}
+export const getKeystoreFile = () => store.get('seed')
 
 const digestPin = async (pin: string) =>
   crypto
@@ -32,11 +28,20 @@ export const copyToClipboard = (event: IpcMainEvent, text: string) => {
 export const validatePin = (event: IpcMainInvokeEvent, pin: string) =>
   digestPin(pin).then((inputHash: string) => store.get('pin') === inputHash)
 
-export const deriveHWAccount = (event: IpcMainInvokeEvent) => {
-  const radix = Radix
+let radix: RadixT
+
+export const login = (event: IpcMainInvokeEvent, password: string) => {
+  radix = Radix
     .create()
     .connect('https://betanet.radixdlt.com/rpc')
+    .login(password,
+      () => new Promise(resolve => {
+        resolve(JSON.parse(getKeystoreFile() as string))
+      })
+    )
+}
 
+export const deriveHWAccount = (event: IpcMainInvokeEvent) => {
   radix.deriveHWAccount({
     keyDerivation: 'next',
     hardwareWalletConnection: HardwareWalletLedger.create()

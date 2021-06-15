@@ -49,3 +49,7 @@ export const validatePin = (pin: string): Promise<boolean> => new Promise((resol
 export const deriveHWAccount = (): Promise<boolean> => new Promise((resolve) => {
   resolve(window.ipcRenderer.invoke('derive-hw-account'))
 })
+
+export const login = (password: string, keystore: any) => new Promise((resolve) => {
+  resolve(window.ipcRenderer.invoke('login', password, keystore))
+})

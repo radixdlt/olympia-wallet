@@ -3,6 +3,7 @@ const TerserPlugin = require('terser-webpack-plugin')
 module.exports = {
   pluginOptions: {
     electronBuilder: {
+      externals: ['usb', 'node-hid', 'bindings'],
       nodeIntegration: true,
       chainWebpackRendererProcess: config => {
         config.target('web')
