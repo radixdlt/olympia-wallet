@@ -74,7 +74,7 @@ const messages = {
       currentAddress: 'Current Address:',
       totalTokens: 'Total',
       availableTokens: 'Available',
-      stakedTokens: 'Staked and Unstaked',
+      stakedTokens: 'Staked or Unstaking',
       navBalances: 'Balances',
       navHistory: 'History',
       navTransaction: 'Send Tokens',
