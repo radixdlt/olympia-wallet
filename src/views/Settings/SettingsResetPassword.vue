@@ -11,8 +11,9 @@
         type="password"
         name="currentPassword"
         class="w-full"
-        :placeholder="$t('settings.currentPasswordLabel')"
+        :placeholder="$t('settings.currentPasswordPlaceholder')"
         rules="required"
+        :label="$t('settings.currentPasswordLabel')"
         data-ci="create-wallet-passcode-input"
       />
       <FormErrorMessage name="currentPassword" />
