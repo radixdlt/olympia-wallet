@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.7.6](https://www.github.com/radixdlt/olympia-wallet/compare/v0.7.5...v0.7.6) (2021-06-16)
+
+
+### Bug Fixes
+
+* Form error messages should have a configurable label ([#119](https://www.github.com/radixdlt/olympia-wallet/issues/119)) ([11904cd](https://www.github.com/radixdlt/olympia-wallet/commit/11904cd50ede57eb617abb9c60611aae143937b9))
+
 ### [0.7.5](https://www.github.com/township-agency/radixdlt-desktop-wallet/compare/v0.7.4...v0.7.5) (2021-06-15)
 
 
