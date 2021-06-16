@@ -5,7 +5,7 @@ import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 import path from 'path'
 import contextMenu from 'electron-context-menu'
-import { copyToClipboard, getKeystoreFile, storePin, validatePin, writeKeystoreFile, deriveHWAccount, login  } from '@/actions/electron/create-wallet'
+import { copyToClipboard, getKeystoreFile, storePin, validatePin, writeKeystoreFile, deriveHWAccount, login, getPublicKey, sendAPDU  } from '@/actions/electron/create-wallet'
 import {
   getAccountName,
   saveAccountName,
@@ -104,8 +104,10 @@ ipcMain.handle('get-account-name', getAccountName)
 ipcMain.handle('save-num-accounts', saveDerivedAccountsIndex)
 ipcMain.handle('get-num-accounts', getDerivedAccountsIndex)
 ipcMain.handle('validate-pin-message', validatePin)
-ipcMain.handle('derive-hw-account', deriveHWAccount)
-ipcMain.handle('login', login)
+//ipcMain.handle('derive-hw-account', deriveHWAccount)
+//ipcMain.handle('login', login)
+//ipcMain.handle('get-public-key', getPublicKey)
+ipcMain.handle('send-apdu', sendAPDU)
 
 // Exit cleanly on request from parent process in development mode.
 if (isDevelopment) {
