@@ -44,8 +44,7 @@
                 <div class="flex flex-col flex-1 mr-3">
                   <FormField
                     name="amount"
-                    type="number"
-                    step="any"
+                    type="text"
                     class="w-full"
                     :placeholder="amountPlaceholder"
                     :rules="{
