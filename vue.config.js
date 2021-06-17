@@ -6,7 +6,10 @@ module.exports = {
       externals: ['usb', 'node-hid', 'bindings'],
       nodeIntegration: true,
       chainWebpackRendererProcess: config => {
-        config.target('web')
+        config.target('web'),
+        config.externals([{
+          'electron-config': 'electron-config'
+        }])
       },
       chainWebpackMainProcess: config => {
         config.optimization.minimizer(0).use(TerserPlugin, [{

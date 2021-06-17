@@ -1,12 +1,17 @@
-import { MnemomicT, Wallet, WalletT, KeystoreT, NetworkT, SigningKeychain } from '@radixdlt/application'
+import { MnemomicT, Wallet, WalletT, KeystoreT, NetworkT, SigningKeychain, Radix, RadixT } from '@radixdlt/application'
+import { clipboard } from 'electron'
+import crypto from 'crypto'
+import { HardwareWalletLedger } from '@radixdlt/hardware-ledger'
+import { store } from '@/actions/electron/data-store'
 
 export const initWallet = async (mnemonic: MnemomicT, passcode: string, network: NetworkT): Promise<WalletT> => {
   const walletResult = await SigningKeychain.byEncryptingMnemonicAndSavingKeystore({
     mnemonic,
     password: passcode,
-    save: (keystore: KeystoreT): Promise<void> => {
-      return window.ipcRenderer.invoke('save-keystores-message', JSON.stringify(keystore, null, '\t'))
-    }
+    save: (keystore: KeystoreT): Promise<void> => new Promise((resolve) => {
+      store.set('seed', JSON.stringify(keystore, null, '\t'))
+      resolve()
+    })
   })
 
   if (walletResult.isErr()) {
@@ -23,33 +28,58 @@ export const initWallet = async (mnemonic: MnemomicT, passcode: string, network:
 }
 
 export const hasKeystore = (): Promise<boolean> => new Promise((resolve) => {
-  window.ipcRenderer.invoke('get-keystore-message')
-    .then((json: string | undefined) => {
-      return resolve(!!json)
-    })
+  const keystore = getKeystore()
+  return resolve(!!keystore)
 })
 
 export const touchKeystore = (): Promise<KeystoreT> => new Promise((resolve) => {
-  window.ipcRenderer.invoke('get-keystore-message')
-    .then((json: string) => {
-      resolve(JSON.parse(json))
-    })
+  return resolve(getKeystore())
 })
 
-export const copyToClipboard = (text: string) => window.ipcRenderer.send('copy-to-clipboard', text)
+export const copyToClipboard = (text: string) => clipboard.writeText(text)
 
-export const storePin = (pin: string): Promise<string> => new Promise((resolve) => {
-  resolve(window.ipcRenderer.invoke('create-pin', pin))
+export const storePin = (pin: string): Promise<void> => new Promise((resolve) => {
+  digestPin(pin).then((hash: string) => {
+    store.set('pin', hash)
+    resolve()
+  })
 })
 
 export const validatePin = (pin: string): Promise<boolean> => new Promise((resolve) => {
-  resolve(window.ipcRenderer.invoke('validate-pin-message', pin))
+  resolve(digestPin(pin).then((inputHash: string) => store.get('pin') === inputHash))
 })
 
+let radix: RadixT
+
 export const deriveHWAccount = (): Promise<boolean> => new Promise((resolve) => {
-  resolve(window.ipcRenderer.invoke('derive-hw-account'))
+  radix.deriveHWAccount({
+    keyDerivation: 'next',
+    hardwareWalletConnection: HardwareWalletLedger.create()
+  }).subscribe((hwAccount: any) => {
+    console.log('got hw account: ', hwAccount.address.toString())
+    resolve(!!hwAccount.address)
+  })
 })
 
 export const login = (password: string, keystore: any) => new Promise((resolve) => {
-  resolve(window.ipcRenderer.invoke('login', password, keystore))
+  radix = Radix
+    .create()
+    .connect('https://betanet.radixdlt.com/rpc')
+    .login(password,
+      () => new Promise(resolve => {
+        resolve(JSON.parse(getKeystore() as string))
+      })
+    )
 })
+
+const getKeystore = () => {
+  const json = store.get('seed') as string
+  // TODO This may not need to be parsed.
+  return JSON.parse(json)
+}
+
+const digestPin = async (pin: string) =>
+  crypto
+    .createHash('sha256')
+    .update(pin)
+    .digest('hex')

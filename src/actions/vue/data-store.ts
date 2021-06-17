@@ -1,15 +1,22 @@
+import Store from 'electron-store'
+Store.initRenderer()
+
+export const store = new Store({
+  name: 'wallet'
+})
+
 export const saveAccountName = (accountAddress: string, prettyName: string): Promise<string> => new Promise((resolve) => {
-  resolve(window.ipcRenderer.invoke('save-account-name', JSON.stringify({ accountAddress, prettyName })))
+  return store.set(`account.${accountAddress}`, prettyName)
 })
 
 export const getAccountName = (accountAddress: string): Promise<string> => new Promise((resolve) => {
-  resolve(window.ipcRenderer.invoke('get-account-name', accountAddress))
+  return store.get(`account.${accountAddress}`)
 })
 
 export const saveDerivedAccountsIndex = (numAccounts: number): Promise<string> => new Promise((resolve) => {
-  resolve(window.ipcRenderer.invoke('save-num-accounts', String(numAccounts)))
+  return store.set('derivedAccountsIndex', numAccounts)
 })
 
 export const getDerivedAccountsIndex = (): Promise<string> => new Promise((resolve) => {
-  resolve(window.ipcRenderer.invoke('get-num-accounts'))
+  return store.get('derivedAccountsIndex')
 })

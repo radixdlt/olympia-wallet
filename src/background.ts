@@ -39,7 +39,7 @@ async function createWindow () {
       // Required for Spectron testing
       enableRemoteModule: true,
       // this must be enabled in Electron < 12, above that it is enabled by default
-      contextIsolation: true,
+      contextIsolation: false,
       // Use pluginOptions.nodeIntegration, leave this alone
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
       nodeIntegration: true,
@@ -95,17 +95,17 @@ app.on('ready', async () => {
 })
 
 // Define channels for ipc to listen to and which actions to fires
-ipcMain.handle('save-keystores-message', writeKeystoreFile)
-ipcMain.handle('get-keystore-message', getKeystoreFile)
-ipcMain.on('copy-to-clipboard', copyToClipboard)
-ipcMain.handle('create-pin', storePin)
-ipcMain.handle('save-account-name', saveAccountName)
-ipcMain.handle('get-account-name', getAccountName)
-ipcMain.handle('save-num-accounts', saveDerivedAccountsIndex)
-ipcMain.handle('get-num-accounts', getDerivedAccountsIndex)
-ipcMain.handle('validate-pin-message', validatePin)
-ipcMain.handle('derive-hw-account', deriveHWAccount)
-ipcMain.handle('login', login)
+// ipcMain.handle('save-keystores-message', writeKeystoreFile)
+// ipcMain.handle('get-keystore-message', getKeystoreFile)
+// ipcMain.on('copy-to-clipboard', copyToClipboard)
+// ipcMain.handle('create-pin', storePin)
+// ipcMain.handle('save-account-name', saveAccountName)
+// ipcMain.handle('get-account-name', getAccountName)
+// ipcMain.handle('save-num-accounts', saveDerivedAccountsIndex)
+// ipcMain.handle('get-num-accounts', getDerivedAccountsIndex)
+// ipcMain.handle('validate-pin-message', validatePin)
+// ipcMain.handle('derive-hw-account', deriveHWAccount)
+// ipcMain.handle('login', login)
 
 // Exit cleanly on request from parent process in development mode.
 if (isDevelopment) {

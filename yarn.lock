@@ -7,36 +7,6 @@
   resolved "https://registry.yarnpkg.com/7zip-bin/-/7zip-bin-5.0.3.tgz#bc5b5532ecafd923a61f2fb097e3b108c0106a3f"
   integrity sha512-GLyWIFBbGvpKPGo55JyRZAo4lVbnBiD52cKlw/0Vt+wnmKvWJkpZvsjVoaIolyBXDeAQKSicRtqFNPem9w0WYA==
 
-"@aleworm/bindings@^1.5.7":
-  version "1.5.7"
-  resolved "https://registry.yarnpkg.com/@aleworm/bindings/-/bindings-1.5.7.tgz#9c70425ab0c5610ee1e3673a3923576f198961aa"
-  integrity sha512-UXNu0Hf5PEfD7X4GpMYqPtknRj3GGnrMSTESDh3QjpaUVyhrqK96M7AfNlPOrWkHctC2gmMP/lJmqhm1DYNZjg==
-  dependencies:
-    file-uri-to-path "1.0.0"
-
-"@aleworm/hw-transport-node-hid@^5.51.9":
-  version "5.51.10"
-  resolved "https://registry.yarnpkg.com/@aleworm/hw-transport-node-hid/-/hw-transport-node-hid-5.51.10.tgz#680ec4a878f9b59fa623baf928dab01c71d153f4"
-  integrity sha512-4vF8tqqiRtxlMh14O871Z9zGGyTGzqW7ruCgFZa0qwHvcmPFIhxY9g3l8PZiWbrWUjCx2L7cBTMOp+w6EqCNBQ==
-  dependencies:
-    "@aleworm/usb2" "^1.7.8"
-    "@ledgerhq/devices" "^5.51.1"
-    "@ledgerhq/errors" "^5.50.0"
-    "@ledgerhq/hw-transport" "^5.51.1"
-    "@ledgerhq/hw-transport-node-hid-noevents" "^5.51.1"
-    "@ledgerhq/logs" "^5.50.0"
-    lodash "^4.17.21"
-    node-hid "2.1.1"
-
-"@aleworm/usb2@^1.7.8":
-  version "1.7.8"
-  resolved "https://registry.yarnpkg.com/@aleworm/usb2/-/usb2-1.7.8.tgz#9091acbcf23f68c9e52ec3ea48e91b22d85568a0"
-  integrity sha512-vqR9XsTWiYWoACoCxOJkW0Aa1Ncn4TaiyoN8dMVr3ipfnhBRwxtcHvXm0F5wJ13ocwTItVBowIsEn69eXsxivQ==
-  dependencies:
-    "@aleworm/bindings" "^1.5.7"
-    node-addon-api "3.0.2"
-    prebuild-install "^5.3.3"
-
 "@babel/code-frame@^7.0.0", "@babel/code-frame@^7.12.13", "@babel/code-frame@^7.8.3":
   version "7.12.13"
   resolved "https://registry.yarnpkg.com/@babel/code-frame/-/code-frame-7.12.13.tgz#dcfc826beef65e75c50e21d3837d7d95798dd658"
@@ -1310,6 +1280,20 @@
     "@ledgerhq/logs" "^5.50.0"
     node-hid "2.1.1"
 
+"@ledgerhq/hw-transport-node-hid@^5.50.0":
+  version "5.51.1"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport-node-hid/-/hw-transport-node-hid-5.51.1.tgz#fe8eb81e18929663540698c80905952cdbe542d5"
+  integrity sha512-Y2eVCCdhVs2Lfr7N2x2cNb+ogcZ24ZATO4QxaQ7LogjiPwYmzmvuXFn8zFjMSrKUCn9CtbptXcuiu0NkGsjWlw==
+  dependencies:
+    "@ledgerhq/devices" "^5.51.1"
+    "@ledgerhq/errors" "^5.50.0"
+    "@ledgerhq/hw-transport" "^5.51.1"
+    "@ledgerhq/hw-transport-node-hid-noevents" "^5.51.1"
+    "@ledgerhq/logs" "^5.50.0"
+    lodash "^4.17.21"
+    node-hid "2.1.1"
+    usb "^1.7.0"
+
 "@ledgerhq/hw-transport@^5.51.1":
   version "5.51.1"
   resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport/-/hw-transport-5.51.1.tgz#8dd14a8e58cbee4df0c29eaeef983a79f5f22578"
@@ -1494,6 +1478,22 @@
     scrypt-js "^3.0.1"
     uuid "^8.3.2"
 
+"@radixdlt/crypto@^1.0.37":
+  version "1.0.37"
+  resolved "https://registry.yarnpkg.com/@radixdlt/crypto/-/crypto-1.0.37.tgz#125558cfe8e09328dc6695f6da7bfc0e4af1d8e0"
+  integrity sha512-k6h7/OEhjtugn8dpVJKufoniuXV6yZQ8wjm2UH4Wo3ZF1c1Z29eioHamZpVDB86mHRLGcqLN/yzY2wx5kw1REA==
+  dependencies:
+    "@radixdlt/data-formats" "^1.0.25"
+    "@radixdlt/primitives" "^1.0.29"
+    "@radixdlt/uint256" "^1.1.0"
+    "@radixdlt/util" "^1.0.25"
+    base-x "^3.0.8"
+    elliptic "^6.5.3"
+    neverthrow "^4.0.1"
+    node-forge "^0.10.0"
+    scrypt-js "^3.0.1"
+    uuid "^8.3.2"
+
 "@radixdlt/data-formats@^1.0.25":
   version "1.0.25"
   resolved "https://registry.yarnpkg.com/@radixdlt/data-formats/-/data-formats-1.0.25.tgz#b3043d829979dbfd4e5b2e4980510390a176651c"
@@ -1503,12 +1503,14 @@
     neverthrow "^4.0.1"
     ramda "^0.27.1"
 
-"@radixdlt/hardware-ledger@file:../radixdlt-javascript/packages/hardware-ledger":
-  version "1.0.1"
+"@radixdlt/hardware-ledger@^1.0.2":
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@radixdlt/hardware-ledger/-/hardware-ledger-1.0.2.tgz#d1c0842b150177484bcff456ae8862fab1fd888b"
+  integrity sha512-q6UMvkd9lJetmvPR1BC53/ls9KJ5X7KJr50x0U1Z7TOtQ9szHEVRk9/IP1iH72SSo44IfOtTozJN6pfkzTQ34Q==
   dependencies:
-    "@aleworm/hw-transport-node-hid" "^5.51.9"
-    "@radixdlt/crypto" "^1.0.36"
-    "@radixdlt/hardware-wallet" "^1.0.19"
+    "@ledgerhq/hw-transport-node-hid" "^5.50.0"
+    "@radixdlt/crypto" "^1.0.37"
+    "@radixdlt/hardware-wallet" "^1.0.20"
     "@radixdlt/primitives" "^1.0.29"
     "@radixdlt/util" "^1.0.25"
     neverthrow "4.0.1"
@@ -1522,6 +1524,19 @@
   integrity sha512-rpP+3IBW7aGxSoTpLBJBfBjkowI5+WXfvfxH+MhiqqLkk3SylUGUXyATIcrkcWu2oviceQ+41SWeJP/5h7UFIQ==
   dependencies:
     "@radixdlt/crypto" "^1.0.36"
+    "@radixdlt/primitives" "^1.0.29"
+    "@radixdlt/util" "^1.0.25"
+    neverthrow "4.0.1"
+    prelude-ts "^1.0.2"
+    rxjs "7.0.0"
+    uuid "^8.3.2"
+
+"@radixdlt/hardware-wallet@^1.0.20":
+  version "1.0.20"
+  resolved "https://registry.yarnpkg.com/@radixdlt/hardware-wallet/-/hardware-wallet-1.0.20.tgz#4a4258e4dca554c830a777e76db18f04a62c9bb4"
+  integrity sha512-hzSpyJQv9IBu5VY8uDH4saF6wgLnN5Wr6KVtd/gCGTAUcLt5b2+oy4biCJEre7BJYILg6vMxr6kd4aq1j5jenQ==
+  dependencies:
+    "@radixdlt/crypto" "^1.0.37"
     "@radixdlt/primitives" "^1.0.29"
     "@radixdlt/util" "^1.0.25"
     neverthrow "4.0.1"
@@ -1870,7 +1885,7 @@
   resolved "https://registry.yarnpkg.com/@types/mocha/-/mocha-5.2.7.tgz#315d570ccb56c53452ff8638738df60726d5b6ea"
   integrity sha512-NYrtPht0wGzhwe9+/idPaBB+TqkY9AhTvOLMkThm0IoEfLaiVQZwBwyJ5puCkO3AUCWrmcoePjp2mbFocKy4SQ==
 
-"@types/node@*", "@types/node@^14.6.2":
+"@types/node@*":
   version "14.14.37"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-14.14.37.tgz#a3dd8da4eb84a996c36e331df98d82abd76b516e"
   integrity sha512-XYmBiy+ohOR4Lh5jE379fV2IU+6Jn4g5qASinhitfyO71b/sCo6MKsMLF5tc7Zf2CE8hViVQyYSobJNke8OvUw==
@@ -1879,6 +1894,11 @@
   version "11.11.6"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-11.11.6.tgz#df929d1bb2eee5afdda598a41930fe50b43eaa6a"
   integrity sha512-Exw4yUWMBXM3X+8oqzJNRqZSwUAaS4+7NdvHqQuFi/d+synz++xmX3QIf+BFqneW8N31R8Ky+sikfZUXq07ggQ==
+
+"@types/node@^14.6.2":
+  version "14.17.3"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.17.3.tgz#6d327abaa4be34a74e421ed6409a0ae2f47f4c3d"
+  integrity sha512-e6ZowgGJmTuXa3GyaPbTGxX17tnThl2aSSizrFthQ7m9uLGZBXiGhgE55cjRZTF5kjZvYn9EOPOMljdjwbflxw==
 
 "@types/normalize-package-data@^2.4.0":
   version "2.4.0"
@@ -3436,7 +3456,7 @@ binaryextensions@^4.15.0:
   resolved "https://registry.yarnpkg.com/binaryextensions/-/binaryextensions-4.15.0.tgz#c63a502e0078ff1b0e9b00a9f74d3c2b0f8bd32e"
   integrity sha512-MkUl3szxXolQ2scI1PM14WOT951KnaTNJ0eMKg7WzOI4kvSxyNo/Cygx4LOBNhwyINhAuSQpJW1rYD9aBSxGaw==
 
-bindings@^1.5.0:
+bindings@^1.4.0, bindings@^1.5.0:
   version "1.5.0"
   resolved "https://registry.yarnpkg.com/bindings/-/bindings-1.5.0.tgz#10353c9e945334bc0511a6d90b38fbc7c9c504df"
   integrity sha512-p2q/t/mhvuOj/UeLlV6566GD/guowlr0hHxClI0W9m7MWYkL1F0hLo+0Aexs9HSPCtR1SXQ0TD3MMKrXZajbiQ==
@@ -5625,9 +5645,9 @@ electron-to-chromium@^1.3.649:
   integrity sha512-6cz0jvawlUe4h5AbfQWxPzb+8LzVyswGAWiGc32EJEmfj39HTQyNPkLXirc7+L4x5I6RgRkzua8Ryu5QZqc8cA==
 
 electron@^12.0.1:
-  version "12.0.2"
-  resolved "https://registry.yarnpkg.com/electron/-/electron-12.0.2.tgz#d92be205f1937627bd6718aad44ac161382b4c2d"
-  integrity sha512-14luh9mGzfL4e0sncyy0+kW37IU7Y0Y1tvI97FDRSW0ZBQxi5cmAwSs5dmPmNBFBIGtzkaGaEB01j9RjZuCmow==
+  version "12.0.11"
+  resolved "https://registry.yarnpkg.com/electron/-/electron-12.0.11.tgz#555dc1cf663e320f2f2cbdf89319352b08fc59f2"
+  integrity sha512-6gPjcce3QCeAWZ8UVAqVy6os+86D5BcxgkIzlROxX89u+du/i7WpZXF5F1vgv419rspds9OHejP3JrJnoUGh6w==
   dependencies:
     "@electron/get" "^1.0.1"
     "@types/node" "^14.6.2"
@@ -13647,6 +13667,15 @@ url@^0.11.0:
   dependencies:
     punycode "1.3.2"
     querystring "0.2.0"
+
+usb@^1.7.0:
+  version "1.7.1"
+  resolved "https://registry.yarnpkg.com/usb/-/usb-1.7.1.tgz#d723223ec517b802c4d2082e31a4649c65c491c5"
+  integrity sha512-HTCfx6NnNRhv5y98t04Y8j2+A8dmQnEGxCMY2/zN/0gkiioLYfTZ5w/PEKlWRVUY+3qLe9xwRv9pHLkjQYNw/g==
+  dependencies:
+    bindings "^1.4.0"
+    node-addon-api "3.0.2"
+    prebuild-install "^5.3.3"
 
 use@^3.1.0:
   version "3.1.1"

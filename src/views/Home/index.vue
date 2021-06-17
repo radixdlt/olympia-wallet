@@ -67,6 +67,7 @@ const CreateWallet = defineComponent({
   },
 
   setup () {
+    console.log('VERSION', process.version)
     const hasWallet = reactive({ value: null as boolean | null })
     const store = useStore()
     const router = useRouter()
