@@ -38,7 +38,7 @@
       >
         <h3 class="font-medium text-rBlack mb-6 w-full">{{ $t('transaction.modalHeading') }}</h3>
 
-        <div class="bg-translucent-gray rounded-md border border-rGray text-rBlack mb-8 w-full">
+        <div class="bg-translucent-gray rounded-md border border-rGray text-rBlack mb-4 w-full">
           <div class="border-b border-rGray py-7 flex items-center">
             <div class="w-24 text-right text-rGrayDark mr-8">{{ $t('transaction.fromLabel') }}</div>
             <div class="flex-1">{{ activeAddress.toString() }}</div>
@@ -66,18 +66,19 @@
           </div>
         </div>
 
+        <h3 class="font-medium text-rBlack text-center w-full mb-4">{{ $t('transaction.enterPin') }}</h3>
         <pin-input
           name="pin"
           :values="values.pin"
           :autofocus="true"
-          class="mb-4 mx-auto"
+          class="mx-auto"
           data-ci="confirmation-pin"
           @finished="handleValidatePin"
           @unfinished="handleUnfinishedPin"
         >
         </pin-input>
 
-        <ButtonSubmit class="w-72 mx-auto mt-5" :disabled="disableSubmit">
+        <ButtonSubmit class="w-72 mx-auto mt-2" :disabled="disableSubmit">
           {{ $t('transaction.confirmButton') }}
         </ButtonSUbmit>
 
