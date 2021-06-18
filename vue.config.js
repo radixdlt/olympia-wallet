@@ -3,22 +3,11 @@ const TerserPlugin = require('terser-webpack-plugin')
 module.exports = {
   pluginOptions: {
     electronBuilder: {
-      externals: ['usb', 'node-hid', 'bindings'],
       nodeIntegration: true,
       chainWebpackRendererProcess: config => {
         config.target('web')
       },
-      chainWebpackMainProcess: config => {
-        config.optimization.minimizer(0).use(TerserPlugin, [{
-          cache: true,
-          parallel: true,
-          terserOptions: {
-              compress: {
-                  reduce_vars: false
-              }
-          }
-        }])
-      },
+     
       builderOptions: {
         publish: {
           provider: 'github',

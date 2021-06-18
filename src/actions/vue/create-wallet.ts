@@ -46,19 +46,5 @@ export const validatePin = (pin: string): Promise<boolean> => new Promise((resol
   resolve(window.ipcRenderer.invoke('validate-pin-message', pin))
 })
 
-/*
-export const deriveHWAccount = () => new Promise((resolve) => {
-  resolve(window.ipcRenderer.invoke('derive-hw-account'))
-})
-
-export const login = (password: string, keystore: any) => new Promise((resolve) => {
-  resolve(window.ipcRenderer.invoke('login', password, keystore))
-})
-
-export const getPublicKey = (input: getPublicKeyInput) => new Promise((resolve) => {
-  resolve(window.ipcRenderer.invoke('get-public-key', input))
-})
-*/
-
 export const sendAPDU = (cla: number, ins: number, p1: number, p2: number, data?: Buffer, statusList?: readonly number[]) =>
-  window.ipcRenderer.invoke('send-apdu', cla, ins, p1, p2, data)
+  window.ipcRenderer.invoke('send-apdu', { cla, ins, p1, p2, data: data?.toString('hex') })

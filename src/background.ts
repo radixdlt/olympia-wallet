@@ -35,11 +35,6 @@ async function createWindow () {
     minWidth: 1200,
     minHeight: 650,
     webPreferences: {
-
-      // Required for Spectron testing
-      enableRemoteModule: true,
-      // this must be enabled in Electron < 12, above that it is enabled by default
-      contextIsolation: true,
       // Use pluginOptions.nodeIntegration, leave this alone
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
       nodeIntegration: true,
