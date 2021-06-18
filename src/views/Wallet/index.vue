@@ -624,7 +624,6 @@ const WalletIndex = defineComponent({
         })
       }).subscribe((hwAccount: any) => {
         console.log('got hw account: ', hwAccount.address.toString())
-        
       })
     }
 
