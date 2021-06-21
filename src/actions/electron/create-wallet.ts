@@ -34,7 +34,7 @@ let radix: RadixT
 export const login = (event: IpcMainInvokeEvent, password: string) => {
   radix = Radix
     .create()
-    .connect('https://betanet.radixdlt.com/rpc')
+    .connect('https://sandpitnet.radixdlt.com')
     .login(password,
       () => new Promise(resolve => {
         resolve(JSON.parse(getKeystoreFile() as string))

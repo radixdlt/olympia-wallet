@@ -276,7 +276,7 @@ const WalletIndex = defineComponent({
 
     const radix = Radix
       .create()
-      .connect(process.env.VUE_APP_API || '')
+      .connect('https://sandpitnet.radixdlt.com')
       .withWallet(store.state.wallet)
       .withTokenBalanceFetchTrigger(interval(5 * 1_000))
       .withStakingFetchTrigger(interval(5 * 1_000))
@@ -621,7 +621,8 @@ const WalletIndex = defineComponent({
         hardwareWalletConnection: HardwareWalletLedger.create({
           send: sendAPDU,
           close: () => Promise.resolve()
-        })
+        }),
+        alsoSwitchTo: true
       }).subscribe((hwAccount: any) => {
         console.log('got hw account: ', hwAccount.address.toString())
       })
