@@ -1,5 +1,17 @@
 # Changelog
 
+### [0.7.7](https://www.github.com/radixdlt/olympia-wallet/compare/v0.7.6...v0.7.7) (2021-06-21)
+
+
+### Bug Fixes
+
+* Replace number inputs with validated text fields ([#121](https://www.github.com/radixdlt/olympia-wallet/issues/121)) ([690a541](https://www.github.com/radixdlt/olympia-wallet/commit/690a541b66127a9f7480cf06b313b2f5c6b6c300))
+
+
+### Code Style
+
+* Remove the .envrc from git since it should be ignored and unique per local environment. ([#122](https://www.github.com/radixdlt/olympia-wallet/issues/122)) ([ee5f6ba](https://www.github.com/radixdlt/olympia-wallet/commit/ee5f6ba8a35b8b854d0b33e943bd9378972c8e10))
+
 ### [0.7.6](https://www.github.com/radixdlt/olympia-wallet/compare/v0.7.5...v0.7.6) (2021-06-16)
 
 
