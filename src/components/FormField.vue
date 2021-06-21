@@ -2,7 +2,6 @@
   <Field
     :type="type"
     :name="name"
-    :step="step"
     :label="label"
     class="focus:outline-none focus:ring-transparent focus:shadow-none focus:border-rGreen border-t-0 border-l-0 border-r-0 border-b border-rBlack px-0"
     :placeholder="placeholder"
@@ -38,10 +37,6 @@ const FormField = defineComponent({
       required: true
     },
     dataCi: {
-      type: String,
-      required: false
-    },
-    step: {
       type: String,
       required: false
     },

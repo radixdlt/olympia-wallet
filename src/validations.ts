@@ -44,7 +44,12 @@ defineRule('validValidator', (validatorString: string) => {
   return !!safeAddress
 })
 
-defineRule('validAmount', (amountString: number) => {
-  const safeAmount = safelyUnwrapAmount(Number(amountString))
-  return !!safeAmount
+defineRule('validAmount', (amountString: string) => {
+  const amountMatch = /^\d*\.?\d*$/
+  const amount = Number(amountString)
+  if (amount && amountString.match(amountMatch)) {
+    const safeAmount = safelyUnwrapAmount(amount)
+    return !!safeAmount
+  }
+  return false
 })
