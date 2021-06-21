@@ -20,7 +20,7 @@
     >
     </wallet-sidebar-accounts>
 
-    <template v-if="activeAddress">
+    <template v-if="loaded">
       <template v-if="view == 'overview'">
         <wallet-overview
           v-if="!loadingBalances"
@@ -608,6 +608,12 @@ const WalletIndex = defineComponent({
   methods: {
     setView (view: string) {
       this.view = view
+    }
+  },
+
+  computed: {
+    loaded () : boolean {
+      return this.activeAddress != null && this.activeStakes != null && this.activeUnstakes != null && this.tokenBalances != null && this.nativeToken != null
     }
   }
 })
