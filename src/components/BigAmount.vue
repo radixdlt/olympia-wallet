@@ -14,37 +14,78 @@ BigNumber.set({
   EXPONENTIAL_AT: [-30, 30]
 })
 
-const formattBigNumber = (x: BigNumber) => {
-  /*
-  1000000000000.59 => 1,000,000,000,000.5
-  1000000000000 => 1,000,000,000,000
-  1000.153229521 => 1,000.15322952
-  1000.500 => 1,000.5
-  0.109351852001 => 0.10935185200
-  0.10935185200 => 0.109351852
-  */
-  const maxPlaces = 12
-  const integerPart = x.integerValue()
-  const decimalPart = x.minus(integerPart)
-  const dpLength = decimalPart.toFixed().length
-  const ipLength = integerPart.toFixed().length
+const numberFormatUSA = {
+  prefix: '',
+  decimalSeparator: '.',
+  groupSeparator: ',',
+  groupSize: 3,
+  secondaryGroupSize: 0,
+  fractionGroupSeparator: ' ',
+  fractionGroupSize: 0,
+  suffix: ''
+}
 
-  if (decimalPart.isZero()) {
-    return x.toFormat()
+// internal format used so BigNumber can read in its own output
+const internalFormat = {
+  prefix: '',
+  decimalSeparator: '.',
+  groupSeparator: '',
+  groupSize: 0,
+  secondaryGroupSize: 0,
+  fractionGroupSeparator: '',
+  fractionGroupSize: 0,
+  suffix: ''
+}
+
+const formattBigNumber = (x: BigNumber, showFull: boolean = false, format: Object = numberFormatUSA) => {
+  /*
+  1000000000000 => 1,000,000,000,000
+  1000000000000.59 => 1,000,000,000,000.6
+  0.987654321 => 0.98765432
+  1000.12341234 => 1,000.1234
+  1000.50001 => 1,000.5
+  999999.09999999999 => 999,999.1
+  0.999999995 => 1
+  0.00000000499999999 => 0
+  0.000000005 => 0.00000001
+*/
+  const maxPlaces = 8
+  const integerPart = x.integerValue(BigNumber.ROUND_FLOOR)
+  const decimalPart = x.minus(integerPart)
+  const dpLength = decimalPart.toFixed().length - 2
+  const ipLength = integerPart.toFixed().length
+  var internallyFormatted = '0'
+  var decimalPlaces
+
+  if (x.isZero()) {
+    return '0'
+  }
+
+  if (showFull || decimalPart.isZero()) {
   } else if (integerPart.isZero()) {
     if (dpLength > maxPlaces) {
-      return x.toFormat(maxPlaces)
+      decimalPlaces = maxPlaces
     }
   } else {
     if (ipLength >= maxPlaces) {
-      return x.toFormat(1)
-    }
-    const totalPlaces = (dpLength - 2) + ipLength
-    if (totalPlaces > maxPlaces) {
-      return x.toFormat(maxPlaces - ipLength)
+      decimalPlaces = 1
+    } else {
+      const totalPlaces = dpLength + ipLength
+      if (totalPlaces > maxPlaces) {
+        decimalPlaces = maxPlaces - ipLength
+      }
     }
   }
-  return x.toFormat()
+  if (decimalPlaces === undefined) {
+    internallyFormatted = x.toFormat(internalFormat)
+  } else {
+    internallyFormatted = x.toFormat(decimalPlaces, internalFormat)
+  }
+
+  // Rounding may have introduced zeros and a decimal place.
+  // Also, to use locale formatting, we use BN again.
+  const z = new BigNumber(internallyFormatted)
+  return z.toFormat(format)
 }
 
 export const asBigNumber = (amount: AmountT) => {
