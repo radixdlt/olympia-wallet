@@ -1,7 +1,11 @@
 <template>
-  <span>
+  <span
+    @mouseover="setHover(true)"
+    @mouseleave="setHover(false)"
+  >
     {{ asBigNumber }}
   </span>
+  <span v-if="hover">{{ asBigNumber }}</span>
 </template>
 
 <script lang="ts">
@@ -37,7 +41,7 @@ const internalFormat = {
   suffix: ''
 }
 
-const formattBigNumber = (x: BigNumber, showFull: boolean = false, format: Object = numberFormatUSA) => {
+const formattBigNumber = (x: BigNumber, showFull = false, format: BigNumber.Format = numberFormatUSA) => {
   /*
   1000000000000 => 1,000,000,000,000
   1000000000000.59 => 1,000,000,000,000.6
@@ -88,11 +92,11 @@ const formattBigNumber = (x: BigNumber, showFull: boolean = false, format: Objec
   return z.toFormat(format)
 }
 
-export const asBigNumber = (amount: AmountT) => {
+export const asBigNumber = (amount: AmountT, showFull = false) => {
   const bigNumber = new BigNumber(amount.toString())
   const shiftedAmount = bigNumber.shiftedBy(-18) // Atto
 
-  return formattBigNumber(shiftedAmount)
+  return formattBigNumber(shiftedAmount, showFull)
 }
 
 const BigAmount = defineComponent({
@@ -100,12 +104,26 @@ const BigAmount = defineComponent({
     amount: {
       type: Object as PropType<AmountT>,
       required: true
+    },
+    hover: {
+      type: Boolean,
+      required: true,
+      default: false
+    },
+  
+  },
+
+
+  methods: {
+    setHover (value: Boolean) {
+       this.hover = value
     }
   },
 
+
   computed: {
-    asBigNumber (): string {
-      return asBigNumber(this.amount)
+    asBigNumber (showFull = false): string {
+      return asBigNumber(this.amount, showFull)
     }
   }
 })
