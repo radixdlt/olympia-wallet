@@ -162,7 +162,7 @@ import {
   TransactionStateError,
   MessageInTransaction,
   ExecutedTransaction,
-  Message
+  Message,
   LogLevel,
   HDPathRadixT,
   Signature,
@@ -191,7 +191,7 @@ import { HardwareWalletLedger } from '@radixdlt/hardware-ledger'
 const PAGE_SIZE = 50
 
 export interface PendingTransaction extends TransactionStateSuccess {
-  actions: IntendedAction[];
+  actions: IntendedAction[]
 }
 
 const WalletIndex = defineComponent({
