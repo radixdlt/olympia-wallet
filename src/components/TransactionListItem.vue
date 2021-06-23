@@ -53,6 +53,15 @@
           />
         </div>
       </div>
+      <div v-if="message" class="text-sm px-3 py-2 bg-rGrayLightest bg-opacity-60 flex items-center">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr-1 h-5">
+          <path d="M15 5H5V11.1288H10.9545L13.3094 13.3889V11.1288H15V5Z" stroke="#7A99AC" stroke-miterlimit="10"/>
+          <line x1="6.2002" y1="7" x2="13.7002" y2="7" stroke="#7A99AC"/>
+          <line x1="6.2002" y1="9" x2="13.7002" y2="9" stroke="#7A99AC"/>
+        </svg>
+
+        <span>{{ message }}</span>
+      </div>
     </div>
     <div class="bg-rGrayLightest flex items-center justify-center px-3">
       <a :href="explorerURL" target="_blank" class="w-6 h-6 rounded-full border border-rGray flex items-center justify-center cursor-pointer">
@@ -102,6 +111,11 @@ export default defineComponent({
     nativeToken: {
       type: Object as PropType<Token>,
       required: true
+    },
+    message: {
+      type: String as PropType<string>,
+      required: false,
+      default: null
     }
   },
 

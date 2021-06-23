@@ -20,7 +20,7 @@
     >
     </wallet-sidebar-accounts>
 
-    <template v-if="activeAddress">
+    <template v-if="loaded">
       <template v-if="view == 'overview'">
         <wallet-overview
           v-if="!loadingBalances"
@@ -80,6 +80,7 @@
         <wallet-history
           v-if="!loadingHistory"
           :transactions="transactionHistory.transactions"
+          :messages="transactionMessages"
           :activeAddress="activeAddress"
           :pendingTransactions="pendingTransactions"
           :canGoBack="cursorStack.length > 0"
@@ -106,6 +107,7 @@
         :selectedCurrency="selectedCurrency"
         :nativeToken="nativeToken"
         :transactionState="transactionState"
+        :activeMessage="activeMessageInTransaction"
         @cancel="cancelTransaction"
         @confirm="confirmTransaction"
       >
@@ -128,7 +130,7 @@
 
 <script lang="ts">
 import { defineComponent, onBeforeMount, onUnmounted, Ref } from 'vue'
-import { Subscription, interval, Subject, Observable, combineLatest, from, BehaviorSubject, ReplaySubject } from 'rxjs'
+import { Subscription, interval, Subject, Observable, combineLatest, from, BehaviorSubject, ReplaySubject, firstValueFrom } from 'rxjs'
 import {
   AccountAddressT,
   Radix,
@@ -156,7 +158,10 @@ import {
   UnstakeOptions,
   TransferTokensInput,
   TokenBalance,
-  TransactionStateError
+  TransactionStateError,
+  MessageInTransaction,
+  ExecutedTransaction,
+  Message
 } from '@radixdlt/application'
 import { ref } from '@nopr3d/vue-next-rx'
 import { useStore } from '@/store'
@@ -171,7 +176,7 @@ import WalletTransaction from './WalletTransaction.vue'
 import WalletLoading from './WalletLoading.vue'
 import AccountEditName from '@/views/Account/AccountEditName.vue'
 import SettingsIndex from '@/views/Settings/index.vue'
-import { filter, mergeMap } from 'rxjs/operators'
+import { filter, mergeMap, map } from 'rxjs/operators'
 import { getDerivedAccountsIndex, saveDerivedAccountsIndex } from '@/actions/vue/data-store'
 import { useI18n } from 'vue-i18n'
 
@@ -212,6 +217,8 @@ const WalletIndex = defineComponent({
     const accounts: Ref<AccountsT | null> = ref(null)
     const tokenBalances: Ref<TokenBalances | null> = ref(null)
     const transactionHistory: Ref<TransactionHistory> = ref({ transactions: [] })
+    const transactionMessages: Ref<{id: string, message: string | null}[]> = ref([])
+    const activeMessageInTransaction: Ref<MessageInTransaction | null> = ref(null)
     const shouldShowConfirmation: Ref<boolean> = ref(false)
     const transferInput: Ref<TransferTokensInput> = ref({})
     const stakeInput: Ref<StakeTokensInput> = ref({})
@@ -226,6 +233,7 @@ const WalletIndex = defineComponent({
     const nativeToken: Ref<Token | null> = ref(null)
     const selectedCurrency: Ref<TokenBalance | null> = ref(null)
     const nativeTokenBalance: Ref<TokenBalance | null> = ref(null)
+    const activeMessage: Ref<string> = ref('')
 
     const loadingBalances: Ref<boolean> = ref(true)
     const loadingHistory: Ref<boolean> = ref(true)
@@ -327,15 +335,45 @@ const WalletIndex = defineComponent({
       historyPagination.asObservable(),
       interval(5 * 1_000)
     ])
+
+    const isHexEncoded = (value: string): boolean => {
+      const buffer = Buffer.from(value, 'hex')
+      const encryptedMessageResult = Message.fromBuffer(buffer)
+      return !encryptedMessageResult.isOk()
+    }
+
+    const parseMessage = (tx: ExecutedTransaction): Promise<{id: string, message: string | null}> => {
+      return new Promise((resolve) => {
+        const id = tx.txID.toString()
+        if (!tx.message) {
+          return resolve({ id, message: null })
+        }
+        if (isHexEncoded(tx.message)) {
+          return resolve({ id, message: Buffer.from(tx.message, 'hex').toString('utf8') })
+        }
+        firstValueFrom(radix.decryptTransaction(tx)).then((val) => {
+          return resolve({ id, message: val })
+        })
+      })
+    }
+
     subs.add(fetchTXHistoryTrigger
-      .pipe(mergeMap(([params]: [TransactionHistoryOfKnownAddressRequestInput, number]) => {
-        return radix.transactionHistory(params)
-      }))
+      .pipe(
+        mergeMap(([params]: [TransactionHistoryOfKnownAddressRequestInput, number]) => {
+          return radix.transactionHistory(params)
+        }),
+        map((history: TransactionHistory) => {
+          const allMessages = history.transactions.map((tx: ExecutedTransaction) => parseMessage(tx))
+          Promise.all(allMessages).then((data) => { transactionMessages.value = data })
+          return history
+        })
+      )
       .subscribe((history: TransactionHistory) => {
         loadingHistory.value = false
         loadingHistoryPage.value = false
         if (history.cursor && history.transactions.length === PAGE_SIZE) canGoNext.value = true
         else canGoNext.value = false
+        // console.log('history', history)
         transactionHistory.value = history
       }))
 
@@ -393,6 +431,7 @@ const WalletIndex = defineComponent({
         .pipe(filter((trackingEvent: TransactionStateUpdate) => trackingEvent.eventUpdateType === 'INITIATED'))
         .subscribe((res: TransactionStateUpdate) => {
           const transactionIntent = res as unknown as TransactionIntent
+          console.log('transactionintent', transactionIntent)
           draftTransaction.value = transactionIntent
         }))
 
@@ -452,22 +491,26 @@ const WalletIndex = defineComponent({
         if (didCancel) {
           cleanupTransactionSubs()
           shouldShowConfirmation.value = false
+          activeMessage.value = ''
         }
       })
 
       subs.add(transactionDidComplete.subscribe((didComplete: boolean) => {
         if (didComplete) {
           cleanupTransactionSubs()
+          activeMessage.value = ''
           historyPagination.next({ size: PAGE_SIZE })
         }
       }))
     }
 
     // call transferTokens() with built options and subscribe to confirmation and results
-    const transferTokens = (transferTokensInput: TransferTokensInput, sc: TokenBalance) => {
+    const transferTokens = (transferTokensInput: TransferTokensInput, message: MessageInTransaction, sc: TokenBalance) => {
       let pollTXStatusTrigger: Observable<unknown>
       transferInput.value = transferTokensInput
       selectedCurrency.value = sc
+      activeMessage.value = message.plaintext
+      activeMessageInTransaction.value = message
       const buildTransferTokens = (): TransferTokensOptions => ({
         transferInput: transferTokensInput,
         userConfirmation: userConfirmation,
@@ -476,7 +519,8 @@ const WalletIndex = defineComponent({
 
       const transactionTracking: TransactionTracking = radix.transferTokens({
         ...buildTransferTokens(),
-        userConfirmation
+        userConfirmation,
+        message
       })
 
       confirmAndExecuteTransaction(transactionTracking)
@@ -553,7 +597,7 @@ const WalletIndex = defineComponent({
         }
       }
       subs.add(from(
-        fetch('https://betanet-faucet.radixdlt.com/faucet/request', {
+        fetch('https://sandpitnet-faucet.radixdlt.com/faucet/request', {
           method: 'POST',
           mode: 'no-cors',
           headers: { 'Content-Type': 'application/json' },
@@ -573,6 +617,7 @@ const WalletIndex = defineComponent({
       activeUnstakes,
       tokenBalances,
       transactionHistory,
+      transactionMessages,
       transactionFee,
       transferInput,
       stakeInput,
@@ -584,6 +629,9 @@ const WalletIndex = defineComponent({
       loadingBalances,
       loadingHistory,
       transactionState,
+      activeMessage,
+      activeMessageInTransaction,
+      radix,
 
       // view flags
       view,
@@ -615,6 +663,11 @@ const WalletIndex = defineComponent({
   methods: {
     setView (view: string) {
       this.view = view
+    }
+  },
+  computed: {
+    loaded () : boolean {
+      return this.activeAddress != null && this.activeStakes != null && this.activeUnstakes != null && this.tokenBalances != null && this.nativeToken != null
     }
   }
 })

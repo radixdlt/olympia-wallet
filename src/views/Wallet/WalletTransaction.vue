@@ -70,16 +70,19 @@
               </div>
             </div>
 
-            <div v-show="messagesEnabled" class="border-b border-rGray  py-7 flex items-center">
+            <div class="border-b border-rGray  py-7 flex items-center">
               <div class="w-32 text-right text-rGrayDark mr-8">{{ $t('transaction.messageLabel') }}</div>
               <div class="flex-1 pr-8">
-                <FormField
-                  name="message"
-                  type="text"
-                  class="w-full"
-                  :placeholder="$t('transaction.messagePlaceholder')"
-                  rules=""
-                />
+                <div class="flex items-center">
+                  <FormField
+                    name="message"
+                    type="text"
+                    class="w-full"
+                    :placeholder="$t('transaction.messagePlaceholder')"
+                    rules=""
+                  />
+                  <FormCheckbox name="encrypt" label="Encrypt" :value="true"/>
+                </div>
                 <FormErrorMessage name="message" class="text-sm text-red-400" />
               </div>
             </div>
@@ -122,17 +125,20 @@ import ButtonSubmit from '@/components/ButtonSubmit.vue'
 import { asBigNumber } from '@/components/BigAmount.vue'
 import LoadingIcon from '@/components/LoadingIcon.vue'
 import TokenSymbol from '@/components/TokenSymbol.vue'
+import FormCheckbox from '@/components/FormCheckbox.vue'
 
 interface TransactionForm {
   recipient: string;
   amount: number;
   message: string;
+  encrypt: boolean;
 }
 
 const WalletTransaction = defineComponent({
   components: {
     ButtonSubmit,
     ClickToCopy,
+    FormCheckbox,
     FormField,
     FormErrorMessage,
     LoadingIcon,
@@ -181,12 +187,6 @@ const WalletTransaction = defineComponent({
     }
   },
 
-  data () {
-    return {
-      messagesEnabled: false
-    }
-  },
-
   computed: {
     selectedCurrency (): TokenBalance | null {
       if (this.tokenBalances.length <= 0) return null
@@ -226,7 +226,12 @@ const WalletTransaction = defineComponent({
             to: safeAddress,
             amount: safeAmount,
             tokenIdentifier: token.rri.toString()
-          }, this.selectedCurrency)
+          },
+          {
+            plaintext: this.values.message,
+            encrypt: this.values.encrypt
+          },
+          this.selectedCurrency)
         }
       }
     }
