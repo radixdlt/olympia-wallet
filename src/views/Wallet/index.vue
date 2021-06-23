@@ -6,9 +6,7 @@
       :activeView="view"
       @open="sidebar = 'accounts'"
       @setView="setView"
-    >
-    </wallet-sidebar-default>
-
+    />
     <wallet-sidebar-accounts
       v-if="sidebar == 'accounts'"
       :accounts="accounts"
@@ -17,9 +15,7 @@
       @addAccount="() => { addAccount() ; view = 'editName' }"
       @switchAccount="switchAccount"
       @editName="setView('editName')"
-    >
-    </wallet-sidebar-accounts>
-
+    />
     <template v-if="loaded">
       <template v-if="view == 'overview'">
         <wallet-overview
@@ -31,28 +27,21 @@
           :nativeToken="nativeToken"
           :nativeTokenBalance="nativeTokenBalance"
           @requestFreeTokens="requestFreeTokens"
-        >
-        </wallet-overview>
-         <wallet-loading
-          v-else
-        >
-        </wallet-loading>
+        />
+        <wallet-loading v-else />
       </template>
 
       <template v-if="view == 'transaction'">
         <wallet-transaction
-          v-show="!loadingBalances"
+          v-if="!loadingBalances"
           :activeAddress="activeAddress"
           :tokenBalances="tokenBalances.tokenBalances"
           :nativeToken="nativeToken"
+          :transactionFee="transactionFee"
           @transferTokens="transferTokens"
           ref="walletTransactionComponent"
-        >
-        </wallet-transaction>
-        <wallet-loading
-          v-if="loadingBalances"
-        >
-        </wallet-loading>
+        />
+        <wallet-loading v-else />
       </template>
 
       <template v-if="view == 'staking'">
@@ -67,13 +56,8 @@
           @stakeTokens="stakeTokens"
           @unstakeTokens="unstakeTokens"
           ref="walletStakingComponent"
-        >
-        </wallet-staking>
-        <wallet-loading
-          v-else
-        >
-        </wallet-loading>
-
+        />
+        <wallet-loading v-else />
       </template>
 
       <template v-if="view == 'history'">
@@ -90,12 +74,8 @@
           @refresh="refreshHistory"
           @next="nextPage"
           @previous="previousPage"
-        >
-        </wallet-history>
-        <wallet-loading
-          v-else
-        >
-        </wallet-loading>
+        />
+        <wallet-loading v-else />
       </template>
 
       <wallet-confirm-transaction-modal
@@ -110,20 +90,15 @@
         :activeMessage="activeMessageInTransaction"
         @cancel="cancelTransaction"
         @confirm="confirmTransaction"
-      >
-      </wallet-confirm-transaction-modal>
+      />
 
       <account-edit-name
         v-if="view == 'editName'"
         :activeAddress="activeAddress"
         @save="view = 'overview'; sidebar = 'default'"
-      >
-      </account-edit-name>
+      />
 
-      <settings-index
-        v-if="view == 'settings' && !loading"
-      >
-      </settings-index>
+      <settings-index v-if="view == 'settings' && !loading" />
     </template>
   </div>
 </template>
