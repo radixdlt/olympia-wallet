@@ -30,6 +30,7 @@
           :key="i"
           :transaction="txn.tx"
           :message="txn.message"
+          :encrypted="txn.encrypted"
           :index="i"
           :activeAddress="activeAddress"
           :pending="false"
@@ -93,7 +94,7 @@ const WalletHistory = defineComponent({
       default: []
     },
     messages: {
-      type: Array as PropType<Array<{id: string, message: string | null}>>,
+      type: Array as PropType<Array<{id: string, encrypted: boolean, message: string | null}>>,
       required: true,
       default: []
     },
@@ -127,12 +128,13 @@ const WalletHistory = defineComponent({
   emits: ['next', 'previous'],
 
   computed: {
-    transactionsWithMessages (): {tx: ExecutedTransaction, message: string | null}[] {
+    transactionsWithMessages (): {tx: ExecutedTransaction, message: string | null, encrypted: boolean}[] {
       return this.transactions.map((tx) => {
         const msg = this.messages.find((msg) => msg.id === tx.txID.toString())
         return {
           tx: tx,
-          message: msg ? msg.message : null
+          message: msg ? msg.message : null,
+          encrypted: msg ? msg.encrypted : false
         }
       })
     }
