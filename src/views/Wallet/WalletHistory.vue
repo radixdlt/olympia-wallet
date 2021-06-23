@@ -14,27 +14,29 @@
     </div>
 
     <div class="text-rBlack py-6 min-h-full">
-      <transaction-list-item
-        v-for="(txn, i) in pendingTransactions"
-        :key="i"
-        :transaction="txn"
-        :index="i"
-        :activeAddress="activeAddress"
-        :pending="true"
-        :nativeToken="nativeToken"
-      />
+      <div v-if="!loadingHistoryPage">
+        <transaction-list-item
+          v-for="(txn, i) in pendingTransactions"
+          :key="i"
+          :transaction="txn"
+          :index="i"
+          :activeAddress="activeAddress"
+          :pending="true"
+          :nativeToken="nativeToken"
+        />
 
-      <transaction-list-item
-        v-for="(txn, i) in transactions"
-        :key="i"
-        :transaction="txn"
-        :index="i"
-        :activeAddress="activeAddress"
-        :pending="false"
-        :nativeToken="nativeToken"
-      />
+        <transaction-list-item
+          v-for="(txn, i) in transactions"
+          :key="i"
+          :transaction="txn"
+          :index="i"
+          :activeAddress="activeAddress"
+          :pending="false"
+          :nativeToken="nativeToken"
+        />
+      </div>
 
-      <!-- <div class="flex flex-row items-center text-rGrayDark justify-between py-5">
+      <div class="flex flex-row items-center text-rGrayDark justify-between py-5 px-8">
         <button v-if="canGoBack" @click="$emit('previous')" class="flex flex-row items-center hover:text-rGreen transition-colors">
           <svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr-3">
             <g clip-path="url(#clip0)">
@@ -65,7 +67,7 @@
           </svg>
         </button>
         <div v-else></div>
-      </div> -->
+      </div>
     </div>
   </div>
 </template>
@@ -103,6 +105,10 @@ const WalletHistory = defineComponent({
       required: true
     },
     canGoNext: {
+      type: Boolean,
+      required: true
+    },
+    loadingHistoryPage: {
       type: Boolean,
       required: true
     },

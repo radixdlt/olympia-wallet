@@ -84,6 +84,7 @@
           :pendingTransactions="pendingTransactions"
           :canGoBack="cursorStack.length > 0"
           :canGoNext="canGoNext"
+          :loadingHistoryPage="loadingHistoryPage"
           :nativeToken="nativeToken"
           @refresh="refreshHistory"
           @next="nextPage"
@@ -174,7 +175,7 @@ import { filter, mergeMap } from 'rxjs/operators'
 import { getDerivedAccountsIndex, saveDerivedAccountsIndex } from '@/actions/vue/data-store'
 import { useI18n } from 'vue-i18n'
 
-const PAGE_SIZE = 100
+const PAGE_SIZE = 50
 
 export interface PendingTransaction extends TransactionStateSuccess {
   actions: IntendedAction[];
@@ -228,6 +229,8 @@ const WalletIndex = defineComponent({
 
     const loadingBalances: Ref<boolean> = ref(true)
     const loadingHistory: Ref<boolean> = ref(true)
+    const loadingHistoryPage: Ref<boolean> = ref(true)
+
     // can be building, confirm, submitting
     const transactionState: Ref<string> = ref('confirm')
 
@@ -249,6 +252,7 @@ const WalletIndex = defineComponent({
     const startLoading = () => {
       loadingBalances.value = true
       loadingHistory.value = true
+      loadingHistoryPage.value = true
     }
 
     // Return home if wallet is undefined
@@ -329,7 +333,8 @@ const WalletIndex = defineComponent({
       }))
       .subscribe((history: TransactionHistory) => {
         loadingHistory.value = false
-        if (history.cursor) canGoNext.value = true
+        loadingHistoryPage.value = false
+        if (history.cursor && history.transactions.length === PAGE_SIZE) canGoNext.value = true
         else canGoNext.value = false
         transactionHistory.value = history
       }))
@@ -524,6 +529,7 @@ const WalletIndex = defineComponent({
     }
 
     const nextPage = () => {
+      loadingHistoryPage.value = true
       cursorStack.value.push(transactionHistory.value.cursor)
       historyPagination.next({
         size: PAGE_SIZE,
@@ -532,6 +538,7 @@ const WalletIndex = defineComponent({
     }
 
     const previousPage = () => {
+      loadingHistoryPage.value = true
       cursorStack.value.pop()
       historyPagination.next({
         size: PAGE_SIZE,
