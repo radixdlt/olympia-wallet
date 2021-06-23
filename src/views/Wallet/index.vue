@@ -217,7 +217,7 @@ const WalletIndex = defineComponent({
     const accounts: Ref<AccountsT | null> = ref(null)
     const tokenBalances: Ref<TokenBalances | null> = ref(null)
     const transactionHistory: Ref<TransactionHistory> = ref({ transactions: [] })
-    const transactionMessages: Ref<{id: string, message: string | null}[]> = ref([])
+    const transactionMessages: Ref<{id: string, encrypted: boolean, message: string | null}[]> = ref([])
     const activeMessageInTransaction: Ref<MessageInTransaction | null> = ref(null)
     const shouldShowConfirmation: Ref<boolean> = ref(false)
     const transferInput: Ref<TransferTokensInput> = ref({})
@@ -342,17 +342,17 @@ const WalletIndex = defineComponent({
       return !encryptedMessageResult.isOk()
     }
 
-    const parseMessage = (tx: ExecutedTransaction): Promise<{id: string, message: string | null}> => {
+    const parseMessage = (tx: ExecutedTransaction): Promise<{id: string, encrypted: boolean, message: string | null}> => {
       return new Promise((resolve) => {
         const id = tx.txID.toString()
         if (!tx.message) {
-          return resolve({ id, message: null })
+          return resolve({ id, message: null, encrypted: false })
         }
         if (isHexEncoded(tx.message)) {
-          return resolve({ id, message: Buffer.from(tx.message, 'hex').toString('utf8') })
+          return resolve({ id, message: Buffer.from(tx.message, 'hex').toString('utf8'), encrypted: false })
         }
         firstValueFrom(radix.decryptTransaction(tx)).then((val) => {
-          return resolve({ id, message: val })
+          return resolve({ id, message: val, encrypted: true })
         })
       })
     }

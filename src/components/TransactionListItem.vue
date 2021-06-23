@@ -54,11 +54,18 @@
         </div>
       </div>
       <div v-if="message" class="text-sm px-3 py-2 bg-rGrayLightest bg-opacity-60 flex items-center">
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr-1 h-5">
-          <path d="M15 5H5V11.1288H10.9545L13.3094 13.3889V11.1288H15V5Z" stroke="#7A99AC" stroke-miterlimit="10"/>
-          <line x1="6.2002" y1="7" x2="13.7002" y2="7" stroke="#7A99AC"/>
-          <line x1="6.2002" y1="9" x2="13.7002" y2="9" stroke="#7A99AC"/>
-        </svg>
+        <div class="h-5 w-6 flex items-center justify-center -ml-1 mr-1">
+          <svg width="10" height="12" viewBox="0 0 10 12" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-5" v-if="encrypted">
+            <path d="M2.04883 4.93512V3.79987C2.04883 2.25355 3.30238 1 4.8487 1C6.39502 1 7.64857 2.25355 7.64857 3.79987V4.93512" stroke="#7A99AC" stroke-width="1.5" stroke-miterlimit="10"/>
+            <path d="M1 11.4001V4.84473H2.13447H7.58739H8.72185V11.0556H2.60558" stroke="#7A99AC" stroke-width="1.5" stroke-miterlimit="10"/>
+          </svg>
+
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-5" v-else>
+            <path d="M15 5H5V11.1288H10.9545L13.3094 13.3889V11.1288H15V5Z" stroke="#7A99AC" stroke-miterlimit="10"/>
+            <line x1="6.2002" y1="7" x2="13.7002" y2="7" stroke="#7A99AC"/>
+            <line x1="6.2002" y1="9" x2="13.7002" y2="9" stroke="#7A99AC"/>
+          </svg>
+        </div>
 
         <span>{{ message }}</span>
       </div>
@@ -116,6 +123,11 @@ export default defineComponent({
       type: String as PropType<string>,
       required: false,
       default: null
+    },
+    encrypted: {
+      type: Boolean,
+      requried: false,
+      default: false
     }
   },
 
