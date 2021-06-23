@@ -109,7 +109,8 @@ const messages = {
       insufficientFunds: 'Sorry, but you don\'t have any tokens to send!',
       recipientPlaceholder: 'Enter address',
       amountPlaceholder: 'Available balance ...',
-      messagePlaceholder: 'Add an optional message'
+      messagePlaceholder: 'Add an optional message',
+      enterPin: 'Enter Your Pin'
     },
     staking: {
       currentStakesHeading: 'Current Stakes',
