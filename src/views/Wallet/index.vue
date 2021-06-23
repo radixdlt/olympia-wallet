@@ -628,6 +628,7 @@ const WalletIndex = defineComponent({
       selectedCurrency,
       loadingBalances,
       loadingHistory,
+      loadingHistoryPage,
       transactionState,
       activeMessage,
       activeMessageInTransaction,
