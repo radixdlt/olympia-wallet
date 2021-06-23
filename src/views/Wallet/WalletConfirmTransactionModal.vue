@@ -57,7 +57,7 @@
             </div>
           </div>
 
-          <div class="border-b border-rGray py-3.5 flex items-center">
+          <div class="border-b border-rGray py-3.5 flex items-center" v-if="activeMessage">
             <div class="w-24 text-right text-rGrayDark mr-8">{{ $t('transaction.messageLabel') }}</div>
             <div class="flex-1">
               <div class="flex">
