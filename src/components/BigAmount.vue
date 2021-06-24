@@ -1,14 +1,14 @@
 <template>
-  <span
-    @mouseover="setHover(true)"
-    @mouseleave="setHover(false)"
-  >
-    {{ asBigNumber }}
+  <span class="relative inline-flex flex-col items-center group cursor-pointer" @click.stop="copyText">
+    <span>{{numberForDisplay}}</span>
+    <div class="absolute invisible group-hover:visible -mt-full bg-black text-white bottom-full text-xs p-1 rounded-sm shadow">
+      {{fullNumber}}
+    </div>
   </span>
-  <span v-if="hover">{{ asBigNumber }}</span>
 </template>
 
 <script lang="ts">
+import { copyToClipboard } from '@/actions/vue/create-wallet'
 import { defineComponent, PropType } from 'vue'
 import { AmountT } from '@radixdlt/application'
 import BigNumber from 'bignumber.js'
@@ -92,7 +92,7 @@ const formattBigNumber = (x: BigNumber, showFull = false, format: BigNumber.Form
   return z.toFormat(format)
 }
 
-export const asBigNumber = (amount: AmountT, showFull = false) => {
+export const asBigNumber = (amount: AmountT, showFull = false) : string => {
   const bigNumber = new BigNumber(amount.toString())
   const shiftedAmount = bigNumber.shiftedBy(-18) // Atto
 
@@ -104,26 +104,23 @@ const BigAmount = defineComponent({
     amount: {
       type: Object as PropType<AmountT>,
       required: true
-    },
-    hover: {
-      type: Boolean,
-      required: true,
-      default: false
-    },
-  
-  },
-
-
-  methods: {
-    setHover (value: Boolean) {
-       this.hover = value
     }
   },
 
-
   computed: {
-    asBigNumber (showFull = false): string {
-      return asBigNumber(this.amount, showFull)
+    numberForDisplay (): string {
+      return asBigNumber(this.amount, false)
+    },
+
+    fullNumber (): string {
+      return asBigNumber(this.amount, true)
+    }
+  },
+
+  methods: {
+    copyText () {
+      const value = asBigNumber(this.amount, true).replaceAll(',', '')
+      copyToClipboard(value)
     }
   }
 })

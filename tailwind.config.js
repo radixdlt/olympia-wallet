@@ -31,7 +31,10 @@ module.exports = {
         headerHeight: '6.4rem'
       },
       width: {
-        '120':'30rem'
+        120: '30rem'
+      },
+      margin: {
+        '-full': '-100%'
       }
     },
     filter: {
@@ -52,10 +55,9 @@ module.exports = {
     extend: {
       backgroundColor: ['active'],
       textColor: ['active'],
-      padding: ['odd'],
-      padding: ['even'],
-      margin: ['odd'],
-      margin: ['even']
+      padding: ['odd', 'even'],
+      margin: ['odd', 'even'],
+      visibility: ['group-hover']
     }
   },
   plugins: [
