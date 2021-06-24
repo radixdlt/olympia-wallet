@@ -176,7 +176,7 @@ import WalletTransaction from './WalletTransaction.vue'
 import WalletLoading from './WalletLoading.vue'
 import AccountEditName from '@/views/Account/AccountEditName.vue'
 import SettingsIndex from '@/views/Settings/index.vue'
-import { filter, mergeMap, map } from 'rxjs/operators'
+import { filter, mergeMap, map, switchMap } from 'rxjs/operators'
 import { getDerivedAccountsIndex, saveDerivedAccountsIndex } from '@/actions/vue/data-store'
 import { useI18n } from 'vue-i18n'
 
@@ -281,9 +281,15 @@ const WalletIndex = defineComponent({
     }))
     subs.add(radix.activeAccount.subscribe((account: AccountT) => { activeAccount.value = account }))
     subs.add(radix.stakingPositions.subscribe((stakes: StakePositions) => { activeStakes.value = stakes }))
-    subs.add(radix.unstakingPositions.subscribe((unstakes: UnstakePositions) => { activeUnstakes.value = unstakes }))
     subs.add(radix.accounts.subscribe((accountsRes: AccountsT) => { accounts.value = accountsRes }))
     subs.add(radix.activeAddress.subscribe((addressRes: AccountAddressT) => { activeAddress.value = addressRes }))
+
+    subs.add(radix.activeAddress.pipe(
+      switchMap((res: AccountAddressT) => radix.ledger.unstakesForAddress(res))
+    ).subscribe((unstakes: UnstakePositions) => {
+      activeUnstakes.value = unstakes
+    }))
+
     subs.add(radix.ledger.nativeToken().subscribe((nativeTokenRes: Token) => { nativeToken.value = nativeTokenRes }))
 
     const fetchNativeTokenBalanceTrigger = combineLatest<[TokenBalances, Token]>([
