@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.8.0](https://www.github.com/radixdlt/olympia-wallet/compare/v0.7.6...v0.8.0) (2021-06-24)
+
+
+### Features
+
+* Transactions can be pagianted. ([#123](https://www.github.com/radixdlt/olympia-wallet/issues/123)) ([85410f9](https://www.github.com/radixdlt/olympia-wallet/commit/85410f9d5b5c1816e01107da8f957027a13c717a))
+* Transfers can have messages that can be encrypted ([#128](https://www.github.com/radixdlt/olympia-wallet/issues/128)) ([e3c82e5](https://www.github.com/radixdlt/olympia-wallet/commit/e3c82e5c1c26ee5254d52fed53ba86c4f7c3530d))
+
+
+### Bug Fixes
+
+* Replace number inputs with validated text fields ([#121](https://www.github.com/radixdlt/olympia-wallet/issues/121)) ([690a541](https://www.github.com/radixdlt/olympia-wallet/commit/690a541b66127a9f7480cf06b313b2f5c6b6c300))
+* Staking Confrmation Modal does include a message ([#132](https://www.github.com/radixdlt/olympia-wallet/issues/132)) ([6cc1965](https://www.github.com/radixdlt/olympia-wallet/commit/6cc1965835f601c5845d18ec987fdb7300671e41))
+* Unstakes should include stakes from all epochs ([#131](https://www.github.com/radixdlt/olympia-wallet/issues/131)) ([543a162](https://www.github.com/radixdlt/olympia-wallet/commit/543a162f881f7626db627677685e9d546a098d0d))
+
+
+### Code Style
+
+* Confirmation Modal should include a label for the PIN input ([#124](https://www.github.com/radixdlt/olympia-wallet/issues/124)) ([184037d](https://www.github.com/radixdlt/olympia-wallet/commit/184037d48c3a3f6b1e307d1642394326fe95ad04))
+* encrypted messages should show a lock ([#130](https://www.github.com/radixdlt/olympia-wallet/issues/130)) ([b605ddc](https://www.github.com/radixdlt/olympia-wallet/commit/b605ddc87bc1717cf239afb116d7ab0ef70e3c8d))
+* Remove the .envrc from git since it should be ignored and unique per local environment. ([#122](https://www.github.com/radixdlt/olympia-wallet/issues/122)) ([ee5f6ba](https://www.github.com/radixdlt/olympia-wallet/commit/ee5f6ba8a35b8b854d0b33e943bd9378972c8e10))
+
 ### [0.7.6](https://www.github.com/radixdlt/olympia-wallet/compare/v0.7.5...v0.7.6) (2021-06-16)
 
 
