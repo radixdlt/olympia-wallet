@@ -171,6 +171,10 @@ const WalletConfirmTransactionModal = defineComponent({
     activeMessage: {
       type: Object as PropType<MessageInTransaction>,
       required: false
+    },
+    hasCalculatedFee: {
+      type: Boolean,
+      required: true
     }
   },
 

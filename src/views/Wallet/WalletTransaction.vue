@@ -47,7 +47,6 @@
                     name="amount"
                     label="Amount"
                     class="focus:outline-none focus:ring-transparent focus:shadow-none focus:border-rGreen border-t-0 border-l-0 border-r-0 border-b border-rBlack px-0"
-                    :placeholder="amountPlaceholder"
                     :rules="{
                       required: true,
                       validAmount: true,
@@ -60,6 +59,7 @@
                       type="text"
                       @blur="findFee"
                       @input="findFee"
+                      :placeholder="amountPlaceholder"
                       class="focus:outline-none focus:ring-transparent focus:shadow-none focus:border-rGreen border-t-0 border-l-0 border-r-0 border-b border-rBlack px-0 w-full"
                     >
                   </Field>
@@ -88,7 +88,6 @@
                     <Field
                       name="message"
                       label="Message"
-                      :placeholder="$t('transaction.messagePlaceholder')"
                       :rules="{
                         max: 160
                       }"
@@ -98,6 +97,7 @@
                       type="text"
                       @blur="findFee"
                       @input="findFee"
+                      :placeholder="$t('transaction.messagePlaceholder')"
                       class="focus:outline-none focus:ring-transparent focus:shadow-none focus:border-rGreen border-t-0 border-l-0 border-r-0 border-b border-rBlack px-0 w-full"
                     >
                     </Field>
