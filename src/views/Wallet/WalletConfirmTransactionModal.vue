@@ -134,11 +134,8 @@ const WalletConfirmTransactionModal = defineComponent({
     TokenSymbol
   },
 
-  setup (props) {
+  setup () {
     const { errors, meta, values, setErrors, resetForm } = useForm<ConfirmationForm>()
-
-    console.log('here', props)
-
     return { errors, meta, values, setErrors, resetForm }
   },
 
@@ -174,6 +171,10 @@ const WalletConfirmTransactionModal = defineComponent({
     activeMessage: {
       type: Object as PropType<MessageInTransaction>,
       required: false
+    },
+    hasCalculatedFee: {
+      type: Boolean,
+      required: true
     },
     confirmationMode: {
       type: String,

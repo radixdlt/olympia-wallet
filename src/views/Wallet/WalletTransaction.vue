@@ -42,17 +42,27 @@
               <div class="w-32 text-right text-rGrayDark mr-8">{{ $t('transaction.amountLabel') }}</div>
               <div class="flex-1 flex items-start pr-8">
                 <div class="flex flex-col flex-1 mr-3">
-                  <FormField
-                    name="amount"
+                  <Field
                     type="text"
-                    class="w-full"
-                    :placeholder="amountPlaceholder"
+                    name="amount"
+                    label="Amount"
+                    class="focus:outline-none focus:ring-transparent focus:shadow-none focus:border-rGreen border-t-0 border-l-0 border-r-0 border-b border-rBlack px-0"
                     :rules="{
                       required: true,
                       validAmount: true,
                       insufficientFunds: this.selectedCurrency.amount.toString()
                     }"
-                  />
+                    v-slot="{field}"
+                  >
+                    <input
+                      v-bind="field"
+                      type="text"
+                      @blur="findFee"
+                      @input="findFee"
+                      :placeholder="amountPlaceholder"
+                      class="focus:outline-none focus:ring-transparent focus:shadow-none focus:border-rGreen border-t-0 border-l-0 border-r-0 border-b border-rBlack px-0 w-full"
+                    >
+                  </Field>
                   <FormErrorMessage name="amount" class="text-sm text-red-400" />
                 </div>
                 <select
@@ -74,14 +84,25 @@
               <div class="w-32 text-right text-rGrayDark mr-8">{{ $t('transaction.messageLabel') }}</div>
               <div class="flex-1 pr-8">
                 <div class="flex items-center">
-                  <FormField
-                    name="message"
-                    type="text"
-                    class="w-full"
-                    :placeholder="$t('transaction.messagePlaceholder')"
-                    rules=""
-                  />
-                  <FormCheckbox name="encrypt" label="Encrypt" :value="true"/>
+                  <div class="flex-1 mr-3">
+                    <Field
+                      name="message"
+                      label="Message"
+                      :rules="{
+                        max: 160
+                      }"
+                      v-slot="{field}">
+                    <input
+                      v-bind="field"
+                      type="text"
+                      @blur="findFee"
+                      @input="findFee"
+                      :placeholder="$t('transaction.messagePlaceholder')"
+                      class="focus:outline-none focus:ring-transparent focus:shadow-none focus:border-rGreen border-t-0 border-l-0 border-r-0 border-b border-rBlack px-0 w-full"
+                    >
+                    </Field>
+                  </div>
+                  <FormCheckbox name="encrypt" label="Encrypt" :value="true" @change="findFee"/>
                 </div>
                 <FormErrorMessage name="message" class="text-sm text-red-400" />
               </div>
@@ -91,7 +112,8 @@
               <div class="w-32 text-right text-rGrayDark mr-8">{{ $t('transaction.feeLabel') }}</div>
               <div class="flex-1 text-2xl font-light">
                 <div class="flex inline-block items-center">
-                0.1
+                <big-amount :amount="transactionFee" class="mr-4" v-if="hasCalculatedFee"/>
+                <span class="mr-4" v-else>--</span>
                 <token-symbol class="ml-2">{{ nativeToken.symbol }}</token-symbol></div>
               </div>
             </div>
@@ -115,14 +137,16 @@
 
 <script lang="ts">
 import { defineComponent, PropType, Ref, ref, watch } from 'vue'
+import { Field, useForm } from 'vee-validate'
+import { debounce } from 'ts-debounce'
+
 import { safelyUnwrapAddress, safelyUnwrapAmount, validateAmountOfType, validateGreaterThanZero } from '@/helpers/validateRadixTypes'
-import { Token, TokenBalance, AccountAddressT } from '@radixdlt/application'
-import { useForm } from 'vee-validate'
+import { AmountT, Token, TokenBalance, AccountAddressT } from '@radixdlt/application'
+import BigAmount, { asBigNumber } from '@/components/BigAmount.vue'
 import ClickToCopy from '@/components/ClickToCopy.vue'
 import FormErrorMessage from '@/components/FormErrorMessage.vue'
 import FormField from '@/components/FormField.vue'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
-import { asBigNumber } from '@/components/BigAmount.vue'
 import LoadingIcon from '@/components/LoadingIcon.vue'
 import TokenSymbol from '@/components/TokenSymbol.vue'
 import FormCheckbox from '@/components/FormCheckbox.vue'
@@ -136,13 +160,15 @@ interface TransactionForm {
 
 const WalletTransaction = defineComponent({
   components: {
+    BigAmount,
     ButtonSubmit,
     ClickToCopy,
     FormCheckbox,
     FormField,
     FormErrorMessage,
     LoadingIcon,
-    TokenSymbol
+    TokenSymbol,
+    Field
   },
 
   setup (props) {
@@ -168,7 +194,23 @@ const WalletTransaction = defineComponent({
       if (nativeToken) setXRDByDefault(nativeToken)
     })
 
-    return { errors, values, meta, setErrors, currency, tokenOptions }
+    const sendBuild = debounce(function (this:any) {
+      const safeAddress = safelyUnwrapAddress(this.values.recipient)
+      const safeAmount = safelyUnwrapAmount(Number(this.values.amount))
+      const token = this.selectedCurrency.token
+      this.$emit('buildTransaction', {
+        to: safeAddress,
+        amount: safeAmount,
+        tokenIdentifier: token.rri.toString()
+      },
+      {
+        plaintext: this.values.message,
+        encrypt: this.values.encrypt
+      },
+      this.selectedCurrency)
+    }, 500)
+
+    return { errors, values, meta, setErrors, currency, tokenOptions, sendBuild }
   },
 
   props: {
@@ -184,6 +226,14 @@ const WalletTransaction = defineComponent({
     nativeToken: {
       type: Object as PropType<Token>,
       required: false
+    },
+    transactionFee: {
+      type: Object as PropType<AmountT>,
+      required: false
+    },
+    hasCalculatedFee: {
+      type: Boolean,
+      required: true
     }
   },
 
@@ -205,39 +255,55 @@ const WalletTransaction = defineComponent({
   },
 
   methods: {
-    handleSubmit () {
-      if (this.meta.valid && this.selectedCurrency) {
-        const safeAddress = safelyUnwrapAddress(this.values.recipient)
-        const safeAmount = safelyUnwrapAmount(Number(this.values.amount))
-        const token = this.selectedCurrency.token
-        const greaterThanZero = safeAmount && validateGreaterThanZero(safeAmount)
-        const validAmount = safeAmount && validateAmountOfType(safeAmount, token) && validateGreaterThanZero(safeAmount)
+    validAmount () {
+      if (!this.selectedCurrency) return false
 
-        if (!greaterThanZero) {
-          this.setErrors({
-            amount: this.$t('validations.greaterThanZero')
-          })
-        } else if (!validAmount) {
-          this.setErrors({
-            amount: this.$t('validations.amountOfType', { granularity: token.granularity.toString() })
-          })
-        } else {
-          this.$emit('transferTokens', {
-            to: safeAddress,
-            amount: safeAmount,
-            tokenIdentifier: token.rri.toString()
-          },
-          {
-            plaintext: this.values.message,
-            encrypt: this.values.encrypt
-          },
-          this.selectedCurrency)
-        }
+      const safeAmount = safelyUnwrapAmount(Number(this.values.amount))
+      const token = this.selectedCurrency.token
+      const greaterThanZero = safeAmount && validateGreaterThanZero(safeAmount)
+      const validAmount = safeAmount && validateAmountOfType(safeAmount, token) && validateGreaterThanZero(safeAmount)
+      if (!greaterThanZero) {
+        this.setErrors({
+          amount: this.$t('validations.greaterThanZero')
+        })
+        return false
       }
+
+      if (!validAmount) {
+        this.setErrors({
+          amount: this.$t('validations.amountOfType', { granularity: token.granularity.toString() })
+        })
+        return false
+      }
+      return true
+    },
+
+    handleSubmit () {
+      if (!this.validAmount() || !this.selectedCurrency || !this.meta.valid) { return }
+      const safeAddress = safelyUnwrapAddress(this.values.recipient)
+      const safeAmount = safelyUnwrapAmount(Number(this.values.amount))
+      const token = this.selectedCurrency.token
+
+      this.$emit('transferTokens', {
+        to: safeAddress,
+        amount: safeAmount,
+        tokenIdentifier: token.rri.toString()
+      },
+      {
+        plaintext: this.values.message,
+        encrypt: this.values.encrypt
+      },
+      this.selectedCurrency)
+    },
+
+    findFee () {
+      const safeAddress = safelyUnwrapAddress(this.values.recipient)
+      if (!this.validAmount() || !this.selectedCurrency || !this.meta.valid || !safeAddress) { return }
+      this.sendBuild()
     }
   },
 
-  emits: ['transferTokens']
+  emits: ['transferTokens', 'buildTransaction']
 })
 
 export default WalletTransaction
