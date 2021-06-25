@@ -133,6 +133,14 @@ const messages = {
       availableBalancePlaceholder: 'Enter amount',
       validatorPlaceholder: 'Enter validator address'
     },
+    confirmation: {
+      transferFromLabel: 'Your address',
+      transferToLabel: 'Send to',
+      stakeFromLabel: 'Your address',
+      stakeToLabel: 'Stake to',
+      unstakeFromLabel: 'Your address',
+      unstakeToLabel: 'Unstake from'
+    },
     account: {
       editNameHeading: 'Let’s set the name of your account',
       nameInputPlaceholder: 'Name me!',

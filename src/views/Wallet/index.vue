@@ -106,6 +106,7 @@
         :transactionFee="transactionFee"
         :selectedCurrency="selectedCurrency"
         :nativeToken="nativeToken"
+        :confirmationMode="confirmationMode"
         :transactionState="transactionState"
         :activeMessage="activeMessageInTransaction"
         @cancel="cancelTransaction"
@@ -220,6 +221,7 @@ const WalletIndex = defineComponent({
     const transactionMessages: Ref<{id: string, encrypted: boolean, message: string | null}[]> = ref([])
     const activeMessageInTransaction: Ref<MessageInTransaction | null> = ref(null)
     const shouldShowConfirmation: Ref<boolean> = ref(false)
+    const confirmationMode: Ref<string | null> = ref(null)
     const transferInput: Ref<TransferTokensInput> = ref({})
     const stakeInput: Ref<StakeTokensInput> = ref({})
     const transactionFee: Ref<AmountT> = ref(0)
@@ -517,6 +519,7 @@ const WalletIndex = defineComponent({
       selectedCurrency.value = sc
       activeMessage.value = message.plaintext
       activeMessageInTransaction.value = message
+      confirmationMode.value = 'transfer'
       const buildTransferTokens = (): TransferTokensOptions => ({
         transferInput: transferTokensInput,
         userConfirmation: userConfirmation,
@@ -537,6 +540,7 @@ const WalletIndex = defineComponent({
       let pollTXStatusTrigger: Observable<unknown>
       stakeInput.value = stakeTokensInput
       selectedCurrency.value = nativeTokenBalance.value
+      confirmationMode.value = 'stake'
 
       const buildTransferTokens = (): StakeOptions => ({
         stakeInput: stakeTokensInput,
@@ -557,6 +561,7 @@ const WalletIndex = defineComponent({
       let pollTXStatusTrigger: Observable<unknown>
       stakeInput.value = unstakeTokensInput
       selectedCurrency.value = nativeTokenBalance.value
+      confirmationMode.value = 'unstake'
 
       const buildTransferTokens = (): UnstakeOptions => ({
         unstakeInput: unstakeTokensInput,
@@ -639,6 +644,7 @@ const WalletIndex = defineComponent({
       activeMessage,
       activeMessageInTransaction,
       radix,
+      confirmationMode,
 
       // view flags
       view,
