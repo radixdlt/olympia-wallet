@@ -343,9 +343,12 @@ const WalletIndex = defineComponent({
     ])
 
     const isHexEncoded = (value: string): boolean => {
-      const buffer = Buffer.from(value, 'hex')
-      const encryptedMessageResult = Message.fromBuffer(buffer)
-      return !encryptedMessageResult.isOk()
+      try {
+        Buffer.from(value, 'hex')
+      } catch {
+        return false
+      }
+      return true
     }
 
     const parseMessage = (tx: ExecutedTransaction): Promise<{id: string, encrypted: boolean, message: string | null}> => {
@@ -354,8 +357,8 @@ const WalletIndex = defineComponent({
         if (!tx.message) {
           return resolve({ id, message: null, encrypted: false })
         }
-        if (isHexEncoded(tx.message)) {
-          return resolve({ id, message: Buffer.from(tx.message, 'hex').toString('utf8'), encrypted: false })
+        if (!isHexEncoded(tx.message)) {
+          return resolve({ id, message: tx.message, encrypted: false })
         }
         firstValueFrom(radix.decryptTransaction(tx)).then((val) => {
           return resolve({ id, message: val, encrypted: true })
