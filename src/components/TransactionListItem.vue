@@ -26,7 +26,7 @@
     </div>
     <div class="flex-1">
       <div class="py-3.5 px-3">
-        <div v-for="(action, i) in transaction.actions" :key="i">
+        <div v-for="(action, i) in relatedActions" :key="i">
           <action-list-item-stake-tokens
             v-if="action.type === 'StakeTokens'"
             :action="action"
@@ -83,7 +83,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { ExecutedTransaction, AccountAddressT, Token } from '@radixdlt/application'
+import { ExecutedTransaction, AccountAddressT, Token, ExecutedAction, ActionType } from '@radixdlt/application'
 import { DateTime } from 'luxon'
 import ActionListItemStakeTokens from '@/components/ActionListItemStakeTokens.vue'
 import ActionListItemUnstakeTokens from '@/components/ActionListItemUnstakeTokens.vue'
@@ -137,6 +137,25 @@ export default defineComponent({
     },
     explorerURL (): string {
       return `${process.env.VUE_APP_EXPLORER}/#/transactions/${this.transaction.txID}`
+    },
+
+    relatedActions (): ExecutedAction[] {
+      return this.transaction.actions.filter((action: ExecutedAction) => {
+        let related
+        switch (action.type) {
+          case ActionType.TOKEN_TRANSFER:
+            related = action.to.equals(this.activeAddress) || action.from.equals(this.activeAddress)
+            break
+          case ActionType.STAKE_TOKENS:
+          case ActionType.UNSTAKE_TOKENS:
+            related = action.from.equals(this.activeAddress)
+            break
+          case ActionType.OTHER:
+            related = false
+            break
+        }
+        return related
+      })
     }
   }
 })
