@@ -31,11 +31,11 @@ module.exports = {
         headerHeight: '6.4rem'
       },
       width: {
-        120: '30rem'
+        120: '30rem',
+        26: '6.5rem'
       },
       margin: {
         '-full': '-100%'
-        26: '6.5rem'
       }
     },
     filter: {
