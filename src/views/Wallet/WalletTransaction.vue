@@ -52,13 +52,13 @@
                       validAmount: true,
                       insufficientFunds: this.selectedCurrency.amount.toString()
                     }"
-                    step="any"
                     v-slot="{field}"
                   >
                     <input
                       v-bind="field"
                       ref="amount"
                       type="number"
+                      step="any"
                       @blur="findFee"
                       @input="findFee"
                       :placeholder="amountPlaceholder"
