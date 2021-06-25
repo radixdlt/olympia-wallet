@@ -32,7 +32,8 @@
                 <div class="text-rGrayDark mb-3">{{ $t('staking.amountLabel')}}</div>
                 <FormField
                   name="amount"
-                  type="text"
+                  type="number"
+                  step="any"
                   class="w-full text-sm"
                   :placeholder="amountPlaceholder"
                   rules="required|validAmount"

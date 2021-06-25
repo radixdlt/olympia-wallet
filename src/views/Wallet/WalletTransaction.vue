@@ -43,7 +43,7 @@
               <div class="flex-1 flex items-start pr-8">
                 <div class="flex flex-col flex-1 mr-3">
                   <Field
-                    type="text"
+                    type="number"
                     name="amount"
                     label="Amount"
                     class="focus:outline-none focus:ring-transparent focus:shadow-none focus:border-rGreen border-t-0 border-l-0 border-r-0 border-b border-rBlack px-0"
@@ -52,11 +52,13 @@
                       validAmount: true,
                       insufficientFunds: this.selectedCurrency.amount.toString()
                     }"
+                    step="any"
                     v-slot="{field}"
                   >
                     <input
                       v-bind="field"
-                      type="text"
+                      ref="amount"
+                      type="number"
                       @blur="findFee"
                       @input="findFee"
                       :placeholder="amountPlaceholder"
@@ -111,10 +113,11 @@
             <div class="py-7 flex items-center">
               <div class="w-32 text-right text-rGrayDark mr-8">{{ $t('transaction.feeLabel') }}</div>
               <div class="flex-1 text-2xl font-light">
-                <div class="flex inline-block items-center">
-                <big-amount :amount="transactionFee" class="mr-4" v-if="hasCalculatedFee"/>
-                <span class="mr-4" v-else>--</span>
-                <token-symbol class="ml-2">{{ nativeToken.symbol }}</token-symbol></div>
+                <div class="flex items-center">
+                  <big-amount :amount="transactionFee" class="mr-4" v-if="hasCalculatedFee"/>
+                  <span class="mr-4" v-else>--</span>
+                  <token-symbol class="ml-2">{{ nativeToken.symbol }}</token-symbol>
+                </div>
               </div>
             </div>
           </template>
@@ -194,7 +197,7 @@ const WalletTransaction = defineComponent({
       if (nativeToken) setXRDByDefault(nativeToken)
     })
 
-    const sendBuild = debounce(function (this:any) {
+    const sendBuild = debounce(function (this: any) {
       const safeAddress = safelyUnwrapAddress(this.values.recipient)
       const safeAmount = safelyUnwrapAmount(Number(this.values.amount))
       const token = this.selectedCurrency.token
@@ -208,7 +211,7 @@ const WalletTransaction = defineComponent({
         encrypt: this.values.encrypt
       },
       this.selectedCurrency)
-    }, 500)
+    }, 2000)
 
     return { errors, values, meta, setErrors, currency, tokenOptions, sendBuild }
   },
@@ -297,8 +300,7 @@ const WalletTransaction = defineComponent({
     },
 
     findFee () {
-      const safeAddress = safelyUnwrapAddress(this.values.recipient)
-      if (!this.validAmount() || !this.selectedCurrency || !this.meta.valid || !safeAddress) { return }
+      if (!this.validAmount() || !this.selectedCurrency || !this.meta.valid || !this.values.recipient || !safelyUnwrapAddress(this.values.recipient)) { return }
       this.sendBuild()
     }
   },
