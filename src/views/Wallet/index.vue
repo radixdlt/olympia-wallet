@@ -6,9 +6,7 @@
       :activeView="view"
       @open="sidebar = 'accounts'"
       @setView="setView"
-    >
-    </wallet-sidebar-default>
-
+    />
     <wallet-sidebar-accounts
       v-if="sidebar == 'accounts'"
       :accounts="accounts"
@@ -17,9 +15,7 @@
       @addAccount="() => { addAccount() ; view = 'editName' }"
       @switchAccount="switchAccount"
       @editName="setView('editName')"
-    >
-    </wallet-sidebar-accounts>
-
+    />
     <template v-if="loaded">
       <template v-if="view == 'overview'">
         <wallet-overview
@@ -31,28 +27,23 @@
           :nativeToken="nativeToken"
           :nativeTokenBalance="nativeTokenBalance"
           @requestFreeTokens="requestFreeTokens"
-        >
-        </wallet-overview>
-         <wallet-loading
-          v-else
-        >
-        </wallet-loading>
+        />
+        <wallet-loading v-else />
       </template>
 
       <template v-if="view == 'transaction'">
         <wallet-transaction
-          v-show="!loadingBalances"
+          v-if="!loadingBalances"
           :activeAddress="activeAddress"
           :tokenBalances="tokenBalances.tokenBalances"
           :nativeToken="nativeToken"
+          :transactionFee="transactionFee"
+          :hasCalculatedFee="hasCalculatedFee"
           @transferTokens="transferTokens"
+          @buildTransaction="buildTransaction"
           ref="walletTransactionComponent"
-        >
-        </wallet-transaction>
-        <wallet-loading
-          v-if="loadingBalances"
-        >
-        </wallet-loading>
+        />
+        <wallet-loading v-else />
       </template>
 
       <template v-if="view == 'staking'">
@@ -67,13 +58,8 @@
           @stakeTokens="stakeTokens"
           @unstakeTokens="unstakeTokens"
           ref="walletStakingComponent"
-        >
-        </wallet-staking>
-        <wallet-loading
-          v-else
-        >
-        </wallet-loading>
-
+        />
+        <wallet-loading v-else />
       </template>
 
       <template v-if="view == 'history'">
@@ -90,12 +76,8 @@
           @refresh="refreshHistory"
           @next="nextPage"
           @previous="previousPage"
-        >
-        </wallet-history>
-        <wallet-loading
-          v-else
-        >
-        </wallet-loading>
+        />
+        <wallet-loading v-else />
       </template>
 
       <wallet-confirm-transaction-modal
@@ -104,26 +86,23 @@
         :transferInput="transferInput"
         :stakeInput="stakeInput"
         :transactionFee="transactionFee"
+        :hasCalculatedFee="hasCalculatedFee"
         :selectedCurrency="selectedCurrency"
         :nativeToken="nativeToken"
+        :confirmationMode="confirmationMode"
         :transactionState="transactionState"
         :activeMessage="activeMessageInTransaction"
         @cancel="cancelTransaction"
         @confirm="confirmTransaction"
-      >
-      </wallet-confirm-transaction-modal>
+      />
 
       <account-edit-name
         v-if="view == 'editName'"
         :activeAddress="activeAddress"
         @save="view = 'overview'; sidebar = 'default'"
-      >
-      </account-edit-name>
+      />
 
-      <settings-index
-        v-if="view == 'settings' && !loading"
-      >
-      </settings-index>
+      <settings-index v-if="view == 'settings' && !loading" />
     </template>
   </div>
 </template>
@@ -158,11 +137,11 @@ import {
   UnstakeOptions,
   TransferTokensInput,
   TokenBalance,
-  TransactionStateError,
   MessageInTransaction,
   ExecutedTransaction,
   Message
 } from '@radixdlt/application'
+import { safelyUnwrapAmount } from '@/helpers/validateRadixTypes'
 import { ref } from '@nopr3d/vue-next-rx'
 import { useStore } from '@/store'
 import { useRouter } from 'vue-router'
@@ -220,9 +199,11 @@ const WalletIndex = defineComponent({
     const transactionMessages: Ref<{id: string, encrypted: boolean, message: string | null}[]> = ref([])
     const activeMessageInTransaction: Ref<MessageInTransaction | null> = ref(null)
     const shouldShowConfirmation: Ref<boolean> = ref(false)
+    const confirmationMode: Ref<string | null> = ref(null)
     const transferInput: Ref<TransferTokensInput> = ref({})
     const stakeInput: Ref<StakeTokensInput> = ref({})
-    const transactionFee: Ref<AmountT> = ref(0)
+    const transactionFee: Ref<AmountT> = ref(safelyUnwrapAmount(0))
+    const hasCalculatedFee: Ref<boolean> = ref(false)
     const transactionToConfirm: Ref<ManualUserConfirmTX | null> = ref(null)
     const pendingTransactions: Ref<Array<PendingTransaction>> = ref([])
     const view: Ref<string> = ref('overview')
@@ -279,6 +260,7 @@ const WalletIndex = defineComponent({
       loadingBalances.value = false
       tokenBalances.value = tokenBalancesRes
     }))
+
     subs.add(radix.activeAccount.subscribe((account: AccountT) => { activeAccount.value = account }))
     subs.add(radix.stakingPositions.subscribe((stakes: StakePositions) => { activeStakes.value = stakes }))
     subs.add(radix.accounts.subscribe((accountsRes: AccountsT) => { accounts.value = accountsRes }))
@@ -332,9 +314,15 @@ const WalletIndex = defineComponent({
       radix.switchAccount({ toAccount: account })
     }
 
-    const confirmTransaction = () => userDidConfirm.next(true)
+    const confirmTransaction = () => {
+      userDidConfirm.next(true)
+      hasCalculatedFee.value = false
+    }
 
-    const cancelTransaction = () => userDidCancel.next(true)
+    const cancelTransaction = () => {
+      userDidCancel.next(true)
+      hasCalculatedFee.value = false
+    }
 
     // Fetch history when user navigates to next page and every 5 seconds
     const fetchTXHistoryTrigger = combineLatest<[TransactionHistoryOfKnownAddressRequestInput, number]>([
@@ -379,7 +367,6 @@ const WalletIndex = defineComponent({
         loadingHistoryPage.value = false
         if (history.cursor && history.transactions.length === PAGE_SIZE) canGoNext.value = true
         else canGoNext.value = false
-        // console.log('history', history)
         transactionHistory.value = history
       }))
 
@@ -388,11 +375,12 @@ const WalletIndex = defineComponent({
       .pipe(mergeMap(() => radix.tokenBalances))
       .subscribe((tokenBalancesRes: TokenBalances) => { tokenBalances.value = tokenBalancesRes }))
 
-    const confirmAndExecuteTransaction = (transactionTracking: TransactionTracking) => {
+    const confirmAndExecuteTransaction = (transactionTracking: TransactionTracking, showConfirmation: boolean) => {
       const transactionDidComplete = new BehaviorSubject<boolean>(false)
       userDidCancel.next(false)
+      // if (showConfirmation) { transactionState.value = 'building' }
       transactionState.value = 'building'
-      shouldShowConfirmation.value = true
+      if (showConfirmation) { shouldShowConfirmation.value = showConfirmation }
       // Subscribe to initial userConfirmation and display modal
       const createUserConfirmation = userConfirmation
         .subscribe((txnToConfirm: ManualUserConfirmTX) => {
@@ -400,20 +388,23 @@ const WalletIndex = defineComponent({
           userDidConfirm.next(false)
           transactionState.value = 'confirm'
           transactionFee.value = txnToConfirm.txToConfirm.fee
+          hasCalculatedFee.value = true
         })
       subs.add(createUserConfirmation)
 
       // Confirm transaction and move user to history view after they press confirm
       const watchUserDidConfirm = combineLatest<[ManualUserConfirmTX, boolean]>([userConfirmation, userDidConfirm])
         .subscribe(([txnToConfirm, didConfirm]: [ManualUserConfirmTX, boolean]) => {
-          if (didConfirm) { txnToConfirm.confirm() }
+          if (!showConfirmation) {
+            if (didConfirm) { txnToConfirm.confirm() }
+          }
         })
       subs.add(watchUserDidConfirm)
 
       // Catch errors that were silently failing
       const trackingSubmittedEventErrors = transactionTracking.events
         .pipe(filter((trackingEvent: any) => trackingEvent.error != null)) // This is really returning TransactionStateError
-        .subscribe((res: TransactionStateError) => {
+        .subscribe(() => {
           userDidCancel.next(true)
           shouldShowConfirmation.value = false
           if (view.value === 'transaction') {
@@ -437,7 +428,6 @@ const WalletIndex = defineComponent({
         .pipe(filter((trackingEvent: TransactionStateUpdate) => trackingEvent.eventUpdateType === 'INITIATED'))
         .subscribe((res: TransactionStateUpdate) => {
           const transactionIntent = res as unknown as TransactionIntent
-          console.log('transactionintent', transactionIntent)
           draftTransaction.value = transactionIntent
         }))
 
@@ -465,6 +455,7 @@ const WalletIndex = defineComponent({
             })
             shouldShowConfirmation.value = false
             view.value = 'history'
+            hasCalculatedFee.value = false
             transactionDidComplete.next(true)
           },
           error: () => {
@@ -492,12 +483,15 @@ const WalletIndex = defineComponent({
         createUserConfirmation.unsubscribe()
         watchUserDidConfirm.unsubscribe()
         trackingSubmittedEvents.unsubscribe()
+        hasCalculatedFee.value = false
       }
+
       userDidCancel.subscribe((didCancel: boolean) => {
         if (didCancel) {
           cleanupTransactionSubs()
           shouldShowConfirmation.value = false
           activeMessage.value = ''
+          hasCalculatedFee.value = false
         }
       })
 
@@ -505,13 +499,14 @@ const WalletIndex = defineComponent({
         if (didComplete) {
           cleanupTransactionSubs()
           activeMessage.value = ''
+          hasCalculatedFee.value = false
           historyPagination.next({ size: PAGE_SIZE })
         }
       }))
     }
 
     // call transferTokens() with built options and subscribe to confirmation and results
-    const transferTokens = (transferTokensInput: TransferTokensInput, message: MessageInTransaction, sc: TokenBalance) => {
+    const buildTransaction = (transferTokensInput: TransferTokensInput, message: MessageInTransaction, sc: TokenBalance) => {
       let pollTXStatusTrigger: Observable<unknown>
       transferInput.value = transferTokensInput
       selectedCurrency.value = sc
@@ -529,7 +524,30 @@ const WalletIndex = defineComponent({
         message
       })
 
-      confirmAndExecuteTransaction(transactionTracking)
+      confirmAndExecuteTransaction(transactionTracking, false)
+    }
+
+    // call transferTokens() with built options and subscribe to confirmation and results
+    const transferTokens = (transferTokensInput: TransferTokensInput, message: MessageInTransaction, sc: TokenBalance) => {
+      let pollTXStatusTrigger: Observable<unknown>
+      transferInput.value = transferTokensInput
+      selectedCurrency.value = sc
+      activeMessage.value = message.plaintext
+      activeMessageInTransaction.value = message
+      confirmationMode.value = 'transfer'
+      const buildTransferTokens = (): TransferTokensOptions => ({
+        transferInput: transferTokensInput,
+        userConfirmation: userConfirmation,
+        pollTXStatusTrigger: pollTXStatusTrigger
+      })
+
+      const transactionTracking: TransactionTracking = radix.transferTokens({
+        ...buildTransferTokens(),
+        userConfirmation,
+        message
+      })
+
+      confirmAndExecuteTransaction(transactionTracking, true)
     }
 
     // call stakeTokens() with built options and subscribe to confirmation and results
@@ -537,6 +555,7 @@ const WalletIndex = defineComponent({
       let pollTXStatusTrigger: Observable<unknown>
       stakeInput.value = stakeTokensInput
       selectedCurrency.value = nativeTokenBalance.value
+      confirmationMode.value = 'stake'
 
       const buildTransferTokens = (): StakeOptions => ({
         stakeInput: stakeTokensInput,
@@ -549,7 +568,7 @@ const WalletIndex = defineComponent({
         userConfirmation
       })
 
-      confirmAndExecuteTransaction(stakingTransactionTracking)
+      confirmAndExecuteTransaction(stakingTransactionTracking, true)
     }
 
     // call unstakeTokens() with built options and subscribe to confirmation and results
@@ -557,6 +576,7 @@ const WalletIndex = defineComponent({
       let pollTXStatusTrigger: Observable<unknown>
       stakeInput.value = unstakeTokensInput
       selectedCurrency.value = nativeTokenBalance.value
+      confirmationMode.value = 'unstake'
 
       const buildTransferTokens = (): UnstakeOptions => ({
         unstakeInput: unstakeTokensInput,
@@ -569,7 +589,7 @@ const WalletIndex = defineComponent({
         userConfirmation
       })
 
-      confirmAndExecuteTransaction(unstakingTransactionTracking)
+      confirmAndExecuteTransaction(unstakingTransactionTracking, true)
     }
 
     historyPagination.next({ size: PAGE_SIZE })
@@ -639,6 +659,8 @@ const WalletIndex = defineComponent({
       activeMessage,
       activeMessageInTransaction,
       radix,
+      hasCalculatedFee,
+      confirmationMode,
 
       // view flags
       view,
@@ -660,6 +682,7 @@ const WalletIndex = defineComponent({
       nextPage,
       previousPage,
       requestFreeTokens,
+      buildTransaction,
 
       // child component refs
       walletTransactionComponent,

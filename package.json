@@ -38,6 +38,7 @@
     "rxjs": "7.0.0",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.1.0",
     "tailwindcss-filters": "^3.0.0",
+    "ts-debounce": "^3.0.0",
     "vee-validate": "^4.4.5",
     "vue": "^3.0.0",
     "vue-class-component": "^8.0.0-0",

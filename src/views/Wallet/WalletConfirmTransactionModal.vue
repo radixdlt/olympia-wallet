@@ -40,17 +40,17 @@
 
         <div class="bg-translucent-gray rounded-md border border-rGray text-rBlack mb-4 w-full">
           <div class="border-b border-rGray py-5 flex items-center">
-            <div class="w-24 text-right text-rGrayDark mr-8">{{ $t('transaction.fromLabel') }}</div>
+            <div class="w-26 text-right text-rGrayDark mr-6">{{ fromLabel }}</div>
             <div class="flex-1">{{ activeAddress.toString() }}</div>
           </div>
 
           <div class="border-b border-rGray py-3.5 flex items-center">
-            <div class="w-24 text-right text-rGrayDark mr-8">{{ $t('transaction.toLabel') }}</div>
+            <div class="w-26 text-right text-rGrayDark mr-6">{{ toLabel }}</div>
             <div class="flex-1">{{ toContent }}</div>
           </div>
 
           <div class="border-b border-rGray py-3.5 flex items-center">
-            <div class="w-24 text-right text-rGrayDark mr-8">{{ $t('transaction.amountLabel') }}</div>
+            <div class="w-26 text-right text-rGrayDark mr-6">{{ $t('transaction.amountLabel') }}</div>
             <div class="flex-1 flex flex-row items-center">
               <big-amount :amount="amount" class="mr-4" />
               <token-symbol>{{ selectedCurrency.token.symbol }}</token-symbol>
@@ -58,7 +58,7 @@
           </div>
 
           <div class="border-b border-rGray py-3.5 flex items-center" v-if="activeMessage">
-            <div class="w-24 text-right text-rGrayDark mr-8">{{ $t('transaction.messageLabel') }}</div>
+            <div class="w-26 text-right text-rGrayDark mr-6">{{ $t('transaction.messageLabel') }}</div>
             <div class="flex-1">
               <div class="flex">
                 <div class="flex-1 text-sm">
@@ -76,7 +76,7 @@
           </div>
 
           <div class="py-4 flex items-center">
-            <div class="w-24 text-right text-rGrayDark mr-8">{{ $t('transaction.feeLabel') }}</div>
+            <div class="w-26 text-right text-rGrayDark mr-8">{{ $t('transaction.feeLabel') }}</div>
             <div class="flex-1 flex flex-row items-center">
               <big-amount :amount="transactionFee" class="mr-4" />
               <token-symbol>{{ nativeToken.symbol }}</token-symbol>
@@ -134,11 +134,8 @@ const WalletConfirmTransactionModal = defineComponent({
     TokenSymbol
   },
 
-  setup (props) {
+  setup () {
     const { errors, meta, values, setErrors, resetForm } = useForm<ConfirmationForm>()
-
-    console.log('here', props)
-
     return { errors, meta, values, setErrors, resetForm }
   },
 
@@ -174,6 +171,15 @@ const WalletConfirmTransactionModal = defineComponent({
     activeMessage: {
       type: Object as PropType<MessageInTransaction>,
       required: false
+    },
+    hasCalculatedFee: {
+      type: Boolean,
+      required: true
+    },
+    confirmationMode: {
+      type: String,
+      required: false,
+      default: 'transfer'
     }
   },
 
@@ -193,6 +199,14 @@ const WalletConfirmTransactionModal = defineComponent({
     },
     disableSubmit (): boolean {
       return !this.isValidPin
+    },
+
+    fromLabel (): string {
+      return this.$t(`confirmation.${this.confirmationMode}FromLabel`)
+    },
+
+    toLabel (): string {
+      return this.$t(`confirmation.${this.confirmationMode}ToLabel`)
     }
   },
 

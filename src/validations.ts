@@ -1,5 +1,5 @@
 import { defineRule, configure } from 'vee-validate'
-import { required, confirmed, length } from '@vee-validate/rules'
+import { required, confirmed, length, max } from '@vee-validate/rules'
 import { i18n } from '@/text'
 import { safelyUnwrapAddress, safelyUnwrapAmount, safelyUnwrapValidator } from '@/helpers/validateRadixTypes'
 
@@ -21,7 +21,9 @@ configure({
       field = 'Passwords'
     }
 
-    if (context.rule) return i18n.global.t(`validations.${context.rule.name}`, { field: field, params: context.rule.params })
+    if (context.rule) {
+      return i18n.global.t(`validations.${context.rule.name}`, { field: field, params: context.rule.params })
+    }
     return i18n.global.t('validations.default', { field: field })
   }
 })
@@ -29,6 +31,7 @@ configure({
 defineRule('required', required)
 defineRule('confirmed', confirmed)
 defineRule('length', length)
+defineRule('max', max)
 
 defineRule('insufficientFunds', (value: number, [max]: [string]) => {
   return value <= Number(max)

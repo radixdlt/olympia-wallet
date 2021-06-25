@@ -35,6 +35,7 @@ module.exports = {
       },
       margin: {
         '-full': '-100%'
+        26: '6.5rem'
       }
     },
     filter: {
