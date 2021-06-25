@@ -2,6 +2,7 @@ on:
   push:
     branches:
       - main
+
 name: release-please
 jobs:
   release-please:
@@ -16,7 +17,7 @@ jobs:
 
   build-release:
     needs: [release-please]
-    if: github.ref == 'refs/heads/main'
+    if: ${{ needs.release-please.outputs.release_created }}
     runs-on: ${{ matrix.os }}
     env: 
       GITHUB_TOKEN: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
