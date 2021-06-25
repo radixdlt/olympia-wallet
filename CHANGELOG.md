@@ -1,5 +1,18 @@
 # Changelog
 
+### [0.8.1](https://www.github.com/radixdlt/olympia-wallet/compare/v0.8.0...v0.8.1) (2021-06-25)
+
+
+### Bug Fixes
+
+* Bring back number inputs, extend fee calculation throttle ([#138](https://www.github.com/radixdlt/olympia-wallet/issues/138)) ([525f230](https://www.github.com/radixdlt/olympia-wallet/commit/525f230d6eed656b1501b8f030df6bf1c1ade5d7))
+* Transactions should only display actions relevant to the active address ([#134](https://www.github.com/radixdlt/olympia-wallet/issues/134)) ([70971bc](https://www.github.com/radixdlt/olympia-wallet/commit/70971bc616a54d42c40cabc5965340698f2591d4))
+
+
+### Dependencies
+
+* Update labels on the confirmation modal to be relevant to the action taken ([#135](https://www.github.com/radixdlt/olympia-wallet/issues/135)) ([2e7e882](https://www.github.com/radixdlt/olympia-wallet/commit/2e7e882398fb723a9ec157b63bf00deba782d7ea))
+
 ## [0.8.0](https://www.github.com/radixdlt/olympia-wallet/compare/v0.7.6...v0.8.0) (2021-06-24)
 
 
