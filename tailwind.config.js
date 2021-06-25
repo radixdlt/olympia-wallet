@@ -31,6 +31,7 @@ module.exports = {
         headerHeight: '6.4rem'
       },
       width: {
+        26: '6.5rem',
         '120':'30rem'
       }
     },
