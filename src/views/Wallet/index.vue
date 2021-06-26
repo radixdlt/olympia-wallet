@@ -103,6 +103,9 @@
 
       <settings-index v-if="view == 'settings' && !loading" />
     </template>
+    <template v-else>
+      <wallet-loading />
+    </template>
   </div>
 </template>
 
