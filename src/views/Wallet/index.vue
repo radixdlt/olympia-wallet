@@ -40,7 +40,6 @@
           :transactionFee="transactionFee"
           :hasCalculatedFee="hasCalculatedFee"
           @transferTokens="transferTokens"
-          @buildTransaction="buildTransaction"
           ref="walletTransactionComponent"
         />
         <wallet-loading v-else />
@@ -375,12 +374,11 @@ const WalletIndex = defineComponent({
       .pipe(mergeMap(() => radix.tokenBalances))
       .subscribe((tokenBalancesRes: TokenBalances) => { tokenBalances.value = tokenBalancesRes }))
 
-    const confirmAndExecuteTransaction = (transactionTracking: TransactionTracking, showConfirmation: boolean) => {
+    const confirmAndExecuteTransaction = (transactionTracking: TransactionTracking) => {
       const transactionDidComplete = new BehaviorSubject<boolean>(false)
       userDidCancel.next(false)
-      // if (showConfirmation) { transactionState.value = 'building' }
       transactionState.value = 'building'
-      if (showConfirmation) { shouldShowConfirmation.value = showConfirmation }
+      shouldShowConfirmation.value = true
       // Subscribe to initial userConfirmation and display modal
       const createUserConfirmation = userConfirmation
         .subscribe((txnToConfirm: ManualUserConfirmTX) => {
@@ -395,9 +393,7 @@ const WalletIndex = defineComponent({
       // Confirm transaction and move user to history view after they press confirm
       const watchUserDidConfirm = combineLatest<[ManualUserConfirmTX, boolean]>([userConfirmation, userDidConfirm])
         .subscribe(([txnToConfirm, didConfirm]: [ManualUserConfirmTX, boolean]) => {
-          if (!showConfirmation) {
-            if (didConfirm) { txnToConfirm.confirm() }
-          }
+          if (didConfirm) { txnToConfirm.confirm() }
         })
       subs.add(watchUserDidConfirm)
 
@@ -506,28 +502,6 @@ const WalletIndex = defineComponent({
     }
 
     // call transferTokens() with built options and subscribe to confirmation and results
-    const buildTransaction = (transferTokensInput: TransferTokensInput, message: MessageInTransaction, sc: TokenBalance) => {
-      let pollTXStatusTrigger: Observable<unknown>
-      transferInput.value = transferTokensInput
-      selectedCurrency.value = sc
-      activeMessage.value = message.plaintext
-      activeMessageInTransaction.value = message
-      const buildTransferTokens = (): TransferTokensOptions => ({
-        transferInput: transferTokensInput,
-        userConfirmation: userConfirmation,
-        pollTXStatusTrigger: pollTXStatusTrigger
-      })
-
-      const transactionTracking: TransactionTracking = radix.transferTokens({
-        ...buildTransferTokens(),
-        userConfirmation,
-        message
-      })
-
-      confirmAndExecuteTransaction(transactionTracking, false)
-    }
-
-    // call transferTokens() with built options and subscribe to confirmation and results
     const transferTokens = (transferTokensInput: TransferTokensInput, message: MessageInTransaction, sc: TokenBalance) => {
       let pollTXStatusTrigger: Observable<unknown>
       transferInput.value = transferTokensInput
@@ -547,7 +521,7 @@ const WalletIndex = defineComponent({
         message
       })
 
-      confirmAndExecuteTransaction(transactionTracking, true)
+      confirmAndExecuteTransaction(transactionTracking)
     }
 
     // call stakeTokens() with built options and subscribe to confirmation and results
@@ -568,7 +542,7 @@ const WalletIndex = defineComponent({
         userConfirmation
       })
 
-      confirmAndExecuteTransaction(stakingTransactionTracking, true)
+      confirmAndExecuteTransaction(stakingTransactionTracking)
     }
 
     // call unstakeTokens() with built options and subscribe to confirmation and results
@@ -589,7 +563,7 @@ const WalletIndex = defineComponent({
         userConfirmation
       })
 
-      confirmAndExecuteTransaction(unstakingTransactionTracking, true)
+      confirmAndExecuteTransaction(unstakingTransactionTracking)
     }
 
     historyPagination.next({ size: PAGE_SIZE })
@@ -682,7 +656,6 @@ const WalletIndex = defineComponent({
       nextPage,
       previousPage,
       requestFreeTokens,
-      buildTransaction,
 
       // child component refs
       walletTransactionComponent,
