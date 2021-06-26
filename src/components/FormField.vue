@@ -7,7 +7,6 @@
     :placeholder="placeholder"
     :rules="rules"
     :data-ci="dataCi"
-    :id="id"
   ></Field>
 </template>
 
@@ -42,10 +41,6 @@ const FormField = defineComponent({
       required: false
     },
     label: {
-      type: String,
-      required: false
-    },
-    id: {
       type: String,
       required: false
     }
