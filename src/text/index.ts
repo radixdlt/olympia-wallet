@@ -1,4 +1,4 @@
-import { createI18n, useI18n as vueUseI18n } from 'vue-i18n'
+import { createI18n } from 'vue-i18n'
 
 const messages = {
   en: {
@@ -7,11 +7,12 @@ const messages = {
       required: '%{field} is required',
       confirmed: '%{field} do not match',
       length: '%{field} is the wrong length',
+      max: '%{field} must be less than 160 characters long',
       validAddress: 'Enter a valid address',
       validValidator: 'Enter a valid validator',
       validAmount: 'Enter a valid amount',
       insufficientFunds: '%{field} cannot be greater than account balance',
-      amountOfType: 'Requested amount to send is not a mulltiple of token granularity (%{granularity}), will be unable to send',
+      amountOfType: 'Requested amount to send is not a multiple of token granularity (%{granularity}), will be unable to send',
       invalidPin: 'Your pin was not a match. Try again.',
       incorrectPassword: 'Your password is incorrect. Try again.',
       greaterThanZero: 'Must be greater than 0',
@@ -134,6 +135,14 @@ const messages = {
       unstakeDisclaimer: 'Your current stakes are shown at right. You may request an unstake of some or all of your XRD tokens from a validator. Once the request transaction has been processed, your tokens will be subject to a lengthy unstaking delay, after which they will become available for transfer once more. Please visit http://learn.radixdlt.com for more information about unstaking.',
       availableBalancePlaceholder: 'Enter amount',
       validatorPlaceholder: 'Enter validator address'
+    },
+    confirmation: {
+      transferFromLabel: 'Your address',
+      transferToLabel: 'Send to',
+      stakeFromLabel: 'Your address',
+      stakeToLabel: 'Stake to',
+      unstakeFromLabel: 'Your address',
+      unstakeToLabel: 'Unstake from'
     },
     account: {
       editNameHeading: 'Let’s set the name of your account',

@@ -2,6 +2,7 @@ on:
   push:
     branches:
       - main
+
 name: release-please
 jobs:
   release-please:
@@ -16,9 +17,9 @@ jobs:
 
   build-release:
     needs: [release-please]
-    if: github.ref == 'refs/heads/main'
+    if: ${{ needs.release-please.outputs.release_created }}
     runs-on: ${{ matrix.os }}
-    env: 
+    env:
       GITHUB_TOKEN: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
     strategy:
       matrix:
@@ -44,3 +45,5 @@ jobs:
           github_token: ${{ secrets.github_token }}
           use_vue_cli: true
           release: ${{ startsWith(github.ref, 'refs/tags/v') }}
+          mac_certs: ${{ secrets.MAC_CERTS }}
+          mac_certs_passwords: ${{ secrets.MAC_CERTS_PASSWORD }}
