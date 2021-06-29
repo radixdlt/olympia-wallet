@@ -1448,7 +1448,7 @@
     node-ipc "^9.1.1"
     ws "^7.3.1"
 
-"@radixdlt/account@^1.0.58", "@radixdlt/account@^1.0.59":
+"@radixdlt/account@^1.0.59":
   version "1.0.59"
   resolved "https://registry.yarnpkg.com/@radixdlt/account/-/account-1.0.59.tgz#7145706e6ac292af32ce77f6906b595799cee573"
   integrity sha512-QrCPldGDFKKSPyN6xYnHUf6Vq6QDfJ1J4SB9KwxdXSbwnUxnBENlNaPTeCZbiLUrluTnR5hlG0R/nzmhwZwyfw==
@@ -1467,15 +1467,15 @@
     prelude-ts "^1.0.2"
     rxjs "7.0.0"
 
-"@radixdlt/application@1.0.73":
-  version "1.0.73"
-  resolved "https://registry.yarnpkg.com/@radixdlt/application/-/application-1.0.73.tgz#437a9c2e5d5cbf49657e917cfea75572090d74f1"
-  integrity sha512-8+L+Qz+2cdfy2oYJyjezSNH6PMaSBCTKLPU3Zww5uPi8h9GjyUIOVJdLYQ99C/NwrUx3zej9USXXWM1QVyg7fQ==
+"@radixdlt/application@1.0.74":
+  version "1.0.74"
+  resolved "https://registry.yarnpkg.com/@radixdlt/application/-/application-1.0.74.tgz#54d104ccfba7c9696153da763fc87e4aab8b097a"
+  integrity sha512-2+4Y+0yhE4i6hovnvsG8CowYPsNDQLrTUgFcayN59Vnvrsl9n0wMjaMGWg21ynGIUzAdhK42y9FbxyvUfn8rUg==
   dependencies:
     "@open-rpc/mock-server" "1.7.2"
     "@open-rpc/schema-utils-js" "1.14.3"
-    "@radixdlt/account" "^1.0.58"
-    "@radixdlt/crypto" "^1.0.46"
+    "@radixdlt/account" "^1.0.59"
+    "@radixdlt/crypto" "^1.0.47"
     "@radixdlt/data-formats" "1.0.30"
     "@radixdlt/networking" "1.0.38"
     "@radixdlt/open-rpc-spec" "1.0.13"
@@ -1488,7 +1488,7 @@
     ramda "^0.27.1"
     rxjs "7.0.0"
 
-"@radixdlt/crypto@^1.0.46", "@radixdlt/crypto@^1.0.47":
+"@radixdlt/crypto@^1.0.47":
   version "1.0.47"
   resolved "https://registry.yarnpkg.com/@radixdlt/crypto/-/crypto-1.0.47.tgz#8ed368ed901ed03aa3caf70301676af99adfee28"
   integrity sha512-Sfzg1eAAhY8fEeGrznhyP/9C6RcSeoIEMJfLXaFQmBh59N1XyZK6P6nsVxfWjB79dRGPWEEUJC7I2cXyvl6L4Q==
@@ -1513,22 +1513,22 @@
     neverthrow "^4.0.1"
     ramda "^0.27.1"
 
-"@radixdlt/hardware-ledger@1.0.18":
-  version "1.0.18"
-  resolved "https://registry.yarnpkg.com/@radixdlt/hardware-ledger/-/hardware-ledger-1.0.18.tgz#616f6cafed26e03bcbececf75e86297238d93819"
-  integrity sha512-/57pnXsb9dVtII6gndXG90MjGTIUzK+mu8W07NXfPs8F2wURm2WPX72ss+YVM7HL3vwRBolIZ/NtUVCRvg6RWw==
+"@radixdlt/hardware-ledger@1.0.19":
+  version "1.0.19"
+  resolved "https://registry.yarnpkg.com/@radixdlt/hardware-ledger/-/hardware-ledger-1.0.19.tgz#b21c0b24bb6372bae2f57557c996aa466e694131"
+  integrity sha512-7HEjVHEigq/cTHLnKh/IC65n7uUGXVTTJaXCvorsH+Dr4YvQDa3zG9TXXGN50+x4JsjZSS6TbBNlyGii8SGfSQ==
   dependencies:
-    "@radixdlt/crypto" "^1.0.46"
-    "@radixdlt/hardware-wallet" "^1.0.32"
+    "@radixdlt/crypto" "^1.0.47"
+    "@radixdlt/hardware-wallet" "^1.0.33"
     "@radixdlt/primitives" "^1.0.35"
-    "@radixdlt/tx-parser" "^1.0.14"
+    "@radixdlt/tx-parser" "^1.0.15"
     "@radixdlt/util" "1.0.29"
     neverthrow "4.0.1"
     prelude-ts "^1.0.2"
     rxjs "7.0.0"
     uuid "^8.3.2"
 
-"@radixdlt/hardware-wallet@^1.0.32", "@radixdlt/hardware-wallet@^1.0.33":
+"@radixdlt/hardware-wallet@^1.0.33":
   version "1.0.33"
   resolved "https://registry.yarnpkg.com/@radixdlt/hardware-wallet/-/hardware-wallet-1.0.33.tgz#fc706b57a2a3e6dccf0fe3dcfee4408967558407"
   integrity sha512-2F6M3rky66bjY2mNWyorfyiPI/xeNfduQkntNGSjKJfq0EhP95ydxWEGYazwCYFy+HzVtanoSFys2Aitgsi/iA==
@@ -1572,7 +1572,7 @@
     long "^4.0.0"
     neverthrow "^4.0.1"
 
-"@radixdlt/tx-parser@^1.0.14":
+"@radixdlt/tx-parser@^1.0.15":
   version "1.0.15"
   resolved "https://registry.yarnpkg.com/@radixdlt/tx-parser/-/tx-parser-1.0.15.tgz#3328900b6b8ed37fdac953e0c26cce4af1ec0c1c"
   integrity sha512-OiOG0YNEzmuiFafwDnae1JIgkdVnZUB9L2Wva86VtqQKMFWhkvRYSNQstnXJ59rgypxjG4E0YyKwIMZOhMdt9Q==
