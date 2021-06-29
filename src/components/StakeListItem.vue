@@ -86,7 +86,7 @@ const StakeListItem = defineComponent({
 
     const radix = Radix
       .create()
-      .connect('https://sandpitnet.radixdlt.com')
+      .connect(process.env.VUE_APP_API || '')
 
     const subs = new Subscription()
 

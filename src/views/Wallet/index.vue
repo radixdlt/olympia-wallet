@@ -272,7 +272,7 @@ const WalletIndex = defineComponent({
 
     const radix = Radix
       .create()
-      .connect('https://sandpitnet.radixdlt.com')
+      .connect(process.env.VUE_APP_API || '')
       .withWallet(store.state.wallet)
       .withTokenBalanceFetchTrigger(interval(5 * 1_000))
       .withStakingFetchTrigger(interval(5 * 1_000))
@@ -621,7 +621,7 @@ const WalletIndex = defineComponent({
         }
       }
       subs.add(from(
-        fetch('https://sandpitnet-faucet.radixdlt.com/faucet/request', {
+        fetch('https://releasenet-faucet.radixdlt.com/faucet/request', {
           method: 'POST',
           mode: 'no-cors',
           headers: { 'Content-Type': 'application/json' },
