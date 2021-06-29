@@ -98,7 +98,6 @@ const CreateWallet = defineComponent({
     // Login with password and path to keystore
     const loginWithWallet = (password: string) => {
       radix.login(password, touchKeystore)
-      // login(password, touchKeystore)
     }
 
     // Check if keystore exists

@@ -5,7 +5,7 @@ import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 import path from 'path'
 import contextMenu from 'electron-context-menu'
-import { copyToClipboard, getKeystoreFile, storePin, validatePin, writeKeystoreFile, deriveHWAccount, login, getPublicKey, sendAPDU  } from '@/actions/electron/create-wallet'
+import { copyToClipboard, getKeystoreFile, storePin, validatePin, writeKeystoreFile, sendAPDU  } from '@/actions/electron/create-wallet'
 import {
   getAccountName,
   saveAccountName,

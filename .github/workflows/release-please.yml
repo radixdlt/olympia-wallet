@@ -39,6 +39,7 @@ jobs:
         env:
           VUE_APP_API: https://releasenet.radixdlt.com
           VUE_APP_EXPLORER: https://releasenet-explorer.radixdlt.com
+          VUE_APP_FAUCET: https://releasenet-faucet.radixdlt.com/faucet/request
         with:
           # GitHub token, automatically provided to the action
           # (No need to define this secret in the repo settings)

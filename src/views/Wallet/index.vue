@@ -145,12 +145,7 @@ import {
   TokenBalance,
   MessageInTransaction,
   ExecutedTransaction,
-  Message,
-  LogLevel,
-  HDPathRadixT,
-  Signature,
-  PublicKey,
-  ECPointOnCurve
+  Message
 } from '@radixdlt/application'
 import { safelyUnwrapAmount } from '@/helpers/validateRadixTypes'
 import { ref } from '@nopr3d/vue-next-rx'
@@ -621,7 +616,7 @@ const WalletIndex = defineComponent({
         }
       }
       subs.add(from(
-        fetch('https://releasenet-faucet.radixdlt.com/faucet/request', {
+        fetch(process.env.VUE_APP_FAUCET || '', {
           method: 'POST',
           mode: 'no-cors',
           headers: { 'Content-Type': 'application/json' },

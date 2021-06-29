@@ -5,9 +5,6 @@ import { store } from '@/actions/electron/data-store'
 import { BasicLedgerTransport } from '@radixdlt/hardware-ledger'
 // @ts-ignore
 import TransportNodeHid from '@aleworm/hw-transport-node-hid'
-import {
-  Radix, RadixT,
-} from '@radixdlt/application'
 
 export const writeKeystoreFile = (event: IpcMainInvokeEvent, encodedWallet: string) => store.set('seed', encodedWallet)
 
@@ -28,19 +25,6 @@ export const copyToClipboard = (event: IpcMainEvent, text: string) => {
 
 export const validatePin = (event: IpcMainInvokeEvent, pin: string) =>
   digestPin(pin).then((inputHash: string) => store.get('pin') === inputHash)
-
-let radix: RadixT
-
-export const login = (event: IpcMainInvokeEvent, password: string) => {
-  radix = Radix
-    .create()
-    .connect(process.env.VUE_APP_API || '')
-    .login(password,
-      () => new Promise(resolve => {
-        resolve(JSON.parse(getKeystoreFile() as string))
-      })
-    )
-}
 
 const basicLedgerTransportPromise: Promise<BasicLedgerTransport> = TransportNodeHid.create()
 
