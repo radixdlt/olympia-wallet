@@ -115,7 +115,7 @@
 
 <script lang="ts">
 import { defineComponent, onBeforeMount, onUnmounted, Ref } from 'vue'
-import { Subscription, interval, Subject, Observable, combineLatest, from, BehaviorSubject, ReplaySubject, of, firstValueFrom } from 'rxjs'
+import { Subscription, interval, Subject, Observable, combineLatest, from, BehaviorSubject, ReplaySubject, firstValueFrom } from 'rxjs'
 import {
   AccountAddressT,
   Radix,
@@ -631,7 +631,6 @@ const WalletIndex = defineComponent({
         return
       }
 
-      console.log('fetching hw account...')
       radix.deriveHWAccount({
         keyDerivation: 'next',
         hardwareWalletConnection: HardwareWalletLedger.create({
@@ -647,7 +646,6 @@ const WalletIndex = defineComponent({
           saveAccountName(hwAccount.address.toString(), 'Hardware Wallet')
           hardwareAddress.value = hwAccount.address.toString()
         }
-        console.log('got hw account: ', hwAccount.address.toString())
       })
     }
 
