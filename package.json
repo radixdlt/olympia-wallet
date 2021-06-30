@@ -26,7 +26,6 @@
     "@types/bn.js": "^5.1.0",
     "@types/luxon": "^1.26.3",
     "@vee-validate/rules": "^4.4.5",
-    "@vue/composition-api": "^1.0.0-rc.9",
     "autoprefixer": "^9",
     "bignumber.js": "^9.0.1",
     "bn.js": "^5.2.0",
