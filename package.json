@@ -29,6 +29,7 @@
     "autoprefixer": "^9",
     "bignumber.js": "^9.0.1",
     "bn.js": "^5.2.0",
+    "copy-webpack-plugin": "6",
     "core-js": "^3.9.1",
     "electron-context-menu": "^3.0.0",
     "electron-store": "^7.0.2",
