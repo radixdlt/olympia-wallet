@@ -22,7 +22,7 @@ module.exports = {
         config
           .plugin('NormalModuleReplacementPlugin')
           .use(NormalModuleReplacementPlugin, [
-            /^bindings$/,
+            /^@aleworm\/bindings$/,
             `${__dirname}/src/bindings`
           ])
       },
