@@ -16,8 +16,8 @@
   },
   "main": "background.js",
   "dependencies": {
-    "@aleworm/hw-transport-node-hid": "5.51.16",
     "@babel/core": "^7.13.10",
+    "@ledgerhq/hw-transport-node-hid": "^6.0.2",
     "@nopr3d/vue-next-rx": "^1.0.6",
     "@radixdlt/application": "1.0.74",
     "@radixdlt/hardware-ledger": "1.0.19",
