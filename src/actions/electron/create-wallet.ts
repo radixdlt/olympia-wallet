@@ -3,8 +3,7 @@ import { clipboard } from 'electron'
 import crypto from 'crypto'
 import { store } from '@/actions/electron/data-store'
 import { BasicLedgerTransport } from '@radixdlt/hardware-ledger'
-// @ts-ignore
-import TransportNodeHid from '@aleworm/hw-transport-node-hid'
+import TransportNodeHid from '@ledgerhq/hw-transport-node-hid'
 import {
   Radix, RadixT,
 } from '@radixdlt/application'

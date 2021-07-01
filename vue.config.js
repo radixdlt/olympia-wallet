@@ -13,8 +13,8 @@ module.exports = {
         config.plugin('CopyWebpackPlugin').use(CopyWebpackPlugin, [
           {
             patterns: [
-              'node_modules/@aleworm/usb/build/Release/usb_bindings.node',
-              'node_modules/@aleworm/node-hid/build/Release/HID_hidraw.node'
+              'node_modules/usb/build/Release/usb_bindings.node',
+              'node_modules/node-hid/build/Release/HID_hidraw.node'
             ]
           }
         ])
@@ -22,13 +22,12 @@ module.exports = {
         config
           .plugin('NormalModuleReplacementPlugin')
           .use(NormalModuleReplacementPlugin, [
-            /^@aleworm\/bindings$/,
+            /^bindings$/,
             `${__dirname}/src/bindings`
           ])
       },
 
       builderOptions: {
-        asar: false,
         publish: {
           provider: 'github',
           private: true,
