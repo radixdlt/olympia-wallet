@@ -14,7 +14,7 @@ module.exports = {
           {
             patterns: [
               'node_modules/@aleworm/usb/build/Release/usb_bindings.node',
-              'node_modules/@aleworm/node-hid/build/Release/HID_hidraw.node'
+              'node_modules/@aleworm/node-hid/build/Release/HID.node'
             ]
           }
         ])
@@ -28,7 +28,6 @@ module.exports = {
       },
 
       builderOptions: {
-        asar: false,
         publish: {
           provider: 'github',
           private: true,
