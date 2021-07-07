@@ -12,12 +12,16 @@
       :accounts="accounts"
       :activeAccount="activeAccount"
       :hardwareAddress="hardwareAddress"
+      :hardwareWalletError="hardwareWalletError"
       @back="sidebar = 'default'"
       @addAccount="() => { addAccount() ; view = 'editName' }"
       @switchAccount="switchAccount"
       @switchToHardwareAccount="connectHardwareWallet"
       @editName="setView('editName')"
       @connectHardwareWallet="connectHardwareWallet"
+    />
+    <wallet-ledger-interaction-modal
+      v-if="!!hardwareInteractionState"
     />
 
     <template v-if="loaded">
@@ -31,6 +35,7 @@
           :nativeToken="nativeToken"
           :nativeTokenBalance="nativeTokenBalance"
           @requestFreeTokens="requestFreeTokens"
+          @verifyHardwareAddress="verifyHardwareWalletAddress"
         />
         <wallet-loading v-else />
       </template>
@@ -161,6 +166,7 @@ import WalletTransaction from './WalletTransaction.vue'
 import WalletLoading from './WalletLoading.vue'
 import AccountEditName from '@/views/Account/AccountEditName.vue'
 import SettingsIndex from '@/views/Settings/index.vue'
+import WalletLedgerInteractionModal from '@/views/Wallet/WalletLedgerInteractionModal.vue'
 import { filter, mergeMap, map, switchMap } from 'rxjs/operators'
 import {
   getDerivedAccountsIndex,
@@ -190,7 +196,8 @@ const WalletIndex = defineComponent({
     WalletSidebarDefault,
     WalletStaking,
     WalletTransaction,
-    WalletLoading
+    WalletLoading,
+    WalletLedgerInteractionModal
   },
 
   props: {
@@ -240,6 +247,7 @@ const WalletIndex = defineComponent({
 
     const walletTransactionComponent = ref(null)
     const walletStakingComponent = ref(null)
+    const hardwareInteractionState: Ref<string> = ref('')
 
     const userDidConfirm = new Subject<boolean>()
     const userDidCancel = new Subject<boolean>()
@@ -248,6 +256,7 @@ const WalletIndex = defineComponent({
     const faucetParams = new Subject<number>()
 
     const hardwareAddress: Ref<string> = ref('')
+    const hardwareWalletError: Ref<Error> = ref(null)
     getHardwareWalletAddress().then(a => { hardwareAddress.value = a })
 
     // Set initial view if provided in props
@@ -626,11 +635,13 @@ const WalletIndex = defineComponent({
     }
 
     const connectHardwareWallet = () => {
-      if (hardwareAccount.value) {
-        switchAccount(hardwareAccount.value)
-        return
-      }
-
+      // console.log('HI', hardwareAccount)
+      // if (hardwareAccount) {
+      //   switchAccount(hardwareAccount.value)
+      //   return
+      // }
+      hardwareInteractionState.value = 'DERIVING'
+      console.log('fetching hw account...')
       radix.deriveHWAccount({
         keyDerivation: 'next',
         hardwareWalletConnection: HardwareWalletLedger.create({
@@ -639,6 +650,8 @@ const WalletIndex = defineComponent({
         }),
         alsoSwitchTo: true
       }).subscribe((hwAccount: AccountT) => {
+        console.log('got hardware account', hwAccount.address.toString())
+        radix.switchAccount({ toAccount: hwAccount })
         activeAccount.value = hwAccount
         hardwareAccount.value = hwAccount
         if (!hardwareAddress.value) {
@@ -646,7 +659,19 @@ const WalletIndex = defineComponent({
           saveAccountName(hwAccount.address.toString(), 'Hardware Wallet')
           hardwareAddress.value = hwAccount.address.toString()
         }
-      })
+      },
+      (err) => { hardwareWalletError.value = err })
+    }
+
+    const verifyHardwareWalletAddress = () => {
+      if (hardwareAccount.value) {
+        console.log('Client Side Account', hardwareAccount.value)
+        console.log('Client Side Account Accress', hardwareAccount.value.address.toString())
+      }
+      radix.displayAddressForActiveHWAccountOnHWDeviceForVerification()
+        .subscribe(() => {
+          console.log('I guess void is happening?')
+        })
     }
 
     onUnmounted(() => subs.unsubscribe())
@@ -680,6 +705,8 @@ const WalletIndex = defineComponent({
       hasCalculatedFee,
       confirmationMode,
       hardwareAddress,
+      hardwareWalletError,
+      hardwareInteractionState,
 
       // view flags
       view,
@@ -702,6 +729,7 @@ const WalletIndex = defineComponent({
       previousPage,
       requestFreeTokens,
       connectHardwareWallet,
+      verifyHardwareWalletAddress,
 
       // child component refs
       walletTransactionComponent,

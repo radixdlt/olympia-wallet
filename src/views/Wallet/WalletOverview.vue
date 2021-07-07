@@ -8,6 +8,7 @@
           <div class="hover:text-rGreen flex flex-row items-center cursor-pointer transition-colors">
             <click-to-copy :text="activeAddress.toString()">
             </click-to-copy>
+            <a @click="$emit('verifyHardwareAddress')"> Verify </a>
           </div>
         </div>
       </div>
@@ -175,7 +176,7 @@ const WalletOverview = defineComponent({
     }
   },
 
-  emits: ['requestFreeTokens']
+  emits: ['requestFreeTokens', 'verifyHardwareAddress']
 })
 
 export default WalletOverview
