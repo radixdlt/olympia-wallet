@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-rGrayLightest flex flex-row w-full p-5 flex-1 h-screen overflow-y-scroll">
+  <div class="bg-rGrayLightest flex flex-row w-full p-5 flex-1 h-screen overflow-y-auto">
     <div class="flex-flex-col flex-1">
       <div class="flex flex-row">
         <tabs-tab :isActive="activeForm == 'stake'" @click="() => setForm('stake')">{{ $t('staking.stakeTab') }}</tabs-tab>
@@ -54,7 +54,7 @@
       </form>
     </div>
 
-    <div class="bg-white border border-rGray rounded-md flex flex-col overflow-y-scroll w-full h-full max-w-md py-5 px-8">
+    <div class="bg-white border border-rGray rounded-md flex flex-col overflow-y-auto w-full h-full max-w-md py-5 px-8">
       <div class="flex items-center justify-between mb-5">
         <h3 class="font-medium text-rBlack">{{ $t('staking.currentStakesHeading') }}</h3>
         <a :href="explorerUrl" target="_blank" class="text-rBlue text-sm inline-flex items-center">

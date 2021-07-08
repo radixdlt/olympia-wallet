@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col flex-1 min-w-0 overflow-y-scroll bg-white">
+  <div class="flex flex-col flex-1 min-w-0 overflow-y-auto bg-white">
     <div class="bg-rGrayLightest py-6 px-8 bg-gray">
       <div class="flex justify-between">
         <h3 class="font-medium text-rBlack">{{ $t('history.historyHeading') }}</h3>
