@@ -19,9 +19,10 @@
       @switchToHardwareAccount="connectHardwareWallet"
       @editName="setView('editName')"
       @connectHardwareWallet="connectHardwareWallet"
+      @verifyHardwareAddress="verifyHardwareWalletAddress"
     />
     <wallet-ledger-interaction-modal
-      v-if="!!hardwareInteractionState"
+      v-if="hardwareInteractionState.length > 0"
     />
 
     <template v-if="loaded">
@@ -641,7 +642,6 @@ const WalletIndex = defineComponent({
       //   return
       // }
       hardwareInteractionState.value = 'DERIVING'
-      console.log('fetching hw account...')
       radix.deriveHWAccount({
         keyDerivation: 'next',
         hardwareWalletConnection: HardwareWalletLedger.create({
@@ -650,8 +650,6 @@ const WalletIndex = defineComponent({
         }),
         alsoSwitchTo: true
       }).subscribe((hwAccount: AccountT) => {
-        console.log('got hardware account', hwAccount.address.toString())
-        radix.switchAccount({ toAccount: hwAccount })
         activeAccount.value = hwAccount
         hardwareAccount.value = hwAccount
         if (!hardwareAddress.value) {
@@ -659,6 +657,8 @@ const WalletIndex = defineComponent({
           saveAccountName(hwAccount.address.toString(), 'Hardware Wallet')
           hardwareAddress.value = hwAccount.address.toString()
         }
+        sidebar.value = 'default'
+        hardwareInteractionState.value = ''
       },
       (err) => { hardwareWalletError.value = err })
     }

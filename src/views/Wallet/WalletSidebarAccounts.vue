@@ -26,20 +26,33 @@
     <br />
 
     <div class="border-t border-rGray border-opacity-50 pt-4">
-      <a class="flex cursor-pointer"
-        v-if="hardwareAddress" @click="$emit('switchToHardwareAccount')"
-        @mouseover="showHardwareHelper = true"
-        @mouseleave="showHardwareHelper = false">
-        <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M18.7382 10.6172H7.26074V18.4568H18.7382V10.6172Z" stroke="white" stroke-miterlimit="10"/>
-          <path d="M10.6592 12.5947V16.4793" stroke="white" stroke-miterlimit="10"/>
-          <path d="M15.3408 12.5947V16.4793" stroke="white" stroke-miterlimit="10"/>
-          <path d="M1.45508 19H24.5456V21.4507C24.5456 23.4598 22.9169 25.0886 20.9078 25.0886H5.09289C3.08379 25.0886 1.45508 23.4598 1.45508 21.4507V19Z" fill="none" stroke="white" stroke-miterlimit="10"/>
-          <path d="M24.5449 7L1.45437 7V4.54926C1.45437 2.54016 3.08309 0.91145 5.09219 0.91145L20.9071 0.91145C22.9162 0.91145 24.5449 2.54016 24.5449 4.54926V7Z" fill="none" stroke="white" stroke-miterlimit="10"/>
-        </svg>
+      <div v-if="hardwareAddress" class="mt-2">
+        <a class="flex cursor-pointer"
+          @click="$emit('switchToHardwareAccount')"
+          @mouseover="showHardwareHelper = true"
+          @mouseleave="showHardwareHelper = false">
+          <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M18.7382 10.6172H7.26074V18.4568H18.7382V10.6172Z" stroke="white" stroke-miterlimit="10"/>
+            <path d="M10.6592 12.5947V16.4793" stroke="white" stroke-miterlimit="10"/>
+            <path d="M15.3408 12.5947V16.4793" stroke="white" stroke-miterlimit="10"/>
+            <path d="M1.45508 19H24.5456V21.4507C24.5456 23.4598 22.9169 25.0886 20.9078 25.0886H5.09289C3.08379 25.0886 1.45508 23.4598 1.45508 21.4507V19Z" fill="none" stroke="white" stroke-miterlimit="10"/>
+            <path d="M24.5449 7L1.45437 7V4.54926C1.45437 2.54016 3.08309 0.91145 5.09219 0.91145L20.9071 0.91145C22.9162 0.91145 24.5449 2.54016 24.5449 4.54926V7Z" fill="none" stroke="white" stroke-miterlimit="10"/>
+          </svg>
 
-        <span class="text-white ml-2"> {{ $t('wallet.hardwareWalletHeading') }} </span>
-      </a>
+          <span class="text-white ml-2"> {{ $t('wallet.hardwareWalletHeading') }} </span>
+        </a>
+
+        <div class="text-xs text-white relative z-20 flex justify-between mt-4">
+          <span class="mr-2">{{ $t('wallet.addressLabel') }}</span>
+          <span class="flex-1 w-full truncate">{{ displayHardwareAddress }}</span>
+          <button @click="showLedgerVerify = true; $emit('verifyHardwareAddress')" class="cursor-pointer flex items-center active:text-rBlack outline-none focus:outline-none hover:text-rGreen active:text-rGreenDark">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="7.5" y="7.5" width="7" height="7" class="stroke-current"/>
+              <path d="M13 5H5V13" class="stroke-current"/>
+            </svg>
+          </button>
+        </div>
+       </div>
 
       <div v-else
         @click="$emit('connectHardwareWallet')"
@@ -58,16 +71,24 @@
       </div>
     </div>
   </div>
+
+  <wallet-ledger-verify-address-modal
+    v-if="showLedgerVerify"
+    :hardwareAddress="hardwareAddress"
+    @dismissVerify="showLedgerVerify = false"
+  />
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { AccountsT, AccountT } from '@radixdlt/application'
 import AccountListItem from '@/components/AccountListItem.vue'
+import WalletLedgerVerifyAddressModal from '@/views/Wallet/WalletLedgerVerifyAddressModal.vue'
 
 const WalletSidebarAccounts = defineComponent({
   components: {
-    AccountListItem
+    AccountListItem,
+    WalletLedgerVerifyAddressModal
   },
 
   props: {
@@ -91,11 +112,21 @@ const WalletSidebarAccounts = defineComponent({
 
   data () {
     return {
-      showHardwareHelper: false
+      showHardwareHelper: false,
+      showLedgerVerify: false
     }
   },
 
-  emits: ['back', 'addAccount', 'switchAccount', 'editName', 'addHardwareWallet', 'connectHardwareWallet', 'switchToHardwareAccount']
+  computed: {
+    displayHardwareAddress () {
+      if (!this.hardwareAddress) { return '' }
+
+      const add:string = this.hardwareAddress
+      return add.substring(0, 8) + '...' + add.substring(add.length - 8)
+    }
+  },
+
+  emits: ['back', 'addAccount', 'switchAccount', 'editName', 'addHardwareWallet', 'connectHardwareWallet', 'switchToHardwareAccount', 'verifyHardwareAddress']
 })
 
 export default WalletSidebarAccounts
