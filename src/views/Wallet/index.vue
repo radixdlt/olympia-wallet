@@ -36,7 +36,6 @@
           :nativeToken="nativeToken"
           :nativeTokenBalance="nativeTokenBalance"
           @requestFreeTokens="requestFreeTokens"
-          @verifyHardwareAddress="verifyHardwareWalletAddress"
         />
         <wallet-loading v-else />
       </template>
