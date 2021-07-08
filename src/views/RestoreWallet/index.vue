@@ -77,7 +77,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { WalletT, Mnemonic, NetworkT } from '@radixdlt/application'
+import { WalletT, Mnemonic, Network } from '@radixdlt/application'
 import WizardHeading from '@/components/WizardHeading.vue'
 import { initWallet, storePin } from '@/actions/vue/create-wallet'
 import RestoreWalletEnterMnemonic from './RestoreWalletEnterMnemonic.vue'
@@ -103,7 +103,7 @@ const RestoreWallet = defineComponent({
 
     // Create wallet with password and path to keystore
     const createWallet = (pass: string) => {
-      initWallet(mnemonic.value, pass, NetworkT.BETANET) // Temporarily hardcoded for betanet
+      initWallet(mnemonic.value, pass, Network.STOKENET) // Temporarily hardcoded for betanet
         .then(wallet => {
           store.commit('setWallet', wallet)
           saveDerivedAccountsIndex(0)

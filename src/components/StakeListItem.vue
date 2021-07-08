@@ -54,7 +54,7 @@
 </template>
 
 <script lang="ts">
-import { Radix, StakePosition, Token, UnstakePosition, Validator } from '@radixdlt/application'
+import { Radix, StakePosition, Token, UnstakePosition, Validator, Network } from '@radixdlt/application'
 import { defineComponent, PropType, Ref, ref } from 'vue'
 import BigAmount from '@/components/BigAmount.vue'
 import ClickToCopy from '@/components/ClickToCopy.vue'
@@ -85,8 +85,8 @@ const StakeListItem = defineComponent({
     const validator: Ref<Validator | null> = ref(null)
 
     const radix = Radix
-      .create()
-      .connect(process.env.VUE_APP_API || '')
+      .create({ network: Network.STOKENET })
+      .connect(process.env.VUE_APP_API || 'https://stokenet.radixdlt.com')
 
     const subs = new Subscription()
 
