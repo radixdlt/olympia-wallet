@@ -1,0 +1,51 @@
+on:
+  push:
+    branches:
+      - ledger
+
+name: release-please
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: GoogleCloudPlatform/release-please-action@v2
+        id: release
+        with:
+          release-type: node
+          package-name: radixdtl-desktop-wallet
+          default-branch: ledger
+          changelog-types: '[{"type":"feat","section":"Features","hidden":false},{"type":"fix","section":"Bug Fixes","hidden":false},{"type":"docs","section":"Documentation","hidden":false},{"type":"chore","section":"Dependencies","hidden":false},{"type":"security","section":"Security","hidden":false},{"type":"style","section":"Code Style","hidden":false},{"type":"test","section":"Test Coverage","hidden":false}]'
+
+  build-release:
+    needs: [release-please]
+    if: ${{ needs.release-please.outputs.release_created }}
+    runs-on: ${{ matrix.os }}
+    env:
+      GITHUB_TOKEN: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v1
+
+      - name: Install Node.js, NPM and Yarn
+        uses: actions/setup-node@v2
+        with:
+          node-version: '15'
+          check-latest: true
+
+      - name: Build/release Electron app
+        uses: samuelmeuli/action-electron-builder@v1
+        env:
+          VUE_APP_API: https://sandpitnet.radixdlt.com
+          VUE_APP_EXPLORER: https://sandpitnet-explorer.radixdlt.com
+          VUE_APP_FAUCET: https://sandpitnet-faucet.radixdlt.com/faucet/request
+        with:
+          # GitHub token, automatically provided to the action
+          # (No need to define this secret in the repo settings)
+          github_token: ${{ secrets.github_token }}
+          use_vue_cli: true
+          release: ${{ startsWith(github.ref, 'refs/tags/v') }}
+          mac_certs: ${{ secrets.MAC_CERTS }}
+          mac_certs_passwords: ${{ secrets.MAC_CERTS_PASSWORD }}
