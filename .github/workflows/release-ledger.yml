@@ -20,6 +20,20 @@ jobs:
           node-version: '15'
           check-latest: true
 
+      - name: Install node-hid Dependencies
+        run: |
+          case $RUNNER_OS in
+            Linux)
+              echo "Building node-hid deps for Ubuntu"
+              apt install build-essential git
+              apt install gcc-4.8 g++-4.8 && export CXX=g++-4.8
+              apt install libusb-1.0-0 libusb-1.0-0-dev
+              apt install libudev-dev
+              ;;
+            *)
+              echo "No commands required for this OS"
+          esac
+
       - name: Build/release Electron app
         uses: samuelmeuli/action-electron-builder@v1
         env:
