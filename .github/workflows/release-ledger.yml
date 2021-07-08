@@ -3,25 +3,12 @@ on:
     branches:
       - ledger
 
-name: release-please
+name: release-ledger
 jobs:
-  release-please:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: GoogleCloudPlatform/release-please-action@v2
-        id: release
-        with:
-          release-type: node
-          package-name: radixdtl-desktop-wallet
-          default-branch: ledger
-          changelog-types: '[{"type":"feat","section":"Features","hidden":false},{"type":"fix","section":"Bug Fixes","hidden":false},{"type":"docs","section":"Documentation","hidden":false},{"type":"chore","section":"Dependencies","hidden":false},{"type":"security","section":"Security","hidden":false},{"type":"style","section":"Code Style","hidden":false},{"type":"test","section":"Test Coverage","hidden":false}]'
-
   build-release:
     needs: [release-please]
     if: ${{ needs.release-please.outputs.release_created }}
     runs-on: ${{ matrix.os }}
-    env:
-      GITHUB_TOKEN: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
     strategy:
       matrix:
         os: [macos-latest, ubuntu-latest, windows-latest]
@@ -46,6 +33,27 @@ jobs:
           # (No need to define this secret in the repo settings)
           github_token: ${{ secrets.github_token }}
           use_vue_cli: true
-          release: ${{ startsWith(github.ref, 'refs/tags/v') }}
+          release: false
           mac_certs: ${{ secrets.MAC_CERTS }}
           mac_certs_passwords: ${{ secrets.MAC_CERTS_PASSWORD }}
+      - name: Move Files
+        shell: bash
+        run: ./move_dist.sh
+
+      - name: Upload Linux Artifacts
+        uses: actions/upload-artifact@v1
+        with:
+          name: my-app-linux
+          path: dist-linux
+
+      - name: Upload Mac Artifacts
+        uses: actions/upload-artifact@v1
+        with:
+          name: my-app-mac
+          path: dist-mac
+
+      - name: Upload Win Artifacts
+        uses: actions/upload-artifact@v1
+        with:
+          name: my-app-win
+          path: dist-win
