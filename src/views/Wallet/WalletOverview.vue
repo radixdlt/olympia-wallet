@@ -42,7 +42,7 @@
     <div class="bg-white text-rBlack py-4 px-8 flex-1">
       <div v-if="!fetchingFreeTokens" class="font-medium mb-6 flex items-center justify-between">
         {{ $t('wallet.additionalBalancesHeading') }}
-        <button @click="requestFreeTokens" class="focus:outline-none text-rGreen py-2 px-4 border border-rGreen rounded-md hover:bg-translucent-greenLighter active:bg-translucent-greenLight">Get free betanet tokens</button>
+        <button @click="requestFreeTokens" class="focus:outline-none text-rGreen py-2 px-4 border border-rGreen rounded-md hover:bg-translucent-greenLighter active:bg-translucent-greenLight">Get free testnet tokens</button>
       </div>
       <div v-else class="font-medium mb-6 flex items-center justify-between">
         {{ $t('wallet.additionalBalancesHeading') }}
@@ -91,7 +91,7 @@
         <span> WARNING </span>
       </div>
       <div class="px-4 py-2 text-sm text-rBlack">
-        This wallet connects to a temporary Radix betanet test network only. All tokens and transactions are for testing purposes only. Tokens you see in this wallet have no value, and you cannot use it to hold real eXRD or XRD tokens.
+        This wallet connects to a temporary Radix testnet test network only. All tokens and transactions are for testing purposes only. Tokens you see in this wallet have no value, and you cannot use it to hold real eXRD or XRD tokens.
       </div>
     </div>
   </div>

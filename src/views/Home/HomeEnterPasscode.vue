@@ -22,7 +22,7 @@
 
       <div class="text-rBlack pb-6 text-xs">
         <p class="text-rRed font-bold uppercase"> Warning: </p>
-        <p> This wallet connects to a temporary Radix betanet test network only. All tokens and transactions in this wallet are for testing purposes only. Tokens you see in this wallet have no value, and you cannot use it to hold real eXRD or XRD tokens. </p>
+        <p> This wallet connects to a temporary Radix testnet test network only. All tokens and transactions in this wallet are for testing purposes only. Tokens you see in this wallet have no value, and you cannot use it to hold real eXRD or XRD tokens. </p>
       </div>
 
       <ButtonSubmit class="w-96" :disabled="disableSubmit">

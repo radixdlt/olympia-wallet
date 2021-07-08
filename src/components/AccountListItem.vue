@@ -35,7 +35,6 @@ import ClickToCopy from '@/components/ClickToCopy.vue'
 import { ref } from '@nopr3d/vue-next-rx'
 import { getAccountName } from '@/actions/vue/data-store'
 import { formatAddressForDisplay } from '@/helpers/formatter'
-import { Subscription } from 'rxjs'
 
 const AccountListItem = defineComponent({
   components: {
