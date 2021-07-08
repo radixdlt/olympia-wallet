@@ -1,6 +1,6 @@
-import { MnemomicT, Wallet, WalletT, KeystoreT, NetworkT, SigningKeychain, SigningKeychainT } from '@radixdlt/application'
+import { MnemomicT, Wallet, WalletT, KeystoreT, Network, SigningKeychain } from '@radixdlt/application'
 
-export const initWallet = async (mnemonic: MnemomicT, passcode: string, network: NetworkT): Promise<WalletT> => {
+export const initWallet = async (mnemonic: MnemomicT, passcode: string, network: Network): Promise<WalletT> => {
   const walletResult = await SigningKeychain.byEncryptingMnemonicAndSavingKeystore({
     mnemonic,
     password: passcode,

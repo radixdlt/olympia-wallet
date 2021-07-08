@@ -55,7 +55,7 @@
 <script lang="ts">
 import { defineComponent, onUnmounted, Ref } from 'vue'
 import { useForm } from 'vee-validate'
-import { Radix, mockedAPI, Keystore, KeystoreT, MnemomicT, NetworkT } from '@radixdlt/application'
+import { Radix, mockedAPI, Keystore, KeystoreT, MnemomicT, Network } from '@radixdlt/application'
 import { Result } from 'neverthrow'
 import { Subscription } from 'rxjs'
 import { ref } from '@nopr3d/vue-next-rx'
@@ -86,14 +86,14 @@ const SettingsResetPassword = defineComponent({
     const updatedPassword: Ref<boolean> = ref(false)
 
     const radix = Radix
-      .create()
-      .__withAPI(mockedAPI)
+      .create({ network: Network.STOKENET })
+      .connect(process.env.VUE_APP_API || 'https://stokenet.radixdlt.com')
       .withWallet(store.state.wallet)
 
     const handleResetPassword = (newPassword: string) => {
       const getMnemonicForPassword = radix.revealMnemonic()
         .subscribe((m: MnemomicT) => {
-          initWallet(m, newPassword, NetworkT.BETANET) // Temporarily hardcoded for betanet
+          initWallet(m, newPassword, Network.STOKENET) // Temporarily hardcoded for betanet
             .then(wallet => {
               store.commit('setWallet', wallet)
               resetForm()

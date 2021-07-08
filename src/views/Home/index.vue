@@ -43,7 +43,7 @@
 
 <script lang="ts">
 import { defineComponent, reactive } from 'vue'
-import { Radix, ErrorNotification, WalletErrorCause, WalletT } from '@radixdlt/application'
+import { Radix, ErrorNotification, WalletErrorCause, WalletT, Network } from '@radixdlt/application'
 import { hasKeystore, touchKeystore } from '@/actions/vue/create-wallet'
 import { useStore } from '@/store'
 import HomeCreateAndRestore from './HomeCreateAndRestore.vue'
@@ -71,8 +71,8 @@ const CreateWallet = defineComponent({
     const enterPasscodeComponent = ref(null)
 
     const radix = Radix
-      .create()
-      .connect(process.env.VUE_APP_API || '')
+      .create({ network: Network.STOKENET })
+      .connect(process.env.VUE_APP_API || 'https://stokenet.radixdlt.com')
     const subs = new Subscription()
 
     radix.errors
