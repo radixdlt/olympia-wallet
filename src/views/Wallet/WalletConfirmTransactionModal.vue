@@ -41,12 +41,12 @@
         <div class="bg-translucent-gray rounded-md border border-rGray text-rBlack mb-4 w-full">
           <div class="border-b border-rGray py-5 flex items-center">
             <div class="w-26 text-right text-rGrayDark mr-6">{{ fromLabel }}</div>
-            <div class="flex-1">{{ activeAddress.toString() }}</div>
+            <div class="flex-1 font-mono text-sm">{{ activeAddress.toString() }}</div>
           </div>
 
           <div class="border-b border-rGray py-3.5 flex items-center">
             <div class="w-26 text-right text-rGrayDark mr-6">{{ toLabel }}</div>
-            <div class="flex-1">{{ toContent }}</div>
+            <div class="flex-1 font-mono text-sm">{{ toContent }}</div>
           </div>
 
           <div class="border-b border-rGray py-3.5 flex items-center">

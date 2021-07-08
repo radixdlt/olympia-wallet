@@ -13,14 +13,14 @@
           <div class="py-4 px-4 text-sm text-rGrayDark border-b border-rGray">{{ stakingDisclaimer }}</div>
           <div class="py-3 px-4 text-sm text-rGrayDark border-b border-rGray">
             <div class="text-rGrayDark mb-2">{{ $t('staking.fromLabel')}}</div>
-            <div class="text-rBlack">{{ activeAddress.toString() }}</div>
+            <div class="text-rBlack font-mono">{{ activeAddress.toString() }}</div>
           </div>
           <div class="pt-3 pb-6 px-4 text-sm border-b border-rGray">
             <div class="text-rGrayDark mb-2">{{ $t('staking.validatorLabel')}}</div>
             <FormField
               name="validator"
               type="text"
-              class="w-full text-sm"
+              class="w-full text-sm font-mono placeholder-sans"
               :placeholder="$t('staking.validatorPlaceholder')"
               rules="required|validValidator"
             />

@@ -44,7 +44,8 @@ module.exports = {
       blurSmall: 'blur(5px)'
     },
     fontFamily: {
-      sans: ['IBM Plex Sans', 'sans-serif']
+      sans: ['IBM Plex Sans', 'sans-serif'],
+      mono: ['IBM Plex Mono', 'ui-monospace', 'monospace']
     },
     gradientColorStops: theme => ({
       ...theme('colors'),
