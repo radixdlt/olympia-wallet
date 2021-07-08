@@ -55,18 +55,21 @@ jobs:
 
       - name: Upload Linux Artifacts
         uses: actions/upload-artifact@v1
+        if: matrix.os == 'ubuntu-latest' 
         with:
-          name: my-app-linux
+          name: olympia-wallet-linux
           path: dist-linux
 
       - name: Upload Mac Artifacts
         uses: actions/upload-artifact@v1
+        if: matrix.os == 'macOS-latest'
         with:
-          name: my-app-mac
+          name: olympia-wallet-mac
           path: dist-mac
 
       - name: Upload Win Artifacts
         uses: actions/upload-artifact@v1
+        if: matrix.os == 'windows-latest'
         with:
-          name: my-app-win
+          name: olympia-wallet-win
           path: dist-win
