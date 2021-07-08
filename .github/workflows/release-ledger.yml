@@ -6,8 +6,6 @@ on:
 name: release-ledger
 jobs:
   build-release:
-    needs: [release-please]
-    if: ${{ needs.release-please.outputs.release_created }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
