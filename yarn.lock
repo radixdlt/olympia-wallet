@@ -1387,7 +1387,7 @@
     prelude-ts "^1.0.2"
     rxjs "7.0.0"
 
-"@radixdlt/application@^1.0.73":
+"@radixdlt/application@1.0.73":
   version "1.0.73"
   resolved "https://registry.yarnpkg.com/@radixdlt/application/-/application-1.0.73.tgz#437a9c2e5d5cbf49657e917cfea75572090d74f1"
   integrity sha512-8+L+Qz+2cdfy2oYJyjezSNH6PMaSBCTKLPU3Zww5uPi8h9GjyUIOVJdLYQ99C/NwrUx3zej9USXXWM1QVyg7fQ==
