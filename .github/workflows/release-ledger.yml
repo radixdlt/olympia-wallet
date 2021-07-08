@@ -21,6 +21,7 @@ jobs:
           check-latest: true
 
       - name: Install node-hid Dependencies
+        shell: bash
         run: |
           case $RUNNER_OS in
             Linux)
