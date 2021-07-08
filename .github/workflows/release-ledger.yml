@@ -25,10 +25,10 @@ jobs:
           case $RUNNER_OS in
             Linux)
               echo "Building node-hid deps for Ubuntu"
-              apt-get install build-essential git
-              apt-get install gcc-4.8 g++-4.8 && export CXX=g++-4.8
-              apt-get install libusb-1.0-0 libusb-1.0-0-dev
-              apt-get install libudev-dev
+              sudo apt install build-essential git
+              sudo apt install gcc-4.8 g++-4.8 && export CXX=g++-4.8
+              sudo apt install libusb-1.0-0 libusb-1.0-0-dev
+              sudo apt install libudev-dev
               ;;
             *)
               echo "No commands required for this OS"
