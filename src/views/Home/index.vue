@@ -76,7 +76,7 @@ const CreateWallet = defineComponent({
 
     const radix = Radix
       .create()
-      .connect(process.env.VUE_APP_API || '')
+      .connect(process.env.VUE_APP_API || 'https://sandpitnet.radixdlt.com')
     const subs = new Subscription()
 
     radix.errors

@@ -276,7 +276,7 @@ const WalletIndex = defineComponent({
 
     const radix = Radix
       .create()
-      .connect(process.env.VUE_APP_API || '')
+      .connect(process.env.VUE_APP_API || 'https://sandpitnet.radixdlt.com')
       .withWallet(store.state.wallet)
       .withTokenBalanceFetchTrigger(interval(5 * 1_000))
       .withStakingFetchTrigger(interval(5 * 1_000))
