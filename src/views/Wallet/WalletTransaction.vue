@@ -4,7 +4,7 @@
       <div class="flex justify-between mb-16">
         <h3 class="font-medium text-rBlack">{{ $t('transaction.transactionHeading') }}</h3>
         <div class="flex items-center text-rBlack text-sm">
-          <span class="text-rBlack mr-4">{{ $t('wallet.currentAddress') }} {{ activeAddress.toString() }}</span>
+          <span class="text-rGrayDark mr-2">{{ $t('wallet.currentAddress') }}</span> <span class="font-mono text-rBlack">{{ activeAddress.toString() }}</span>
           <div class="hover:text-rGreen flex flex-row items-center cursor-pointer transition-colors">
             <click-to-copy :text="activeAddress.toString()">
             </click-to-copy>
@@ -21,7 +21,7 @@
           <template v-if="nativeToken && selectedCurrency">
             <div class="border-b border-rGray py-7 flex items-center">
               <div class="w-32 text-right text-rGrayDark mr-8">{{ $t('transaction.fromLabel') }}</div>
-              <div class="flex-1">{{ activeAddress.toString() }}</div>
+              <div class="flex-1 font-mono">{{ activeAddress.toString() }}</div>
             </div>
 
             <div class="border-b border-rGray py-7 flex items-center">
@@ -30,7 +30,7 @@
                 <FormField
                   name="recipient"
                   type="text"
-                  class="w-full"
+                  class="w-full font-mono placeholder-sans"
                   :placeholder="$t('transaction.recipientPlaceholder')"
                   rules="required|validAddress"
                 />

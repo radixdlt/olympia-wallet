@@ -22,7 +22,7 @@
     </div>
     <div class="text-xs text-white relative z-20 flex justify-between">
       <span class="mr-2">{{ $t('wallet.addressLabel') }}</span>
-      <span class="flex-1 w-full truncate">{{ displayAddress }}</span>
+      <span class="flex-1 w-full truncate font-mono">{{ displayAddress }}</span>
       <click-to-copy :text="address" class="hover:text-rGreen active:text-rGreenDark" />
     </div>
   </div>
