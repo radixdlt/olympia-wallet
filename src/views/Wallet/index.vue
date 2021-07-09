@@ -1,21 +1,30 @@
 <template>
-  <div data-ci="wallet-view" class="flex flex-row h-screen">
+  <div data-ci="wallet-view" class="flex flex-row h-screen relative">
     <wallet-sidebar-default
-      v-if="sidebar == 'default'"
       :activeAccount="activeAccount"
       :activeView="view"
+      :nameIndex="accountNameIndex"
       @open="sidebar = 'accounts'"
       @setView="setView"
     />
-    <wallet-sidebar-accounts
-      v-if="sidebar == 'accounts'"
-      :accounts="accounts"
-      :activeAccount="activeAccount"
-      @back="sidebar = 'default'"
-      @addAccount="() => { addAccount() ; view = 'editName' }"
-      @switchAccount="switchAccount"
-      @editName="setView('editName')"
-    />
+    <transition
+      enter-active-class="transition ease-out duration-100 transform"
+      enter-from-class="-translate-x-full"
+      enter-to-class="translate-x-0"
+      leave-active-class="transition ease-in duration-75 transform"
+      leave-from-class="translate-x-0"
+      leave-to-class="-translate-x-full"
+    >
+      <wallet-sidebar-accounts
+        v-if="sidebar == 'accounts'"
+        :accounts="accounts"
+        :activeAccount="activeAccount"
+        @back="sidebar = 'default'"
+        @addAccount="() => { addAccount() ; view = 'editName' }"
+        @switchAccount="switchAccount"
+        @editName="setView('editName')"
+      />
+    </transition>
     <template v-if="loaded">
       <template v-if="view == 'overview'">
         <wallet-overview
@@ -99,7 +108,7 @@
       <account-edit-name
         v-if="view == 'editName'"
         :activeAddress="activeAddress"
-        @save="view = 'overview'; sidebar = 'default'"
+        @save="saveAccountName"
       />
 
       <settings-index v-if="view == 'settings' && !loading" />
@@ -219,6 +228,8 @@ const WalletIndex = defineComponent({
     const nativeTokenBalance: Ref<TokenBalance | null> = ref(null)
     const activeMessage: Ref<string> = ref('')
 
+    // a dirty trick to get the account list item in the default wallet sidebar when the name changes
+    const accountNameIndex: Ref<number> = ref(0)
     const loadingBalances: Ref<boolean> = ref(true)
     const loadingHistory: Ref<boolean> = ref(true)
     const loadingHistoryPage: Ref<boolean> = ref(true)
@@ -315,6 +326,7 @@ const WalletIndex = defineComponent({
       tokenBalances.value = null
       decryptedMessages.value = []
       startLoading()
+      sidebar.value = 'default'
       radix.switchAccount({ toAccount: account })
     }
 
@@ -591,6 +603,12 @@ const WalletIndex = defineComponent({
       ).subscribe(() => { faucetParams.next(Math.random()) }))
     }
 
+    const saveAccountName = () => {
+      view.value = 'overview'
+      sidebar.value = 'default'
+      accountNameIndex.value = accountNameIndex.value + 1
+    }
+
     onUnmounted(() => subs.unsubscribe())
 
     return {
@@ -620,6 +638,7 @@ const WalletIndex = defineComponent({
       hasCalculatedFee,
       confirmationMode,
       decryptedMessages,
+      accountNameIndex,
 
       // view flags
       view,
@@ -642,6 +661,7 @@ const WalletIndex = defineComponent({
       previousPage,
       requestFreeTokens,
       decryptMessage,
+      saveAccountName,
 
       // child component refs
       walletTransactionComponent,

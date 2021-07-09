@@ -14,6 +14,7 @@
         <account-list-item
           :account="activeAccount"
           :activeAccount="activeAccount"
+          :nameIndex="nameIndex"
         />
         <div class="absolute bg-gradient-to-r from-blueEnd to-transparent inset-0 w-full h-full z-10 -mx-8 opacity-40">
         </div>
@@ -124,8 +125,18 @@ const WalletSidebarDefault = defineComponent({
   },
 
   props: {
-    activeAccount: Object as PropType<AccountT>,
-    activeView: String
+    activeAccount: {
+      type: Object as PropType<AccountT>,
+      required: true
+    },
+    activeView: {
+      type: String,
+      required: true
+    },
+    nameIndex: {
+      type: Number,
+      required: true
+    }
   },
 
   emits: ['open', 'setView', 'openHelp']
