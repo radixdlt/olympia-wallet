@@ -65,16 +65,17 @@
         <wallet-history
           v-if="!loadingHistory"
           :transactions="transactionHistory.transactions"
-          :messages="transactionMessages"
           :activeAddress="activeAddress"
           :pendingTransactions="pendingTransactions"
           :canGoBack="cursorStack.length > 0"
           :canGoNext="canGoNext"
           :loadingHistoryPage="loadingHistoryPage"
           :nativeToken="nativeToken"
+          :decryptedMessages="decryptedMessages"
           @refresh="refreshHistory"
           @next="nextPage"
           @previous="previousPage"
+          @decryptMessage="decryptMessage"
         />
         <wallet-loading v-else />
       </template>
@@ -140,8 +141,7 @@ import {
   TransferTokensInput,
   TokenBalance,
   MessageInTransaction,
-  ExecutedTransaction,
-  Message
+  ExecutedTransaction
 } from '@radixdlt/application'
 import { safelyUnwrapAmount } from '@/helpers/validateRadixTypes'
 import { ref } from '@nopr3d/vue-next-rx'
@@ -157,7 +157,7 @@ import WalletTransaction from './WalletTransaction.vue'
 import WalletLoading from './WalletLoading.vue'
 import AccountEditName from '@/views/Account/AccountEditName.vue'
 import SettingsIndex from '@/views/Settings/index.vue'
-import { filter, mergeMap, map, switchMap } from 'rxjs/operators'
+import { filter, mergeMap, switchMap } from 'rxjs/operators'
 import { getDerivedAccountsIndex, saveDerivedAccountsIndex } from '@/actions/vue/data-store'
 import { useI18n } from 'vue-i18n'
 
@@ -198,7 +198,8 @@ const WalletIndex = defineComponent({
     const accounts: Ref<AccountsT | null> = ref(null)
     const tokenBalances: Ref<TokenBalances | null> = ref(null)
     const transactionHistory: Ref<TransactionHistory> = ref({ transactions: [] })
-    const transactionMessages: Ref<{id: string, encrypted: boolean, message: string | null}[]> = ref([])
+    const decryptedMessages = ref([])
+
     const activeMessageInTransaction: Ref<MessageInTransaction | null> = ref(null)
     const shouldShowConfirmation: Ref<boolean> = ref(false)
     const confirmationMode: Ref<string | null> = ref(null)
@@ -312,6 +313,7 @@ const WalletIndex = defineComponent({
 
     const switchAccount = (account: AccountT) => {
       tokenBalances.value = null
+      decryptedMessages.value = []
       startLoading()
       radix.switchAccount({ toAccount: account })
     }
@@ -332,36 +334,10 @@ const WalletIndex = defineComponent({
       interval(5 * 1_000)
     ])
 
-    const isHexEncoded = (value: string): boolean => {
-      const buffer = Buffer.from(value, 'hex')
-      const encryptedMessageResult = Message.fromBuffer(buffer)
-      return !encryptedMessageResult.isOk()
-    }
-
-    const parseMessage = (tx: ExecutedTransaction): Promise<{id: string, encrypted: boolean, message: string | null}> => {
-      return new Promise((resolve) => {
-        const id = tx.txID.toString()
-        if (!tx.message) {
-          return resolve({ id, message: null, encrypted: false })
-        }
-        if (isHexEncoded(tx.message)) {
-          return resolve({ id, message: Buffer.from(tx.message, 'hex').toString('utf8'), encrypted: false })
-        }
-        firstValueFrom(radix.decryptTransaction(tx)).then((val) => {
-          return resolve({ id, message: val, encrypted: true })
-        })
-      })
-    }
-
     subs.add(fetchTXHistoryTrigger
       .pipe(
         mergeMap(([params]: [TransactionHistoryOfKnownAddressRequestInput, number]) => {
           return radix.transactionHistory(params)
-        }),
-        map((history: TransactionHistory) => {
-          const allMessages = history.transactions.map((tx: ExecutedTransaction) => parseMessage(tx))
-          Promise.all(allMessages).then((data) => { transactionMessages.value = data })
-          return history
         })
       )
       .subscribe((history: TransactionHistory) => {
@@ -593,6 +569,12 @@ const WalletIndex = defineComponent({
       })
     }
 
+    const decryptMessage = (tx: ExecutedTransaction) => {
+      firstValueFrom(radix.decryptTransaction(tx)).then((val) => {
+        decryptedMessages.value.push({ id: tx.txID.toString(), message: val })
+      })
+    }
+
     const requestFreeTokens = () => {
       const request = {
         params: {
@@ -620,7 +602,6 @@ const WalletIndex = defineComponent({
       activeUnstakes,
       tokenBalances,
       transactionHistory,
-      transactionMessages,
       transactionFee,
       transferInput,
       stakeInput,
@@ -638,6 +619,7 @@ const WalletIndex = defineComponent({
       radix,
       hasCalculatedFee,
       confirmationMode,
+      decryptedMessages,
 
       // view flags
       view,
@@ -659,6 +641,7 @@ const WalletIndex = defineComponent({
       nextPage,
       previousPage,
       requestFreeTokens,
+      decryptMessage,
 
       // child component refs
       walletTransactionComponent,
