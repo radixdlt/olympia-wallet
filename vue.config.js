@@ -14,7 +14,8 @@ module.exports = {
           {
             patterns: [
               'node_modules/usb/build/Release/usb_bindings.node',
-              'node_modules/node-hid/build/Release/HID.node'
+              'node_modules/node-hid/build/Release/HID.node',
+              'node_modules/node-hid/build/Release/HID_hidraw.node'
             ]
           }
         ])
