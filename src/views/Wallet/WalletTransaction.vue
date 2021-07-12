@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col flex-1 min-w-0 overflow-y-scroll bg-rGrayLightest">
+  <div class="flex flex-col flex-1 min-w-0 overflow-y-auto bg-rGrayLightest">
     <div class="py-6 px-8 bg-gray h-full">
       <div class="flex justify-between mb-16">
         <h3 class="font-medium text-rBlack">{{ $t('transaction.transactionHeading') }}</h3>

@@ -39,6 +39,8 @@ jobs:
         env:
           VUE_APP_API: https://betanet.radixdlt.com/rpc
           VUE_APP_EXPLORER: https://betanet-explorer.radixdlt.com
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_ID_PASSWORD: ${{ secrets.APPLE_ID_PASSWORD }}
         with:
           # GitHub token, automatically provided to the action
           # (No need to define this secret in the repo settings)

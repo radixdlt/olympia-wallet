@@ -9,7 +9,7 @@
           <path d="M12.2181 11.1432C13.6383 11.1432 14.7897 9.99183 14.7897 8.57158C14.7897 7.15133 13.6383 6 12.2181 6C10.7978 6 9.64648 7.15133 9.64648 8.57158C9.64648 9.99183 10.7978 11.1432 12.2181 11.1432Z" :stroke="isActive ? '#FFFFFf': '#00C389'" stroke-miterlimit="10"/>
         </svg>
 
-        <div class="font-medium leading-snug text-white hover:text-rGreen transition-colors cursor-pointer w-36 truncate">{{ name }}</div>
+        <div class="font-medium leading-snug text-white hover:text-rGreen transition-colors cursor-pointer w-36 truncate">{{ nickName }}</div>
       </div>
 
       <div v-if="shouldShowEdit" class="text-white hover:text-rGreen transition-colors cursor-pointer flex items-center" @click="$emit('edit')">
@@ -29,13 +29,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onUnmounted, PropType } from 'vue'
+import { defineComponent, PropType, watchEffect, watch } from 'vue'
 import { AccountT } from '@radixdlt/application'
 import ClickToCopy from '@/components/ClickToCopy.vue'
 import { ref } from '@nopr3d/vue-next-rx'
 import { getAccountName } from '@/actions/vue/data-store'
 import { formatAddressForDisplay } from '@/helpers/formatter'
-import { Subscription } from 'rxjs'
 
 const AccountListItem = defineComponent({
   components: {
@@ -54,21 +53,32 @@ const AccountListItem = defineComponent({
     shouldShowEdit: {
       type: Boolean,
       required: false
+    },
+    nameIndex: {
+      type: Number,
+      required: false,
+      default: 0
     }
   },
 
   setup (props) {
-    const address = ref(null)
-    const displayAddress = ref(null)
-    const name = ref('')
+    const nickName = ref('')
 
-    address.value = props.account.address.toString()
-    displayAddress.value = formatAddressForDisplay(address.value)
+    const fetchAccountName = (account: AccountT) => {
+      getAccountName(account.address.toString())
+        .then((storedName: string) => { nickName.value = storedName || account.address.toString() })
+    }
 
-    getAccountName(props.account.address.toString())
-      .then((storedName: string) => { name.value = storedName || props.account.address.toString() })
+    fetchAccountName(props.account)
 
-    return { address, displayAddress, name }
+    watch(() => props.nameIndex, () => {
+      fetchAccountName(props.account)
+    })
+
+    watchEffect(() => {
+      fetchAccountName(props.account)
+    })
+    return { nickName }
   },
 
   computed: {
@@ -76,6 +86,14 @@ const AccountListItem = defineComponent({
       const activeAccountKey: string = this.activeAccount?.hdPath ? this.activeAccount.hdPath.toString() : 'active'
       const accountKey: string = this.account?.hdPath ? this.account.hdPath.toString() : 'account'
       return activeAccountKey === accountKey
+    },
+
+    address (): string {
+      return this.account.address.toString()
+    },
+
+    displayAddress (): string {
+      return formatAddressForDisplay(this.account.address)
     }
   },
 

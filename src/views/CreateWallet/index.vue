@@ -45,7 +45,7 @@
       <router-link
         to="/"
         data-ci="home-button"
-        class="hover:text-rGreen cursor-pointer transition-colors inline-flex flex-row items-center mt-60"
+        class="hover:text-rGreen cursor-pointer transition-colors inline-flex flex-row items-center absolute bottom-8"
       >
        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr-2">
           <circle cx="10" cy="10" r="9.5" transform="rotate(90 10 10)" fill="none" class="stroke-current" />
