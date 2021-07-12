@@ -1,3 +1,5 @@
 export NODE_TLS_REJECT_UNAUTHORIZED=0
 export VUE_APP_API=https://betanet.radixdlt.com/rpc
 export VUE_APP_EXPLORER=https://betanet-explorer.radixdlt.com
+export APPLE_ID=
+export APPLE_ID_PASSWORD=
