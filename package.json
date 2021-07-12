@@ -46,6 +46,7 @@
     "vue-property-decorator": "^10.0.0-rc.2",
     "vue-router": "^4.0.0-0",
     "vue-rx": "^6.2.0",
+    "vue-toastification": "^2.0.0-rc.1",
     "vuex": "^4.0.0"
   },
   "devDependencies": {
