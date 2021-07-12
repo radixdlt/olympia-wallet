@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.9.3](https://www.github.com/radixdlt/olympia-wallet/compare/v0.9.2...v0.9.3) (2021-07-12)
+
+
+### Bug Fixes
+
+* Cert Password Variable in Workflow ([8bd0fab](https://www.github.com/radixdlt/olympia-wallet/commit/8bd0fabced3b6028f9cdc55a6979374ce06e98ea))
+
 ### [0.9.2](https://www.github.com/radixdlt/olympia-wallet/compare/v0.9.1...v0.9.2) (2021-07-12)
 
 
