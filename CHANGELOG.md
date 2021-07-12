@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.9.4](https://www.github.com/radixdlt/olympia-wallet/compare/v0.9.3...v0.9.4) (2021-07-12)
+
+
+### Bug Fixes
+
+* action-electron-builder needs mac_certs_password ([#162](https://www.github.com/radixdlt/olympia-wallet/issues/162)) ([f5e14cc](https://www.github.com/radixdlt/olympia-wallet/commit/f5e14ccd9a8aeb20ce0aa049af5249db4a777e00))
+
 ### [0.9.3](https://www.github.com/radixdlt/olympia-wallet/compare/v0.9.2...v0.9.3) (2021-07-12)
 
 
