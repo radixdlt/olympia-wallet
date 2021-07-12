@@ -37,8 +37,8 @@ jobs:
       - name: Build/release Electron app
         uses: samuelmeuli/action-electron-builder@v1
         env:
-          VUE_APP_API: https://betanet.radixdlt.com/rpc
-          VUE_APP_EXPLORER: https://betanet-explorer.radixdlt.com
+          VUE_APP_API: https://sandpitnet.radixdlt.com
+          VUE_APP_EXPLORER: https://sandpitnet-explorer.radixdlt.com
           APPLE_ID: ${{ secrets.APPLE_ID }}
           APPLE_ID_PASSWORD: ${{ secrets.APPLE_ID_PASSWORD }}
         with:
