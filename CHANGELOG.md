@@ -1,5 +1,34 @@
 # Changelog
 
+## [0.9.0](https://www.github.com/radixdlt/olympia-wallet/compare/v0.8.0...v0.9.0) (2021-07-12)
+
+
+### Features
+
+* Encrypted Messages should be manually decrypted ([#148](https://www.github.com/radixdlt/olympia-wallet/issues/148)) ([76191c5](https://www.github.com/radixdlt/olympia-wallet/commit/76191c519b210ffc3ee38e6de98b857d30b02144))
+* Monospaced addresses ([#151](https://www.github.com/radixdlt/olympia-wallet/issues/151)) ([530e8ce](https://www.github.com/radixdlt/olympia-wallet/commit/530e8cec6e26a357f7369b42baf25eabfb80563a))
+* Notarize mac builds ([#153](https://www.github.com/radixdlt/olympia-wallet/issues/153)) ([f868dd8](https://www.github.com/radixdlt/olympia-wallet/commit/f868dd87c0d6a25796e922e72ebc845434f2197c))
+* update decimal display ([#126](https://www.github.com/radixdlt/olympia-wallet/issues/126)) ([dc496b3](https://www.github.com/radixdlt/olympia-wallet/commit/dc496b3c7c6d2dc3dd73cc0d4b5ff59c1380df22))
+
+
+### Bug Fixes
+
+* Bring back number inputs, extend fee calculation throttle ([#138](https://www.github.com/radixdlt/olympia-wallet/issues/138)) ([525f230](https://www.github.com/radixdlt/olympia-wallet/commit/525f230d6eed656b1501b8f030df6bf1c1ade5d7))
+* **CI:** Unnecessary release builds ([#143](https://www.github.com/radixdlt/olympia-wallet/issues/143)) ([f565372](https://www.github.com/radixdlt/olympia-wallet/commit/f5653723cf14cb5625f22fb1965b9fa0a291b58d))
+* Mac OS Builds should be signed ([1dd9ea7](https://www.github.com/radixdlt/olympia-wallet/commit/1dd9ea7d663d192a3d01002e6ff30c49f1879045))
+* Replace overflow-_-scroll with overflow-_-auto ([#152](https://www.github.com/radixdlt/olympia-wallet/issues/152)) ([38ae47b](https://www.github.com/radixdlt/olympia-wallet/commit/38ae47bafcc56dc9e2ef870c731ceaac2701051b))
+* TailwindCSS Config Broken in a rebase ([#142](https://www.github.com/radixdlt/olympia-wallet/issues/142)) ([a5f2f96](https://www.github.com/radixdlt/olympia-wallet/commit/a5f2f96337e2bc776a2f3adc5ba32ee89c62b40b))
+* Transaction Wallet Step ([e52e0c8](https://www.github.com/radixdlt/olympia-wallet/commit/e52e0c83179d591c976019036c2c1ab8efa897f8))
+* Transactions should only display actions relevant to the active address ([#134](https://www.github.com/radixdlt/olympia-wallet/issues/134)) ([70971bc](https://www.github.com/radixdlt/olympia-wallet/commit/70971bc616a54d42c40cabc5965340698f2591d4))
+
+
+### Dependencies
+
+* Improve support for min screen size in onboarding ([#155](https://www.github.com/radixdlt/olympia-wallet/issues/155)) ([edb9aa3](https://www.github.com/radixdlt/olympia-wallet/commit/edb9aa3324f4205247009d9621b34bf0931bc91b))
+* Release builds should speak to sandpit ([#156](https://www.github.com/radixdlt/olympia-wallet/issues/156)) ([f41f45f](https://www.github.com/radixdlt/olympia-wallet/commit/f41f45f5f6e6944010a0c15c71a924ebf311d54c))
+* remove betanet warnings ([#154](https://www.github.com/radixdlt/olympia-wallet/issues/154)) ([cf46405](https://www.github.com/radixdlt/olympia-wallet/commit/cf46405c644d708afd04350875006742b0a6835a))
+* Update labels on the confirmation modal to be relevant to the action taken ([#135](https://www.github.com/radixdlt/olympia-wallet/issues/135)) ([2e7e882](https://www.github.com/radixdlt/olympia-wallet/commit/2e7e882398fb723a9ec157b63bf00deba782d7ea))
+
 ## [0.8.0](https://www.github.com/radixdlt/olympia-wallet/compare/v0.7.6...v0.8.0) (2021-06-24)
 
 
