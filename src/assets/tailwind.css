@@ -4,10 +4,24 @@
 
 @tailwind utilities;
 
-.placeholder-sans::placeholder {
-  font-family: 'IBM Plex Sans', 'sans-serif';
-}
+@layer components {
+  .placeholder-sans::placeholder {
+    font-family: 'IBM Plex Sans', 'sans-serif';
+  }
+  
+  body {
+    user-select: none;
+  }
 
-body {
-  user-select: none;
+  .Vue-Toastification__container.bottom-right {
+    @apply fixed bottom-4 right-4 z-20
+  }
+
+  .Vue-Toastification__toast {
+    @apply px-4 py-3 text-white mt-4
+  }
+
+  .Vue-Toastification__toast--success {
+    @apply bg-rGreen
+  }
 }

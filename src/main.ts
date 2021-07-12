@@ -11,7 +11,11 @@ import { i18n } from '@/text'
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
 
 const options: PluginOptions = {
-  position: POSITION.BOTTOM_RIGHT
+  position: POSITION.BOTTOM_RIGHT,
+  closeButton: false,
+  icon: false,
+  timeout: 5000,
+  maxToasts: 3
 }
 
 createApp(App)
