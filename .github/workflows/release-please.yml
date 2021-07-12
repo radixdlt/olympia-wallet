@@ -7,6 +7,8 @@ name: release-please
 jobs:
   release-please:
     runs-on: ubuntu-latest
+    outputs:
+      release_created: ${{ steps.release.ouputs.release_created }}
     steps:
       - uses: GoogleCloudPlatform/release-please-action@v2
         id: release
