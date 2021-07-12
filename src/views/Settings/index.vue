@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-rGrayLightest p-5 flex-1 overflow-y-scroll">
+  <div class="bg-rGrayLightest p-5 flex-1 overflow-y-auto">
     <div class="flex flex-col">
       <div class="flex flex-row">
         <tabs-tab :isActive="activeForm == 'password'" @click="() => handleClickTab('password')">Change Password</tabs-tab>
