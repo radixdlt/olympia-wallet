@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.9.6](https://www.github.com/radixdlt/olympia-wallet/compare/v0.9.5...v0.9.6) (2021-07-13)
+
+
+### Dependencies
+
+* upgrade JS lib to fix staking on stokenet ([#166](https://www.github.com/radixdlt/olympia-wallet/issues/166)) ([7957964](https://www.github.com/radixdlt/olympia-wallet/commit/7957964a34ecb10cfd93138f4fbd8aa355206055))
+
 ### [0.9.5](https://www.github.com/radixdlt/olympia-wallet/compare/v0.9.4...v0.9.5) (2021-07-13)
 
 
