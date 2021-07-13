@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.9.5](https://www.github.com/radixdlt/olympia-wallet/compare/v0.9.4...v0.9.5) (2021-07-13)
+
+
+### Dependencies
+
+* move to stokenet ([f1466c3](https://www.github.com/radixdlt/olympia-wallet/commit/f1466c3ff16af7e99b483a561b1cfaf8f666d041))
+
 ### [0.9.4](https://www.github.com/radixdlt/olympia-wallet/compare/v0.9.3...v0.9.4) (2021-07-12)
 
 
