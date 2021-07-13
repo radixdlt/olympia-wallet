@@ -412,8 +412,7 @@ const WalletIndex = defineComponent({
       subs.add(transactionTracking.events
         .pipe(filter((trackingEvent: TransactionStateUpdate) => trackingEvent.eventUpdateType === 'INITIATED'))
         .subscribe((res: TransactionStateUpdate) => {
-          const transactionIntent = res as unknown as TransactionIntent
-          draftTransaction.value = transactionIntent
+          draftTransaction.value = (res as TransactionStateSuccess).transactionState as TransactionIntent
         }))
 
       // Track pending transactions augmented with actions array
