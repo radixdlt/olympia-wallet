@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.10.0](https://www.github.com/radixdlt/olympia-wallet/compare/v0.9.5...v0.10.0) (2021-07-13)
+
+
+### Features
+
+* copying addresses in wallet and explorer ([#165](https://www.github.com/radixdlt/olympia-wallet/issues/165)) ([2c4a6db](https://www.github.com/radixdlt/olympia-wallet/commit/2c4a6db15e451404650cd744eb2aa9b866bebedd))
+
+
+### Dependencies
+
+* upgrade JS lib to fix staking on stokenet ([#166](https://www.github.com/radixdlt/olympia-wallet/issues/166)) ([7957964](https://www.github.com/radixdlt/olympia-wallet/commit/7957964a34ecb10cfd93138f4fbd8aa355206055))
+
 ### [0.9.5](https://www.github.com/radixdlt/olympia-wallet/compare/v0.9.4...v0.9.5) (2021-07-13)
 
 
