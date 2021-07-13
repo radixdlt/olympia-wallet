@@ -10,7 +10,28 @@
         class="flex flex-col flex-1 mr-6"
       >
         <tabs-content :leftTabIsActive="activeForm == 'stake'">
-          <div class="py-4 px-4 text-sm text-rGrayDark border-b border-rGray">{{ stakingDisclaimer }}</div>
+          <div class="py-4 px-4 text-sm text-rGrayDark border-b border-rGray">
+            <div v-if="activeForm == 'stake'">
+              <i18n-t keypath="staking.stakeDisclaimer" tag="p">
+                <template #link>
+                  <a :href="stakeUrl" target="_blank" class="underline text-rBlack">{{$t('staking.guideTitle')}}</a>
+                </template>
+                <template #bold>
+                  <b class="font-medium text-rBlack">{{$t('staking.stakeDisclaimerBold')}}</b>
+                </template>
+              </i18n-t>
+            </div>
+            <div v-else>
+              <i18n-t keypath="staking.unstakeDisclaimer" tag="p">
+                <template #link>
+                  <a :href="stakeUrl" target="_blank" class="underline text-rBlack">{{$t('staking.guideTitle')}}</a>
+                </template>
+                <template #bold>
+                  <b class="font-medium text-rBlack">{{$t('staking.unstakeDisclaimerBold')}}</b>
+                </template>
+              </i18n-t>
+            </div>
+          </div>
           <div class="py-3 px-4 text-sm text-rGrayDark border-b border-rGray">
             <div class="text-rGrayDark mb-2">{{ $t('staking.fromLabel')}}</div>
             <div class="text-rBlack font-mono">{{ activeAddress.toString() }}</div>
@@ -142,7 +163,8 @@ const WalletStaking = defineComponent({
 
   data () {
     return {
-      activeForm: 'stake'
+      activeForm: 'stake',
+      stakeUrl: 'https://learn.radixdlt.com'
     }
   },
 
