@@ -13,15 +13,8 @@
     user-select: none;
   }
 
-  .Vue-Toastification__container.bottom-right {
-    @apply fixed bottom-4 right-4 z-20
-  }
 
-  .Vue-Toastification__toast {
-    @apply px-4 py-3 text-white mt-4
-  }
-
-  .Vue-Toastification__toast--success {
-    @apply bg-rGreen
+  .Vue-Toastification__toast.Vue-Toastification__toast--success {
+    @apply px-4 py-3 text-white rounded-none bg-rGreen min-w-min min-h-0
   }
 }

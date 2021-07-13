@@ -4,6 +4,7 @@ import router from './router'
 import VueRx from '@nopr3d/vue-next-rx'
 import Toast, { PluginOptions, POSITION } from 'vue-toastification'
 import './assets/tailwind.css'
+import 'vue-toastification/dist/index.css'
 import '@/validations'
 import { store, key } from '@/store'
 import { i18n } from '@/text'
@@ -14,8 +15,8 @@ const options: PluginOptions = {
   position: POSITION.BOTTOM_RIGHT,
   closeButton: false,
   icon: false,
-  timeout: 5000,
-  maxToasts: 3
+  maxToasts: 3,
+  hideProgressBar: true
 }
 
 createApp(App)
