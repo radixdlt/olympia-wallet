@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.10.2](https://www.github.com/radixdlt/olympia-wallet/compare/v0.10.1...v0.10.2) (2021-07-14)
+
+
+### Bug Fixes
+
+* Toast Updates ([#171](https://www.github.com/radixdlt/olympia-wallet/issues/171)) ([7c6d0ff](https://www.github.com/radixdlt/olympia-wallet/commit/7c6d0ff5401c7f8781a28341522605f88fcaf49a))
+
 ### [0.10.1](https://www.github.com/radixdlt/olympia-wallet/compare/v0.10.0...v0.10.1) (2021-07-14)
 
 
