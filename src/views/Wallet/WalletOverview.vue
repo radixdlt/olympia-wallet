@@ -1,10 +1,10 @@
 <template>
-  <div class="flex flex-col flex-1 min-w-0 overflow-y-scroll overflow-x-hidden bg-white">
+  <div class="flex flex-col flex-1 min-w-0 overflow-y-auto overflow-x-hidden bg-white">
     <div class="bg-rGrayLightest px-8">
       <div class="flex justify-between mb-4 pt-4">
         <h3 class="font-medium text-rBlack">{{ $t('wallet.balancesHeading') }}</h3>
         <div class="flex items-center text-rBlack text-sm">
-          <span class="text-rBlack mr-4">{{ $t('wallet.currentAddress') }} {{ activeAddress.toString() }}</span>
+          <span class="text-rGrayDark mr-2">{{ $t('wallet.currentAddress') }}</span> <span class="font-mono text-rBlack">{{ activeAddress.toString() }}</span>
           <div class="hover:text-rGreen flex flex-row items-center cursor-pointer transition-colors">
             <click-to-copy :text="activeAddress.toString()">
             </click-to-copy>
@@ -12,7 +12,7 @@
         </div>
       </div>
 
-      <div class="border border-rGray bg-white rounded-md flex flex-row mb-7 overflow-y-scroll">
+      <div class="border border-rGray bg-white rounded-md flex flex-row mb-7 overflow-y-auto">
         <img src="@/assets/token.svg" alt="token symbol" class="p-3 border-r border-rGray" />
         <div class="flex flex-col my-3 px-5 border-r border-rGray flex-1">
           <span class="text-sm text-rGrayDark">{{ $t('wallet.totalTokens') }}</span>
@@ -76,21 +76,12 @@
           class="border border-rGray rounded-md divide-x divide-rGray"
         >
           <div class="flex flex-row py-1">
-            <div class="flex-1 flex flex-row items-center px-4 overflow-x-scroll p-2 m-2.5">
+            <div class="flex-1 flex flex-row items-center px-4 overflow-x-auto p-2 m-2.5">
               <big-amount :amount="tokenBalance.amount" class="text-4xl font-light mr-4 text-rBlack" />
               <token-symbol>{{ tokenBalance.token.symbol.toUpperCase() }}</token-symbol>
             </div>
           </div>
         </div>
-      </div>
-    </div>
-
-    <div class="fixed bottom-0 bg-rGrayLightest flex py-2 px-4">
-      <div class="border-2 rounded-md border-rRed text-rRed py-2 px-4 flex self-center font-bold">
-        <span> WARNING </span>
-      </div>
-      <div class="px-4 py-2 text-sm text-rBlack">
-        This wallet connects to a temporary Radix testnet test network only. All tokens and transactions are for testing purposes only. Tokens you see in this wallet have no value, and you cannot use it to hold real eXRD or XRD tokens.
       </div>
     </div>
   </div>

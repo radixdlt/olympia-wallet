@@ -1,4 +1,6 @@
 export NODE_TLS_REJECT_UNAUTHORIZED=0
-export VUE_APP_API=https://releasenet.radixdlt.com
-export VUE_APP_EXPLORER=https://betanet-explorer.radixdlt.com
-export VUE_APP_FAUCET=https://releasenet-faucet.radixdlt.com/faucet/request
+export VUE_APP_API=https://stokenet.radixdlt.com
+export VUE_APP_EXPLORER=https://stokenet-explorer.radixdlt.com
+export VUE_APP_FAUCET=https://stokenet-faucet.radixdlt.com/faucet/request
+export APPLE_ID=
+export APPLE_ID_PASSWORD=

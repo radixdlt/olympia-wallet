@@ -44,7 +44,15 @@ module.exports = {
           publish: 'github'
         },
         appId: 'com.radixdlt.olympia-wallet',
-        productName: 'Radix Wallet'
+        productName: 'Radix Wallet',
+        mac: {
+          hardenedRuntime: true,
+          gatekeeperAssess: false
+        },
+        dmg: {
+          sign: false
+        },
+        afterSign: 'scripts/notarize.js'
       },
       preload: 'src/preload.ts'
     }

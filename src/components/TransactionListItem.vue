@@ -53,9 +53,9 @@
           />
         </div>
       </div>
-      <div v-if="message" class="text-sm px-3 py-2 bg-rGrayLightest bg-opacity-60 flex items-center">
+      <div v-if="messageState" class="text-sm px-3 py-2 bg-rGrayLightest bg-opacity-60 flex items-center">
         <div class="h-5 w-6 flex items-center justify-center -ml-1 mr-1">
-          <svg width="10" height="12" viewBox="0 0 10 12" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-5" v-if="encrypted">
+          <svg width="10" height="12" viewBox="0 0 10 12" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-5" v-if="showMessageLock">
             <path d="M2.04883 4.93512V3.79987C2.04883 2.25355 3.30238 1 4.8487 1C6.39502 1 7.64857 2.25355 7.64857 3.79987V4.93512" stroke="#7A99AC" stroke-width="1.5" stroke-miterlimit="10"/>
             <path d="M1 11.4001V4.84473H2.13447H7.58739H8.72185V11.0556H2.60558" stroke="#7A99AC" stroke-width="1.5" stroke-miterlimit="10"/>
           </svg>
@@ -67,9 +67,11 @@
           </svg>
         </div>
 
-        <span>{{ message }}</span>
+        <span v-if="messageState == 'plaintext'">{{ transaction.message }}</span>
+        <span v-if="messageState == 'decrypted'" class="underline">{{decryptedMessage}}</span>
+        <button v-if="messageState == 'encrypted'" class="rGrayDark" @click="decrypt">Encrypted message, click to decrypt.</button>
       </div>
-    </div>
+     </div>
     <div class="bg-rGrayLightest flex items-center justify-center px-3">
       <a :href="explorerURL" target="_blank" class="w-6 h-6 rounded-full border border-rGray flex items-center justify-center cursor-pointer">
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -83,7 +85,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { ExecutedTransaction, AccountAddressT, Token, ExecutedAction, ActionType } from '@radixdlt/application'
+import { ExecutedTransaction, AccountAddressT, Token, ExecutedAction, ActionType, Message } from '@radixdlt/application'
 import { DateTime } from 'luxon'
 import ActionListItemStakeTokens from '@/components/ActionListItemStakeTokens.vue'
 import ActionListItemUnstakeTokens from '@/components/ActionListItemUnstakeTokens.vue'
@@ -119,15 +121,10 @@ export default defineComponent({
       type: Object as PropType<Token>,
       required: true
     },
-    message: {
+    decryptedMessage: {
       type: String as PropType<string>,
       required: false,
       default: null
-    },
-    encrypted: {
-      type: Boolean,
-      requried: false,
-      default: false
     }
   },
 
@@ -135,6 +132,7 @@ export default defineComponent({
     sentAt (): string {
       return DateTime.fromJSDate(this.transaction.sentAt).toLocaleString(DateTime.DATETIME_SHORT)
     },
+
     explorerURL (): string {
       return `${process.env.VUE_APP_EXPLORER}/#/transactions/${this.transaction.txID}`
     },
@@ -156,7 +154,26 @@ export default defineComponent({
         }
         return related
       })
+    },
+
+    showMessageLock (): boolean {
+      return this.messageState === 'decrypted' || this.messageState === 'encrypted'
+    },
+
+    messageState (): string | null {
+      if (!this.transaction.message) { return null }
+      if (this.decryptedMessage) { return 'decrypted' }
+      if (Message.isEncrypted(this.transaction.message)) { return 'encrypted' }
+      return 'plaintext'
     }
-  }
+  },
+
+  methods: {
+    decrypt () {
+      this.$emit('decryptMessage', this.transaction)
+    }
+  },
+
+  emits: ['decryptMessage']
 })
 </script>

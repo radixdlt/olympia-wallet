@@ -10,6 +10,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { copyToClipboard } from '@/actions/vue/create-wallet'
+import { useToast } from 'vue-toastification'
 
 const ClickToCopy = defineComponent({
   props: {
@@ -19,9 +20,15 @@ const ClickToCopy = defineComponent({
     }
   },
 
+  setup () {
+    const toast = useToast()
+    return { toast }
+  },
+
   methods: {
     copyText () {
       copyToClipboard(this.text)
+      this.toast.success('Copied to Clipboard')
     }
   }
 })

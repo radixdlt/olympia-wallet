@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-rGrayLightest p-5 flex-1 overflow-y-scroll">
+  <div class="bg-rGrayLightest p-5 flex-1 overflow-y-auto">
     <div class="flex flex-col">
       <div class="flex flex-row">
         <tabs-tab :isActive="activeForm == 'password'" @click="() => handleClickTab('password')">Change Password</tabs-tab>
@@ -25,7 +25,7 @@
 
 <script lang="ts">
 import { defineComponent, onUnmounted } from 'vue'
-import { Radix, mockedAPI, MnemomicT } from '@radixdlt/application'
+import { Radix, mockedAPI, MnemomicT, Network } from '@radixdlt/application'
 import { combineLatest, Subject, Subscription } from 'rxjs'
 import TabsTab from '@/components/TabsTab.vue'
 import TabsContent from '@/components/TabsContent.vue'
@@ -47,8 +47,8 @@ const SettingsIndex = defineComponent({
   setup () {
     const store = useStore()
     const radix = Radix
-      .create()
-      .__withAPI(mockedAPI)
+      .create({ network: Network.STOKENET })
+      .connect(process.env.VUE_APP_API || 'https://stokenet.radixdlt.com')
       .withWallet(store.state.wallet)
 
     const mnemonic = ref(null)

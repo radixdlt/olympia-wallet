@@ -7,6 +7,8 @@ name: release-please
 jobs:
   release-please:
     runs-on: ubuntu-latest
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
     steps:
       - uses: GoogleCloudPlatform/release-please-action@v2
         id: release
@@ -37,9 +39,11 @@ jobs:
       - name: Build/release Electron app
         uses: samuelmeuli/action-electron-builder@v1
         env:
-          VUE_APP_API: https://releasenet.radixdlt.com
-          VUE_APP_EXPLORER: https://releasenet-explorer.radixdlt.com
-          VUE_APP_FAUCET: https://releasenet-faucet.radixdlt.com/faucet/request
+          VUE_APP_API: https://stokenet.radixdlt.com
+          VUE_APP_EXPLORER: https://stokenet-explorer.radixdlt.com
+          VUE_APP_FAUCET: https://stokenet-faucet.radixdlt.com/faucet/request
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_ID_PASSWORD: ${{ secrets.APPLE_ID_PASSWORD }}
         with:
           # GitHub token, automatically provided to the action
           # (No need to define this secret in the repo settings)
@@ -47,4 +51,4 @@ jobs:
           use_vue_cli: true
           release: ${{ startsWith(github.ref, 'refs/tags/v') }}
           mac_certs: ${{ secrets.MAC_CERTS }}
-          mac_certs_passwords: ${{ secrets.MAC_CERTS_PASSWORD }}
+          mac_certs_password: ${{ secrets.MAC_CERTS_PASSWORD }}

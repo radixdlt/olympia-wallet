@@ -1,9 +1,9 @@
 <template>
-  <div data-ci="wallet-view" class="flex flex-row h-screen">
+  <div data-ci="wallet-view" class="flex flex-row h-screen relative">
     <wallet-sidebar-default
-      v-if="sidebar == 'default'"
       :activeAccount="activeAccount"
       :activeView="view"
+      :nameIndex="accountNameIndex"
       @open="sidebar = 'accounts'"
       @setView="setView"
     />
@@ -74,16 +74,17 @@
         <wallet-history
           v-if="!loadingHistory"
           :transactions="transactionHistory.transactions"
-          :messages="transactionMessages"
           :activeAddress="activeAddress"
           :pendingTransactions="pendingTransactions"
           :canGoBack="cursorStack.length > 0"
           :canGoNext="canGoNext"
           :loadingHistoryPage="loadingHistoryPage"
           :nativeToken="nativeToken"
+          :decryptedMessages="decryptedMessages"
           @refresh="refreshHistory"
           @next="nextPage"
           @previous="previousPage"
+          @decryptMessage="decryptMessage"
         />
         <wallet-loading v-else />
       </template>
@@ -107,7 +108,7 @@
       <account-edit-name
         v-if="view == 'editName'"
         :activeAddress="activeAddress"
-        @save="view = 'overview'; sidebar = 'default'"
+        @save="saveAccountName"
       />
 
       <settings-index v-if="view == 'settings' && !loading" />
@@ -150,7 +151,7 @@ import {
   TokenBalance,
   MessageInTransaction,
   ExecutedTransaction,
-  Message
+  Network
 } from '@radixdlt/application'
 import { safelyUnwrapAmount } from '@/helpers/validateRadixTypes'
 import { ref } from '@nopr3d/vue-next-rx'
@@ -218,7 +219,8 @@ const WalletIndex = defineComponent({
     const accounts: Ref<AccountsT | null> = ref(null)
     const tokenBalances: Ref<TokenBalances | null> = ref(null)
     const transactionHistory: Ref<TransactionHistory> = ref({ transactions: [] })
-    const transactionMessages: Ref<{id: string, encrypted: boolean, message: string | null}[]> = ref([])
+    const decryptedMessages = ref([])
+
     const activeMessageInTransaction: Ref<MessageInTransaction | null> = ref(null)
     const shouldShowConfirmation: Ref<boolean> = ref(false)
     const confirmationMode: Ref<string | null> = ref(null)
@@ -238,6 +240,8 @@ const WalletIndex = defineComponent({
     const nativeTokenBalance: Ref<TokenBalance | null> = ref(null)
     const activeMessage: Ref<string> = ref('')
 
+    // a dirty trick to get the account list item in the default wallet sidebar when the name changes
+    const accountNameIndex: Ref<number> = ref(0)
     const loadingBalances: Ref<boolean> = ref(true)
     const loadingHistory: Ref<boolean> = ref(true)
     const loadingHistoryPage: Ref<boolean> = ref(true)
@@ -275,8 +279,8 @@ const WalletIndex = defineComponent({
     if (!store.state.wallet) router.push('/')
 
     const radix = Radix
-      .create()
-      .connect(process.env.VUE_APP_API || 'https://sandpitnet.radixdlt.com')
+      .create({ network: Network.STOKENET })
+      .connect(process.env.VUE_APP_API || 'https://stokenet.radixdlt.com')
       .withWallet(store.state.wallet)
       .withTokenBalanceFetchTrigger(interval(5 * 1_000))
       .withStakingFetchTrigger(interval(5 * 1_000))
@@ -337,7 +341,9 @@ const WalletIndex = defineComponent({
 
     const switchAccount = (account: AccountT) => {
       tokenBalances.value = null
+      decryptedMessages.value = []
       startLoading()
+      sidebar.value = 'default'
       radix.switchAccount({ toAccount: account })
     }
 
@@ -357,36 +363,10 @@ const WalletIndex = defineComponent({
       interval(5 * 1_000)
     ])
 
-    const isHexEncoded = (value: string): boolean => {
-      const buffer = Buffer.from(value, 'hex')
-      const encryptedMessageResult = Message.fromBuffer(buffer)
-      return !encryptedMessageResult.isOk()
-    }
-
-    const parseMessage = (tx: ExecutedTransaction): Promise<{id: string, encrypted: boolean, message: string | null}> => {
-      return new Promise((resolve) => {
-        const id = tx.txID.toString()
-        if (!tx.message) {
-          return resolve({ id, message: null, encrypted: false })
-        }
-        if (isHexEncoded(tx.message)) {
-          return resolve({ id, message: Buffer.from(tx.message, 'hex').toString('utf8'), encrypted: false })
-        }
-        firstValueFrom(radix.decryptTransaction(tx)).then((val) => {
-          return resolve({ id, message: val, encrypted: true })
-        })
-      })
-    }
-
     subs.add(fetchTXHistoryTrigger
       .pipe(
         mergeMap(([params]: [TransactionHistoryOfKnownAddressRequestInput, number]) => {
           return radix.transactionHistory(params)
-        }),
-        map((history: TransactionHistory) => {
-          const allMessages = history.transactions.map((tx: ExecutedTransaction) => parseMessage(tx))
-          Promise.all(allMessages).then((data) => { transactionMessages.value = data })
-          return history
         })
       )
       .subscribe((history: TransactionHistory) => {
@@ -618,6 +598,12 @@ const WalletIndex = defineComponent({
       })
     }
 
+    const decryptMessage = (tx: ExecutedTransaction) => {
+      firstValueFrom(radix.decryptTransaction(tx)).then((val) => {
+        decryptedMessages.value.push({ id: tx.txID.toString(), message: val })
+      })
+    }
+
     const requestFreeTokens = () => {
       const request = {
         params: {
@@ -685,7 +671,6 @@ const WalletIndex = defineComponent({
       activeUnstakes,
       tokenBalances,
       transactionHistory,
-      transactionMessages,
       transactionFee,
       transferInput,
       stakeInput,
@@ -706,6 +691,8 @@ const WalletIndex = defineComponent({
       hardwareAddress,
       hardwareWalletError,
       hardwareInteractionState,
+      decryptedMessages,
+      accountNameIndex,
 
       // view flags
       view,
@@ -729,6 +716,8 @@ const WalletIndex = defineComponent({
       requestFreeTokens,
       connectHardwareWallet,
       verifyHardwareWalletAddress,
+      decryptMessage,
+      saveAccountName,
 
       // child component refs
       walletTransactionComponent,

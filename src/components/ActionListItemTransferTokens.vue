@@ -13,11 +13,11 @@
     </div>
     <div class="flex flex-col items-end">
       <div v-if="!isRecipient" class="flex flex-row flex-1 min-w-0">
-        <span>{{ $t('history.toLabel') }}:</span> <span class="ml-2 mr-1 min-w-0">{{ displayAddress(action.to) }}</span>
+        <span>{{ $t('history.toLabel') }}:</span> <span class="ml-2 mr-1 min-w-0 font-mono">{{ displayAddress(action.to) }}</span>
         <click-to-copy :text="action.to.toString()" />
       </div>
       <div v-if="isRecipient" class="flex flex-row flex-1 min-w-0">
-        <span>{{ $t('history.fromLabel') }}:</span> <span class="ml-2 mr-1 min-w-0">{{displayAddress(action.from) }}</span>
+        <span>{{ $t('history.fromLabel') }}:</span> <span class="ml-2 mr-1 min-w-0 font-mono">{{displayAddress(action.from) }}</span>
         <click-to-copy :text="action.from.toString()" />
       </div>
     </div>
