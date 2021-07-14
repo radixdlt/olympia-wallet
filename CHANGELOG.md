@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.10.1](https://www.github.com/radixdlt/olympia-wallet/compare/v0.10.0...v0.10.1) (2021-07-14)
+
+
+### Bug Fixes
+
+* Enable auto updates ([85092db](https://www.github.com/radixdlt/olympia-wallet/commit/85092db9f98836a16b2978677d5d4fc83896ff29))
+
 ## [0.10.0](https://www.github.com/radixdlt/olympia-wallet/compare/v0.9.5...v0.10.0) (2021-07-13)
 
 
