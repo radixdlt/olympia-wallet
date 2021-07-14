@@ -1,6 +1,6 @@
 'use strict'
 
-import { app, ipcMain, protocol, BrowserWindow } from 'electron'
+import { app, ipcMain, protocol, BrowserWindow, Menu } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 import path from 'path'
@@ -12,8 +12,9 @@ import {
   getDerivedAccountsIndex,
   saveDerivedAccountsIndex
 } from './actions/electron/data-store'
+import menu from './menu'
+
 const isDevelopment = process.env.NODE_ENV !== 'production'
-import { autoUpdater } from "electron-updater"
 
 app.commandLine.appendSwitch('ignore-certificate-errors')
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0
@@ -61,7 +62,6 @@ async function createWindow () {
     createProtocol('app')
     // Load the index.html when not in development
     win.loadURL('app://./index.html')
-    autoUpdater.checkForUpdatesAndNotify()
   }
 }
 
@@ -92,6 +92,7 @@ app.on('ready', async () => {
       console.error('Vue Devtools failed to install:', e.toString())
     }
   }
+  Menu.setApplicationMenu(menu)
   createWindow()
 })
 
