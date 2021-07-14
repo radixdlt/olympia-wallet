@@ -13,6 +13,7 @@ import {
   saveDerivedAccountsIndex
 } from './actions/electron/data-store'
 const isDevelopment = process.env.NODE_ENV !== 'production'
+import { autoUpdater } from "electron-updater"
 
 app.commandLine.appendSwitch('ignore-certificate-errors')
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0
@@ -60,6 +61,7 @@ async function createWindow () {
     createProtocol('app')
     // Load the index.html when not in development
     win.loadURL('app://./index.html')
+    autoUpdater.checkForUpdatesAndNotify()
   }
 }
 
