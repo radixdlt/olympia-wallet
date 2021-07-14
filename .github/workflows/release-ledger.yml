@@ -41,6 +41,8 @@ jobs:
           VUE_APP_API: https://sandpitnet.radixdlt.com
           VUE_APP_EXPLORER: https://sandpitnet-explorer.radixdlt.com
           VUE_APP_FAUCET: https://sandpitnet-faucet.radixdlt.com/faucet/request
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_ID_PASSWORD: ${{ secrets.APPLE_ID_PASSWORD }}
         with:
           # GitHub token, automatically provided to the action
           # (No need to define this secret in the repo settings)
