@@ -16,6 +16,7 @@ const options: PluginOptions = {
   closeButton: false,
   icon: false,
   maxToasts: 3,
+  timeout: 1500,
   hideProgressBar: true
 }
 
