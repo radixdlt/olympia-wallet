@@ -23,6 +23,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     env:
       GITHUB_TOKEN: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
+      GH_TOKEN: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
     strategy:
       matrix:
         os: [macos-latest, ubuntu-latest, windows-latest]
