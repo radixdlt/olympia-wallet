@@ -42,7 +42,7 @@ jobs:
         env:
           VUE_APP_API: https://stokenet.radixdlt.com
           VUE_APP_EXPLORER: https://stokenet-explorer.radixdlt.com
-          VUE_APP_FAUCET: https://stokenet-faucet.radixdlt.com/faucet/request
+          VUE_APP_FAUCET: https://stokenet-faucet.radixdlt.com
           APPLE_ID: ${{ secrets.APPLE_ID }}
           APPLE_ID_PASSWORD: ${{ secrets.APPLE_ID_PASSWORD }}
         with:
