@@ -61,10 +61,6 @@
                 />
                 <FormErrorMessage name="amount" class="text-sm text-red-400" errorClass="w-120" />
               </div>
-              <div class="flex flex-col w-32 ">
-                <div class="text-rGrayDark mb-3">{{ $t('staking.feeLabel')}}</div>
-                <div class="pt-4 pb-2">0.100</div>
-              </div>
             </div>
           </div>
         </tabs-content>

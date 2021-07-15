@@ -46,8 +46,6 @@
           :activeAddress="activeAddress"
           :tokenBalances="tokenBalances.tokenBalances"
           :nativeToken="nativeToken"
-          :transactionFee="transactionFee"
-          :hasCalculatedFee="hasCalculatedFee"
           @transferTokens="transferTokens"
           ref="walletTransactionComponent"
         />
@@ -95,7 +93,6 @@
         :transferInput="transferInput"
         :stakeInput="stakeInput"
         :transactionFee="transactionFee"
-        :hasCalculatedFee="hasCalculatedFee"
         :selectedCurrency="selectedCurrency"
         :nativeToken="nativeToken"
         :confirmationMode="confirmationMode"
@@ -636,7 +633,6 @@ const WalletIndex = defineComponent({
       activeMessage,
       activeMessageInTransaction,
       radix,
-      hasCalculatedFee,
       confirmationMode,
       decryptedMessages,
       accountNameIndex,
