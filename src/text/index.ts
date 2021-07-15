@@ -125,7 +125,7 @@ const messages = {
       fromLabel: 'Staking Account',
       validatorLabel: 'Validator',
       amountLabel: 'Amount',
-      amountPlaceholder: '10 XRD min stake. Available balance ...',
+      amountPlaceholder: '100 XRD min stake. Available balance ...',
       feeLabel: 'Fee',
       stakeButton: 'Stake',
       unstakeButton: 'Request Unstake',
