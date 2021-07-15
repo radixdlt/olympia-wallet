@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.11.0](https://www.github.com/radixdlt/olympia-wallet/compare/v0.10.2...v0.11.0) (2021-07-15)
+
+
+### Features
+
+* App Updates should be opt in ([#175](https://www.github.com/radixdlt/olympia-wallet/issues/175)) ([36fea8a](https://www.github.com/radixdlt/olympia-wallet/commit/36fea8a300400e4be32b8c262234b0283346651d))
+
+
+### Dependencies
+
+* **copy:** Update the copy for the staking and unstaking forms ([#169](https://www.github.com/radixdlt/olympia-wallet/issues/169)) ([d448fae](https://www.github.com/radixdlt/olympia-wallet/commit/d448fae67810d8f5a0a73db3ea3b32329aed0d27))
+
 ### [0.10.2](https://www.github.com/radixdlt/olympia-wallet/compare/v0.10.1...v0.10.2) (2021-07-14)
 
 
