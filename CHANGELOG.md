@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.11.2](https://www.github.com/radixdlt/olympia-wallet/compare/v0.11.1...v0.11.2) (2021-07-15)
+
+
+### Bug Fixes
+
+* Update Faucet Request ([5a43bae](https://www.github.com/radixdlt/olympia-wallet/commit/5a43baeca958d0ab31776995a1ce86e775b446eb))
+
 ### [0.11.1](https://www.github.com/radixdlt/olympia-wallet/compare/v0.11.0...v0.11.1) (2021-07-15)
 
 
