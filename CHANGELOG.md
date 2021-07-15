@@ -1,5 +1,19 @@
 # Changelog
 
+### [0.11.1](https://www.github.com/radixdlt/olympia-wallet/compare/v0.11.0...v0.11.1) (2021-07-15)
+
+
+### Bug Fixes
+
+* Add more menu items so we can copy and paste in the app ([#178](https://www.github.com/radixdlt/olympia-wallet/issues/178)) ([14f130b](https://www.github.com/radixdlt/olympia-wallet/commit/14f130b85fd783af3470d8d41983f60cf672b159))
+* Correctly type a pending transaction so it displays in history correctly ([fe83bdd](https://www.github.com/radixdlt/olympia-wallet/commit/fe83bddddaab64e2433a4c6de014cd13f6550a39))
+
+
+### Dependencies
+
+* remove fee from send tokens and stake forms ([709345d](https://www.github.com/radixdlt/olympia-wallet/commit/709345d5c4c91f3fca35247d7dfff6509ae26df7))
+* update min stake copy to 100 XRD ([dc9718a](https://www.github.com/radixdlt/olympia-wallet/commit/dc9718ab21586517e94ffa285a47fa3a27e75d0f))
+
 ## [0.11.0](https://www.github.com/radixdlt/olympia-wallet/compare/v0.10.2...v0.11.0) (2021-07-15)
 
 
