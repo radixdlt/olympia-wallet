@@ -281,11 +281,9 @@ const WalletIndex = defineComponent({
     subs.add(radix.accounts.subscribe((accountsRes: AccountsT) => { accounts.value = accountsRes }))
     subs.add(radix.activeAddress.subscribe((addressRes: AccountAddressT) => { activeAddress.value = addressRes }))
 
-    subs.add(radix.activeAddress.pipe(
-      switchMap((res: AccountAddressT) => radix.ledger.unstakesForAddress(res))
-    ).subscribe((unstakes: UnstakePositions) => {
+    radix.unstakingPositions.subscribe(unstakes => {
       activeUnstakes.value = unstakes
-    }))
+    })
 
     subs.add(radix.ledger.nativeToken().subscribe((nativeTokenRes: Token) => { nativeToken.value = nativeTokenRes }))
 
