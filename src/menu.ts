@@ -39,7 +39,9 @@ const template = [
       { role: 'minimize' },
       { role: 'zoom' },
       { type: 'separator' },
-      { role: 'front' }
+      { role: 'front' },
+      { role: 'reload' },
+      { role: 'forceReload' }
     ]
   }
 ]
