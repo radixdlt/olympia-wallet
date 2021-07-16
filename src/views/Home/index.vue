@@ -18,14 +18,14 @@
         </div>
       </div>
       <div class="py-8 flex flex-row">
-        <home-create-and-restore></home-create-and-restore>
+        <home-create-and-restore/>
       </div>
     </template>
 
     <template v-else>
       <img alt="Radix DLT Logo" src="../../assets/logo.svg" class="absolute inset-0 mt-6 mx-4">
       <div v-if="hasWallet.value == null" class="flex w-full justify-center items-center">
-        <loading-icon></loading-icon>
+        <loading-icon/>
       </div>
 
       <div
@@ -35,8 +35,9 @@
         <home-enter-passcode
           @submit="loginWithWallet"
           ref="enterPasscodeComponent"
-        ></home-enter-passcode>
+        />
       </div>
+      <home-locked-modal :open="modal === 'locked-out'" @close="closeModal"/>
     </template>
   </div>
 </template>
@@ -48,6 +49,7 @@ import { hasKeystore, touchKeystore } from '@/actions/vue/create-wallet'
 import { useStore } from '@/store'
 import HomeCreateAndRestore from './HomeCreateAndRestore.vue'
 import HomeEnterPasscode from './HomeEnterPasscode.vue'
+import HomeLockedModal from './HomeLockedModal.vue'
 import LoadingIcon from '@/components/LoadingIcon.vue'
 import { Subscription } from 'rxjs'
 import { useRouter } from 'vue-router'
@@ -59,7 +61,15 @@ const CreateWallet = defineComponent({
   components: {
     HomeCreateAndRestore,
     HomeEnterPasscode,
+    HomeLockedModal,
     LoadingIcon
+  },
+
+  props: {
+    modal: {
+      type: String,
+      required: false
+    }
   },
 
   setup () {
@@ -105,7 +115,10 @@ const CreateWallet = defineComponent({
       // methods
       loginWithWallet,
       // component refs
-      enterPasscodeComponent
+      enterPasscodeComponent,
+      closeModal () {
+        router.push({ name: 'Home', query: { modal: '' } })
+      }
     }
   }
 })
