@@ -1,5 +1,13 @@
 # Changelog
 
+### [0.11.3](https://www.github.com/radixdlt/olympia-wallet/compare/v0.11.2...v0.11.3) (2021-07-16)
+
+
+### Bug Fixes
+
+* Menus should include reload and force reload ([69acf12](https://www.github.com/radixdlt/olympia-wallet/commit/69acf12787db8823e2ee3193462f0927e34a55c6))
+* Validator, Account, and Transaction IDs should have specific shortened formats ([d1fcb9c](https://www.github.com/radixdlt/olympia-wallet/commit/d1fcb9c3da8502a82b4de7896f1f09aefdc6d976))
+
 ### [0.11.2](https://www.github.com/radixdlt/olympia-wallet/compare/v0.11.1...v0.11.2) (2021-07-15)
 
 
