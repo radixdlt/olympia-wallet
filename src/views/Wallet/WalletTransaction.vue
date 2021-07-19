@@ -94,17 +94,6 @@
                 <FormErrorMessage name="message" class="text-sm text-red-400" />
               </div>
             </div>
-
-            <div class="py-7 flex items-center">
-              <div class="w-32 text-right text-rGrayDark mr-8">{{ $t('transaction.feeLabel') }}</div>
-              <div class="flex-1 text-2xl font-light">
-                <div class="flex items-center">
-                  <big-amount :amount="transactionFee" class="mr-4" v-if="hasCalculatedFee"/>
-                  <span class="mr-4" v-else>--</span>
-                  <token-symbol class="ml-2">{{ nativeToken.symbol }}</token-symbol>
-                </div>
-              </div>
-            </div>
           </template>
           <div v-else class="p-4 flex items-center justify-center">
             <loading-icon class="text-rGrayDark" />
@@ -128,14 +117,13 @@ import { defineComponent, PropType, Ref, ref, watch } from 'vue'
 import { useForm } from 'vee-validate'
 
 import { safelyUnwrapAddress, safelyUnwrapAmount, validateAmountOfType, validateGreaterThanZero } from '@/helpers/validateRadixTypes'
-import { AmountT, Token, TokenBalance, AccountAddressT } from '@radixdlt/application'
-import BigAmount, { asBigNumber } from '@/components/BigAmount.vue'
+import { Token, TokenBalance, AccountAddressT } from '@radixdlt/application'
+import { asBigNumber } from '@/components/BigAmount.vue'
 import ClickToCopy from '@/components/ClickToCopy.vue'
 import FormErrorMessage from '@/components/FormErrorMessage.vue'
 import FormField from '@/components/FormField.vue'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
 import LoadingIcon from '@/components/LoadingIcon.vue'
-import TokenSymbol from '@/components/TokenSymbol.vue'
 import FormCheckbox from '@/components/FormCheckbox.vue'
 
 interface TransactionForm {
@@ -147,14 +135,12 @@ interface TransactionForm {
 
 const WalletTransaction = defineComponent({
   components: {
-    BigAmount,
     ButtonSubmit,
     ClickToCopy,
     FormCheckbox,
     FormField,
     FormErrorMessage,
-    LoadingIcon,
-    TokenSymbol
+    LoadingIcon
   },
 
   setup (props) {
@@ -196,14 +182,6 @@ const WalletTransaction = defineComponent({
     nativeToken: {
       type: Object as PropType<Token>,
       required: false
-    },
-    transactionFee: {
-      type: Object as PropType<AmountT>,
-      required: false
-    },
-    hasCalculatedFee: {
-      type: Boolean,
-      required: true
     }
   },
 

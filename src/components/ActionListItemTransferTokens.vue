@@ -28,7 +28,7 @@
 import { defineComponent, PropType } from 'vue'
 import { ExecutedTransferTokensAction, AccountAddressT } from '@radixdlt/application'
 import ClickToCopy from '@/components/ClickToCopy.vue'
-import { formatAddressForDisplay } from '@/helpers/formatter'
+import { formatWalletAddressForDisplay } from '@/helpers/formatter'
 import BigAmount from '@/components/BigAmount.vue'
 
 const ActionListItemTransferTokens = defineComponent({
@@ -61,7 +61,7 @@ const ActionListItemTransferTokens = defineComponent({
 
   methods: {
     displayAddress (address: AccountAddressT): string {
-      return formatAddressForDisplay(address)
+      return formatWalletAddressForDisplay(address)
     }
   }
 })

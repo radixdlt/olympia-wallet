@@ -129,7 +129,6 @@ const WalletHistory = defineComponent({
 
   computed: {
     transactionsWithMessages (): {tx: ExecutedTransaction, decryptedMessage?: string}[] {
-      console.log('recalculating messages')
       return this.transactions.map((tx) => {
         const msg = this.decryptedMessages.find((msg) => msg.id === tx.txID.toString())
         if (!msg) {

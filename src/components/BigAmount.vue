@@ -12,6 +12,7 @@ import { copyToClipboard } from '@/actions/vue/create-wallet'
 import { defineComponent, PropType } from 'vue'
 import { AmountT } from '@radixdlt/application'
 import BigNumber from 'bignumber.js'
+import { useToast } from 'vue-toastification'
 
 BigNumber.set({
   ROUNDING_MODE: BigNumber.ROUND_FLOOR,
@@ -107,6 +108,11 @@ const BigAmount = defineComponent({
     }
   },
 
+  setup () {
+    const toast = useToast()
+    return { toast }
+  },
+
   computed: {
     numberForDisplay (): string {
       return asBigNumber(this.amount, false)
@@ -120,6 +126,7 @@ const BigAmount = defineComponent({
   methods: {
     copyText () {
       const value = asBigNumber(this.amount, true).replaceAll(',', '')
+      this.toast.success('Copied to Clipboard')
       copyToClipboard(value)
     }
   }
