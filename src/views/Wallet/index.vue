@@ -351,6 +351,11 @@ const WalletIndex = defineComponent({
     }
 
     const confirmTransaction = () => {
+      if (activeAccount.value &&
+      hardwareAccount.value &&
+      activeAccount.value === hardwareAccount.value) {
+        transactionState.value = 'hw-signing'
+      }
       userDidConfirm.next(true)
       hasCalculatedFee.value = false
     }
