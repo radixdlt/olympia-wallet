@@ -62,13 +62,10 @@
         {{ $t('wallet.navAddHWWallet') }}
       </div>
 
-      <div v-if="showHardwareHelper && !hardwareWalletError" class="w-48 text-xs mt-4">
+      <div v-if="showHardwareHelper" class="w-48 text-xs mt-4">
         Please ensure your Ledger is connected and the Radix application is selected.
       </div>
 
-      <div v-if="hardwareWalletError" class="w-48 text-xs mt-4">
-        We're encountered an error communicating with your Ledger device. Please ensure the Ledger is connected adn the Radix application is select.
-      </div>
     </div>
   </div>
 
@@ -102,10 +99,6 @@ const WalletSidebarAccounts = defineComponent({
     },
     hardwareAddress: {
       type: String,
-      required: false
-    },
-    hardwareWalletError: {
-      type: Object as PropType<Error>,
       required: false
     }
   },

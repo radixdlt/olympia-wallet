@@ -12,7 +12,6 @@
       :accounts="accounts"
       :activeAccount="activeAccount"
       :hardwareAddress="hardwareAddress"
-      :hardwareWalletError="hardwareWalletError"
       @back="sidebar = 'default'"
       @addAccount="() => { addAccount() ; view = 'editName' }"
       @switchAccount="switchAccount"
@@ -22,7 +21,10 @@
       @verifyHardwareAddress="verifyHardwareWalletAddress"
     />
     <wallet-ledger-interaction-modal
-      v-if="hardwareInteractionState.length > 0"
+      v-if="hardwareInteractionState && hardwareInteractionState.length > 0"
+      :hardwareWalletError="hardwareWalletError"
+      @closeLedgerModal="hardwareInteractionState = null"
+      @retryLedgerAccountDerivation="connectHardwareWallet"
     />
 
     <template v-if="loaded">
@@ -260,7 +262,7 @@ const WalletIndex = defineComponent({
     const faucetParams = new Subject<number>()
 
     const hardwareAddress: Ref<string> = ref('')
-    const hardwareWalletError: Ref<Error> = ref(null)
+    const hardwareWalletError: Ref<Error | null> = ref(null)
     getHardwareWalletAddress().then(a => { hardwareAddress.value = a })
 
     // Set initial view if provided in props
@@ -621,11 +623,11 @@ const WalletIndex = defineComponent({
     }
 
     const connectHardwareWallet = () => {
-      // console.log('HI', hardwareAccount)
-      // if (hardwareAccount) {
-      //   switchAccount(hardwareAccount.value)
-      //   return
-      // }
+      if (hardwareAccount.value) {
+        switchAccount(hardwareAccount.value)
+        return
+      }
+      hardwareWalletError.value = null
       hardwareInteractionState.value = 'DERIVING'
       radix.deriveHWAccount({
         keyDerivation: 'next',
@@ -649,14 +651,7 @@ const WalletIndex = defineComponent({
     }
 
     const verifyHardwareWalletAddress = () => {
-      if (hardwareAccount.value) {
-        console.log('Client Side Account', hardwareAccount.value)
-        console.log('Client Side Account Accress', hardwareAccount.value.address.toString())
-      }
       radix.displayAddressForActiveHWAccountOnHWDeviceForVerification()
-        .subscribe(() => {
-          console.log('I guess void is happening?')
-        })
     }
 
     onUnmounted(() => subs.unsubscribe())
