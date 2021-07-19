@@ -1441,10 +1441,10 @@
     prelude-ts "^1.0.2"
     rxjs "7.0.0"
 
-"@radixdlt/application@^2.1.2":
-  version "2.1.2"
-  resolved "https://registry.yarnpkg.com/@radixdlt/application/-/application-2.1.2.tgz#b03821c0e176569c3b1d76da3bc9b41e2ee462f2"
-  integrity sha512-FVQEjn53dJolvh5ZUYazqN+I01Y0wUd45y2tDOFBlHRHCAUkeokKmNXnIYx/2nYajljdjpQYrK4N4+17eP+pOA==
+"@radixdlt/application@^2.1.3":
+  version "2.1.3"
+  resolved "https://registry.yarnpkg.com/@radixdlt/application/-/application-2.1.3.tgz#53375ff32010ac79fc64f1d2b3d6aa156031480b"
+  integrity sha512-v3CeeAgFGhCv79bsahdSu3uqgLzca+5LMyT/t9RvulmSeS8wQ+5uhtofjFxch1N/gk3QD8wGP5sUZJmgjBLxKQ==
   dependencies:
     "@open-rpc/mock-server" "1.7.2"
     "@open-rpc/schema-utils-js" "1.14.3"
@@ -1462,7 +1462,7 @@
     ramda "^0.27.1"
     rxjs "7.0.0"
 
-"@radixdlt/crypto@^2.1.1":
+"@radixdlt/crypto@^2.0.0", "@radixdlt/crypto@^2.1.1":
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/@radixdlt/crypto/-/crypto-2.1.1.tgz#a72b8685f42772f1b9e29b28828e4674ece81e8f"
   integrity sha512-rPcGrR365pfp+P9dQ3VmoausuYsMg0/Lu7R5TjIpIBFrGfZaP4nySpcqOcqxiOv/DWBJTT/V57EE1OX92kaIcA==
@@ -1487,22 +1487,21 @@
     neverthrow "^4.0.1"
     ramda "^0.27.1"
 
-"@radixdlt/hardware-ledger@^2.1.2":
-  version "2.1.2"
-  resolved "https://registry.yarnpkg.com/@radixdlt/hardware-ledger/-/hardware-ledger-2.1.2.tgz#79c5f6b71072ff6a7b180484e330bdffb5d48556"
-  integrity sha512-8Kexxn/6iy2sOFJJENoKaLlrjWMy+6NBszoaQtO7+4RaOFsnMh8qhUYprMTnKdt9BMcqUHc+SyWqgWsElFktlg==
+"@radixdlt/hardware-ledger@file:../radixdlt-javascript/packages/hardware-ledger":
+  version "2.0.1"
   dependencies:
-    "@radixdlt/crypto" "^2.1.1"
-    "@radixdlt/hardware-wallet" "^2.1.1"
-    "@radixdlt/primitives" "^2.1.1"
-    "@radixdlt/tx-parser" "^2.1.1"
+    "@radixdlt/crypto" "^2.0.0"
+    "@radixdlt/hardware-wallet" "^2.0.0"
+    "@radixdlt/primitives" "^2.0.0"
+    "@radixdlt/tx-parser" "^2.0.0"
     "@radixdlt/util" "1.0.29"
+    "@types/ledgerhq__hw-transport-node-hid" "^4.22.2"
     neverthrow "4.0.1"
     prelude-ts "^1.0.2"
     rxjs "7.0.0"
     uuid "^8.3.2"
 
-"@radixdlt/hardware-wallet@^2.1.1":
+"@radixdlt/hardware-wallet@^2.0.0", "@radixdlt/hardware-wallet@^2.1.1":
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/@radixdlt/hardware-wallet/-/hardware-wallet-2.1.1.tgz#b2a22f21b48fd5a3e43f4bfe4a996b72b23cdfd1"
   integrity sha512-Uy5MeZlw1StylnqY4fuJa1PsJQbIUyK0+FyjtlmSk5yYhDJ7pUPMmXfBjwQSBa+QepZ6YsksNtebjz6MpK4oBQ==
@@ -1539,7 +1538,7 @@
   resolved "https://registry.yarnpkg.com/@radixdlt/open-rpc-spec/-/open-rpc-spec-1.0.15.tgz#d52bb10e8faa0cabebf0f726e9b4d4955858a932"
   integrity sha512-jEa0NjXDCwgfcFxg79SL3qNB/fyMJ8G278h1Dnorte74JBDkH2t0orrv5Tirs94YpTv2HRZNbPYBiIYBNJZCQw==
 
-"@radixdlt/primitives@^2.1.1":
+"@radixdlt/primitives@^2.0.0", "@radixdlt/primitives@^2.1.1":
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/@radixdlt/primitives/-/primitives-2.1.1.tgz#dc24a17d663bc9c64fad6bf7c65e03f737f58ab1"
   integrity sha512-smX+xnCWuWykC5hqzbeOJblNI7AFD9VSjhhQJwSzEM6N2ShlO1gxd14Ukkm9DfdYt4VSylNcUY/a1YnGewcmNA==
@@ -1551,10 +1550,10 @@
     long "^4.0.0"
     neverthrow "^4.0.1"
 
-"@radixdlt/tx-parser@^2.1.1":
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/@radixdlt/tx-parser/-/tx-parser-2.1.1.tgz#b0a1a33a9e00d77208efe754c70fe5176aa034f4"
-  integrity sha512-7Vu1iM7Jq8vY3DyqoampBZkiQ8HbJI/NEwRzTlKUUFlqGj3BM6dw58tvEdKnI9GsFmpvcSki/hME+Mh5OxuVrg==
+"@radixdlt/tx-parser@^2.0.0":
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/@radixdlt/tx-parser/-/tx-parser-2.1.2.tgz#d295ababa1616719683a21e47cdc82c712f6e9c1"
+  integrity sha512-V5qOtHEhErlWOvO58toVSYsU0nWEI6SQlHzsKuETL3t138URyfqIPhGgm5ATxYTQ0gXBYkADhsjqJDXrd3zchg==
   dependencies:
     "@radixdlt/account" "^2.1.1"
     "@radixdlt/crypto" "^2.1.1"
@@ -1856,6 +1855,22 @@
   dependencies:
     "@types/node" "*"
 
+"@types/ledgerhq__hw-transport-node-hid@^4.22.2":
+  version "4.22.2"
+  resolved "https://registry.yarnpkg.com/@types/ledgerhq__hw-transport-node-hid/-/ledgerhq__hw-transport-node-hid-4.22.2.tgz#f3de58b9b49b461dd96e5bfb646328c242e70aca"
+  integrity sha512-b9dXYEZ8Iijv20LykEVhbThVzSjchMpvj8y/mSsCSP1n7Ncs+YqD8mjEV/bGTks9jAP8CdxhRqOGq+h47/4B9g==
+  dependencies:
+    "@types/ledgerhq__hw-transport" "*"
+    "@types/node" "*"
+    "@types/node-hid" "*"
+
+"@types/ledgerhq__hw-transport@*":
+  version "4.21.4"
+  resolved "https://registry.yarnpkg.com/@types/ledgerhq__hw-transport/-/ledgerhq__hw-transport-4.21.4.tgz#3a78a02d2b51d2b0dd8099412d5567d21118225c"
+  integrity sha512-vep+6yZnGv6owAthIY0w3f72w4dJIb4+yE5PCHveInTlZE9wukvU6Wc5Eig0OUUxcdhTazzeZx1xUaNVLqyQSg==
+  dependencies:
+    "@types/node" "*"
+
 "@types/luxon@^1.26.3":
   version "1.26.3"
   resolved "https://registry.yarnpkg.com/@types/luxon/-/luxon-1.26.3.tgz#3d548f5f6f59723c292a8545da97631a85738b95"
@@ -1880,6 +1895,13 @@
   version "5.2.7"
   resolved "https://registry.yarnpkg.com/@types/mocha/-/mocha-5.2.7.tgz#315d570ccb56c53452ff8638738df60726d5b6ea"
   integrity sha512-NYrtPht0wGzhwe9+/idPaBB+TqkY9AhTvOLMkThm0IoEfLaiVQZwBwyJ5puCkO3AUCWrmcoePjp2mbFocKy4SQ==
+
+"@types/node-hid@*":
+  version "1.3.1"
+  resolved "https://registry.yarnpkg.com/@types/node-hid/-/node-hid-1.3.1.tgz#e84507a35a6f3ece3f6324c21ba9252405758b65"
+  integrity sha512-VPxuGDCoDxOUKrTZPSok7IEmiK4cVLfj8Csu09FtG5uF+eqf1HETERHXQkO02Rk6j6YiiHxp0/DA9R4llvhEzQ==
+  dependencies:
+    "@types/node" "*"
 
 "@types/node@*", "@types/node@^14.6.2":
   version "14.14.37"

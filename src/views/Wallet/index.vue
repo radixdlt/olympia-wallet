@@ -151,7 +151,8 @@ import {
   TokenBalance,
   MessageInTransaction,
   ExecutedTransaction,
-  Network
+  Network,
+  LogLevel
 } from '@radixdlt/application'
 import { safelyUnwrapAmount } from '@/helpers/validateRadixTypes'
 import { ref } from '@nopr3d/vue-next-rx'
@@ -177,7 +178,7 @@ import {
   saveAccountName
 } from '@/actions/vue/data-store'
 import { useI18n } from 'vue-i18n'
-import { sendAPDU } from '@/actions/vue/create-wallet'
+import { sendAPDU } from '@/actions/vue/hardware-wallet'
 import { HardwareWalletLedger } from '@radixdlt/hardware-ledger'
 
 const PAGE_SIZE = 50
@@ -630,8 +631,7 @@ const WalletIndex = defineComponent({
       radix.deriveHWAccount({
         keyDerivation: 'next',
         hardwareWalletConnection: HardwareWalletLedger.create({
-          send: sendAPDU,
-          close: () => Promise.resolve()
+          send: sendAPDU
         }),
         alsoSwitchTo: true
       }).subscribe((hwAccount: AccountT) => {
