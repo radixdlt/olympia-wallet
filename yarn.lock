@@ -1285,16 +1285,6 @@
     rxjs "6"
     semver "^7.3.5"
 
-"@ledgerhq/devices@^6.1.0":
-  version "6.1.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/devices/-/devices-6.1.0.tgz#54963409011c0bb83e2cc3d4d55ad9b905e296ff"
-  integrity sha512-Swl08sVuvx7IL9yx9P0ZzvwjIl4JXl51X34Po3pT2uRRaLnh/fRRSNe9tSC1gFMioviiLJlkmO+yydE4XeV+Jg==
-  dependencies:
-    "@ledgerhq/errors" "^6.0.2"
-    "@ledgerhq/logs" "^6.0.2"
-    rxjs "6"
-    semver "^7.3.5"
-
 "@ledgerhq/errors@^6.0.2":
   version "6.0.2"
   resolved "https://registry.yarnpkg.com/@ledgerhq/errors/-/errors-6.0.2.tgz#7c88d16620db08c96de6a2636440db1c0e541da1"
@@ -1308,17 +1298,6 @@
     "@ledgerhq/devices" "^6.0.2"
     "@ledgerhq/errors" "^6.0.2"
     "@ledgerhq/hw-transport" "^6.0.2"
-    "@ledgerhq/logs" "^6.0.2"
-    node-hid "2.1.1"
-
-"@ledgerhq/hw-transport-node-hid-noevents@^6.1.0":
-  version "6.1.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport-node-hid-noevents/-/hw-transport-node-hid-noevents-6.1.0.tgz#b894dbe07234eb2a7a6751b1a298d00758b91731"
-  integrity sha512-U7VFaLIG46ohe92N7ZXqgJSLuIWTPXS6BxT+K45VIkHr/OZYlJhtrI/5Ly3FOUOnWsI+O7QCg/yTBdEkfVSfRw==
-  dependencies:
-    "@ledgerhq/devices" "^6.1.0"
-    "@ledgerhq/errors" "^6.0.2"
-    "@ledgerhq/hw-transport" "^6.1.0"
     "@ledgerhq/logs" "^6.0.2"
     node-hid "2.1.1"
 
@@ -1336,35 +1315,12 @@
     node-hid "2.1.1"
     usb "^1.7.0"
 
-"@ledgerhq/hw-transport-node-hid@^6.1.0":
-  version "6.1.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport-node-hid/-/hw-transport-node-hid-6.1.0.tgz#b8fff70c96f53af65aaab3d425c4ef33b1c18c88"
-  integrity sha512-WmVkc/bOKxnesv3wadooNVdWR2lRhti5asn6kw7OstRNOAXlSgYyPexLsliCfIe9APwOSt+S5SDci+oEh8Oh/Q==
-  dependencies:
-    "@ledgerhq/devices" "^6.1.0"
-    "@ledgerhq/errors" "^6.0.2"
-    "@ledgerhq/hw-transport" "^6.1.0"
-    "@ledgerhq/hw-transport-node-hid-noevents" "^6.1.0"
-    "@ledgerhq/logs" "^6.0.2"
-    lodash "^4.17.21"
-    node-hid "2.1.1"
-    usb "^1.7.0"
-
 "@ledgerhq/hw-transport@^6.0.2":
   version "6.0.2"
   resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport/-/hw-transport-6.0.2.tgz#5b3a0cb01eb6adbd876916bc7d566226e505d333"
   integrity sha512-JI8bhs0vQW1pjDeZ8/Cv/OT4iejH2F3j0i5z5mGNkSgs179GiGeM81EhStLB0XuXqxWpFZMnZ97/Cdo0XmffrA==
   dependencies:
     "@ledgerhq/devices" "^6.0.2"
-    "@ledgerhq/errors" "^6.0.2"
-    events "^3.3.0"
-
-"@ledgerhq/hw-transport@^6.1.0":
-  version "6.1.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport/-/hw-transport-6.1.0.tgz#b50151c6199e9ad6d3ab9e447532a22170c9f3b7"
-  integrity sha512-j9IyvksI9PjFoFrk/B3p8wCXWRWc8uK24gc20pAaXQiDtqMkWqEge8iZyPKWBVIv69vDQF3LE3Y6EeRwwA7wJA==
-  dependencies:
-    "@ledgerhq/devices" "^6.1.0"
     "@ledgerhq/errors" "^6.0.2"
     events "^3.3.0"
 
@@ -1497,7 +1453,7 @@
     node-ipc "^9.1.1"
     ws "^7.3.1"
 
-"@radixdlt/account@^2.1.2":
+"@radixdlt/account@^2.1.1", "@radixdlt/account@^2.1.2":
   version "2.1.2"
   resolved "https://registry.yarnpkg.com/@radixdlt/account/-/account-2.1.2.tgz#dcf96e56a0b5328409c2113b9f3f0abb8d3176c6"
   integrity sha512-1dkL3QW0iOKhcduoYubbiWMPOsUtOh+LPclUlo5yCASt2wr3Taghfd80Fv7vGrksjy/4y3+Z4F1x3RjlrtQSjw==
@@ -1516,19 +1472,19 @@
     prelude-ts "^1.0.2"
     rxjs "7.0.0"
 
-"@radixdlt/application@2.1.6":
-  version "2.1.6"
-  resolved "https://registry.yarnpkg.com/@radixdlt/application/-/application-2.1.6.tgz#7802a98dabf64e13ff6f258e1544737b6c8bb180"
-  integrity sha512-B9Q283mbm1dcWpFm6AGcWp5TEwpGaRFPS1mnUJzEcwDFb51xhSpjRKTwumuhFve/XiluCLEg/INJFIMi77Crqg==
+"@radixdlt/application@2.1.8":
+  version "2.1.8"
+  resolved "https://registry.yarnpkg.com/@radixdlt/application/-/application-2.1.8.tgz#ffb85f75d254b9619c2cddebce5f2d9320281e11"
+  integrity sha512-chl0pv7vpZY97qEWfh7MitL51NzyCv/pYvRWvVD8ofSUXZf3RNwuyAEJ0CnXn0YQIsTv1525qWj3fweQuj8ZHQ==
   dependencies:
     "@open-rpc/mock-server" "1.7.2"
     "@open-rpc/schema-utils-js" "1.14.3"
-    "@radixdlt/account" "^2.1.2"
-    "@radixdlt/crypto" "^2.1.2"
+    "@radixdlt/account" "^2.1.1"
+    "@radixdlt/crypto" "^2.1.1"
     "@radixdlt/data-formats" "1.0.30"
-    "@radixdlt/networking" "^2.1.2"
-    "@radixdlt/open-rpc-spec" "1.0.13"
-    "@radixdlt/primitives" "^2.1.2"
+    "@radixdlt/networking" "^2.1.1"
+    "@radixdlt/open-rpc-spec" "^1.0.17"
+    "@radixdlt/primitives" "^2.1.1"
     "@radixdlt/util" "1.0.29"
     jest "^26.6.3"
     json-schema-faker "^0.5.0-rcv.34"
@@ -1537,7 +1493,7 @@
     ramda "^0.27.1"
     rxjs "7.0.0"
 
-"@radixdlt/crypto@^2.1.2":
+"@radixdlt/crypto@^2.1.1", "@radixdlt/crypto@^2.1.2":
   version "2.1.2"
   resolved "https://registry.yarnpkg.com/@radixdlt/crypto/-/crypto-2.1.2.tgz#c1fe89c924023982b435b4b0ed01bd0283e2cfed"
   integrity sha512-9NpZXeGslS5ercS6zZNTDojGiuPHmpILhhr8/SyPzOkvTxcR87J/YL+0ZQ+iUnF53YlXK0TAeVF6k3pEEhg8RQ==
@@ -1562,22 +1518,22 @@
     neverthrow "^4.0.1"
     ramda "^0.27.1"
 
-"@radixdlt/hardware-ledger@^2.1.4":
-  version "2.1.4"
-  resolved "https://registry.yarnpkg.com/@radixdlt/hardware-ledger/-/hardware-ledger-2.1.4.tgz#31b902d0141077272351a0badb9b6e08fd084ea9"
-  integrity sha512-TQm+QyxogUNsSQ3SLiezFmbowuh8yeyhFRFZbQe0HJ6NheO6/JUOjKKtku1Y/PumMHcU4OaRHQc+0VQRVTqPyA==
+"@radixdlt/hardware-ledger@2.1.6":
+  version "2.1.6"
+  resolved "https://registry.yarnpkg.com/@radixdlt/hardware-ledger/-/hardware-ledger-2.1.6.tgz#3b61922488e9090e4c2c5955eac82428e4638288"
+  integrity sha512-sMV7GFX8whU/FP7wvICnOexW8O5I6zw84el7pgQVe5nv9qWpmHrgg/nHUdeI3rX1OKEfI036dNgJSx6KCbf1jQ==
   dependencies:
-    "@radixdlt/crypto" "^2.1.2"
-    "@radixdlt/hardware-wallet" "^2.1.2"
-    "@radixdlt/primitives" "^2.1.2"
-    "@radixdlt/tx-parser" "^2.1.3"
+    "@radixdlt/crypto" "^2.1.1"
+    "@radixdlt/hardware-wallet" "^2.1.1"
+    "@radixdlt/primitives" "^2.1.1"
+    "@radixdlt/tx-parser" "^2.1.2"
     "@radixdlt/util" "1.0.29"
     neverthrow "4.0.1"
     prelude-ts "^1.0.2"
     rxjs "7.0.0"
     uuid "^8.3.2"
 
-"@radixdlt/hardware-wallet@^2.1.2":
+"@radixdlt/hardware-wallet@^2.1.1", "@radixdlt/hardware-wallet@^2.1.2":
   version "2.1.2"
   resolved "https://registry.yarnpkg.com/@radixdlt/hardware-wallet/-/hardware-wallet-2.1.2.tgz#025be49d61dc34c70038ff9505a57f01de18b124"
   integrity sha512-AoY/qz5BiDE0FLmqAipcxj/jKO3y4XKCGri6SPDs4hHbLpBZ3ytgFeDqObnQrn1o1MdHa515RjjiHOvyM5eXTQ==
@@ -1590,7 +1546,7 @@
     rxjs "7.0.0"
     uuid "^8.3.2"
 
-"@radixdlt/networking@^2.1.2":
+"@radixdlt/networking@^2.1.1":
   version "2.1.2"
   resolved "https://registry.yarnpkg.com/@radixdlt/networking/-/networking-2.1.2.tgz#4277e47d75f42bc977b0b7c87157a18d9ec14fdc"
   integrity sha512-ACkjviPuzf85AZ3clBx3uHO8uumaD8KYD9D76ZtCkr4jjHskRWoVnq7Ue3e/XnEdLzxYA96QGWUnYQ0NBONwyA==
@@ -1609,7 +1565,12 @@
   resolved "https://registry.yarnpkg.com/@radixdlt/open-rpc-spec/-/open-rpc-spec-1.0.15.tgz#d52bb10e8faa0cabebf0f726e9b4d4955858a932"
   integrity sha512-jEa0NjXDCwgfcFxg79SL3qNB/fyMJ8G278h1Dnorte74JBDkH2t0orrv5Tirs94YpTv2HRZNbPYBiIYBNJZCQw==
 
-"@radixdlt/primitives@^2.1.2":
+"@radixdlt/open-rpc-spec@^1.0.17":
+  version "1.0.17"
+  resolved "https://registry.yarnpkg.com/@radixdlt/open-rpc-spec/-/open-rpc-spec-1.0.17.tgz#e0634ee6826a3bfb48078d5b411d0827c27c3896"
+  integrity sha512-51zV918QljWo+YlnXfnrNqEHcM4cjqFSQRRo2gAeIKKvnExLQvVKyYTlDCySoitrY0qAdbMYL+FGS5GBA2h4uw==
+
+"@radixdlt/primitives@^2.1.1", "@radixdlt/primitives@^2.1.2":
   version "2.1.2"
   resolved "https://registry.yarnpkg.com/@radixdlt/primitives/-/primitives-2.1.2.tgz#87a9a111686f19f7de0fd9c903f65167a6cecabd"
   integrity sha512-ODirDf6TyPKQ7zUunDkw96kCtBwhLdF1t8NeKIK/im3AHOeDyz3tgi11Xmry6OrKDLAJ1CW2AgWAAJud3wWrvQ==
@@ -1621,7 +1582,7 @@
     long "^4.0.0"
     neverthrow "^4.0.1"
 
-"@radixdlt/tx-parser@^2.1.3":
+"@radixdlt/tx-parser@^2.1.2":
   version "2.1.3"
   resolved "https://registry.yarnpkg.com/@radixdlt/tx-parser/-/tx-parser-2.1.3.tgz#2cf209e04f7d0b6b0452cc34226c2638785803f7"
   integrity sha512-1VxISBY31UvAymIKOg4T3TqpZFYBDl2ABbCKQbHtGEGzGw2zO79ouW2O01mAZ/hZQDGsARHdJLAqSDz+QZDeqA==
@@ -3073,6 +3034,36 @@ app-builder-lib@22.10.5:
     sanitize-filename "^1.6.3"
     semver "^7.3.4"
     temp-file "^3.3.7"
+
+app-builder-lib@22.11.9:
+  version "22.11.9"
+  resolved "https://registry.yarnpkg.com/app-builder-lib/-/app-builder-lib-22.11.9.tgz#c43a9ded17b772ea64d2f94ad14f45b7e0763e01"
+  integrity sha512-mS8aFN16IlzXzD1LwuheHliCI7wiJjC+agiCh+mxRtY8TKinb0vSI4pggib4RHvVq55l3RxDX4EEWGuqGMScIA==
+  dependencies:
+    "7zip-bin" "~5.1.1"
+    "@develar/schema-utils" "~2.6.5"
+    "@electron/universal" "1.0.5"
+    "@malept/flatpak-bundler" "^0.4.0"
+    async-exit-hook "^2.0.1"
+    bluebird-lst "^1.0.9"
+    builder-util "22.11.9"
+    builder-util-runtime "8.7.8"
+    chromium-pickle-js "^0.2.0"
+    debug "^4.3.2"
+    ejs "^3.1.6"
+    electron-osx-sign "^0.5.0"
+    electron-publish "22.11.9"
+    fs-extra "^10.0.0"
+    hosted-git-info "^4.0.2"
+    is-ci "^3.0.0"
+    isbinaryfile "^4.0.8"
+    js-yaml "^4.1.0"
+    lazy-val "^1.0.5"
+    minimatch "^3.0.4"
+    read-config-file "6.2.0"
+    sanitize-filename "^1.6.3"
+    semver "^7.3.5"
+    temp-file "^3.4.0"
 
 aproba@^1.0.3, aproba@^1.1.1:
   version "1.2.0"
