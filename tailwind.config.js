@@ -26,7 +26,8 @@ module.exports = {
       },
       height: {
         tallest: '99999999999px',
-        modal: '600px'
+        modal: '600px',
+        modalSmall: '300px'
       },
       padding: {
         headerHeight: '6.4rem'

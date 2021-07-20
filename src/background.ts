@@ -10,13 +10,17 @@ import {
   getAccountName,
   saveAccountName,
   getDerivedAccountsIndex,
-  saveDerivedAccountsIndex
+  saveDerivedAccountsIndex,
+  saveHardwareAddress,
+  getHardwareAddress
 } from './actions/electron/data-store'
+import { sendAPDU} from './actions/electron/hardware-wallet'
 import menu from './menu'
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
 app.commandLine.appendSwitch('ignore-certificate-errors')
+
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0
 
 // Scheme must be registered before the app is ready
@@ -36,14 +40,9 @@ async function createWindow () {
     minWidth: 1200,
     minHeight: 650,
     webPreferences: {
-
-      // Required for Spectron testing
-      enableRemoteModule: true,
-
       // Use pluginOptions.nodeIntegration, leave this alone
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
-      nodeIntegration: (process.env
-        .ELECTRON_NODE_INTEGRATION as unknown) as boolean,
+      nodeIntegration: false,
       preload: path.join(__dirname, 'preload.js'),
       devTools: isDevelopment
     }
@@ -106,6 +105,9 @@ ipcMain.handle('get-account-name', getAccountName)
 ipcMain.handle('save-num-accounts', saveDerivedAccountsIndex)
 ipcMain.handle('get-num-accounts', getDerivedAccountsIndex)
 ipcMain.handle('validate-pin-message', validatePin)
+ipcMain.handle('save-hw-address', saveHardwareAddress)
+ipcMain.handle('get-hw-address', getHardwareAddress)
+ipcMain.handle('send-apdu', sendAPDU)
 
 // Exit cleanly on request from parent process in development mode.
 if (isDevelopment) {

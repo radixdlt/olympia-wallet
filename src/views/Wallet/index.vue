@@ -7,24 +7,26 @@
       @open="sidebar = 'accounts'"
       @setView="setView"
     />
-    <transition
-      enter-active-class="transition ease-out duration-100 transform"
-      enter-from-class="-translate-x-full"
-      enter-to-class="translate-x-0"
-      leave-active-class="transition ease-in duration-75 transform"
-      leave-from-class="translate-x-0"
-      leave-to-class="-translate-x-full"
-    >
-      <wallet-sidebar-accounts
-        v-if="sidebar == 'accounts'"
-        :accounts="accounts"
-        :activeAccount="activeAccount"
-        @back="sidebar = 'default'"
-        @addAccount="() => { addAccount() ; view = 'editName' }"
-        @switchAccount="switchAccount"
-        @editName="setView('editName')"
-      />
-    </transition>
+    <wallet-sidebar-accounts
+      v-if="sidebar == 'accounts'"
+      :accounts="accounts"
+      :activeAccount="activeAccount"
+      :hardwareAddress="hardwareAddress"
+      @back="sidebar = 'default'"
+      @addAccount="() => { addAccount() ; view = 'editName' }"
+      @switchAccount="switchAccount"
+      @switchToHardwareAccount="connectHardwareWallet"
+      @editName="setView('editName')"
+      @connectHardwareWallet="connectHardwareWallet"
+      @verifyHardwareAddress="verifyHardwareWalletAddress"
+    />
+    <wallet-ledger-interaction-modal
+      v-if="hardwareInteractionState && hardwareInteractionState.length > 0"
+      :hardwareWalletError="hardwareWalletError"
+      @closeLedgerModal="hardwareInteractionState = null"
+      @retryLedgerAccountDerivation="connectHardwareWallet"
+    />
+
     <template v-if="loaded">
       <template v-if="view == 'overview'">
         <wallet-overview
@@ -148,7 +150,8 @@ import {
   TokenBalance,
   MessageInTransaction,
   ExecutedTransaction,
-  Network
+  Network,
+  LogLevel
 } from '@radixdlt/application'
 import { safelyUnwrapAmount } from '@/helpers/validateRadixTypes'
 import { ref } from '@nopr3d/vue-next-rx'
@@ -164,14 +167,23 @@ import WalletTransaction from './WalletTransaction.vue'
 import WalletLoading from './WalletLoading.vue'
 import AccountEditName from '@/views/Account/AccountEditName.vue'
 import SettingsIndex from '@/views/Settings/index.vue'
-import { filter, mergeMap, switchMap } from 'rxjs/operators'
-import { getDerivedAccountsIndex, saveDerivedAccountsIndex } from '@/actions/vue/data-store'
+import WalletLedgerInteractionModal from '@/views/Wallet/WalletLedgerInteractionModal.vue'
+import { filter, mergeMap, map, switchMap } from 'rxjs/operators'
+import {
+  getDerivedAccountsIndex,
+  saveDerivedAccountsIndex,
+  saveHardwareWalletAddress,
+  getHardwareWalletAddress,
+  saveAccountName
+} from '@/actions/vue/data-store'
 import { useI18n } from 'vue-i18n'
+import { sendAPDU } from '@/actions/vue/hardware-wallet'
+import { HardwareWalletLedger } from '@radixdlt/hardware-ledger'
 
 const PAGE_SIZE = 50
 
 export interface PendingTransaction extends TransactionStateSuccess {
-  actions: IntendedAction[];
+  actions: IntendedAction[]
 }
 
 const WalletIndex = defineComponent({
@@ -185,7 +197,8 @@ const WalletIndex = defineComponent({
     WalletSidebarDefault,
     WalletStaking,
     WalletTransaction,
-    WalletLoading
+    WalletLoading,
+    WalletLedgerInteractionModal
   },
 
   props: {
@@ -199,6 +212,7 @@ const WalletIndex = defineComponent({
     const { t } = useI18n({ useScope: 'global' })
 
     const activeAccount: Ref<AccountT | null> = ref(null)
+    const hardwareAccount: Ref<AccountT | null> = ref(null)
     const activeAddress: Ref<AccountAddressT | null> = ref(null)
     const activeStakes: Ref<StakePositions | null> = ref(null)
     const activeUnstakes: Ref<UnstakePositions | null> = ref(null)
@@ -237,12 +251,17 @@ const WalletIndex = defineComponent({
 
     const walletTransactionComponent = ref(null)
     const walletStakingComponent = ref(null)
+    const hardwareInteractionState: Ref<string> = ref('')
 
     const userDidConfirm = new Subject<boolean>()
     const userDidCancel = new Subject<boolean>()
     let userConfirmation = new ReplaySubject<ManualUserConfirmTX>()
     const historyPagination = new Subject<TransactionHistoryOfKnownAddressRequestInput>()
     const faucetParams = new Subject<number>()
+
+    const hardwareAddress: Ref<string> = ref('')
+    const hardwareWalletError: Ref<Error | null> = ref(null)
+    getHardwareWalletAddress().then(a => { hardwareAddress.value = a })
 
     // Set initial view if provided in props
     onBeforeMount(() => {
@@ -327,6 +346,11 @@ const WalletIndex = defineComponent({
     }
 
     const confirmTransaction = () => {
+      if (activeAccount.value &&
+      hardwareAccount.value &&
+      activeAccount.value === hardwareAccount.value) {
+        transactionState.value = 'hw-signing'
+      }
       userDidConfirm.next(true)
       hasCalculatedFee.value = false
     }
@@ -602,10 +626,35 @@ const WalletIndex = defineComponent({
       ).subscribe(() => { faucetParams.next(Math.random()) }))
     }
 
-    const saveAccountName = () => {
-      view.value = 'overview'
-      sidebar.value = 'default'
-      accountNameIndex.value = accountNameIndex.value + 1
+    const connectHardwareWallet = () => {
+      if (hardwareAccount.value) {
+        switchAccount(hardwareAccount.value)
+        return
+      }
+      hardwareWalletError.value = null
+      hardwareInteractionState.value = 'DERIVING'
+      radix.deriveHWAccount({
+        keyDerivation: 'next',
+        hardwareWalletConnection: HardwareWalletLedger.create({
+          send: sendAPDU
+        }),
+        alsoSwitchTo: true
+      }).subscribe((hwAccount: AccountT) => {
+        activeAccount.value = hwAccount
+        hardwareAccount.value = hwAccount
+        if (!hardwareAddress.value) {
+          saveHardwareWalletAddress(hwAccount.address.toString())
+          saveAccountName(hwAccount.address.toString(), 'Hardware Wallet')
+          hardwareAddress.value = hwAccount.address.toString()
+        }
+        sidebar.value = 'default'
+        hardwareInteractionState.value = ''
+      },
+      (err) => { hardwareWalletError.value = err })
+    }
+
+    const verifyHardwareWalletAddress = () => {
+      radix.displayAddressForActiveHWAccountOnHWDeviceForVerification()
     }
 
     onUnmounted(() => subs.unsubscribe())
@@ -614,6 +663,7 @@ const WalletIndex = defineComponent({
       // data
       accounts,
       activeAccount,
+      hardwareAccount,
       activeAddress,
       activeStakes,
       activeUnstakes,
@@ -635,6 +685,9 @@ const WalletIndex = defineComponent({
       activeMessageInTransaction,
       radix,
       confirmationMode,
+      hardwareAddress,
+      hardwareWalletError,
+      hardwareInteractionState,
       decryptedMessages,
       accountNameIndex,
 
@@ -658,6 +711,8 @@ const WalletIndex = defineComponent({
       nextPage,
       previousPage,
       requestFreeTokens,
+      connectHardwareWallet,
+      verifyHardwareWalletAddress,
       decryptMessage,
       saveAccountName,
 

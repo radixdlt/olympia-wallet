@@ -3,13 +3,9 @@ import { clipboard } from 'electron'
 import crypto from 'crypto'
 import { store } from '@/actions/electron/data-store'
 
-export const writeKeystoreFile = (event: IpcMainInvokeEvent, encodedWallet: string) => {
-  return store.set('seed', encodedWallet)
-}
+export const writeKeystoreFile = (event: IpcMainInvokeEvent, encodedWallet: string) => store.set('seed', encodedWallet)
 
-export const getKeystoreFile = () => {
-  return store.get('seed')
-}
+export const getKeystoreFile = () => store.get('seed')
 
 const digestPin = async (pin: string) =>
   crypto

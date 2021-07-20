@@ -23,7 +23,7 @@ const messages = {
     },
     home: {
       welcomeOne: 'Welcome to the Radix Olympia Desktop Wallet.',
-      welcomeTwo: 'Betanet Version',
+      welcomeTwo: 'Testnet Version',
       welcomeThree: 'Decentralized finance applications are currently being built on protocols that were not designed to meet the needs and requirements of DeFi.',
       welcomeFour: 'Radix is using our technology innovations to create the first layer 1 protocol specifically built to serve the rapidly growing DeFi world.',
       welcomeFive: 'Olympia is the first release of the Radix mainnet with the XRD token, dPoS staking, low fees, and a simplified form of our Cerberus consensus protocol. It provides the decentralized network foundations for our future releases that will introduce a DeFi-focused developer experience and unlimited scalability.',
@@ -69,7 +69,7 @@ const messages = {
     wallet: {
       addressLabel: 'Address:',
       back: 'back',
-      addAccount: 'Add Account',
+      addAccount: '+ Add Account',
       balancesHeading: 'XRD Balances',
       additionalBalancesHeading: 'Additional Balances',
       currentAddress: 'Current Address:',
@@ -81,7 +81,9 @@ const messages = {
       navTransaction: 'Send Tokens',
       navStake: 'Stake & Unstake',
       navSettings: 'Wallet Settings',
-      navHelp: 'Help'
+      navHelp: 'Help',
+      navAddHWWallet: '+ Add Hardware Wallet',
+      hardwareWalletHeading: 'Hardware Wallet'
     },
     history: {
       historyHeading: 'History',

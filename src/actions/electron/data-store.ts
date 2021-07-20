@@ -21,3 +21,11 @@ export const saveDerivedAccountsIndex = (event: IpcMainInvokeEvent, num: string)
 export const getDerivedAccountsIndex = (event: IpcMainInvokeEvent) => {
   return store.get('derivedAccountsIndex')
 }
+
+export const saveHardwareAddress = (event: IpcMainInvokeEvent, address: string) => {
+  return store.set('hardwareAddress', address)
+}
+
+export const getHardwareAddress = (event: IpcMainInvokeEvent) => {
+  return store.get('hardwareAddress')
+}

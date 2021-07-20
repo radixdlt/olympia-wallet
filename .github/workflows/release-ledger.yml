@@ -1,0 +1,77 @@
+on:
+  push:
+    branches:
+      - ledger
+
+name: release-ledger
+jobs:
+  build-release:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v1
+
+      - name: Install Node.js, NPM and Yarn
+        uses: actions/setup-node@v2
+        with:
+          node-version: '15'
+          check-latest: true
+
+      - name: Install node-hid Dependencies
+        shell: bash
+        run: |
+          case $RUNNER_OS in
+            Linux)
+              echo "Building node-hid deps for Ubuntu"
+              sudo apt install build-essential git
+              sudo apt install gcc-4.8 g++-4.8 && export CXX=g++-4.8
+              sudo apt install libusb-1.0-0 libusb-1.0-0-dev
+              sudo apt install libudev-dev
+              ;;
+            *)
+              echo "No commands required for this OS"
+          esac
+
+      - name: Build/release Electron app
+        uses: samuelmeuli/action-electron-builder@v1
+        env:
+          VUE_APP_API: https://sandpitnet.radixdlt.com
+          VUE_APP_EXPLORER: https://sandpitnet-explorer.radixdlt.com
+          VUE_APP_FAUCET: https://sandpitnet-faucet.radixdlt.com/faucet/request
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_ID_PASSWORD: ${{ secrets.APPLE_ID_PASSWORD }}
+        with:
+          # GitHub token, automatically provided to the action
+          # (No need to define this secret in the repo settings)
+          github_token: ${{ secrets.github_token }}
+          use_vue_cli: true
+          release: false
+          mac_certs: ${{ secrets.MAC_CERTS }}
+          mac_certs_password: ${{ secrets.MAC_CERTS_PASSWORD }}
+      - name: Move Files
+        shell: bash
+        run: ./move_dist.sh
+
+      - name: Upload Linux Artifacts
+        uses: actions/upload-artifact@v1
+        if: matrix.os == 'ubuntu-latest' 
+        with:
+          name: olympia-wallet-linux
+          path: dist-linux
+
+      - name: Upload Mac Artifacts
+        uses: actions/upload-artifact@v1
+        if: matrix.os == 'macOS-latest'
+        with:
+          name: olympia-wallet-mac
+          path: dist-mac
+
+      - name: Upload Win Artifacts
+        uses: actions/upload-artifact@v1
+        if: matrix.os == 'windows-latest'
+        with:
+          name: olympia-wallet-win
+          path: dist-win

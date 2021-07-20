@@ -13,3 +13,11 @@ export const saveDerivedAccountsIndex = (numAccounts: number): Promise<string> =
 export const getDerivedAccountsIndex = (): Promise<string> => new Promise((resolve) => {
   resolve(window.ipcRenderer.invoke('get-num-accounts'))
 })
+
+export const saveHardwareWalletAddress = (address: string): Promise<string> => new Promise((resolve) => {
+  resolve(window.ipcRenderer.invoke('save-hw-address', address))
+})
+
+export const getHardwareWalletAddress = (): Promise<string> => new Promise((resolve) => {
+  resolve(window.ipcRenderer.invoke('get-hw-address'))
+})
