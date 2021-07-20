@@ -23,6 +23,9 @@
       <ButtonSubmit class="w-96" :disabled="disableSubmit">
         {{ $t('home.passwordButton') }}
       </ButtonSubmit>
+      <div>
+        <a @click="this.$emit('forgotPassword')" class="w-96 text-rGrayMed text-sm text-center py-4 block">{{ $t('home.forgotPassword')}}</a>
+      </div>
     </form>
   </div>
 </template>
@@ -67,7 +70,7 @@ const HomeEnterPasscode = defineComponent({
     if (passEl) passEl.focus()
   },
 
-  emits: ['submit']
+  emits: ['submit', 'forgotPassword']
 })
 
 export default HomeEnterPasscode

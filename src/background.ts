@@ -12,7 +12,8 @@ import {
   getDerivedAccountsIndex,
   saveDerivedAccountsIndex,
   saveHardwareAddress,
-  getHardwareAddress
+  getHardwareAddress,
+  resetStore
 } from './actions/electron/data-store'
 import { sendAPDU} from './actions/electron/hardware-wallet'
 import menu from './menu'
@@ -108,6 +109,7 @@ ipcMain.handle('validate-pin-message', validatePin)
 ipcMain.handle('save-hw-address', saveHardwareAddress)
 ipcMain.handle('get-hw-address', getHardwareAddress)
 ipcMain.handle('send-apdu', sendAPDU)
+ipcMain.handle('reset-store', resetStore)
 
 // Exit cleanly on request from parent process in development mode.
 if (isDevelopment) {
