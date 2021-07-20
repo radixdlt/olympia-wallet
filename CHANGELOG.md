@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.12.3](https://www.github.com/radixdlt/olympia-wallet/compare/v0.12.2...v0.12.3) (2021-07-20)
+
+
+### Bug Fixes
+
+* Add the settings link back ([#195](https://www.github.com/radixdlt/olympia-wallet/issues/195)) ([0132e70](https://www.github.com/radixdlt/olympia-wallet/commit/0132e708168249a798bfb8222d753eff64a40500))
+
 ### [0.12.2](https://www.github.com/radixdlt/olympia-wallet/compare/v0.12.1...v0.12.2) (2021-07-20)
 
 
