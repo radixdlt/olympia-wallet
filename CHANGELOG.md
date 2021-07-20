@@ -1,5 +1,20 @@
 # Changelog
 
+### [0.12.1](https://www.github.com/radixdlt/olympia-wallet/compare/v0.12.0...v0.12.1) (2021-07-20)
+
+
+### Features
+
+* Ledger  ([#147](https://www.github.com/radixdlt/olympia-wallet/issues/147)) ([9d0f904](https://www.github.com/radixdlt/olympia-wallet/commit/9d0f904a2ee8cc42432c6c3741514ce07685337a))
+
+
+### Dependencies
+
+* **deps:** bump browserslist from 4.16.3 to 4.16.6 ([#91](https://www.github.com/radixdlt/olympia-wallet/issues/91)) ([0b277e1](https://www.github.com/radixdlt/olympia-wallet/commit/0b277e1afbd1d8cca4eec97e7017cc148475bf80))
+* **deps:** bump dns-packet from 1.3.1 to 1.3.4 ([#93](https://www.github.com/radixdlt/olympia-wallet/issues/93)) ([571a5bf](https://www.github.com/radixdlt/olympia-wallet/commit/571a5bf3b94e1ec748c8b5f5bbe48490df3b124c))
+* **deps:** bump postcss from 7.0.35 to 7.0.36 ([#118](https://www.github.com/radixdlt/olympia-wallet/issues/118)) ([36ba62d](https://www.github.com/radixdlt/olympia-wallet/commit/36ba62d3e0b2e571e22aa04c158bb63e5b3f558a))
+* **deps:** bump ws from 6.2.1 to 6.2.2 ([#100](https://www.github.com/radixdlt/olympia-wallet/issues/100)) ([0e37801](https://www.github.com/radixdlt/olympia-wallet/commit/0e3780190738fb8d2bc21c5c8e3845ee950281d0))
+
 ## [0.12.0](https://www.github.com/radixdlt/olympia-wallet/compare/v0.11.2...v0.12.0) (2021-07-20)
 
 
