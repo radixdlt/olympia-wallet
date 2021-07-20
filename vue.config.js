@@ -14,15 +14,15 @@ module.exports = {
           {
             patterns: [
               'node_modules/usb/build/Release/usb_bindings.node',
-              { 
+              {
                 from: 'node_modules/node-hid/build/Release/HID.node',
                 noErrorOnMissing: true
               },
-              { 
+              {
                 from: 'node_modules/node-hid/build/Release/HID_hidraw.node',
                 noErrorOnMissing: true
-              }            
-             ]
+              }
+            ]
           }
         ])
 
@@ -47,6 +47,8 @@ module.exports = {
         productName: 'Radix Wallet',
         mac: {
           hardenedRuntime: true,
+          entitlements: 'build/entitlements.mac.plist',
+          entitlementsInherit: 'build/entitlements.mac.plist',
           gatekeeperAssess: false
         },
         dmg: {
