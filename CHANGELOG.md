@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.12.4](https://www.github.com/radixdlt/olympia-wallet/compare/v0.12.3...v0.12.4) (2021-07-20)
+
+
+### Bug Fixes
+
+* Validator SDK updates ([#198](https://www.github.com/radixdlt/olympia-wallet/issues/198)) ([4cd4afa](https://www.github.com/radixdlt/olympia-wallet/commit/4cd4afa3c8b91bb02a5e91967df1a93aa676063c))
+
 ### [0.12.3](https://www.github.com/radixdlt/olympia-wallet/compare/v0.12.2...v0.12.3) (2021-07-20)
 
 
