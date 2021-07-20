@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.12.0](https://www.github.com/radixdlt/olympia-wallet/compare/v0.11.2...v0.12.0) (2021-07-20)
+
+
+### Features
+
+* Too many PIN attempts should lock the wallet ([2678ae4](https://www.github.com/radixdlt/olympia-wallet/commit/2678ae44c2f008c853910cd5fb4c56abef3e0205))
+
+
+### Bug Fixes
+
+* Menus should include reload and force reload ([69acf12](https://www.github.com/radixdlt/olympia-wallet/commit/69acf12787db8823e2ee3193462f0927e34a55c6))
+* use high level method for unstakes ([#182](https://www.github.com/radixdlt/olympia-wallet/issues/182)) ([6b7671e](https://www.github.com/radixdlt/olympia-wallet/commit/6b7671e4c5aac269c14a2333693fefaf0a88eef7))
+* Validator, Account, and Transaction IDs should have specific shortened formats ([d1fcb9c](https://www.github.com/radixdlt/olympia-wallet/commit/d1fcb9c3da8502a82b4de7896f1f09aefdc6d976))
+
+
+### Dependencies
+
+* Use the latest SDK ([#189](https://www.github.com/radixdlt/olympia-wallet/issues/189)) ([12aade2](https://www.github.com/radixdlt/olympia-wallet/commit/12aade21a801205ed91f62c28056cd379fe53181))
+
 ### [0.11.2](https://www.github.com/radixdlt/olympia-wallet/compare/v0.11.1...v0.11.2) (2021-07-15)
 
 
