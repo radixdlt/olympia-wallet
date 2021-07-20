@@ -11,12 +11,19 @@
 import { defineComponent } from 'vue'
 import { copyToClipboard } from '@/actions/vue/create-wallet'
 import { useToast } from 'vue-toastification'
+import { getHardwareWalletAddress } from '@/actions/vue/data-store'
 
 const ClickToCopy = defineComponent({
+
   props: {
-    text: {
+    address: {
       type: String,
       required: true
+    },
+    checkForHardwareAddress: {
+      type: Boolean,
+      required: false,
+      default: false
     }
   },
 
@@ -27,10 +34,24 @@ const ClickToCopy = defineComponent({
 
   methods: {
     copyText () {
-      copyToClipboard(this.text)
-      this.toast.success('Copied to Clipboard')
+      if (this.checkForHardwareAddress) {
+        getHardwareWalletAddress().then(a => {
+          const hardwareAddress = a
+          if (hardwareAddress && this.address === hardwareAddress) {
+            this.$emit('verifyHardwareAddress')
+          } else {
+            copyToClipboard(this.address)
+            this.toast.success('Copied to Clipboard')
+          }
+        })
+      } else {
+        copyToClipboard(this.address)
+        this.toast.success('Copied to Clipboard')
+      }
     }
-  }
+  },
+
+  emits: ['verifyHardwareAddress']
 })
 
 export default ClickToCopy

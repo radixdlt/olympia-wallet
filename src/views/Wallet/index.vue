@@ -6,6 +6,7 @@
       :nameIndex="accountNameIndex"
       @open="sidebar = 'accounts'"
       @setView="setView"
+      @verifyHardwareAddress="verifyHardwareWalletAddress"
     />
     <transition
       enter-active-class="transition ease-out duration-100 transform"
@@ -41,6 +42,7 @@
           :nativeToken="nativeToken"
           :nativeTokenBalance="nativeTokenBalance"
           @requestFreeTokens="requestFreeTokens"
+          @verifyHardwareAddress="verifyHardwareWalletAddress"
         />
         <wallet-loading v-else />
       </template>
@@ -53,6 +55,7 @@
           :nativeToken="nativeToken"
           @transferTokens="transferTokens"
           ref="walletTransactionComponent"
+          @verifyHardwareAddress="verifyHardwareWalletAddress"
         />
         <wallet-loading v-else />
       </template>
@@ -88,6 +91,7 @@
           @next="nextPage"
           @previous="previousPage"
           @decryptMessage="decryptMessage"
+          @verifyHardwareAddress="verifyHardwareWalletAddress"
         />
         <wallet-loading v-else />
       </template>
@@ -112,6 +116,12 @@
         :activeAddress="activeAddress"
         @saved="accountRenamed"
       />
+
+      <wallet-ledger-verify-address-modal
+      v-if="showLedgerVerify"
+      :hardwareAddress="hardwareAddress"
+      @dismissVerify="showLedgerVerify = false"
+    />
 
       <settings-index v-if="view == 'settings' && !loading" />
       <wallet-ledger-interaction-modal
@@ -187,6 +197,7 @@ import {
 import { useI18n } from 'vue-i18n'
 import { sendAPDU } from '@/actions/vue/hardware-wallet'
 import { HardwareWalletLedger } from '@radixdlt/hardware-ledger'
+import WalletLedgerVerifyAddressModal from '@/views/Wallet/WalletLedgerVerifyAddressModal.vue'
 
 const PAGE_SIZE = 50
 
@@ -206,7 +217,8 @@ const WalletIndex = defineComponent({
     WalletStaking,
     WalletTransaction,
     WalletLoading,
-    WalletLedgerInteractionModal
+    WalletLedgerInteractionModal,
+    WalletLedgerVerifyAddressModal
   },
 
   props: {
@@ -247,6 +259,7 @@ const WalletIndex = defineComponent({
     const selectedCurrency: Ref<TokenBalance | null> = ref(null)
     const nativeTokenBalance: Ref<TokenBalance | null> = ref(null)
     const activeMessage: Ref<string> = ref('')
+    const showLedgerVerify: Ref<boolean> = ref(false)
 
     // a dirty trick to get the account list item in the default wallet sidebar when the name changes
     const accountNameIndex: Ref<number> = ref(0)
@@ -669,6 +682,8 @@ const WalletIndex = defineComponent({
 
     const verifyHardwareWalletAddress = () => {
       radix.displayAddressForActiveHWAccountOnHWDeviceForVerification()
+        .subscribe()
+      showLedgerVerify.value = true
     }
 
     onUnmounted(() => subs.unsubscribe())
@@ -704,6 +719,7 @@ const WalletIndex = defineComponent({
       hardwareInteractionState,
       decryptedMessages,
       accountNameIndex,
+      showLedgerVerify,
 
       // view flags
       view,

@@ -11,7 +11,7 @@
         </div>
         <div class="text-sm flex items-center text-rGrayMed font-mono">
           {{ validatorAddress }}
-          <click-to-copy :text="stake.validator.toString()" class="hover:text-rGreen active:text-rGreenDark" />
+          <click-to-copy :address="stake.validator.toString()" class="hover:text-rGreen active:text-rGreenDark" />
         </div>
         <div class="text-sm text-rBlack flex flex-row items-center justify-between mr-4">
           <span><big-amount :amount="stake.amount" /> <span class="text-rGrayDark ml-1 uppercase">{{ nativeToken.symbol }}</span></span>

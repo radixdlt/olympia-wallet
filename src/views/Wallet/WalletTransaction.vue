@@ -6,8 +6,11 @@
         <div class="flex items-center text-rBlack text-sm">
           <span class="text-rGrayDark mr-2">{{ $t('wallet.currentAddress') }}</span> <span class="font-mono text-rBlack">{{ activeAddress.toString() }}</span>
           <div class="hover:text-rGreen flex flex-row items-center cursor-pointer transition-colors">
-            <click-to-copy :text="activeAddress.toString()">
-            </click-to-copy>
+            <click-to-copy
+              :address="activeAddress.toString()"
+              :checkForHardwareAddress=true
+              @verifyHardwareAddress="$emit('verifyHardwareAddress')"
+            />
           </div>
         </div>
       </div>
@@ -256,7 +259,7 @@ const WalletTransaction = defineComponent({
     }
   },
 
-  emits: ['transferTokens']
+  emits: ['transferTokens', 'verifyHardwareAddress']
 })
 
 export default WalletTransaction

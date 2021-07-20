@@ -11,7 +11,7 @@
             <div class="w-20 text-right text-rGrayDark mr-4">Address</div>
             <div class="flex-1 flex">
               {{ hardwareAddress }}
-              <click-to-copy :text="hardwareAddress" class="hover:text-rGreen active:text-rGreenDark ml-1" />
+              <click-to-copy :address="hardwareAddress" class="hover:text-rGreen active:text-rGreenDark ml-1" />
             </div>
           </div>
         </div>
@@ -29,17 +29,31 @@
 import { defineComponent } from 'vue'
 import ClickToCopy from '@/components/ClickToCopy.vue'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
+import { copyToClipboard } from '@/actions/vue/create-wallet'
+import { useToast } from 'vue-toastification'
 
 const WalletLedgerVerifyAddressModal = defineComponent({
   components: {
-    ClickToCopy,
-    ButtonSubmit
+    ButtonSubmit,
+    ClickToCopy
   },
 
   props: {
     hardwareAddress: {
       type: String,
-      required: false
+      required: true
+    }
+  },
+
+  setup () {
+    const toast = useToast()
+    return { toast }
+  },
+
+  methods: {
+    copyText () {
+      copyToClipboard(this.hardwareAddress)
+      this.toast.success('Copied to Clipboard')
     }
   },
 

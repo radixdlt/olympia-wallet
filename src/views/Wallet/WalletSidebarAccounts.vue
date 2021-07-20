@@ -45,12 +45,11 @@
         <div class="text-xs text-white relative z-20 flex justify-between mt-4">
           <span class="mr-2">{{ $t('wallet.addressLabel') }}</span>
           <span class="flex-1 w-full truncate">{{ displayHardwareAddress }}</span>
-          <button @click="showLedgerVerify = true; $emit('verifyHardwareAddress')" class="cursor-pointer flex items-center active:text-rBlack outline-none focus:outline-none hover:text-rGreen active:text-rGreenDark">
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect x="7.5" y="7.5" width="7" height="7" class="stroke-current"/>
-              <path d="M13 5H5V13" class="stroke-current"/>
-            </svg>
-          </button>
+          <click-to-copy
+              :address="hardwareAddress"
+              :checkForHardwareAddress=true
+              @verifyHardwareAddress="$emit('verifyHardwareAddress')"
+            />
         </div>
       </div>
 
@@ -67,11 +66,6 @@
         </div>
       </div>
     </div>
-    <wallet-ledger-verify-address-modal
-      v-if="showLedgerVerify"
-      :hardwareAddress="hardwareAddress"
-      @close="showLedgerVerify = false"
-    />
   </div>
 </template>
 
@@ -79,12 +73,12 @@
 import { defineComponent, PropType } from 'vue'
 import { AccountsT, AccountT } from '@radixdlt/application'
 import AccountListItem from '@/components/AccountListItem.vue'
-import WalletLedgerVerifyAddressModal from '@/views/Wallet/WalletLedgerVerifyAddressModal.vue'
+import ClickToCopy from '@/components/ClickToCopy.vue'
 
 const WalletSidebarAccounts = defineComponent({
   components: {
     AccountListItem,
-    WalletLedgerVerifyAddressModal
+    ClickToCopy
   },
 
   props: {
@@ -104,7 +98,7 @@ const WalletSidebarAccounts = defineComponent({
 
   data () {
     return {
-      showLedgerVerify: false
+      showHardwareHelper: false
     }
   },
 
