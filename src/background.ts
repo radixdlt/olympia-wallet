@@ -5,7 +5,7 @@ import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 import path from 'path'
 import contextMenu from 'electron-context-menu'
-import { copyToClipboard, getKeystoreFile, storePin, validatePin, writeKeystoreFile } from '@/actions/electron/create-wallet'
+import { copyToClipboard, getKeystoreFile, storePin, validatePin, writeKeystoreFile, sendAPDU  } from '@/actions/electron/create-wallet'
 import {
   getAccountName,
   saveAccountName,
@@ -14,7 +14,6 @@ import {
   saveHardwareAddress,
   getHardwareAddress
 } from './actions/electron/data-store'
-import { sendAPDU} from './actions/electron/hardware-wallet'
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
 app.commandLine.appendSwitch('ignore-certificate-errors')

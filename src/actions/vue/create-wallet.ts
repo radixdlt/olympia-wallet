@@ -45,3 +45,6 @@ export const storePin = (pin: string): Promise<string> => new Promise((resolve) 
 export const validatePin = (pin: string): Promise<boolean> => new Promise((resolve) => {
   resolve(window.ipcRenderer.invoke('validate-pin-message', pin))
 })
+
+export const sendAPDU = (cla: number, ins: number, p1: number, p2: number, data?: Buffer, statusList?: readonly number[]) =>
+  window.ipcRenderer.invoke('send-apdu', { cla, ins, p1, p2, data: data?.toString('hex') })
