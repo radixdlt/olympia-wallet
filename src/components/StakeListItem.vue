@@ -59,6 +59,7 @@ import { defineComponent, PropType, Ref, ref } from 'vue'
 import BigAmount from '@/components/BigAmount.vue'
 import ClickToCopy from '@/components/ClickToCopy.vue'
 import { Subscription } from 'rxjs'
+import { formatValidatorAddressForDisplay } from '@/helpers/formatter'
 
 const StakeListItem = defineComponent({
   components: {
@@ -101,8 +102,7 @@ const StakeListItem = defineComponent({
 
   computed: {
     validatorAddress (): string {
-      const address = this.stake.validator.toString()
-      return `${address.slice(0, 8)}...${address.slice(-7)}`
+      return formatValidatorAddressForDisplay(this.stake.validator)
     },
     unstakesForValidator (): UnstakePosition[] {
       return this.activeUnstakes.filter((unstake: UnstakePosition) => unstake.validator.equals(this.stake.validator))

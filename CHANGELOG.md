@@ -1,5 +1,71 @@
 # Changelog
 
+## [0.12.0](https://www.github.com/radixdlt/olympia-wallet/compare/v0.11.2...v0.12.0) (2021-07-20)
+
+
+### Features
+
+* Too many PIN attempts should lock the wallet ([2678ae4](https://www.github.com/radixdlt/olympia-wallet/commit/2678ae44c2f008c853910cd5fb4c56abef3e0205))
+
+
+### Bug Fixes
+
+* Menus should include reload and force reload ([69acf12](https://www.github.com/radixdlt/olympia-wallet/commit/69acf12787db8823e2ee3193462f0927e34a55c6))
+* use high level method for unstakes ([#182](https://www.github.com/radixdlt/olympia-wallet/issues/182)) ([6b7671e](https://www.github.com/radixdlt/olympia-wallet/commit/6b7671e4c5aac269c14a2333693fefaf0a88eef7))
+* Validator, Account, and Transaction IDs should have specific shortened formats ([d1fcb9c](https://www.github.com/radixdlt/olympia-wallet/commit/d1fcb9c3da8502a82b4de7896f1f09aefdc6d976))
+
+
+### Dependencies
+
+* Use the latest SDK ([#189](https://www.github.com/radixdlt/olympia-wallet/issues/189)) ([12aade2](https://www.github.com/radixdlt/olympia-wallet/commit/12aade21a801205ed91f62c28056cd379fe53181))
+
+### [0.11.2](https://www.github.com/radixdlt/olympia-wallet/compare/v0.11.1...v0.11.2) (2021-07-15)
+
+
+### Bug Fixes
+
+* Update Faucet Request ([5a43bae](https://www.github.com/radixdlt/olympia-wallet/commit/5a43baeca958d0ab31776995a1ce86e775b446eb))
+
+### [0.11.1](https://www.github.com/radixdlt/olympia-wallet/compare/v0.11.0...v0.11.1) (2021-07-15)
+
+
+### Bug Fixes
+
+* Add more menu items so we can copy and paste in the app ([#178](https://www.github.com/radixdlt/olympia-wallet/issues/178)) ([14f130b](https://www.github.com/radixdlt/olympia-wallet/commit/14f130b85fd783af3470d8d41983f60cf672b159))
+* Correctly type a pending transaction so it displays in history correctly ([fe83bdd](https://www.github.com/radixdlt/olympia-wallet/commit/fe83bddddaab64e2433a4c6de014cd13f6550a39))
+
+
+### Dependencies
+
+* remove fee from send tokens and stake forms ([709345d](https://www.github.com/radixdlt/olympia-wallet/commit/709345d5c4c91f3fca35247d7dfff6509ae26df7))
+* update min stake copy to 100 XRD ([dc9718a](https://www.github.com/radixdlt/olympia-wallet/commit/dc9718ab21586517e94ffa285a47fa3a27e75d0f))
+
+## [0.11.0](https://www.github.com/radixdlt/olympia-wallet/compare/v0.10.2...v0.11.0) (2021-07-15)
+
+
+### Features
+
+* App Updates should be opt in ([#175](https://www.github.com/radixdlt/olympia-wallet/issues/175)) ([36fea8a](https://www.github.com/radixdlt/olympia-wallet/commit/36fea8a300400e4be32b8c262234b0283346651d))
+
+
+### Dependencies
+
+* **copy:** Update the copy for the staking and unstaking forms ([#169](https://www.github.com/radixdlt/olympia-wallet/issues/169)) ([d448fae](https://www.github.com/radixdlt/olympia-wallet/commit/d448fae67810d8f5a0a73db3ea3b32329aed0d27))
+
+### [0.10.2](https://www.github.com/radixdlt/olympia-wallet/compare/v0.10.1...v0.10.2) (2021-07-14)
+
+
+### Bug Fixes
+
+* Toast Updates ([#171](https://www.github.com/radixdlt/olympia-wallet/issues/171)) ([7c6d0ff](https://www.github.com/radixdlt/olympia-wallet/commit/7c6d0ff5401c7f8781a28341522605f88fcaf49a))
+
+### [0.10.1](https://www.github.com/radixdlt/olympia-wallet/compare/v0.10.0...v0.10.1) (2021-07-14)
+
+
+### Bug Fixes
+
+* Enable auto updates ([85092db](https://www.github.com/radixdlt/olympia-wallet/commit/85092db9f98836a16b2978677d5d4fc83896ff29))
+
 ## [0.10.0](https://www.github.com/radixdlt/olympia-wallet/compare/v0.9.5...v0.10.0) (2021-07-13)
 
 

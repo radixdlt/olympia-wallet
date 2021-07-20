@@ -34,7 +34,7 @@ import { AccountT } from '@radixdlt/application'
 import ClickToCopy from '@/components/ClickToCopy.vue'
 import { ref } from '@nopr3d/vue-next-rx'
 import { getAccountName } from '@/actions/vue/data-store'
-import { formatAddressForDisplay } from '@/helpers/formatter'
+import { formatWalletAddressForDisplay } from '@/helpers/formatter'
 
 const AccountListItem = defineComponent({
   components: {
@@ -93,7 +93,7 @@ const AccountListItem = defineComponent({
     },
 
     displayAddress (): string {
-      return formatAddressForDisplay(this.account.address)
+      return formatWalletAddressForDisplay(this.account.address)
     }
   },
 

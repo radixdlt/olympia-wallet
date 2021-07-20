@@ -48,8 +48,6 @@
           :activeAddress="activeAddress"
           :tokenBalances="tokenBalances.tokenBalances"
           :nativeToken="nativeToken"
-          :transactionFee="transactionFee"
-          :hasCalculatedFee="hasCalculatedFee"
           @transferTokens="transferTokens"
           ref="walletTransactionComponent"
         />
@@ -97,7 +95,6 @@
         :transferInput="transferInput"
         :stakeInput="stakeInput"
         :transactionFee="transactionFee"
-        :hasCalculatedFee="hasCalculatedFee"
         :selectedCurrency="selectedCurrency"
         :nativeToken="nativeToken"
         :confirmationMode="confirmationMode"
@@ -300,11 +297,9 @@ const WalletIndex = defineComponent({
     subs.add(radix.accounts.subscribe((accountsRes: AccountsT) => { accounts.value = accountsRes }))
     subs.add(radix.activeAddress.subscribe((addressRes: AccountAddressT) => { activeAddress.value = addressRes }))
 
-    subs.add(radix.activeAddress.pipe(
-      switchMap((res: AccountAddressT) => radix.ledger.unstakesForAddress(res))
-    ).subscribe((unstakes: UnstakePositions) => {
+    radix.unstakingPositions.subscribe(unstakes => {
       activeUnstakes.value = unstakes
-    }))
+    })
 
     subs.add(radix.ledger.nativeToken().subscribe((nativeTokenRes: Token) => { nativeToken.value = nativeTokenRes }))
 
@@ -439,8 +434,7 @@ const WalletIndex = defineComponent({
       subs.add(transactionTracking.events
         .pipe(filter((trackingEvent: TransactionStateUpdate) => trackingEvent.eventUpdateType === 'INITIATED'))
         .subscribe((res: TransactionStateUpdate) => {
-          const transactionIntent = res as unknown as TransactionIntent
-          draftTransaction.value = transactionIntent
+          draftTransaction.value = (res as TransactionStateSuccess).transactionState as TransactionIntent
         }))
 
       // Track pending transactions augmented with actions array
@@ -614,12 +608,16 @@ const WalletIndex = defineComponent({
 
     const requestFreeTokens = () => {
       const request = {
+        jsonrpc: '2.0',
+        method: 'faucet.request_tokens',
+        id: 1,
         params: {
           address: activeAddress.value ? activeAddress.value.toString() : ''
         }
       }
+      const baseUrl = process.env.VUE_APP_FAUCET || 'https://stokenet-faucet.radixdlt.com'
       subs.add(from(
-        fetch(process.env.VUE_APP_FAUCET || '', {
+        fetch(`${baseUrl}/faucet`, {
           method: 'POST',
           mode: 'no-cors',
           headers: { 'Content-Type': 'application/json' },
@@ -686,7 +684,6 @@ const WalletIndex = defineComponent({
       activeMessage,
       activeMessageInTransaction,
       radix,
-      hasCalculatedFee,
       confirmationMode,
       hardwareAddress,
       hardwareWalletError,

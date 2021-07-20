@@ -41,7 +41,7 @@
     <div class="bg-white text-rBlack py-4 px-8 flex-1">
       <div v-if="!fetchingFreeTokens" class="font-medium mb-6 flex items-center justify-between">
         {{ $t('wallet.additionalBalancesHeading') }}
-        <button @click="requestFreeTokens" class="focus:outline-none text-rGreen py-2 px-4 border border-rGreen rounded-md hover:bg-translucent-greenLighter active:bg-translucent-greenLight">Get free testnet tokens</button>
+        <button @click="requestFreeTokens" class="focus:outline-none text-rGreen py-2 px-4 border border-rGreen rounded-md hover:bg-translucent-greenLighter active:bg-translucent-greenLight">Get free test tokens</button>
       </div>
       <div v-else class="font-medium mb-6 flex items-center justify-between">
         {{ $t('wallet.additionalBalancesHeading') }}

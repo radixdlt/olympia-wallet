@@ -184,10 +184,6 @@ const WalletConfirmTransactionModal = defineComponent({
       type: Object as PropType<MessageInTransaction>,
       required: false
     },
-    hasCalculatedFee: {
-      type: Boolean,
-      required: true
-    },
     confirmationMode: {
       type: String,
       required: false,
@@ -198,7 +194,8 @@ const WalletConfirmTransactionModal = defineComponent({
   data () {
     return {
       canCancel: true,
-      isValidPin: false
+      isValidPin: false,
+      pinAttempts: 0
     }
   },
 
@@ -236,6 +233,10 @@ const WalletConfirmTransactionModal = defineComponent({
             this.setErrors({
               pin: this.$t('validations.invalidPin')
             })
+            this.pinAttempts++
+            if (this.pinAttempts === 3) {
+              this.$router.push('/?modal=locked-out')
+            }
           }
         })
     },

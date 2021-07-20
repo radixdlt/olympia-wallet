@@ -1,6 +1,6 @@
 'use strict'
 
-import { app, ipcMain, protocol, BrowserWindow } from 'electron'
+import { app, ipcMain, protocol, BrowserWindow, Menu } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 import path from 'path'
@@ -15,6 +15,8 @@ import {
   getHardwareAddress
 } from './actions/electron/data-store'
 import { sendAPDU} from './actions/electron/hardware-wallet'
+import menu from './menu'
+
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
 app.commandLine.appendSwitch('ignore-certificate-errors')
@@ -89,6 +91,7 @@ app.on('ready', async () => {
       console.error('Vue Devtools failed to install:', e.toString())
     }
   }
+  Menu.setApplicationMenu(menu)
   createWindow()
 })
 
