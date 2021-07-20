@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.12.2](https://www.github.com/radixdlt/olympia-wallet/compare/v0.12.1...v0.12.2) (2021-07-20)
+
+
+### Bug Fixes
+
+* include more entitlements for the mac builds ([#193](https://www.github.com/radixdlt/olympia-wallet/issues/193)) ([967a953](https://www.github.com/radixdlt/olympia-wallet/commit/967a953dbf991001fbc8092897748dd823248137))
+
 ### [0.12.1](https://www.github.com/radixdlt/olympia-wallet/compare/v0.12.0...v0.12.1) (2021-07-20)
 
 
