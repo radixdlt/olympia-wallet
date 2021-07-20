@@ -1418,10 +1418,10 @@
     prelude-ts "^1.0.2"
     rxjs "7.0.0"
 
-"@radixdlt/application@2.1.2":
-  version "2.1.2"
-  resolved "https://registry.yarnpkg.com/@radixdlt/application/-/application-2.1.2.tgz#b03821c0e176569c3b1d76da3bc9b41e2ee462f2"
-  integrity sha512-FVQEjn53dJolvh5ZUYazqN+I01Y0wUd45y2tDOFBlHRHCAUkeokKmNXnIYx/2nYajljdjpQYrK4N4+17eP+pOA==
+"@radixdlt/application@2.1.6":
+  version "2.1.6"
+  resolved "https://registry.yarnpkg.com/@radixdlt/application/-/application-2.1.6.tgz#7802a98dabf64e13ff6f258e1544737b6c8bb180"
+  integrity sha512-B9Q283mbm1dcWpFm6AGcWp5TEwpGaRFPS1mnUJzEcwDFb51xhSpjRKTwumuhFve/XiluCLEg/INJFIMi77Crqg==
   dependencies:
     "@open-rpc/mock-server" "1.7.2"
     "@open-rpc/schema-utils-js" "1.14.3"
@@ -1429,7 +1429,7 @@
     "@radixdlt/crypto" "^2.1.1"
     "@radixdlt/data-formats" "1.0.30"
     "@radixdlt/networking" "^2.1.1"
-    "@radixdlt/open-rpc-spec" "1.0.13"
+    "@radixdlt/open-rpc-spec" "^1.0.17"
     "@radixdlt/primitives" "^2.1.1"
     "@radixdlt/util" "1.0.29"
     jest "^26.6.3"
@@ -1491,15 +1491,15 @@
     open-rpc-utils "^1.1.1"
     uuid "^8.3.2"
 
-"@radixdlt/open-rpc-spec@1.0.13":
-  version "1.0.13"
-  resolved "https://registry.yarnpkg.com/@radixdlt/open-rpc-spec/-/open-rpc-spec-1.0.13.tgz#5b58ed3febbbcf04196b9fa1b8a57ef241b74c81"
-  integrity sha512-gcmcCkcLePZS2fWrAtB2Z0yEz/a9saWaJ76yngjVoHwk0bXjQLjYuPklGJVbo6a0Il0B4JXdOKzadBD/46TzRg==
-
 "@radixdlt/open-rpc-spec@^1.0.15":
   version "1.0.15"
   resolved "https://registry.yarnpkg.com/@radixdlt/open-rpc-spec/-/open-rpc-spec-1.0.15.tgz#d52bb10e8faa0cabebf0f726e9b4d4955858a932"
   integrity sha512-jEa0NjXDCwgfcFxg79SL3qNB/fyMJ8G278h1Dnorte74JBDkH2t0orrv5Tirs94YpTv2HRZNbPYBiIYBNJZCQw==
+
+"@radixdlt/open-rpc-spec@^1.0.17":
+  version "1.0.17"
+  resolved "https://registry.yarnpkg.com/@radixdlt/open-rpc-spec/-/open-rpc-spec-1.0.17.tgz#e0634ee6826a3bfb48078d5b411d0827c27c3896"
+  integrity sha512-51zV918QljWo+YlnXfnrNqEHcM4cjqFSQRRo2gAeIKKvnExLQvVKyYTlDCySoitrY0qAdbMYL+FGS5GBA2h4uw==
 
 "@radixdlt/primitives@^2.1.1":
   version "2.1.1"
