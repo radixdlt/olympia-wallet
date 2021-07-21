@@ -7,25 +7,28 @@
       @open="sidebar = 'accounts'"
       @setView="setView"
     />
-    <wallet-sidebar-accounts
-      v-if="sidebar == 'accounts'"
-      :accounts="accounts"
-      :activeAccount="activeAccount"
-      :hardwareAddress="hardwareAddress"
-      @back="sidebar = 'default'"
-      @addAccount="() => { addAccount() ; view = 'editName' }"
-      @switchAccount="switchAccount"
-      @switchToHardwareAccount="connectHardwareWallet"
-      @editName="setView('editName')"
-      @connectHardwareWallet="connectHardwareWallet"
-      @verifyHardwareAddress="verifyHardwareWalletAddress"
-    />
-    <wallet-ledger-interaction-modal
-      v-if="hardwareInteractionState && hardwareInteractionState.length > 0"
-      :hardwareWalletError="hardwareWalletError"
-      @closeLedgerModal="hardwareInteractionState = null"
-      @retryLedgerAccountDerivation="connectHardwareWallet"
-    />
+    <transition
+      enter-active-class="transition ease-out duration-100 transform"
+      enter-from-class="-translate-x-full"
+      enter-to-class="translate-x-0"
+      leave-active-class="transition ease-in duration-75 transform"
+      leave-from-class="translate-x-0"
+      leave-to-class="-translate-x-full"
+    >
+      <wallet-sidebar-accounts
+        v-if="sidebar == 'accounts'"
+        :accounts="accounts"
+        :activeAccount="activeAccount"
+        :hardwareAddress="hardwareAddress"
+        @back="sidebar = 'default'"
+        @addAccount="() => { addAccount() ; view = 'editName' }"
+        @switchAccount="switchAccount"
+        @switchToHardwareAccount="connectHardwareWallet"
+        @editName="setView('editName')"
+        @connectHardwareWallet="connectHardwareWallet"
+        @verifyHardwareAddress="verifyHardwareWalletAddress"
+      />
+    </transition>
 
     <template v-if="loaded">
       <template v-if="view == 'overview'">
@@ -107,10 +110,16 @@
       <account-edit-name
         v-if="view == 'editName'"
         :activeAddress="activeAddress"
-        @save="saveAccountName"
+        @saved="accountRenamed"
       />
 
       <settings-index v-if="view == 'settings' && !loading" />
+      <wallet-ledger-interaction-modal
+        v-if="hardwareInteractionState && hardwareInteractionState.length > 0"
+        :hardwareWalletError="hardwareWalletError"
+        @closeLedgerModal="hardwareInteractionState = null"
+        @retryLedgerAccountDerivation="connectHardwareWallet"
+      />
     </template>
     <template v-else>
       <wallet-loading />
@@ -150,8 +159,7 @@ import {
   TokenBalance,
   MessageInTransaction,
   ExecutedTransaction,
-  Network,
-  LogLevel
+  Network
 } from '@radixdlt/application'
 import { safelyUnwrapAmount } from '@/helpers/validateRadixTypes'
 import { ref } from '@nopr3d/vue-next-rx'
@@ -168,7 +176,7 @@ import WalletLoading from './WalletLoading.vue'
 import AccountEditName from '@/views/Account/AccountEditName.vue'
 import SettingsIndex from '@/views/Settings/index.vue'
 import WalletLedgerInteractionModal from '@/views/Wallet/WalletLedgerInteractionModal.vue'
-import { filter, mergeMap, map, switchMap } from 'rxjs/operators'
+import { filter, mergeMap } from 'rxjs/operators'
 import {
   getDerivedAccountsIndex,
   saveDerivedAccountsIndex,
@@ -343,6 +351,12 @@ const WalletIndex = defineComponent({
       startLoading()
       sidebar.value = 'default'
       radix.switchAccount({ toAccount: account })
+    }
+
+    const accountRenamed = () => {
+      view.value = 'overview'
+      sidebar.value = 'default'
+      accountNameIndex.value = accountNameIndex.value + 1
     }
 
     const confirmTransaction = () => {
@@ -714,7 +728,7 @@ const WalletIndex = defineComponent({
       connectHardwareWallet,
       verifyHardwareWalletAddress,
       decryptMessage,
-      saveAccountName,
+      accountRenamed,
 
       // child component refs
       walletTransactionComponent,

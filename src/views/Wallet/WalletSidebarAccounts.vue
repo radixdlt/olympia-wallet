@@ -1,5 +1,5 @@
 <template>
-  <div class="w-54 px-5 py-8 text-white overflow-y-auto fixed left-0 h-full bg-rBlueDark z-30">
+  <div class="w-54 px-5 py-8 text-white overflow-y-auto fixed left-0 h-full bg-rBlueDark z-30 overflow-x-hidden">
     <div @click="$emit('back')" class="hover:text-rGreen cursor-pointer transition-colors inline-flex flex-row items-center mb-12">
       <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr-2">
         <circle cx="10" cy="10" r="9.5" transform="rotate(90 10 10)" fill="none" class="stroke-current" />
@@ -52,28 +52,27 @@
             </svg>
           </button>
         </div>
-       </div>
+      </div>
 
       <div v-else
         @click="$emit('connectHardwareWallet')"
-        @mouseover="showHardwareHelper = true"
-        @mouseleave="showHardwareHelper = false"
-        class="inline-flex flex-row items-center cursor-pointer hover:text-rGreen transition-colors">
-        {{ $t('wallet.navAddHWWallet') }}
-      </div>
+        class="group"
+      >
+        <div class="inline-flex flex-row items-center cursor-pointer hover:text-rGreen transition-colors">
+          {{ $t('wallet.navAddHWWallet') }}
+        </div>
 
-      <div v-if="showHardwareHelper" class="w-48 text-xs mt-4">
-        Please ensure your Ledger is connected and the Radix application is selected.
+        <div class="hidden group-hover:block text-xs mt-4">
+          <p class="w-48">Please ensure your Ledger is connected and the Radix application is selected.</p>
+        </div>
       </div>
-
     </div>
+    <wallet-ledger-verify-address-modal
+      v-if="showLedgerVerify"
+      :hardwareAddress="hardwareAddress"
+      @close="showLedgerVerify = false"
+    />
   </div>
-
-  <wallet-ledger-verify-address-modal
-    v-if="showLedgerVerify"
-    :hardwareAddress="hardwareAddress"
-    @dismissVerify="showLedgerVerify = false"
-  />
 </template>
 
 <script lang="ts">
@@ -105,7 +104,6 @@ const WalletSidebarAccounts = defineComponent({
 
   data () {
     return {
-      showHardwareHelper: false,
       showLedgerVerify: false
     }
   },

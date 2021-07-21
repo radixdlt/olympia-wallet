@@ -1,5 +1,5 @@
 <template>
-  <div class="fixed w-screen h-screen z-20 flex items-center justify-center bg-translucent-black">
+  <div class="fixed w-screen h-screen z-20 flex items-center justify-center bg-translucent-black left-0 top-0">
     <div class="h-modalSmall bg-white rounded-md py-7 px-7 w-full max-w-3xl absolute top-1/2 left-1/2 transform -translate-x-1/3 -translate-y-1/2">
       <h3 class="font-medium text-rBlack mb-2 w-full">Verify Hardware Wallet Address</h3>
       <div class="text-rBlack">
