@@ -84,10 +84,9 @@
       </div>
 
       <stake-list-item
-        v-for="(stake, i) in sortedStakes"
+        v-for="(position, i) in sortedPositions"
         :key="i"
-        :stake="stake"
-        :activeUnstakes="activeUnstakes"
+        :position="position"
         :nativeToken="nativeToken"
         @addToValidator="handleAddToValidator"
         @reduceFromValidator="handleReduceFromValidator"
@@ -98,7 +97,7 @@
 </template>
 
 <script lang="ts">
-import { StakePosition, TokenBalance, TokenBalances, UnstakePosition, AccountAddressT, Amount, AmountT, Token, ValidatorAddressT } from '@radixdlt/application'
+import { StakePosition, TokenBalance, TokenBalances, UnstakePosition, AccountAddressT, Amount, AmountT, Token, ValidatorAddressT, TransactionIdentifierT, Validator } from '@radixdlt/application'
 import { defineComponent, PropType } from 'vue'
 import { useForm } from 'vee-validate'
 import StakeListItem from '@/components/StakeListItem.vue'
@@ -109,6 +108,7 @@ import FormErrorMessage from '@/components/FormErrorMessage.vue'
 import FormField from '@/components/FormField.vue'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
 import { asBigNumber } from '@/components/BigAmount.vue'
+import { Position } from '@/store/_types'
 
 interface StakeForm {
   validator: string;
@@ -177,24 +177,35 @@ const WalletStaking = defineComponent({
     stakeButtonCopy (): string {
       return this.activeForm === 'stake' ? this.$t('staking.stakeButton') : this.$t('staking.unstakeButton')
     },
-    sortedStakes (): Array<StakePosition> {
+    sortedPositions (): Array<Position> {
       // If more than 1 stake exists for the same validator, only display the validator once and sum their amounts
-      const stakes = this.activeStakes
-        .reduce((accum: StakePosition[], el: StakePosition) => {
-          const existingValidatorIndex = accum.findIndex((sp: StakePosition) => sp.validator.equals(el.validator))
-          if (existingValidatorIndex === -1) return [...accum, el]
-          const existingValidator = accum[existingValidatorIndex]
-          accum[existingValidatorIndex] = {
-            ...existingValidator,
-            amount: existingValidator.amount.add(el.amount)
-          }
-          return accum
-        }, [])
-      return stakes.sort((a, b) => {
-        if (a.amount > b.amount) return -1
-        if (b.amount > a.amount) return 1
+      let positions: Position[] = []
+
+      this.activeStakes.forEach((stake: StakePosition) => {
+        const existingPositionIndex = positions.findIndex((pos: Position) => pos.validator.equals(stake.validator))
+        if (existingPositionIndex === -1) {
+          positions = [...positions, { validator: stake.validator, stakes: [stake], unstakes: [] }]
+        } else {
+          positions[existingPositionIndex] = { ...positions[existingPositionIndex], stakes: [...positions[existingPositionIndex].stakes, stake] }
+        }
+      })
+
+      this.activeUnstakes.forEach((unstake: UnstakePosition) => {
+        const existingPositionIndex = positions.findIndex((pos: Position) => pos.validator.equals(unstake.validator))
+        if (existingPositionIndex === -1) {
+          positions = [...positions, { validator: unstake.validator, unstakes: [unstake], stakes: [] }]
+        } else {
+          positions[existingPositionIndex] = { ...positions[existingPositionIndex], unstakes: [...positions[existingPositionIndex].unstakes, unstake] }
+        }
+      })
+
+      return positions.sort((a: Position, b: Position) => {
+        const aTotal = a.stakes.map((el: StakePosition) => el.amount).reduce((prev: AmountT, curr: AmountT) => prev.add(curr))
+        const bTotal = b.stakes.map((el: StakePosition) => el.amount).reduce((prev: AmountT, curr: AmountT) => prev.add(curr))
+        if (aTotal > bTotal) return -1
+        if (bTotal > aTotal) return 1
         return 0
-      }).filter(s => s.amount.gt(0))
+      })
     },
     disableSubmit (): boolean {
       return this.meta.dirty ? !this.meta.valid : true

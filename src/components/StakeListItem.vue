@@ -1,65 +1,79 @@
 <template>
-  <div class="border border-rGray rounded-md flex flex-row mb-1 text-rBlack flex-wrap justify-end">
-    <div class="flex-1 pt-2 pl-4">
-      <div>
-        <div
-          v-if="validator"
-          class="text-sm flex items-center"
-        >
-          <a class="text-rBlue" v-if="validator.infoURL" :href="validator.infoURL" target="__blank"> {{ validator.name }} </a>
-          <span v-else>{{validator.name}}</span>
+  <div class="border border-rGray rounded-md mb-4 text-rBlack">
+    <div class="">
+      <div class="flex px-4 pt-3 pb-1">
+        <div class="flex-grow">
+          <div
+            v-if="validator"
+            class="text-sm flex items-center"
+          >
+            <div class="flex flex-col">
+              <div v-if="!validator.registered" class="inline-flex justify-start items-center">
+                <span class="bg-rRed w-2 h-2 rounded-full"></span>
+                <span class="text-rRed ml-2">unregistered</span>
+              </div>
+              <a class="text-rBlack hover:text-rBlue" v-if="validator.infoURL" :href="validator.infoURL" target="__blank"> {{ validator.name }} </a>
+              <span v-else>{{validator.name}}</span>
+            </div>
+          </div>
+          <div class="text-xs flex items-center text-rGrayDark font-mono group">
+            {{ validatorAddress }}
+            <click-to-copy :text="position.validator.toString()" class="group-hover:text-rGreen active:text-rGreenDark" />
+          </div>
         </div>
-        <div class="text-sm flex items-center text-rGrayMed font-mono">
-          {{ validatorAddress }}
-          <click-to-copy :address="stake.validator.toString()" class="hover:text-rGreen active:text-rGreenDark" />
-        </div>
-        <div class="text-sm text-rBlack flex flex-row items-center justify-between mr-4">
-          <span><big-amount :amount="stake.amount" /> <span class="text-rGrayDark ml-1 uppercase">{{ nativeToken.symbol }}</span></span>
-          <span class="text-rGrayDark text-xs">{{ $t('staking.stakedLabel') }}</span>
-        </div>
-        <div
-          v-for="(unstake, i) in unstakesForValidator"
-          :key="i"
-          class="text-sm text-rBlack flex flex-row items-center flex-wrap justify-between mr-4"
-        >
-          <span><big-amount :amount="unstake.amount" /> <span class="text-rGrayDark ml-1 uppercase">{{ nativeToken.symbol }}</span></span>
-          <span class="text-rGrayDark text-xs">{{ $t('staking.unstakingLabel') }}</span>
+        <div class="flex-grow-0">
+          <a :href="explorerUrl" target="_blank" class="hover:text-rGreen transition-colors text-rGrayMed">
+            <div class="rounded-full border border-solid border-rGray w-6 h-6 flex items-center justify-center">
+              <svg width="8" height="8" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M1.08789 1H11.1344V11.0465" class="stroke-current" stroke-miterlimit="10"/>
+                <path d="M11.1339 1L1 11.134" class="stroke-current" stroke-miterlimit="10"/>
+              </svg>
+            </div>
+          </a>
         </div>
       </div>
-      <div class="flex flex-row justify-end mb-px text-rGrayDark text-sm py-2 pr-4">
+
+      <dl v-if="validator" class="text-sm mx-4 grid grid-cols-2 border-b border-rGray">
+        <dd class="mb-1 w-26 flex-grow-0 text-rGrayMed">{{ $t('staking.validatorFeeLabel') }}:</dd>
+        <dt class="mb-1 flex-1 text-rBlack">+{{validator.validatorFee}}%</dt>
+        <dd class="mb-1 w-26 flex-grow-0 text-rGrayMed">{{ $t('staking.recentUptimeLabel') }}:</dd>
+        <dt class="mb-1 flex-1 text-rBlack">{{validator.uptimePercentage}}%</dt>
+      </dl>
+
+      <dl v-if="validator" class="text-sm mx-4 mt-1 grid grid-cols-2">
+        <dd class="mb-1 w-26 flex-grow-0 text-rGrayMed">{{ $t('staking.stakedLabel') }}:</dd>
+        <dt class="mb-1 flex-1 text-rBlack"><big-amount :amount="stakeAmount" /> <span class="text-rGrayDark ml-1 uppercase">{{ nativeToken.symbol }}</span></dt>
+        <dd v-if="unstakeAmount" class="mb-1 w-26 flex-grow-0 text-rGrayMed">{{ $t('staking.unstakingLabel') }}:</dd>
+        <dt v-if="unstakeAmount" class="mb-1 flex-1 text-rBlack"><big-amount :amount="unstakeAmount" /> <span class="text-rGrayDark ml-1 uppercase">{{ nativeToken.symbol }}</span></dt>
+      </dl>
+      <div class="flex flex-row justify-end mb-px text-rGrayDark text-xs py-2 pr-4 bg-rGrayLightest">
         <button
-          class="text-rBlue hover:text-rGreen transition-colors cursor-pointer pointer-events-auto mr-px outline-none focus:outline-none"
-          @click="$emit('addToValidator', stake.validator)"
+          class="text-rBlue hover:text-rGreen transition-colors cursor-pointer pointer-events-auto mr-px outline-none focus:outline-none px-2"
+          @click="$emit('addToValidator', position.validator)"
         >
           {{ $t('staking.addButton') }}
         </button>
         /
         <button
-          class="text-rBlue hover:text-rGreen transition-colors cursor-pointer pointer-events-auto ml-px outline-none focus:outline-none"
-          @click="$emit('reduceFromValidator', stake.validator)"
+          class="text-rBlue hover:text-rGreen transition-colors cursor-pointer pointer-events-auto ml-px outline-none focus:outline-none pl-2"
+          @click="$emit('reduceFromValidator', position.validator)"
         >
           {{ $t('staking.reduceButton') }}
         </button>
       </div>
     </div>
-    <a :href="explorerUrl" target="_blank" class="bg-rGrayLightest flex items-center justify-center px-2 hover:text-rGreen transition-colors text-rGrayMed w-full lg:w-auto py-1">
-      <div class=" rounded-full border border-solid border-rGray w-6 h-6 flex items-center justify-center">
-        <svg width="8" height="8" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M1.08789 1H11.1344V11.0465" class="stroke-current" stroke-miterlimit="10"/>
-          <path d="M11.1339 1L1 11.134" class="stroke-current" stroke-miterlimit="10"/>
-        </svg>
-      </div>
-    </a>
+
   </div>
 </template>
 
 <script lang="ts">
-import { Radix, StakePosition, Token, UnstakePosition, Validator, Network } from '@radixdlt/application'
+import { Radix, Token, UnstakePosition, Validator, Network, Amount, AmountT, StakePosition } from '@radixdlt/application'
 import { defineComponent, PropType, Ref, ref } from 'vue'
 import BigAmount from '@/components/BigAmount.vue'
 import ClickToCopy from '@/components/ClickToCopy.vue'
 import { Subscription } from 'rxjs'
 import { formatValidatorAddressForDisplay } from '@/helpers/formatter'
+import { Position } from '@/store/_types'
 
 const StakeListItem = defineComponent({
   components: {
@@ -68,12 +82,8 @@ const StakeListItem = defineComponent({
   },
 
   props: {
-    stake: {
-      type: Object as PropType<StakePosition>,
-      required: true
-    },
-    activeUnstakes: {
-      type: Object as PropType<Array<UnstakePosition>>,
+    position: {
+      type: Object as PropType<Position>,
       required: true
     },
     nativeToken: {
@@ -92,7 +102,7 @@ const StakeListItem = defineComponent({
     const subs = new Subscription()
 
     subs
-      .add(radix.ledger.lookupValidator(props.stake.validator)
+      .add(radix.ledger.lookupValidator(props.position.validator)
         .subscribe((validatorRes: Validator) => { validator.value = validatorRes }))
 
     return {
@@ -102,13 +112,23 @@ const StakeListItem = defineComponent({
 
   computed: {
     validatorAddress (): string {
-      return formatValidatorAddressForDisplay(this.stake.validator)
+      return formatValidatorAddressForDisplay(this.position.validator)
     },
     unstakesForValidator (): UnstakePosition[] {
-      return this.activeUnstakes.filter((unstake: UnstakePosition) => unstake.validator.equals(this.stake.validator))
+      return this.position.unstakes
     },
     explorerUrl (): string {
       return this.validator ? `${process.env.VUE_APP_EXPLORER}/#/validators/${this.validator.address.toString()}` : `${process.env.VUE_APP_EXPLORER}/#/validators/`
+    },
+
+    stakeAmount (): AmountT {
+      if (this.position.stakes.length === 0) { Amount.fromUnsafe(0)._unsafeUnwrap() }
+      return this.position.stakes.map((el: StakePosition) => el.amount).reduce((prev: AmountT, curr: AmountT) => prev.add(curr))
+    },
+
+    unstakeAmount (): AmountT | null {
+      if (this.position.unstakes.length === 0) { return null }
+      return this.position.unstakes.map((el: UnstakePosition) => el.amount).reduce((prev: AmountT, curr: AmountT) => prev.add(curr))
     }
   },
 
