@@ -58,9 +58,11 @@ const AccountEditName = defineComponent({
   methods: {
     handleSubmit () {
       saveAccountName(this.activeAddress.toString(), this.name)
-        .then(() => this.$emit('save'))
+        .then(() => this.$emit('saved'))
     }
-  }
+  },
+
+  emits: ['saved']
 })
 
 export default AccountEditName

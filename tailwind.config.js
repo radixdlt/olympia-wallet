@@ -61,7 +61,8 @@ module.exports = {
       textColor: ['active'],
       padding: ['odd', 'even'],
       margin: ['odd', 'even'],
-      visibility: ['group-hover']
+      visibility: ['group-hover'],
+      display: ['group-hover']
     }
   },
   plugins: [
