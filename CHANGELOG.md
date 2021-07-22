@@ -1,5 +1,17 @@
 # Changelog
 
+### [0.13.1](https://www.github.com/radixdlt/olympia-wallet/compare/v0.13.0...v0.13.1) (2021-07-22)
+
+
+### Bug Fixes
+
+* round half up, not truncate ([#206](https://www.github.com/radixdlt/olympia-wallet/issues/206)) ([58ceefc](https://www.github.com/radixdlt/olympia-wallet/commit/58ceefca5af406c89c7e1fd98ebc2ea6b35cbcf7))
+
+
+### Dependencies
+
+* update help url ([#208](https://www.github.com/radixdlt/olympia-wallet/issues/208)) ([6250b26](https://www.github.com/radixdlt/olympia-wallet/commit/6250b26f240048a32593b2462bf021fe7c1f3710))
+
 ## [0.13.0](https://www.github.com/radixdlt/olympia-wallet/compare/v0.12.4...v0.13.0) (2021-07-22)
 
 
