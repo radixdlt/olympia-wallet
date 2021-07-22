@@ -29,3 +29,7 @@ export const saveHardwareAddress = (event: IpcMainInvokeEvent, address: string) 
 export const getHardwareAddress = (event: IpcMainInvokeEvent) => {
   return store.get('hardwareAddress')
 }
+
+export const resetStore = (event: IpcMainInvokeEvent) => {
+  return store.clear()
+}

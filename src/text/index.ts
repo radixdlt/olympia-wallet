@@ -35,7 +35,16 @@ const messages = {
       createButton: 'Create a new wallet',
       restoreTitle: 'I already have a wallet.',
       restoreContent: 'You previously created a wallet and want to use your seed phrase to restore your access.',
-      restoreButton: 'Restore a previous wallet'
+      restoreButton: 'Restore a previous wallet',
+      forgotPassword: 'I forgot my password',
+      deleteWalletTitle: 'Do you want to delete your current wallet?',
+      deleteWalletContent: 'If you can\'t remember your password, you\'ll need to delete this local wallet and restore from your seed phrase or create a new wallet.',
+      deleteChoiceContent: 'Are you sure you want to proceed?',
+      deleteRestoreButton: 'Delete and restore from seed phrase',
+      deleteCreateButton: 'Delete and create a new wallet',
+      deleteRestoreConfirm: 'Type DELETE AND RESTORE below to confirm',
+      restoreConfirmButton: 'Yes, I\'m sure I want to delete my wallet',
+      forgotPasswordExit: 'Nevermind, I remember my password'
     },
     createWallet: {
       recoveryTitle: 'Seed Phrase',

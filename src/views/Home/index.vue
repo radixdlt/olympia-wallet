@@ -30,14 +30,21 @@
 
       <div
         v-if="hasWallet.value == true"
-        class="bg-white py-8 px-11 max-w-lg rounded mx-auto"
+        class="bg-white pt-8 pb-4 px-11 max-w-lg rounded mx-auto"
       >
         <home-enter-passcode
           @submit="loginWithWallet"
+          @forgotPassword="forgotPassword"
           ref="enterPasscodeComponent"
         />
       </div>
       <home-locked-modal :open="modal === 'locked-out'" @close="closeModal"/>
+      <home-forgot-password
+        :open="modal === 'forgot-password'"
+        @close="closeModal"
+        @resetAndCreate="resetAndCreate"
+        @resetAndRestore="resetAndRestore"
+      />
     </template>
   </div>
 </template>
@@ -50,18 +57,21 @@ import { useStore } from '@/store'
 import HomeCreateAndRestore from './HomeCreateAndRestore.vue'
 import HomeEnterPasscode from './HomeEnterPasscode.vue'
 import HomeLockedModal from './HomeLockedModal.vue'
+import HomeForgotPassword from './HomeForgotPassword.vue'
 import LoadingIcon from '@/components/LoadingIcon.vue'
 import { Subscription } from 'rxjs'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ref } from '@nopr3d/vue-next-rx'
 import { filter } from 'rxjs/operators'
+import { resetStore } from '@/actions/vue/data-store'
 
 const CreateWallet = defineComponent({
   components: {
     HomeCreateAndRestore,
     HomeEnterPasscode,
     HomeLockedModal,
+    HomeForgotPassword,
     LoadingIcon
   },
 
@@ -118,6 +128,22 @@ const CreateWallet = defineComponent({
       enterPasscodeComponent,
       closeModal () {
         router.push({ name: 'Home', query: { modal: '' } })
+      },
+
+      forgotPassword () {
+        router.push({ name: 'Home', query: { modal: 'forgot-password' } })
+      },
+
+      resetAndCreate () {
+        resetStore()
+        hasWallet.value = false
+        router.push('/create-wallet')
+      },
+
+      resetAndRestore () {
+        resetStore()
+        hasWallet.value = false
+        router.push('/restore-wallet')
       }
     }
   }

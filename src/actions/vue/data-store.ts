@@ -21,3 +21,7 @@ export const saveHardwareWalletAddress = (address: string): Promise<string> => n
 export const getHardwareWalletAddress = (): Promise<string> => new Promise((resolve) => {
   resolve(window.ipcRenderer.invoke('get-hw-address'))
 })
+
+export const resetStore = (): Promise<string> => new Promise((resolve) => {
+  resolve(window.ipcRenderer.invoke('reset-store'))
+})
