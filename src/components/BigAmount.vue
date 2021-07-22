@@ -15,7 +15,7 @@ import BigNumber from 'bignumber.js'
 import { useToast } from 'vue-toastification'
 
 BigNumber.set({
-  ROUNDING_MODE: BigNumber.ROUND_FLOOR,
+  ROUNDING_MODE: BigNumber.ROUND_HALF_UP,
   EXPONENTIAL_AT: [-30, 30]
 })
 
