@@ -82,7 +82,7 @@
 
     <div class="flex flex-col">
       <a
-        href="https://learn.radixdlt.com/article/betanet-desktop-wallet-introduction"
+        href="https://learn.radixdlt.com/article/start-here-desktop-wallet-introduction"
         target="__blank"
         class="flex flex-row items-center my-2 cursor-pointer transition-opacity"
       >
