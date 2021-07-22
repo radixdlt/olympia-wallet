@@ -1,5 +1,14 @@
 # Changelog
 
+### [0.12.5](https://www.github.com/radixdlt/olympia-wallet/compare/v0.12.4...v0.12.5) (2021-07-22)
+
+
+### Bug Fixes
+
+* Account Renaming broken from Ledger Epic ([#200](https://www.github.com/radixdlt/olympia-wallet/issues/200)) ([8b93452](https://www.github.com/radixdlt/olympia-wallet/commit/8b9345292e6adc79d2bbc915a16b597abc311444))
+* add proper verify address modals everywhere ([#197](https://www.github.com/radixdlt/olympia-wallet/issues/197)) ([7eea9d1](https://www.github.com/radixdlt/olympia-wallet/commit/7eea9d11f456bc2f928fd51d9cbf6d275ce9616b))
+* Current Stake Logic and UX ([#202](https://www.github.com/radixdlt/olympia-wallet/issues/202)) ([dc5c10a](https://www.github.com/radixdlt/olympia-wallet/commit/dc5c10a07faea020756297b30c37cc74569b458a))
+
 ### [0.12.4](https://www.github.com/radixdlt/olympia-wallet/compare/v0.12.3...v0.12.4) (2021-07-20)
 
 
