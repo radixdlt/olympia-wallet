@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.13.2](https://www.github.com/radixdlt/olympia-wallet/compare/v0.13.1...v0.13.2) (2021-07-22)
+
+
+### Dependencies
+
+* update JS libs to 2.1.14 ([#209](https://www.github.com/radixdlt/olympia-wallet/issues/209)) ([715e695](https://www.github.com/radixdlt/olympia-wallet/commit/715e6955f27f08e73479899da9af66693896fae4))
+
 ### [0.13.1](https://www.github.com/radixdlt/olympia-wallet/compare/v0.13.0...v0.13.1) (2021-07-22)
 
 
