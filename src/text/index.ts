@@ -122,8 +122,8 @@ const messages = {
       unstakeTab: 'Request Unstake',
       unstakingLabel: 'Unstaking',
       stakedLabel: 'Staked',
-      addButton: 'add',
-      reduceButton: 'reduce',
+      addButton: 'add stake',
+      reduceButton: 'reduce stake',
       fromLabel: 'Staking Account',
       validatorLabel: 'Validator',
       amountLabel: 'Amount',
@@ -137,7 +137,9 @@ const messages = {
       unstakeDisclaimer: 'Your current stakes are shown at right. You may request an unstake of some or all of your XRD tokens from a validator. Once the request transaction has been processed, {bold}, after which they will become available for transfer once more. Please visit {link} for more information about unstaking.',
       unstakeDisclaimerBold: 'your tokens will be subject to a lengthy unstaking delay',
       availableBalancePlaceholder: 'Enter amount',
-      validatorPlaceholder: 'Enter validator address'
+      validatorPlaceholder: 'Enter validator address',
+      validatorFeeLabel: 'Validator Fee',
+      recentUptimeLabel: 'Recent Uptime'
     },
     confirmation: {
       transferFromLabel: 'Your address',
