@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.14.1](https://www.github.com/radixdlt/olympia-wallet/compare/v0.14.0...v0.14.1) (2021-07-23)
+
+
+### Dependencies
+
+* update icons ([#218](https://www.github.com/radixdlt/olympia-wallet/issues/218)) ([c96c86e](https://www.github.com/radixdlt/olympia-wallet/commit/c96c86ec9c1c1e5f816c9025a91253dd13b00776))
+
 ## [0.14.0](https://www.github.com/radixdlt/olympia-wallet/compare/v0.13.2...v0.14.0) (2021-07-23)
 
 
