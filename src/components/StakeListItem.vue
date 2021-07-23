@@ -18,7 +18,7 @@
           </div>
           <div class="text-xs flex items-center text-rGrayDark font-mono group">
             {{ validatorAddress }}
-            <click-to-copy :text="position.validator.toString()" class="group-hover:text-rGreen active:text-rGreenDark" />
+            <click-to-copy :address="position.address" class="group-hover:text-rGreen active:text-rGreenDark" />
           </div>
         </div>
         <div class="flex-grow-0">
