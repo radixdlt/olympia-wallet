@@ -103,6 +103,7 @@ const messages = {
       sentAction: 'Sent',
       toLabel: 'To',
       fromLabel: 'From',
+      clickToDecryptLabel: 'Encrypted message, click to decrypt.',
       stakeAction: 'Stake',
       otherAction: 'Other',
       previous: 'Previous',
