@@ -5,7 +5,7 @@
         <img src="@/assets/stakeTokens.svg" alt="receive tokens" />
         <span class="ml-2 text-sm">{{ $t('history.stakeAction') }}</span>
       </div>
-      <div><big-amount :amount="action.amount" class="text-rBlack"/> {{ nativeToken.symbol.toUpperCase() }}</div>
+      <div><big-amount :amount="action.amount" class="text-rBlack text-base"/> {{ nativeToken.symbol.toUpperCase() }}</div>
     </div>
     <div class="flex flex-col items-end">
       <div class="flex flex-row flex-1 min-w-0">
