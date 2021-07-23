@@ -84,8 +84,8 @@
       </div>
 
       <stake-list-item
-        v-for="(position, i) in sortedPositions"
-        :key="i"
+        v-for="(position) in sortedPositions"
+        :key="position.address"
         :position="position"
         :nativeToken="nativeToken"
         @addToValidator="handleAddToValidator"
@@ -183,17 +183,19 @@ const WalletStaking = defineComponent({
 
       this.activeStakes.forEach((stake: StakePosition) => {
         const existingPositionIndex = positions.findIndex((pos: Position) => pos.validator.equals(stake.validator))
+        const address = stake.validator.toString()
         if (existingPositionIndex === -1) {
-          positions = [...positions, { validator: stake.validator, stakes: [stake], unstakes: [] }]
+          positions = [...positions, { address, validator: stake.validator, stakes: [stake], unstakes: [] }]
         } else {
           positions[existingPositionIndex] = { ...positions[existingPositionIndex], stakes: [...positions[existingPositionIndex].stakes, stake] }
         }
       })
 
       this.activeUnstakes.forEach((unstake: UnstakePosition) => {
+        const address = unstake.validator.toString()
         const existingPositionIndex = positions.findIndex((pos: Position) => pos.validator.equals(unstake.validator))
         if (existingPositionIndex === -1) {
-          positions = [...positions, { validator: unstake.validator, unstakes: [unstake], stakes: [] }]
+          positions = [...positions, { address, validator: unstake.validator, unstakes: [unstake], stakes: [] }]
         } else {
           positions[existingPositionIndex] = { ...positions[existingPositionIndex], unstakes: [...positions[existingPositionIndex].unstakes, unstake] }
         }
