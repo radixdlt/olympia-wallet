@@ -8,7 +8,6 @@
       <br />
       {{ $t('settings.resetPinDisclaimerTwo') }}
     </div>
-
     <FormField
       type="password"
       name="password"
@@ -37,7 +36,7 @@
     <div class="text-rGrayDark mb-4">{{ $t('settings.confirmationPinLabel') }}</div>
     <pin-input
       name="confirmationPin"
-      :values="values.confirmation"
+      :values="values.confirmationPin"
       :autofocus="activePin === 2"
       class="mb-6 max-w-sm"
       data-ci="confirmation"
