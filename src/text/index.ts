@@ -62,7 +62,9 @@ const messages = {
       pinHelpOne: 'Please enter a secure PIN. This will be used to verify all transactions made in the Wallet.',
       pinHelpTwo: 'Please confirm your PIN.',
       pinButton: 'Confirm PIN',
-      startOver: 'Start Over'
+      startOver: 'Start Over',
+      newPinLabel: 'Create your PIN',
+      confirmPinLabel: 'Confirm your PIN'
     },
     restoreWallet: {
       recoveryTitle: 'Seed Phrase',
@@ -117,14 +119,14 @@ const messages = {
       amountLabel: 'Amount',
       messageLabel: 'Message',
       feeLabel: 'Fee',
-      cancelButton: 'Cancel',
-      confirmButton: 'Confirm',
+      cancelButton: 'Cancel Transaction',
+      confirmButton: 'Confirm Transaction',
       sendButton: 'Send',
       insufficientFunds: 'Sorry, but you don\'t have any tokens to send!',
       recipientPlaceholder: 'Enter address',
       amountPlaceholder: 'Available balance ...',
       messagePlaceholder: 'Add an optional message',
-      enterPin: 'Enter Your Pin'
+      enterPin: 'Enter PIN'
     },
     staking: {
       currentStakesHeading: 'Current Stakes',

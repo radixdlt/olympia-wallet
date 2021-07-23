@@ -1,20 +1,24 @@
 <template>
   <div data-ci="create-wallet-create-pin-component">
     <form @submit.prevent="handleSubmit">
+      <div class="text-rGrayDark text-base mb-7">{{ $t('createWallet.newPinLabel') }}</div>
       <pin-input
         name="pin"
         :values="values.pin"
         :autofocus="updatingFirstInput"
+        :large="true"
         @finished="handleFinished"
         class="mb-14 max-w-sm"
         data-ci="create-wallet-pin-input"
       >
       </pin-input>
+      <div class="text-rGrayDark text-base mb-7">{{ $t('createWallet.confirmPinLabel') }}</div>
       <pin-input
         name="pinConfirmation"
-        :values="values.confirmation"
+        :values="values.pinConfirmation"
         :autofocus="!updatingFirstInput"
-        class="mb-48 max-w-sm"
+        :large="true"
+        class="mb-36 max-w-sm"
         data-ci="create-wallet-confirm-input"
       >
       </pin-input>
