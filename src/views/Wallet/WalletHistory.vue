@@ -16,7 +16,7 @@
       </div>
     </div>
 
-    <div class="text-rBlack py-6 min-h-full">
+    <div class="text-rBlack py-6 min-h-full text-sm">
       <div v-if="!loadingHistoryPage">
         <transaction-list-item
           v-for="(txn, i) in pendingTransactions"

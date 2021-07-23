@@ -17,7 +17,6 @@
           data-ci="create-wallet-passcode-input"
           id="password"
         />
-        <FormErrorMessage name="password" class="text-sm text-red-400" />
       </div>
 
       <ButtonSubmit class="w-96" :disabled="disableSubmit">
@@ -33,7 +32,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { useForm } from 'vee-validate'
-import FormErrorMessage from '@/components/FormErrorMessage.vue'
 import FormField from '@/components/FormField.vue'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
 
@@ -44,8 +42,7 @@ interface PasswordForm {
 const HomeEnterPasscode = defineComponent({
   components: {
     ButtonSubmit,
-    FormField,
-    FormErrorMessage
+    FormField
   },
 
   setup () {

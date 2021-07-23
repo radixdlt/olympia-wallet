@@ -64,8 +64,8 @@
           <div class="border-b border-rGray py-3.5 flex items-center">
             <div class="w-26 text-right text-rGrayDark mr-6">{{ $t('transaction.amountLabel') }}</div>
             <div class="flex-1 flex flex-row items-center">
-              <big-amount :amount="amount" class="mr-4" />
-              <token-symbol>{{ selectedCurrency.token.symbol }}</token-symbol>
+              <big-amount :amount="amount" class="mr-1" />
+              <span class="uppercase">{{ selectedCurrency.token.symbol }}</span>
             </div>
           </div>
 
@@ -90,8 +90,8 @@
           <div class="py-4 flex items-center">
             <div class="w-26 text-right text-rGrayDark mr-8">{{ $t('transaction.feeLabel') }}</div>
             <div class="flex-1 flex flex-row items-center">
-              <big-amount :amount="transactionFee" class="mr-4" />
-              <token-symbol>{{ nativeToken.symbol }}</token-symbol>
+              <big-amount :amount="transactionFee"  class="mr-1" />
+              <span class="uppercase">{{ nativeToken.symbol }}</span>
             </div>
           </div>
         </div>
@@ -132,7 +132,6 @@ import BigAmount from '@/components/BigAmount.vue'
 import PinInput from '@/components/PinInput.vue'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
 import { validatePin } from '@/actions/vue/create-wallet'
-import TokenSymbol from '@/components/TokenSymbol.vue'
 
 interface ConfirmationForm {
   pin: string;
@@ -142,8 +141,7 @@ const WalletConfirmTransactionModal = defineComponent({
   components: {
     BigAmount,
     ButtonSubmit,
-    PinInput,
-    TokenSymbol
+    PinInput
   },
 
   setup () {
