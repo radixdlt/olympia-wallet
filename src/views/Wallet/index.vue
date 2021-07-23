@@ -54,6 +54,7 @@
           :tokenBalances="tokenBalances.tokenBalances"
           :nativeToken="nativeToken"
           @transferTokens="transferTokens"
+          :ledgerError="ledgerTxError"
           ref="walletTransactionComponent"
           @verifyHardwareAddress="verifyHardwareWalletAddress"
         />
@@ -119,6 +120,7 @@
 
       <wallet-ledger-verify-address-modal
       v-if="showLedgerVerify"
+      :hardwareError="ledgerVerifyError"
       :hardwareAddress="hardwareAddress"
       @dismissVerify="showLedgerVerify = false"
     />
@@ -260,6 +262,8 @@ const WalletIndex = defineComponent({
     const nativeTokenBalance: Ref<TokenBalance | null> = ref(null)
     const activeMessage: Ref<string> = ref('')
     const showLedgerVerify: Ref<boolean> = ref(false)
+    const ledgerVerifyError: Ref<Error | null> = ref(null)
+    const ledgerTxError: Ref<Error | null> = ref(null)
 
     // a dirty trick to get the account list item in the default wallet sidebar when the name changes
     const accountNameIndex: Ref<number> = ref(0)
@@ -438,10 +442,13 @@ const WalletIndex = defineComponent({
       // Catch errors that were silently failing
       const trackingSubmittedEventErrors = transactionTracking.events
         .pipe(filter((trackingEvent: any) => trackingEvent.error != null)) // This is really returning TransactionStateError
-        .subscribe(() => {
+        .subscribe((event) => {
           userDidCancel.next(true)
           shouldShowConfirmation.value = false
-          if (view.value === 'transaction') {
+          const isLedgerConnectedError = event.error.message.includes('No device found')
+          if (isLedgerConnectedError) {
+            ledgerTxError.value = event.error
+          } else if (view.value === 'transaction' && !ledgerTxError) {
             walletTransactionComponent.value.setErrors({
               amount: t('validations.transactionFailed')
             })
@@ -682,7 +689,9 @@ const WalletIndex = defineComponent({
 
     const verifyHardwareWalletAddress = () => {
       radix.displayAddressForActiveHWAccountOnHWDeviceForVerification()
-        .subscribe()
+        .subscribe({
+          error: (e) => { ledgerVerifyError.value = e }
+        })
       showLedgerVerify.value = true
     }
 
@@ -720,6 +729,8 @@ const WalletIndex = defineComponent({
       decryptedMessages,
       accountNameIndex,
       showLedgerVerify,
+      ledgerVerifyError,
+      ledgerTxError,
 
       // view flags
       view,

@@ -117,7 +117,7 @@
 
           <ButtonSubmit class="w-72 mx-auto mt-2" :disabled="disableSubmit">
             {{ $t('transaction.confirmButton') }}
-          </ButtonSUbmit>
+          </ButtonSubmit>
         </div>
       </form>
     </div>
