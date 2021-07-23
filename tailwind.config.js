@@ -27,6 +27,7 @@ module.exports = {
       height: {
         tallest: '99999999999px',
         modal: '600px',
+        modalMedium: '490px',
         modalSmall: '300px'
       },
       padding: {

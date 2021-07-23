@@ -1,6 +1,6 @@
 <template>
   <div class="fixed w-screen h-screen z-20 flex items-center justify-center bg-translucent-black">
-    <div class="h-modal bg-white rounded-md py-7 px-7 w-full max-w-3xl absolute top-1/2 left-1/2 transform -translate-x-1/3 -translate-y-1/2">
+    <div class="h-modalMedium bg-white rounded-md py-7 px-7 w-full max-w-3xl absolute top-1/2 left-1/2 transform -translate-x-1/3 -translate-y-1/2">
       <div v-if="transactionState === 'building'">
         <div class="bg-white h-full flex flex-col flex-1 w-full justify-around box-border mt-52">
           <svg width="40" height="40" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" class="container animate-spin">
@@ -96,28 +96,34 @@
           </div>
         </div>
 
-        <h3 class="font-medium text-rBlack text-center w-full mb-4">{{ $t('transaction.enterPin') }}</h3>
-        <pin-input
-          name="pin"
-          :values="values.pin"
-          :autofocus="true"
-          class="mx-auto"
-          data-ci="confirmation-pin"
-          @finished="handleValidatePin"
-          @unfinished="handleUnfinishedPin"
-        >
-        </pin-input>
-        <div class="flex justify-end items-center mt-4">
-          <button
-            class="text-rGrayDark py-4 px-4text-sm mx-auto mr-8"
-            @click="canCancel && $emit('cancel')"
-          >
-            {{ $t('transaction.cancelButton') }}
-          </button>
+        <div class="flex items-start justify-between w-full mt-1">
+          <div class="flex items-start justify-start mt-1 flex-1">
+            <div class="font-light text-rGrayDark bg-rGrayLight border border-rGray py-2 pl-4 pr-5 rounded text-base w-30">
+              <span>{{ $t('transaction.enterPin') }}</span>
+            </div>
+            <pin-input
+              name="pin"
+              :values="values.pin"
+              :autofocus="true"
+              :shiftErrorLeft="true"
+              class="-ml-2 flex-1"
+              data-ci="confirmation-pin"
+              @finished="handleValidatePin"
+              @unfinished="handleUnfinishedPin"
+            />
+          </div>
+          <div class="flex justify-end items-center">
+            <button
+              class="text-rGrayDark py-3 px-4 text-base mx-auto mr-4"
+              @click="canCancel && $emit('cancel')"
+            >
+              {{ $t('transaction.cancelButton') }}
+            </button>
 
-          <ButtonSubmit class="w-72 mx-auto mt-2" :disabled="disableSubmit">
-            {{ $t('transaction.confirmButton') }}
-          </ButtonSUbmit>
+            <ButtonSubmit class="w-44 py-3" :disabled="disableSubmit" :small="true" >
+              {{ $t('transaction.confirmButton') }}
+            </ButtonSUbmit>
+          </div>
         </div>
       </form>
     </div>

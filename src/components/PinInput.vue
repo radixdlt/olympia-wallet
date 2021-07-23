@@ -1,13 +1,17 @@
 <template>
-  <div class="relative">
-    <div class="inline-flex divide-x rounded-md overflow-hidden border text-base" :class="{
+  <div class="relative w-full">
+    <div class="inline-flex divide-x rounded-md overflow-hidden border text-base bg-white" :class="{
       'border-rGrayDark divide-rGrayDark text-rGrayDark': !isFocused,
       'border-rBlue divide-rBlue text-rBlue': isFocused
     }">
       <div
         v-for="(digit, i) in [1, 2, 3, 4]"
         :key="i"
-        class="w-9 h-10 flex items-center justify-center"
+        class="flex items-center justify-center w-"
+        :class="{
+          'w-9 h-10': !large,
+          'w-14 h-16': large,
+        }"
       >
         <pin-input-digit :values="values" :index="i" :focused="isFocused" />
       </div>
@@ -23,9 +27,8 @@
       @input="handleChange"
     />
 
-    <div class="relative my-4 w-full">
-      <div v-if="errorMessage" class="flex flex-row items-center justify-center
-      text-rRed absolute">
+    <div class="relative my-4 w-full text-sm" :class="{'-ml-24': shiftErrorLeft}">
+      <div v-if="errorMessage" class="flex flex-row items-center justify-center text-rRed absolute">
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr-3">
         <circle cx="7" cy="7" r="6.5" transform="rotate(90 7 7)" fill="#EF4136" stroke="#EF4136"/>
         <rect x="4" y="5" width="1" height="7" transform="rotate(-45 4 5)" fill="white"/>
@@ -63,10 +66,15 @@ const PinInput = defineComponent({
       required: false,
       default: true
     },
-    small: {
+    large: {
       type: Boolean,
       required: false,
-      default: true
+      default: false
+    },
+    shiftErrorLeft: {
+      type: Boolean,
+      required: false,
+      default: false
     }
   },
 
