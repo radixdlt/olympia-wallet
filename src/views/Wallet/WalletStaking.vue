@@ -200,8 +200,9 @@ const WalletStaking = defineComponent({
       })
 
       return positions.sort((a: Position, b: Position) => {
-        const aTotal = a.stakes.map((el: StakePosition) => el.amount).reduce((prev: AmountT, curr: AmountT) => prev.add(curr))
-        const bTotal = b.stakes.map((el: StakePosition) => el.amount).reduce((prev: AmountT, curr: AmountT) => prev.add(curr))
+        const zero = Amount.fromUnsafe(0)._unsafeUnwrap()
+        const aTotal = a.stakes.map((el: StakePosition) => el.amount).reduce((prev: AmountT, curr: AmountT) => prev.add(curr), zero)
+        const bTotal = b.stakes.map((el: StakePosition) => el.amount).reduce((prev: AmountT, curr: AmountT) => prev.add(curr), zero)
         if (aTotal > bTotal) return -1
         if (bTotal > aTotal) return 1
         return 0

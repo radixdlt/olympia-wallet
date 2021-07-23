@@ -122,13 +122,15 @@ const StakeListItem = defineComponent({
     },
 
     stakeAmount (): AmountT {
-      if (this.position.stakes.length === 0) { Amount.fromUnsafe(0)._unsafeUnwrap() }
-      return this.position.stakes.map((el: StakePosition) => el.amount).reduce((prev: AmountT, curr: AmountT) => prev.add(curr))
+      const zero = Amount.fromUnsafe(0)._unsafeUnwrap()
+      if (this.position.stakes.length === 0) { return zero }
+      return this.position.stakes.map((el: StakePosition) => el.amount).reduce((prev: AmountT, curr: AmountT) => prev.add(curr), zero)
     },
 
     unstakeAmount (): AmountT | null {
+      const zero = Amount.fromUnsafe(0)._unsafeUnwrap()
       if (this.position.unstakes.length === 0) { return null }
-      return this.position.unstakes.map((el: UnstakePosition) => el.amount).reduce((prev: AmountT, curr: AmountT) => prev.add(curr))
+      return this.position.unstakes.map((el: UnstakePosition) => el.amount).reduce((prev: AmountT, curr: AmountT) => prev.add(curr), zero)
     }
   },
 
