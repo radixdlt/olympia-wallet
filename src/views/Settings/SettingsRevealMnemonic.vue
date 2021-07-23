@@ -46,7 +46,7 @@
           <FormErrorMessage name="password" />
           <ButtonSubmit
             :disabled="disableSubmit"
-            class="mb-9 mt-9"
+            class="mb-2 mt-9"
           >
             {{ $t('settings.accessMnemonicButton') }}
           </ButtonSubmit>
