@@ -54,7 +54,6 @@
           :tokenBalances="tokenBalances.tokenBalances"
           :nativeToken="nativeToken"
           @transferTokens="transferTokens"
-          :ledgerError="ledgerTxError"
           ref="walletTransactionComponent"
           @verifyHardwareAddress="verifyHardwareWalletAddress"
         />
