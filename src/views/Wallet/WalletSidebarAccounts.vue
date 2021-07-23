@@ -1,11 +1,15 @@
 <template>
   <div class="w-54 px-5 py-8 text-white overflow-y-auto fixed left-0 h-full bg-rBlueDark z-30 overflow-x-hidden">
-    <div @click="$emit('back')" class="hover:text-rGreen cursor-pointer transition-colors inline-flex flex-row items-center mb-12">
+    <div @click="$emit('back')" class="hover:text-rGreen cursor-pointer transition-colors inline-flex flex-row items-center mb-4">
       <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr-2">
         <circle cx="10" cy="10" r="9.5" transform="rotate(90 10 10)" fill="none" class="stroke-current" />
         <path d="M12 15L7 10L12 5" class="stroke-current" stroke-miterlimit="10"/>
       </svg>
       {{ $t('wallet.back') }}
+    </div>
+
+    <div class="mt-3 mb-6">
+      {{ $t('wallet.chooseAnAccount') }}
     </div>
 
     <account-list-item

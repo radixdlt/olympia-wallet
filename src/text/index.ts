@@ -79,6 +79,7 @@ const messages = {
       addressLabel: 'Address:',
       back: 'back',
       addAccount: '+ Add Account',
+      chooseAnAccount: 'Choose an account:',
       balancesHeading: 'XRD Balances',
       additionalBalancesHeading: 'Additional Balances',
       currentAddress: 'Current Address:',
