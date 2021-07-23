@@ -672,7 +672,8 @@ const WalletIndex = defineComponent({
         hardwareWalletConnection: HardwareWalletLedger.create({
           send: sendAPDU
         }),
-        alsoSwitchTo: true
+        alsoSwitchTo: true,
+        verificationPrompt: !hardwareAddress.value
       }).subscribe((hwAccount: AccountT) => {
         activeAccount.value = hwAccount
         hardwareAccount.value = hwAccount
