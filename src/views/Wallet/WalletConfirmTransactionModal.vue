@@ -122,7 +122,7 @@
 
             <ButtonSubmit class="w-44 py-3" :disabled="disableSubmit" :small="true" >
               {{ $t('transaction.confirmButton') }}
-            </ButtonSUbmit>
+            </ButtonSubmit>
           </div>
         </div>
       </form>

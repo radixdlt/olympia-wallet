@@ -106,6 +106,9 @@
         <ButtonSubmit :disabled="disableSubmit" class="w-52 ml-full">
           {{ $t('transaction.sendButton') }}
         </ButtonSubmit>
+        <div v-if="ledgerError" class="text-rRed">
+          Your Transaction could not be finalized because your Ledger device could not be found.
+        </div>
       </form>
 
       <div v-else>
@@ -184,6 +187,10 @@ const WalletTransaction = defineComponent({
     },
     nativeToken: {
       type: Object as PropType<Token>,
+      required: false
+    },
+    ledgerError: {
+      type: Error,
       required: false
     }
   },
