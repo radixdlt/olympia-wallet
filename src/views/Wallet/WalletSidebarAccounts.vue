@@ -36,11 +36,11 @@
           @mouseover="showHardwareHelper = true"
           @mouseleave="showHardwareHelper = false">
           <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M18.7382 10.6172H7.26074V18.4568H18.7382V10.6172Z" stroke="white" stroke-miterlimit="10"/>
-            <path d="M10.6592 12.5947V16.4793" stroke="white" stroke-miterlimit="10"/>
-            <path d="M15.3408 12.5947V16.4793" stroke="white" stroke-miterlimit="10"/>
-            <path d="M1.45508 19H24.5456V21.4507C24.5456 23.4598 22.9169 25.0886 20.9078 25.0886H5.09289C3.08379 25.0886 1.45508 23.4598 1.45508 21.4507V19Z" fill="none" stroke="white" stroke-miterlimit="10"/>
-            <path d="M24.5449 7L1.45437 7V4.54926C1.45437 2.54016 3.08309 0.91145 5.09219 0.91145L20.9071 0.91145C22.9162 0.91145 24.5449 2.54016 24.5449 4.54926V7Z" fill="none" stroke="white" stroke-miterlimit="10"/>
+            <path d="M18.7382 10.6172H7.26074V19H18.7382V10.6172Z" stroke="white" stroke-width="1.5" stroke-miterlimit="10"/>
+            <path d="M10.6592 12.7317V16.8855" stroke="white" stroke-width="1.5" stroke-miterlimit="10"/>
+            <path d="M15.3405 12.7317V16.8855" stroke="white" stroke-width="1.5" stroke-miterlimit="10"/>
+            <path d="M1.45471 18.9997H24.5453V21.4505C24.5453 23.4596 22.9165 25.0883 20.9074 25.0883H5.09253C3.08342 25.0883 1.45471 23.4596 1.45471 21.4505V18.9997Z" stroke="white" stroke-width="1.5" stroke-miterlimit="10"/>
+            <path d="M24.5449 7L1.45438 7V4.54926C1.45438 2.54016 3.08309 0.91145 5.09219 0.91145L20.9071 0.91145C22.9162 0.91145 24.5449 2.54016 24.5449 4.54926V7Z" stroke="white" stroke-width="1.5" stroke-miterlimit="10"/>
           </svg>
 
           <span class="text-white ml-2"> {{ $t('wallet.hardwareWalletHeading') }} </span>

@@ -2,11 +2,11 @@
   <div>
     <div class="flex flex-row mb-4 justify-between">
       <div class="flex flex-row">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr-4 text-rGreen">
-          <circle cx="12" cy="12" r="11.5" stroke="white" :class="{'fill-current': isActive}" />
-          <path d="M16.2423 14.677C15.2852 13.5191 13.8379 12.7812 12.2183 12.7812C9.33632 12.7812 7 15.1175 7 17.9995" stroke="white" stroke-miterlimit="10"/>
-          <path d="M17.4366 17.9999C17.4366 17.3287 17.3099 16.687 17.0791 16.0977" stroke="white" stroke-miterlimit="10"/>
-          <path d="M12.2181 11.1432C13.6383 11.1432 14.7897 9.99183 14.7897 8.57158C14.7897 7.15133 13.6383 6 12.2181 6C10.7978 6 9.64648 7.15133 9.64648 8.57158C9.64648 9.99183 10.7978 11.1432 12.2181 11.1432Z" :stroke="isActive ? '#FFFFFf': '#00C389'" stroke-miterlimit="10"/>
+        <svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr-4 text-rGreen">
+          <path d="M23.7138 12C23.7138 18.1997 18.5868 23.25 12.2319 23.25C5.87702 23.25 0.75 18.1997 0.75 12C0.75 5.80026 5.87702 0.75 12.2319 0.75C18.5868 0.75 23.7138 5.80026 23.7138 12Z" stroke="white" stroke-width="1.5" :class="{'fill-current': isActive}"/>
+          <path d="M16.5562 14.6775C15.5805 13.5196 14.1053 12.7817 12.4544 12.7817C9.51673 12.7817 7.13525 15.118 7.13525 18" stroke="white" stroke-width="1.5" stroke-miterlimit="10"/>
+          <path d="M17.7733 18C17.7733 17.3288 17.6441 16.6871 17.4089 16.0977" stroke="white" stroke-width="1.5" stroke-miterlimit="10"/>
+          <path d="M12.4542 10.1432C13.9019 10.1432 15.0754 8.99183 15.0754 7.57158C15.0754 6.15133 13.9019 5 12.4542 5C11.0065 5 9.83289 6.15133 9.83289 7.57158C9.83289 8.99183 11.0065 10.1432 12.4542 10.1432Z" stroke="white" stroke-width="1.5" stroke-miterlimit="10"/>
         </svg>
 
         <div class="font-medium leading-snug text-white hover:text-rGreen transition-colors cursor-pointer w-36 truncate">{{ nickName }}</div>
