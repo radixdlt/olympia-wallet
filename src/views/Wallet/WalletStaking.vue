@@ -76,7 +76,7 @@
         <h3 class="font-medium text-rBlack">{{ $t('staking.currentStakesHeading') }}</h3>
         <a :href="explorerUrl" target="_blank" class="text-rBlue text-sm inline-flex items-center">
           {{ $t('staking.viewAllValidators') }}
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" class="ml-3">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" class="ml-1">
             <path d="M1.08789 1H11.1344V11.0465" stroke="#7A99AC" stroke-miterlimit="10"/>
             <path d="M11.1339 1L1 11.134" stroke="#7A99AC" stroke-miterlimit="10"/>
           </svg>
