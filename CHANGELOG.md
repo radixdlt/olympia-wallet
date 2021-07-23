@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.14.0](https://www.github.com/radixdlt/olympia-wallet/compare/v0.13.2...v0.14.0) (2021-07-23)
+
+
+### Features
+
+* New PIN entry ([#216](https://www.github.com/radixdlt/olympia-wallet/issues/216)) ([8dcc773](https://www.github.com/radixdlt/olympia-wallet/commit/8dcc7732f2cffa88a77c539f4e3ad72c3f1f74f5))
+
+
+### Bug Fixes
+
+* Addresses without XRD should be able to send transactions ([#214](https://www.github.com/radixdlt/olympia-wallet/issues/214)) ([2e5e11a](https://www.github.com/radixdlt/olympia-wallet/commit/2e5e11ad1a54a880ef92cad638d940f1b8a7a9cb))
+* Stake List was using an unpredicatable key ([#215](https://www.github.com/radixdlt/olympia-wallet/issues/215)) ([273c1b9](https://www.github.com/radixdlt/olympia-wallet/commit/273c1b96657f5afd862d1a9c65de73594bc83043))
+* Stake reducers need an initial value for empty lists ([#211](https://www.github.com/radixdlt/olympia-wallet/issues/211)) ([230a18e](https://www.github.com/radixdlt/olympia-wallet/commit/230a18eddfe6742838daab782ca881f247d35d10))
+
+
+### Dependencies
+
+* Various design enhancements ([#212](https://www.github.com/radixdlt/olympia-wallet/issues/212)) ([77be0a9](https://www.github.com/radixdlt/olympia-wallet/commit/77be0a9b3a041e7ad6d62f1b7bf82f79c260db0c))
+
 ### [0.13.2](https://www.github.com/radixdlt/olympia-wallet/compare/v0.13.1...v0.13.2) (2021-07-22)
 
 
