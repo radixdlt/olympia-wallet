@@ -1,14 +1,15 @@
 <template>
   <div class="relative">
-    <div class="flex -mr-11" :class="{'filter-blurSmall': !autofocus}">
+    <div :class="{
+      'flex divide-x rounded-md overflow-hidden border': true,
+      'filter-blurSmall': !autofocus,
+      'border-rGrayDark divide-rGrayDark': !(value && value.length > i),
+      'border-rGreen divide-rGreen': value && value.length > i,
+    }">
       <div
         v-for="(digit, i) in [1, 2, 3, 4]"
         :key="i"
-        class="rounded-full w-16 h-16 mr-11 border transition-colors"
-        :class="{
-          'bg-rGreen border-rGreen': value && value.length > i,
-          'border-rGrayDark': !(value && value.length > i),
-        }"
+        class="w-8 h-10"
       />
     </div>
     <input
@@ -40,10 +41,37 @@
 import { defineComponent, ref } from 'vue'
 import { useField } from 'vee-validate'
 
+type Digit = {
+  value: number;
+  filled: boolean;
+}
+
 const PinInput = defineComponent({
+  props: {
+    name: {
+      type: String,
+      required: true
+    },
+    values: String,
+    autofocus: Boolean,
+    dataCi: {
+      type: String,
+      required: true
+    },
+    required: {
+      type: Boolean,
+      required: false,
+      default: true
+    },
+    small: {
+      type: Boolean,
+      required: false,
+      default: true
+    }
+  },
+
   setup (props) {
-    // eslint-disable-next-line func-call-spacing
-    const inputRef = ref<null | { focus: () => null }> (null)
+    const inputRef = ref<null | { focus:() => null }> (null)
     const focusInput = () => {
       if (props.autofocus && inputRef.value) {
         return inputRef.value.focus()
@@ -60,32 +88,26 @@ const PinInput = defineComponent({
     }
   },
 
-  props: {
-    name: {
-      type: String,
-      required: true
-    },
-    values: String,
-    autofocus: Boolean,
-    dataCi: {
-      type: String,
-      required: true
-    },
-    required: {
-      type: Boolean,
-      required: false,
-      default: true
-    }
-  },
-
   mounted () {
     this.focusInput()
   },
 
+  computed: {
+    digits (): Digit[] {
+      const digits = [1, 2, 3, 4]
+
+      return digits.map((i) => {
+        const current: Digit = { value: i, filled: this.value.length > i }
+        return current
+      })
+    }
+  },
+
   methods: {
-    handleChange (event: any) {
+    handleChange (event: Event) {
+      const target = event.target as HTMLInputElement
       if (this.value.length > 4) this.value = this.value.slice(0, 4)
-      if (event.target.value.length >= 4) {
+      if (target.value.length >= 4) {
         this.$emit('finished', this.name)
       } else {
         this.$emit('unfinished', this.name)
