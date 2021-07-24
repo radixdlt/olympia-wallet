@@ -69,7 +69,7 @@
             </div>
           </div>
 
-          <div class="border-b border-rGray py-3.5 flex items-center" v-if="activeMessage">
+          <div class="border-b border-rGray py-3.5 flex items-center" v-if="activeMessage && !this.stakeInput">
             <div class="w-26 text-right text-rGrayDark mr-6">{{ $t('transaction.messageLabel') }}</div>
             <div class="flex-1">
               <div class="flex">
@@ -162,11 +162,11 @@ const WalletConfirmTransactionModal = defineComponent({
     },
     transferInput: {
       type: Object as PropType<TransferTokensInput>,
-      required: true
+      required: false
     },
     stakeInput: {
       type: Object as PropType<StakeTokensInput>,
-      required: true
+      required: false
     },
     transactionFee: {
       type: Object as PropType<AmountT>,
@@ -205,10 +205,20 @@ const WalletConfirmTransactionModal = defineComponent({
 
   computed: {
     toContent (): string {
-      return this.transferInput.to ? this.transferInput.to.toString() : this.stakeInput.validator.toString()
+      if (this.stakeInput) {
+        return this.stakeInput.validator.toString()
+      } else if (this.transferInput) {
+        return this.transferInput.to.toString()
+      }
+      return ''
     },
     amount (): AmountOrUnsafeInput {
-      return this.transferInput.amount ? this.transferInput.amount : this.stakeInput.amount
+      if (this.stakeInput) {
+        return this.stakeInput.amount
+      } else if (this.transferInput) {
+        return this.transferInput.amount
+      }
+      return 0
     },
     disableSubmit (): boolean {
       return !this.isValidPin
