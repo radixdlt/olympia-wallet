@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.14.2](https://www.github.com/radixdlt/olympia-wallet/compare/v0.14.1...v0.14.2) (2021-07-24)
+
+
+### Features
+
+* remove message field from stake unstake & clean up Transaction input handling ([#220](https://www.github.com/radixdlt/olympia-wallet/issues/220)) ([c27be94](https://www.github.com/radixdlt/olympia-wallet/commit/c27be946863fee11a1c8719897b00462c3b5f8ef))
+
 ### [0.14.1](https://www.github.com/radixdlt/olympia-wallet/compare/v0.14.0...v0.14.1) (2021-07-23)
 
 
