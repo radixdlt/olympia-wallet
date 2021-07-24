@@ -245,8 +245,8 @@ const WalletIndex = defineComponent({
     const activeMessageInTransaction: Ref<MessageInTransaction | null> = ref(null)
     const shouldShowConfirmation: Ref<boolean> = ref(false)
     const confirmationMode: Ref<string | null> = ref(null)
-    const transferInput: Ref<TransferTokensInput> = ref({})
-    const stakeInput: Ref<StakeTokensInput> = ref({})
+    const transferInput: Ref<TransferTokensInput | null> = ref({})
+    const stakeInput: Ref<StakeTokensInput | null> = ref({})
     const transactionFee: Ref<AmountT> = ref(safelyUnwrapAmount(0))
     const hasCalculatedFee: Ref<boolean> = ref(false)
     const transactionToConfirm: Ref<ManualUserConfirmTX | null> = ref(null)
@@ -544,9 +544,15 @@ const WalletIndex = defineComponent({
       }))
     }
 
+    const cleanupInputs = () => {
+      transferInput.value = null
+      stakeInput.value = null
+    }
+
     // call transferTokens() with built options and subscribe to confirmation and results
     const transferTokens = (transferTokensInput: TransferTokensInput, message: MessageInTransaction, sc: TokenBalance) => {
       let pollTXStatusTrigger: Observable<unknown>
+      cleanupInputs()
       transferInput.value = transferTokensInput
       selectedCurrency.value = sc
       activeMessage.value = message.plaintext
@@ -570,6 +576,7 @@ const WalletIndex = defineComponent({
     // call stakeTokens() with built options and subscribe to confirmation and results
     const stakeTokens = (stakeTokensInput: StakeTokensInput) => {
       let pollTXStatusTrigger: Observable<unknown>
+      cleanupInputs()
       stakeInput.value = stakeTokensInput
       selectedCurrency.value = nativeTokenBalance.value
       confirmationMode.value = 'stake'
@@ -591,6 +598,7 @@ const WalletIndex = defineComponent({
     // call unstakeTokens() with built options and subscribe to confirmation and results
     const unstakeTokens = (unstakeTokensInput: UnstakeTokensInput) => {
       let pollTXStatusTrigger: Observable<unknown>
+      cleanupInputs()
       stakeInput.value = unstakeTokensInput
       selectedCurrency.value = nativeTokenBalance.value
       confirmationMode.value = 'unstake'
