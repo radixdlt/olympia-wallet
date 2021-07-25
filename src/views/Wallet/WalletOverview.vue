@@ -42,36 +42,6 @@
     </div>
 
     <div class="bg-white text-rBlack py-4 px-8 flex-1">
-      <div v-if="!fetchingFreeTokens" class="font-medium mb-6 flex items-center justify-between">
-        {{ $t('wallet.additionalBalancesHeading') }}
-        <button @click="requestFreeTokens" class="focus:outline-none text-rGreen py-2 px-4 border border-rGreen rounded-md hover:bg-translucent-greenLighter active:bg-translucent-greenLight">Get free test tokens</button>
-      </div>
-      <div v-else class="font-medium mb-6 flex items-center justify-between">
-        {{ $t('wallet.additionalBalancesHeading') }}
-        <button disabled class="flex items-center focus:outline-none text-rGrayDark py-2 px-4 border border-rGrayDark rounded-md cursor-wait">
-          <svg width="14" height="15" viewBox="0 0 14 15" fill="none" xmlns="http://www.w3.org/2000/svg" class="animate-spin mr-2">
-            <g clip-path="url(#clip0)">
-              <path d="M6.8194 0.5V4.5" stroke="#003057" stroke-width="1.0485" stroke-miterlimit="10"/>
-              <path d="M6.8194 10.5V14.5" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.0485" stroke-miterlimit="10"/>
-              <path d="M2.7049 1.8369L5.056 5.0729" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.0485" stroke-miterlimit="10"/>
-              <path d="M8.5828 9.9271L10.9339 13.1631" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.0485" stroke-miterlimit="10"/>
-              <path d="M0.161999 5.3369L3.9662 6.5729" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.0485" stroke-miterlimit="10"/>
-              <path d="M9.6726 8.4271L13.4768 9.6631" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.0485" stroke-miterlimit="10"/>
-              <path d="M0.161999 9.6631L3.9662 8.4271" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.0485" stroke-miterlimit="10"/>
-              <path d="M9.6726 6.5729L13.4768 5.3369" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.0485" stroke-miterlimit="10"/>
-              <path d="M2.7049 13.1631L5.056 9.9271" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.0485" stroke-miterlimit="10"/>
-              <path d="M8.5828 5.0729L10.9339 1.8369" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.0485" stroke-miterlimit="10"/>
-            </g>
-            <defs>
-            <clipPath id="clip0">
-            <rect width="13.6388" height="14" fill="white" transform="translate(0 0.5)"/>
-            </clipPath>
-            </defs>
-          </svg>
-          Fetching tokens...
-        </button>
-      </div>
-
       <div class="grid grid-cols-2 gap-4">
         <div
           v-for="(tokenBalance, i) in otherTokenBalances"
@@ -104,12 +74,6 @@ const WalletOverview = defineComponent({
     BigAmount,
     TokenSymbol,
     ClickToCopy
-  },
-
-  setup () {
-    const fetchingFreeTokens: Ref<boolean> = ref(false)
-
-    return { fetchingFreeTokens }
   },
 
   props: {
@@ -161,15 +125,7 @@ const WalletOverview = defineComponent({
     }
   },
 
-  methods: {
-    requestFreeTokens () {
-      this.$emit('requestFreeTokens')
-      this.fetchingFreeTokens = true
-      setTimeout(() => { this.fetchingFreeTokens = false }, 30000)
-    }
-  },
-
-  emits: ['requestFreeTokens', 'verifyHardwareAddress']
+  emits: ['verifyHardwareAddress']
 })
 
 export default WalletOverview
