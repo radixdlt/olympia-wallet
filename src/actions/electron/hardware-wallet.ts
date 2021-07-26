@@ -5,7 +5,7 @@ import { Observable, Subject } from 'rxjs'
 import { RadixAPDU } from '@radixdlt/hardware-ledger'
 
 let performingInstruction = false
-let transportSubscription: Subscription
+let listeningTransport: Subscription
 
 export const sendAPDU = async (event: IpcMainInvokeEvent, apdu: { cla: number, ins: number, p1: number, p2: number, data?: string }) => {
   const devices = await TransportNodeHid.list()
@@ -32,11 +32,11 @@ export const sendAPDU = async (event: IpcMainInvokeEvent, apdu: { cla: number, i
 }
 
 export const closeConnection = () => {
-  transportSubscription.unsubscribe()
+  listeningTransport.unsubscribe()
 }
 
 const subscribeDeviceConnection = async (next: (isConnected: boolean) => any) =>
-  TransportNodeHid.listen({
+  listeningTransport = TransportNodeHid.listen({
     next: async (obj: any) => {
       switch (obj.type) {
         case 'add':
@@ -124,7 +124,7 @@ export async function subscribeConnection(next: (value: ConnectionEvent) => void
   }
 }
 
-transportSubscription = subscribeConnection(event => {
+subscribeConnection(event => {
   switch (event) {
     case ConnectionEvent.APP_OPEN:
       console.log('ledger app is open')
