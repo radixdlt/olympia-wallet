@@ -31,20 +31,30 @@
 
     <div class="border-t border-rGray border-opacity-50 pt-4">
       <div v-if="hardwareAddress" class="mt-2">
-        <a class="flex cursor-pointer"
-          @click="$emit('switchToHardwareAccount')"
-          @mouseover="showHardwareHelper = true"
-          @mouseleave="showHardwareHelper = false">
-          <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M18.7382 10.6172H7.26074V19H18.7382V10.6172Z" stroke="white" stroke-width="1.5" stroke-miterlimit="10"/>
-            <path d="M10.6592 12.7317V16.8855" stroke="white" stroke-width="1.5" stroke-miterlimit="10"/>
-            <path d="M15.3405 12.7317V16.8855" stroke="white" stroke-width="1.5" stroke-miterlimit="10"/>
-            <path d="M1.45471 18.9997H24.5453V21.4505C24.5453 23.4596 22.9165 25.0883 20.9074 25.0883H5.09253C3.08342 25.0883 1.45471 23.4596 1.45471 21.4505V18.9997Z" stroke="white" stroke-width="1.5" stroke-miterlimit="10"/>
-            <path d="M24.5449 7L1.45438 7V4.54926C1.45438 2.54016 3.08309 0.91145 5.09219 0.91145L20.9071 0.91145C22.9162 0.91145 24.5449 2.54016 24.5449 4.54926V7Z" stroke="white" stroke-width="1.5" stroke-miterlimit="10"/>
-          </svg>
+        <div class="flex justify-between">
 
-          <span class="text-white ml-2"> {{ $t('wallet.hardwareWalletHeading') }} </span>
-        </a>
+          <a class="flex cursor-pointer"
+            @click="$emit('switchToHardwareAccount')"
+            @mouseover="showHardwareHelper = true"
+            @mouseleave="showHardwareHelper = false">
+            <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M18.7382 10.6172H7.26074V19H18.7382V10.6172Z" stroke="white" stroke-width="1.5" stroke-miterlimit="10"/>
+              <path d="M10.6592 12.7317V16.8855" stroke="white" stroke-width="1.5" stroke-miterlimit="10"/>
+              <path d="M15.3405 12.7317V16.8855" stroke="white" stroke-width="1.5" stroke-miterlimit="10"/>
+              <path d="M1.45471 18.9997H24.5453V21.4505C24.5453 23.4596 22.9165 25.0883 20.9074 25.0883H5.09253C3.08342 25.0883 1.45471 23.4596 1.45471 21.4505V18.9997Z" stroke="white" stroke-width="1.5" stroke-miterlimit="10"/>
+              <path d="M24.5449 7L1.45438 7V4.54926C1.45438 2.54016 3.08309 0.91145 5.09219 0.91145L20.9071 0.91145C22.9162 0.91145 24.5449 2.54016 24.5449 4.54926V7Z" stroke="white" stroke-width="1.5" stroke-miterlimit="10"/>
+            </svg>
+
+            <span class="text-white ml-2"> {{ $t('wallet.hardwareWalletHeading') }} </span>
+          </a>
+          <div class="text-white hover:text-rGreen transition-colors cursor-pointer flex items-center" @click="$emit('deleteHWWalletPrompt')">
+            <svg width="15" height="14" viewBox="0 0 15 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M7.78758 13.5C4.11396 13.5 1.15231 10.5809 1.15231 7C1.15231 3.41913 4.11396 0.5 7.78758 0.5C11.4612 0.5 14.4229 3.41913 14.4229 7C14.4229 10.5809 11.4612 13.5 7.78758 13.5Z" class="stroke-current" />
+              <path d="M9.94199 2.99976L5.39062 7.46484L7.28703 9.32529L11.8384 4.86021L9.94199 2.99976Z" class="fill-current" />
+              <path d="M4.72949 9.99967L6.68661 9.91411L4.79018 8.05371L4.72949 9.99967Z" class="fill-current" />
+            </svg>
+          </div>
+        </div>
 
         <div class="text-xs text-white relative z-20 flex justify-between mt-4">
           <span class="mr-2">{{ $t('wallet.addressLabel') }}</span>
@@ -115,7 +125,7 @@ const WalletSidebarAccounts = defineComponent({
     }
   },
 
-  emits: ['back', 'addAccount', 'switchAccount', 'editName', 'addHardwareWallet', 'connectHardwareWallet', 'switchToHardwareAccount', 'verifyHardwareAddress']
+  emits: ['back', 'addAccount', 'switchAccount', 'editName', 'addHardwareWallet', 'connectHardwareWallet', 'switchToHardwareAccount', 'verifyHardwareAddress', 'deleteHWWalletPrompt']
 })
 
 export default WalletSidebarAccounts
