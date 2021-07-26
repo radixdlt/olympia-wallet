@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.14.4](https://www.github.com/radixdlt/olympia-wallet/compare/v0.14.3...v0.14.4) (2021-07-26)
+
+
+### Dependencies
+
+* remove version.txt ([#224](https://www.github.com/radixdlt/olympia-wallet/issues/224)) ([d0a4357](https://www.github.com/radixdlt/olympia-wallet/commit/d0a435794bb462781cb32855954f0940c4ba8467))
+
 ### [0.14.3](https://www.github.com/radixdlt/olympia-wallet/compare/v0.14.2...v0.14.3) (2021-07-26)
 
 
