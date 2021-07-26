@@ -1,28 +1,21 @@
 import TransportNodeHid from '@ledgerhq/hw-transport-node-hid'
 import { IpcMainInvokeEvent } from 'electron/main'
 
-let performingInstruction = false
-
 export const sendAPDU = async (event: IpcMainInvokeEvent, apdu: { cla: number, ins: number, p1: number, p2: number, data?: string }) => {
-  const devices = await TransportNodeHid.list()
-  if (!devices[0]) { throw new Error('No device found.') }
+  const paths = await TransportNodeHid.list()
+  if (paths.length === 0) throw Error('No device found.')
 
-  
-  const transport = await TransportNodeHid.create()
-  performingInstruction = true
+  const device = await TransportNodeHid.open(paths[0])
 
   let result
-
   try {
-    result = await transport.send(apdu.cla, apdu.ins, apdu.p1, apdu.p2, apdu.data ? Buffer.from(apdu.data, 'hex') : undefined)
+    result = await device.send(apdu.cla, apdu.ins, apdu.p1, apdu.p2, apdu.data ? Buffer.from(apdu.data, 'hex') : undefined)
   } catch (e) {
-    performingInstruction = false
-    transport.close()
+    await device.close()
     throw e
   }
 
-  performingInstruction = false
-  transport.close()
+  await device.close()
 
   return result
 }
