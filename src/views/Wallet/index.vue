@@ -170,7 +170,8 @@ import {
   TokenBalance,
   MessageInTransaction,
   ExecutedTransaction,
-  Network
+  Network,
+  TransactionStateError
 } from '@radixdlt/application'
 import { safelyUnwrapAmount } from '@/helpers/validateRadixTypes'
 import { ref } from '@nopr3d/vue-next-rx'
@@ -440,13 +441,23 @@ const WalletIndex = defineComponent({
 
       // Catch errors that were silently failing
       const trackingSubmittedEventErrors = transactionTracking.events
-        .pipe(filter((trackingEvent: any) => trackingEvent.error != null)) // This is really returning TransactionStateError
-        .subscribe((event) => {
+        .pipe(filter((trackingEvent: TransactionStateUpdate) => {
+          const errorEvent: TransactionStateError = trackingEvent as TransactionStateError
+          return errorEvent && errorEvent.error != null
+        }))
+        .subscribe((event: TransactionStateUpdate) => {
+          const errorEvent: TransactionStateError = event as TransactionStateError
           userDidCancel.next(true)
           shouldShowConfirmation.value = false
-          const isLedgerConnectedError = event.error.message.includes('No device found')
+          const isLedgerConnectedError = errorEvent.error.message.includes('Failed to sign tx with Ledger')
           if (isLedgerConnectedError) {
-            ledgerTxError.value = event.error
+            ledgerTxError.value = errorEvent.error
+            hardwareAccount.value = null
+            hardwareInteractionState.value = 'FAILED_TO_SIGN'
+            hardwareWalletError.value = new Error(t('validations.failedToSign'))
+            walletTransactionComponent.value.setErrors({
+              amount: null
+            })
           } else if (view.value === 'transaction' && !ledgerTxError) {
             walletTransactionComponent.value.setErrors({
               amount: t('validations.transactionFailed')
@@ -500,7 +511,7 @@ const WalletIndex = defineComponent({
           error: () => {
             userDidCancel.next(true)
             shouldShowConfirmation.value = false
-            if (view.value === 'transaction') {
+            if (view.value === 'transaction' && !ledgerTxError) {
               walletTransactionComponent.value.setErrors({
                 amount: t('validations.transactionFailed')
               })
@@ -681,18 +692,20 @@ const WalletIndex = defineComponent({
         }),
         alsoSwitchTo: true,
         verificationPrompt: !hardwareAddress.value
-      }).subscribe((hwAccount: AccountT) => {
-        activeAccount.value = hwAccount
-        hardwareAccount.value = hwAccount
-        if (!hardwareAddress.value) {
-          saveHardwareWalletAddress(hwAccount.address.toString())
-          saveAccountName(hwAccount.address.toString(), 'Hardware Wallet')
-          hardwareAddress.value = hwAccount.address.toString()
-        }
-        sidebar.value = 'default'
-        hardwareInteractionState.value = ''
-      },
-      (err) => { hardwareWalletError.value = err })
+      }).subscribe({
+        next: (hwAccount: AccountT) => {
+          activeAccount.value = hwAccount
+          hardwareAccount.value = hwAccount
+          if (!hardwareAddress.value) {
+            saveHardwareWalletAddress(hwAccount.address.toString())
+            saveAccountName(hwAccount.address.toString(), 'Hardware Wallet')
+            hardwareAddress.value = hwAccount.address.toString()
+          }
+          sidebar.value = 'default'
+          hardwareInteractionState.value = ''
+        },
+        error: (err) => { hardwareWalletError.value = err }
+      })
     }
 
     const verifyHardwareWalletAddress = () => {
