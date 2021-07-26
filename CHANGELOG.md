@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.14.3](https://www.github.com/radixdlt/olympia-wallet/compare/v0.14.2...v0.14.3) (2021-07-26)
+
+
+### Bug Fixes
+
+* unsubscribe from usb events before quit ([#222](https://www.github.com/radixdlt/olympia-wallet/issues/222)) ([80213e2](https://www.github.com/radixdlt/olympia-wallet/commit/80213e266e47b0c8a1ed82e6177809eb1af3a84d))
+
 ### [0.14.2](https://www.github.com/radixdlt/olympia-wallet/compare/v0.14.1...v0.14.2) (2021-07-24)
 
 
