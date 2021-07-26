@@ -1,5 +1,13 @@
 # Changelog
 
+### [0.14.6](https://www.github.com/radixdlt/olympia-wallet/compare/v0.14.5...v0.14.6) (2021-07-26)
+
+
+### Bug Fixes
+
+* correct hardware address display ([#234](https://www.github.com/radixdlt/olympia-wallet/issues/234)) ([634af0a](https://www.github.com/radixdlt/olympia-wallet/commit/634af0a80c595b59ebe085ceff87b031d647fb90))
+* Remove .app mac builds, produce DMGs only ([#233](https://www.github.com/radixdlt/olympia-wallet/issues/233)) ([2c7ed26](https://www.github.com/radixdlt/olympia-wallet/commit/2c7ed26902dabf4043ce5676a1e1c17a35e9d190))
+
 ### [0.14.5](https://www.github.com/radixdlt/olympia-wallet/compare/v0.14.4...v0.14.5) (2021-07-26)
 
 
