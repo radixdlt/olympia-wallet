@@ -1,9 +1,11 @@
 import TransportNodeHid from '@ledgerhq/hw-transport-node-hid'
+import { Subscription } from '@ledgerhq/hw-transport'
 import { IpcMainInvokeEvent } from 'electron/main'
 import { Observable, Subject } from 'rxjs'
 import { RadixAPDU } from '@radixdlt/hardware-ledger'
 
 let performingInstruction = false
+let listeningTransport: Subscription
 
 export const sendAPDU = async (event: IpcMainInvokeEvent, apdu: { cla: number, ins: number, p1: number, p2: number, data?: string }) => {
   const devices = await TransportNodeHid.list()
@@ -28,8 +30,12 @@ export const sendAPDU = async (event: IpcMainInvokeEvent, apdu: { cla: number, i
   return result
 }
 
+export const closeConnection = () => {
+  listeningTransport.unsubscribe()
+}
+
 const subscribeDeviceConnection = async (next: (isConnected: boolean) => any) =>
-  TransportNodeHid.listen({
+  listeningTransport = TransportNodeHid.listen({
     next: async (obj: any) => {
       switch (obj.type) {
         case 'add':
