@@ -48,7 +48,7 @@
 
         <div class="text-xs text-white relative z-20 flex justify-between mt-4">
           <span class="mr-2">{{ $t('wallet.addressLabel') }}</span>
-          <span class="flex-1 w-full truncate">{{ displayHardwareAddress }}</span>
+          <span class="flex-1 w-full truncate font-mono">{{ displayHardwareAddress }}</span>
           <click-to-copy
               :address="hardwareAddress"
               :checkForHardwareAddress=true
@@ -111,7 +111,7 @@ const WalletSidebarAccounts = defineComponent({
       if (!this.hardwareAddress) { return '' }
 
       const add:string = this.hardwareAddress
-      return add.substring(0, 8) + '...' + add.substring(add.length - 8)
+      return add.substring(0, 3) + '...' + add.substring(add.length - 9)
     }
   },
 
