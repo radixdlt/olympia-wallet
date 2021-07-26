@@ -1,5 +1,13 @@
 # Changelog
 
+### [0.14.5](https://www.github.com/radixdlt/olympia-wallet/compare/v0.14.4...v0.14.5) (2021-07-26)
+
+
+### Dependencies
+
+* Revent hardware connection events & enforce certs ([#229](https://www.github.com/radixdlt/olympia-wallet/issues/229)) ([bdf3f5b](https://www.github.com/radixdlt/olympia-wallet/commit/bdf3f5ba2a59a9987e75b52221192efb98c3afed))
+* Update min stake copy for Mainnet ([#230](https://www.github.com/radixdlt/olympia-wallet/issues/230)) ([56a8cc0](https://www.github.com/radixdlt/olympia-wallet/commit/56a8cc0ad995012dac79d179c238725e94b1fd4f))
+
 ### [0.14.4](https://www.github.com/radixdlt/olympia-wallet/compare/v0.14.3...v0.14.4) (2021-07-26)
 
 
