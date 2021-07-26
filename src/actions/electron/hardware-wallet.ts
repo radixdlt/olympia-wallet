@@ -21,6 +21,7 @@ export const sendAPDU = async (event: IpcMainInvokeEvent, apdu: { cla: number, i
     result = await transport.send(apdu.cla, apdu.ins, apdu.p1, apdu.p2, apdu.data ? Buffer.from(apdu.data, 'hex') : undefined)
   } catch (e) {
     performingInstruction = false
+    transport.close()
     throw e
   }
 
