@@ -13,5 +13,3 @@ contextBridge.exposeInMainWorld('ipcRenderer', {
   invoke: (channel: string, args: string[]) =>
     ipcRenderer.invoke(channel, args)
 })
-
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'

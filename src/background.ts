@@ -20,10 +20,6 @@ import menu from './menu'
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
-app.commandLine.appendSwitch('ignore-certificate-errors')
-
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0
-
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
   { scheme: 'app', privileges: { secure: true, standard: true } }
