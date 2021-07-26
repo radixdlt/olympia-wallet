@@ -15,14 +15,10 @@ import {
   getHardwareAddress,
   resetStore
 } from './actions/electron/data-store'
-import { sendAPDU, closeConnection } from './actions/electron/hardware-wallet'
+import { sendAPDU } from './actions/electron/hardware-wallet'
 import menu from './menu'
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
-
-app.commandLine.appendSwitch('ignore-certificate-errors')
-
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
@@ -96,10 +92,6 @@ app.on('ready', async () => {
   createWindow()
 })
 
-app.on('before-quit',() => {
-  closeConnection()
-})
-
 // Define channels for ipc to listen to and which actions to fires
 ipcMain.handle('save-keystores-message', writeKeystoreFile)
 ipcMain.handle('get-keystore-message', getKeystoreFile)
@@ -114,7 +106,6 @@ ipcMain.handle('save-hw-address', saveHardwareAddress)
 ipcMain.handle('get-hw-address', getHardwareAddress)
 ipcMain.handle('send-apdu', sendAPDU)
 ipcMain.handle('reset-store', resetStore)
-ipcMain.handle('close-connection', closeConnection)
 
 // Exit cleanly on request from parent process in development mode.
 if (isDevelopment) {

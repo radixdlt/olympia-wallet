@@ -9,8 +9,6 @@ import '@/validations'
 import { store, key } from '@/store'
 import { i18n } from '@/text'
 
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
-
 const options: PluginOptions = {
   position: POSITION.BOTTOM_RIGHT,
   closeButton: false,
