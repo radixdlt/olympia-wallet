@@ -34,7 +34,6 @@ jobs:
             *)
               echo "No commands required for this OS"
           esac
-
       - name: Build/release Electron app
         uses: samuelmeuli/action-electron-builder@v1
         env:
