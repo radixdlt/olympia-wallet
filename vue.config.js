@@ -49,7 +49,8 @@ module.exports = {
           hardenedRuntime: true,
           entitlements: 'build/entitlements.mac.plist',
           entitlementsInherit: 'build/entitlements.mac.plist',
-          gatekeeperAssess: false
+          gatekeeperAssess: false,
+          target: ['dmg']
         },
         dmg: {
           sign: false
