@@ -33,15 +33,15 @@
         </div>
       </div>
 
-      <dl v-if="validator" class="text-sm mx-4 grid grid-cols-2 border-b border-rGray">
-        <dd class="mb-1 w-26 flex-grow-0 text-rGrayMed">{{ $t('staking.validatorFeeLabel') }}:</dd>
+      <dl v-if="validator" class="text-sm mx-4 flex flex-wrap border-b border-rGray items-center">
+        <dd class="mb-1 w-26 flex-grow-0 text-rGrayMed text-xs">{{ $t('staking.validatorFeeLabel') }}:</dd>
         <dt class="mb-1 flex-1 text-rBlack">+{{validator.validatorFee}}%</dt>
-        <dd class="mb-1 w-26 flex-grow-0 text-rGrayMed">{{ $t('staking.recentUptimeLabel') }}:</dd>
+        <dd class="mb-1 w-26 flex-grow-0 text-rGrayMed text-xs">{{ $t('staking.recentUptimeLabel') }}:</dd>
         <dt class="mb-1 flex-1 text-rBlack">{{validator.uptimePercentage}}%</dt>
       </dl>
 
-      <dl v-if="validator" class="text-sm mx-4 mt-1 grid grid-cols-2">
-        <dd class="mb-1 w-26 flex-grow-0 text-rGrayMed">{{ $t('staking.stakedLabel') }}:</dd>
+      <dl v-if="validator" class="text-sm mx-4 mt-1 flex flex-wrap">
+        <dd class="mb-1 w-26 flex-grow-0 text-rGrayMed text-xs">{{ $t('staking.stakedLabel') }}:</dd>
         <dt class="mb-1 flex-1 text-rBlack"><big-amount :amount="stakeAmount" /> <span class="text-rGrayDark ml-1 uppercase">{{ nativeToken.symbol }}</span></dt>
         <dd v-if="unstakeAmount" class="mb-1 w-26 flex-grow-0 text-rGrayMed">{{ $t('staking.unstakingLabel') }}:</dd>
         <dt v-if="unstakeAmount" class="mb-1 flex-1 text-rBlack"><big-amount :amount="unstakeAmount" /> <span class="text-rGrayDark ml-1 uppercase">{{ nativeToken.symbol }}</span></dt>
