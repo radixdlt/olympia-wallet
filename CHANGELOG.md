@@ -1,5 +1,18 @@
 # Changelog
 
+### [0.14.8](https://www.github.com/radixdlt/olympia-wallet/compare/v0.14.7...v0.14.8) (2021-07-27)
+
+
+### Bug Fixes
+
+* Include zip file in mac electron-builder targets ([#242](https://www.github.com/radixdlt/olympia-wallet/issues/242)) ([e0c0b77](https://www.github.com/radixdlt/olympia-wallet/commit/e0c0b77e280f7f2cb9bcb9e6fc83fc8d67fd793c))
+* wallet stake list styling updates ([#241](https://www.github.com/radixdlt/olympia-wallet/issues/241)) ([d47b633](https://www.github.com/radixdlt/olympia-wallet/commit/d47b6333f6b0d699c43cfe0535f58c427945f9f2))
+
+
+### Dependencies
+
+* Tooltip updates ([#244](https://www.github.com/radixdlt/olympia-wallet/issues/244)) ([e2c2e47](https://www.github.com/radixdlt/olympia-wallet/commit/e2c2e478e65a3b0cd83490ccdd8f45240ab469ae))
+
 ### [0.14.7](https://www.github.com/radixdlt/olympia-wallet/compare/v0.14.6...v0.14.7) (2021-07-27)
 
 
