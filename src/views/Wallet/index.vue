@@ -42,7 +42,6 @@
           :tokenBalances="tokenBalances"
           :nativeToken="nativeToken"
           :nativeTokenBalance="nativeTokenBalance"
-          @requestFreeTokens="requestFreeTokens"
           @verifyHardwareAddress="verifyHardwareWalletAddress"
         />
         <wallet-loading v-else />
@@ -668,26 +667,6 @@ const WalletIndex = defineComponent({
       })
     }
 
-    const requestFreeTokens = () => {
-      const request = {
-        jsonrpc: '2.0',
-        method: 'faucet.request_tokens',
-        id: 1,
-        params: {
-          address: activeAddress.value ? activeAddress.value.toString() : ''
-        }
-      }
-      const baseUrl = process.env.VUE_APP_FAUCET || 'https://stokenet-faucet.radixdlt.com'
-      subs.add(from(
-        fetch(`${baseUrl}/faucet`, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(request)
-        })
-      ).subscribe(() => { faucetParams.next(Math.random()) }))
-    }
-
     const connectHardwareWallet = () => {
       if (hardwareAccount.value) {
         switchAccount(hardwareAccount.value)
@@ -790,7 +769,6 @@ const WalletIndex = defineComponent({
       refreshHistory,
       nextPage,
       previousPage,
-      requestFreeTokens,
       connectHardwareWallet,
       verifyHardwareWalletAddress,
       decryptMessage,
