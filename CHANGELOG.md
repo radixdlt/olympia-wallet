@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.14.9](https://www.github.com/radixdlt/olympia-wallet/compare/v0.14.8...v0.14.9) (2021-07-27)
+
+
+### Bug Fixes
+
+* Manually trigger release ([#245](https://www.github.com/radixdlt/olympia-wallet/issues/245)) ([409cf3c](https://www.github.com/radixdlt/olympia-wallet/commit/409cf3c7c2d1028d93d4ac56ca933165168d1158))
+
 ### [0.14.8](https://www.github.com/radixdlt/olympia-wallet/compare/v0.14.7...v0.14.8) (2021-07-27)
 
 
