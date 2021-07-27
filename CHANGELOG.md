@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.14.11](https://www.github.com/radixdlt/olympia-wallet/compare/v0.14.10...v0.14.11) (2021-07-27)
+
+
+### Bug Fixes
+
+* Wallet Staking Items on max size windows ([5b4ada3](https://www.github.com/radixdlt/olympia-wallet/commit/5b4ada3254035aa5463e60da4d031f8678b42a6d))
+
 ### [0.14.10](https://www.github.com/radixdlt/olympia-wallet/compare/v0.14.9...v0.14.10) (2021-07-27)
 
 
