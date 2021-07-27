@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.0.0](https://www.github.com/radixdlt/olympia-wallet/compare/v0.14.9...v1.0.0) (2021-07-27)
+
+
+### ⚠ BREAKING CHANGES
+
+* prepare for maininet
+
+### Features
+
+* prepare for maininet ([26475ad](https://www.github.com/radixdlt/olympia-wallet/commit/26475ad3c2b58174cec7fa54e3e17e6583d0eeec))
+
 ### [0.14.9](https://www.github.com/radixdlt/olympia-wallet/compare/v0.14.8...v0.14.9) (2021-07-27)
 
 
