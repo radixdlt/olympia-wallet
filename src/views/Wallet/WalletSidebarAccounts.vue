@@ -31,24 +31,33 @@
 
     <div class="border-t border-rGray border-opacity-50 pt-4">
       <div v-if="hardwareAddress" class="mt-2">
-        <a class="flex cursor-pointer"
-          @click="$emit('switchToHardwareAccount')"
-          @mouseover="showHardwareHelper = true"
-          @mouseleave="showHardwareHelper = false">
-          <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M18.7382 10.6172H7.26074V19H18.7382V10.6172Z" stroke="white" stroke-width="1.5" stroke-miterlimit="10"/>
-            <path d="M10.6592 12.7317V16.8855" stroke="white" stroke-width="1.5" stroke-miterlimit="10"/>
-            <path d="M15.3405 12.7317V16.8855" stroke="white" stroke-width="1.5" stroke-miterlimit="10"/>
-            <path d="M1.45471 18.9997H24.5453V21.4505C24.5453 23.4596 22.9165 25.0883 20.9074 25.0883H5.09253C3.08342 25.0883 1.45471 23.4596 1.45471 21.4505V18.9997Z" stroke="white" stroke-width="1.5" stroke-miterlimit="10"/>
-            <path d="M24.5449 7L1.45438 7V4.54926C1.45438 2.54016 3.08309 0.91145 5.09219 0.91145L20.9071 0.91145C22.9162 0.91145 24.5449 2.54016 24.5449 4.54926V7Z" stroke="white" stroke-width="1.5" stroke-miterlimit="10"/>
-          </svg>
+        <div class="flex justify-between">
 
-          <span class="text-white ml-2"> {{ $t('wallet.hardwareWalletHeading') }} </span>
-        </a>
+          <a class="flex cursor-pointer"
+            @click="$emit('switchToHardwareAccount')"
+            @mouseover="showHardwareHelper = true"
+            @mouseleave="showHardwareHelper = false">
+            <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M18.7382 10.6172H7.26074V19H18.7382V10.6172Z" stroke="white" stroke-width="1.5" stroke-miterlimit="10"/>
+              <path d="M10.6592 12.7317V16.8855" stroke="white" stroke-width="1.5" stroke-miterlimit="10"/>
+              <path d="M15.3405 12.7317V16.8855" stroke="white" stroke-width="1.5" stroke-miterlimit="10"/>
+              <path d="M1.45471 18.9997H24.5453V21.4505C24.5453 23.4596 22.9165 25.0883 20.9074 25.0883H5.09253C3.08342 25.0883 1.45471 23.4596 1.45471 21.4505V18.9997Z" stroke="white" stroke-width="1.5" stroke-miterlimit="10"/>
+              <path d="M24.5449 7L1.45438 7V4.54926C1.45438 2.54016 3.08309 0.91145 5.09219 0.91145L20.9071 0.91145C22.9162 0.91145 24.5449 2.54016 24.5449 4.54926V7Z" stroke="white" stroke-width="1.5" stroke-miterlimit="10"/>
+            </svg>
+
+            <span class="text-white ml-2"> {{ $t('wallet.hardwareWalletHeading') }} </span>
+          </a>
+          <div class="text-white hover:text-rGreen transition-colors cursor-pointer flex items-center justify-center w-5 h-5" @click="$emit('deleteHWWalletPrompt')">
+            <svg width="10" height="12" viewBox="0 0 10 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M1.65912 5.23001L1.91 11H7.77L8.02275 5.23001" stroke="white" stroke-width="1.5"/>
+              <path d="M0 3.21212H2.98M2.98 3.21212V1H6.7V3.21212M2.98 3.21212H6.7M6.7 3.21212H9.68" stroke="white" stroke-width="1.5"/>
+            </svg>
+          </div>
+        </div>
 
         <div class="text-xs text-white relative z-20 flex justify-between mt-4">
           <span class="mr-2">{{ $t('wallet.addressLabel') }}</span>
-          <span class="flex-1 w-full truncate">{{ displayHardwareAddress }}</span>
+          <span class="flex-1 w-full truncate font-mono">{{ displayHardwareAddress }}</span>
           <click-to-copy
               :address="hardwareAddress"
               :checkForHardwareAddress=true
@@ -111,11 +120,11 @@ const WalletSidebarAccounts = defineComponent({
       if (!this.hardwareAddress) { return '' }
 
       const add:string = this.hardwareAddress
-      return add.substring(0, 8) + '...' + add.substring(add.length - 8)
+      return add.substring(0, 3) + '...' + add.substring(add.length - 9)
     }
   },
 
-  emits: ['back', 'addAccount', 'switchAccount', 'editName', 'addHardwareWallet', 'connectHardwareWallet', 'switchToHardwareAccount', 'verifyHardwareAddress']
+  emits: ['back', 'addAccount', 'switchAccount', 'editName', 'addHardwareWallet', 'connectHardwareWallet', 'switchToHardwareAccount', 'verifyHardwareAddress', 'deleteHWWalletPrompt']
 })
 
 export default WalletSidebarAccounts

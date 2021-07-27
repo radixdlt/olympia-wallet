@@ -1,6 +1,6 @@
 {
   "name": "radix-olympia-desktop-wallet",
-  "version": "0.14.4",
+  "version": "0.14.7",
   "private": true,
   "description": "Radix Olympia Desktop Wallet",
   "author": "Radix Tokens Jersey Limited",
@@ -10,7 +10,7 @@
     "test:unit": "vue-cli-service test:unit",
     "lint": "vue-cli-service lint",
     "electron:build": "vue-cli-service electron:build",
-    "electron:serve": "NODE_TLS_REJECT_UNAUTHORIZED=0 vue-cli-service electron:serve",
+    "electron:serve": "vue-cli-service electron:serve",
     "postinstall": "electron-builder install-app-deps",
     "postuninstall": "electron-builder install-app-deps"
   },

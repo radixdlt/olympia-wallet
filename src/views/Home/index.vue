@@ -11,8 +11,6 @@
         </div>
         <div class="text-white font-normal text-normal leading-snug mr-12">
           <div class="text-lg"> {{ $t('home.welcomeOne') }} </div>
-          <div class="text-lg mt-3"> {{ $t('home.welcomeTwo') }} </div>
-          <div class="text-sm mt-3"> {{ $t('home.welcomeThree') }} </div>
           <div class="text-sm mt-3"> {{ $t('home.welcomeFour') }} </div>
           <div class="text-sm mt-3"> {{ $t('home.welcomeFive') }} </div>
         </div>

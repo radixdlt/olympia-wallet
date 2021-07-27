@@ -71,7 +71,7 @@
       </form>
     </div>
 
-    <div class="bg-white border border-rGray rounded-md flex flex-col overflow-y-auto w-full h-full max-w-md py-5 px-8">
+    <div class="bg-white border border-rGray rounded-md flex flex-col overflow-y-auto w-full h-full max-w-md p-4">
       <div class="flex items-center justify-between mb-5">
         <h3 class="font-medium text-rBlack">{{ $t('staking.currentStakesHeading') }}</h3>
         <a :href="explorerUrl" target="_blank" class="text-rBlue text-sm inline-flex items-center">

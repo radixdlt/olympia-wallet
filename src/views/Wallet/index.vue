@@ -28,6 +28,7 @@
         @editName="setView('editName')"
         @connectHardwareWallet="connectHardwareWallet"
         @verifyHardwareAddress="verifyHardwareWalletAddress"
+        @deleteHWWalletPrompt="showDeleteHWWalletPrompt = true"
       />
     </transition>
 
@@ -41,7 +42,6 @@
           :tokenBalances="tokenBalances"
           :nativeToken="nativeToken"
           :nativeTokenBalance="nativeTokenBalance"
-          @requestFreeTokens="requestFreeTokens"
           @verifyHardwareAddress="verifyHardwareWalletAddress"
         />
         <wallet-loading v-else />
@@ -131,6 +131,11 @@
         @closeLedgerModal="hardwareInteractionState = null"
         @retryLedgerAccountDerivation="connectHardwareWallet"
       />
+      <wallet-ledger-delete-modal
+        v-if="showDeleteHWWalletPrompt"
+        @forgetHardwareWallet="deleteLocalHardwareAddress"
+        @closeLedgerDeleteModal="showDeleteHWWalletPrompt = false"
+      />
     </template>
     <template v-else>
       <wallet-loading />
@@ -170,7 +175,8 @@ import {
   TokenBalance,
   MessageInTransaction,
   ExecutedTransaction,
-  Network
+  Network,
+  TransactionStateError
 } from '@radixdlt/application'
 import { safelyUnwrapAmount } from '@/helpers/validateRadixTypes'
 import { ref } from '@nopr3d/vue-next-rx'
@@ -193,12 +199,14 @@ import {
   saveDerivedAccountsIndex,
   saveHardwareWalletAddress,
   getHardwareWalletAddress,
+  deleteHardwareWalletAddress,
   saveAccountName
 } from '@/actions/vue/data-store'
 import { useI18n } from 'vue-i18n'
 import { sendAPDU } from '@/actions/vue/hardware-wallet'
 import { HardwareWalletLedger } from '@radixdlt/hardware-ledger'
 import WalletLedgerVerifyAddressModal from '@/views/Wallet/WalletLedgerVerifyAddressModal.vue'
+import WalletLedgerDeleteModal from '@/views/Wallet/WalletLedgerDeleteModal.vue'
 
 const PAGE_SIZE = 50
 
@@ -219,7 +227,8 @@ const WalletIndex = defineComponent({
     WalletTransaction,
     WalletLoading,
     WalletLedgerInteractionModal,
-    WalletLedgerVerifyAddressModal
+    WalletLedgerVerifyAddressModal,
+    WalletLedgerDeleteModal
   },
 
   props: {
@@ -286,6 +295,7 @@ const WalletIndex = defineComponent({
     const hardwareAddress: Ref<string> = ref('')
     const hardwareWalletError: Ref<Error | null> = ref(null)
     getHardwareWalletAddress().then(a => { hardwareAddress.value = a })
+    const showDeleteHWWalletPrompt: Ref<boolean> = ref(false)
 
     // Set initial view if provided in props
     onBeforeMount(() => {
@@ -440,13 +450,23 @@ const WalletIndex = defineComponent({
 
       // Catch errors that were silently failing
       const trackingSubmittedEventErrors = transactionTracking.events
-        .pipe(filter((trackingEvent: any) => trackingEvent.error != null)) // This is really returning TransactionStateError
-        .subscribe((event) => {
+        .pipe(filter((trackingEvent: TransactionStateUpdate) => {
+          const errorEvent: TransactionStateError = trackingEvent as TransactionStateError
+          return errorEvent && errorEvent.error != null
+        }))
+        .subscribe((event: TransactionStateUpdate) => {
+          const errorEvent: TransactionStateError = event as TransactionStateError
           userDidCancel.next(true)
           shouldShowConfirmation.value = false
-          const isLedgerConnectedError = event.error.message.includes('No device found')
+          const isLedgerConnectedError = errorEvent.error.message.includes('Failed to sign tx with Ledger')
           if (isLedgerConnectedError) {
-            ledgerTxError.value = event.error
+            ledgerTxError.value = errorEvent.error
+            hardwareAccount.value = null
+            hardwareInteractionState.value = 'FAILED_TO_SIGN'
+            hardwareWalletError.value = new Error(t('validations.failedToSign'))
+            walletTransactionComponent.value.setErrors({
+              amount: null
+            })
           } else if (view.value === 'transaction' && !ledgerTxError) {
             walletTransactionComponent.value.setErrors({
               amount: t('validations.transactionFailed')
@@ -500,7 +520,7 @@ const WalletIndex = defineComponent({
           error: () => {
             userDidCancel.next(true)
             shouldShowConfirmation.value = false
-            if (view.value === 'transaction') {
+            if (view.value === 'transaction' && !ledgerTxError) {
               walletTransactionComponent.value.setErrors({
                 amount: t('validations.transactionFailed')
               })
@@ -647,26 +667,6 @@ const WalletIndex = defineComponent({
       })
     }
 
-    const requestFreeTokens = () => {
-      const request = {
-        jsonrpc: '2.0',
-        method: 'faucet.request_tokens',
-        id: 1,
-        params: {
-          address: activeAddress.value ? activeAddress.value.toString() : ''
-        }
-      }
-      const baseUrl = process.env.VUE_APP_FAUCET || 'https://stokenet-faucet.radixdlt.com'
-      subs.add(from(
-        fetch(`${baseUrl}/faucet`, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(request)
-        })
-      ).subscribe(() => { faucetParams.next(Math.random()) }))
-    }
-
     const connectHardwareWallet = () => {
       if (hardwareAccount.value) {
         switchAccount(hardwareAccount.value)
@@ -681,18 +681,20 @@ const WalletIndex = defineComponent({
         }),
         alsoSwitchTo: true,
         verificationPrompt: !hardwareAddress.value
-      }).subscribe((hwAccount: AccountT) => {
-        activeAccount.value = hwAccount
-        hardwareAccount.value = hwAccount
-        if (!hardwareAddress.value) {
-          saveHardwareWalletAddress(hwAccount.address.toString())
-          saveAccountName(hwAccount.address.toString(), 'Hardware Wallet')
-          hardwareAddress.value = hwAccount.address.toString()
-        }
-        sidebar.value = 'default'
-        hardwareInteractionState.value = ''
-      },
-      (err) => { hardwareWalletError.value = err })
+      }).subscribe({
+        next: (hwAccount: AccountT) => {
+          activeAccount.value = hwAccount
+          hardwareAccount.value = hwAccount
+          if (!hardwareAddress.value) {
+            saveHardwareWalletAddress(hwAccount.address.toString())
+            saveAccountName(hwAccount.address.toString(), 'Hardware Wallet')
+            hardwareAddress.value = hwAccount.address.toString()
+          }
+          sidebar.value = 'default'
+          hardwareInteractionState.value = ''
+        },
+        error: (err) => { hardwareWalletError.value = err }
+      })
     }
 
     const verifyHardwareWalletAddress = () => {
@@ -701,6 +703,13 @@ const WalletIndex = defineComponent({
           error: (e) => { ledgerVerifyError.value = e }
         })
       showLedgerVerify.value = true
+    }
+
+    const deleteLocalHardwareAddress = () => {
+      deleteHardwareWalletAddress()
+      hardwareAddress.value = ''
+      showDeleteHWWalletPrompt.value = false
+      hardwareAccount.value = null
     }
 
     onUnmounted(() => subs.unsubscribe())
@@ -743,6 +752,7 @@ const WalletIndex = defineComponent({
       // view flags
       view,
       sidebar,
+      showDeleteHWWalletPrompt,
 
       // boolean flags
       canGoNext,
@@ -759,11 +769,11 @@ const WalletIndex = defineComponent({
       refreshHistory,
       nextPage,
       previousPage,
-      requestFreeTokens,
       connectHardwareWallet,
       verifyHardwareWalletAddress,
       decryptMessage,
       accountRenamed,
+      deleteLocalHardwareAddress,
 
       // child component refs
       walletTransactionComponent,

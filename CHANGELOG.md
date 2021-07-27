@@ -1,5 +1,39 @@
 # Changelog
 
+### [0.14.7](https://www.github.com/radixdlt/olympia-wallet/compare/v0.14.6...v0.14.7) (2021-07-27)
+
+
+### Features
+
+* forget hardware wallet ([#238](https://www.github.com/radixdlt/olympia-wallet/issues/238)) ([6a90012](https://www.github.com/radixdlt/olympia-wallet/commit/6a900129744327bc6e4b5ef9d7d4b02918c4853f))
+
+
+### Bug Fixes
+
+* Confirmation Modal should show warnings about the ledger not being connected for hardware wallets ([#236](https://www.github.com/radixdlt/olympia-wallet/issues/236)) ([9d9deb0](https://www.github.com/radixdlt/olympia-wallet/commit/9d9deb0807753e376481a33ba12fee756e1925a7))
+
+
+### Dependencies
+
+* reduce overview balance font size ([#239](https://www.github.com/radixdlt/olympia-wallet/issues/239)) ([e490a4e](https://www.github.com/radixdlt/olympia-wallet/commit/e490a4e6a67a6ec52710bb8b99ca6928237316c7))
+* Remove all the testnet ([#240](https://www.github.com/radixdlt/olympia-wallet/issues/240)) ([3364af3](https://www.github.com/radixdlt/olympia-wallet/commit/3364af3ec325e836b3de8f1e98d490c15f855a2f))
+
+### [0.14.6](https://www.github.com/radixdlt/olympia-wallet/compare/v0.14.5...v0.14.6) (2021-07-26)
+
+
+### Bug Fixes
+
+* correct hardware address display ([#234](https://www.github.com/radixdlt/olympia-wallet/issues/234)) ([634af0a](https://www.github.com/radixdlt/olympia-wallet/commit/634af0a80c595b59ebe085ceff87b031d647fb90))
+* Remove .app mac builds, produce DMGs only ([#233](https://www.github.com/radixdlt/olympia-wallet/issues/233)) ([2c7ed26](https://www.github.com/radixdlt/olympia-wallet/commit/2c7ed26902dabf4043ce5676a1e1c17a35e9d190))
+
+### [0.14.5](https://www.github.com/radixdlt/olympia-wallet/compare/v0.14.4...v0.14.5) (2021-07-26)
+
+
+### Dependencies
+
+* Revent hardware connection events & enforce certs ([#229](https://www.github.com/radixdlt/olympia-wallet/issues/229)) ([bdf3f5b](https://www.github.com/radixdlt/olympia-wallet/commit/bdf3f5ba2a59a9987e75b52221192efb98c3afed))
+* Update min stake copy for Mainnet ([#230](https://www.github.com/radixdlt/olympia-wallet/issues/230)) ([56a8cc0](https://www.github.com/radixdlt/olympia-wallet/commit/56a8cc0ad995012dac79d179c238725e94b1fd4f))
+
 ### [0.14.4](https://www.github.com/radixdlt/olympia-wallet/compare/v0.14.3...v0.14.4) (2021-07-26)
 
 
