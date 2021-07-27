@@ -79,7 +79,7 @@
           class="border border-rGray rounded-md divide-x divide-rGray"
         >
           <div class="flex flex-row py-1">
-            <div class="flex-1 flex flex-row items-center px-4 overflow-x-auto p-2 m-2.5">
+            <div class="flex-1 flex flex-row items-center px-6 py-7 overflow-x-auto">
               <big-amount :amount="tokenBalance.amount" class="text-4xl font-light mr-4 text-rBlack" />
               <token-symbol>{{ tokenBalance.token.symbol.toUpperCase() }}</token-symbol>
             </div>
