@@ -47,11 +47,10 @@
 
             <span class="text-white ml-2"> {{ $t('wallet.hardwareWalletHeading') }} </span>
           </a>
-          <div class="text-white hover:text-rGreen transition-colors cursor-pointer flex items-center" @click="$emit('deleteHWWalletPrompt')">
-            <svg width="15" height="14" viewBox="0 0 15 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M7.78758 13.5C4.11396 13.5 1.15231 10.5809 1.15231 7C1.15231 3.41913 4.11396 0.5 7.78758 0.5C11.4612 0.5 14.4229 3.41913 14.4229 7C14.4229 10.5809 11.4612 13.5 7.78758 13.5Z" class="stroke-current" />
-              <path d="M9.94199 2.99976L5.39062 7.46484L7.28703 9.32529L11.8384 4.86021L9.94199 2.99976Z" class="fill-current" />
-              <path d="M4.72949 9.99967L6.68661 9.91411L4.79018 8.05371L4.72949 9.99967Z" class="fill-current" />
+          <div class="text-white hover:text-rGreen transition-colors cursor-pointer flex items-center justify-center w-5 h-5" @click="$emit('deleteHWWalletPrompt')">
+            <svg width="10" height="12" viewBox="0 0 10 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M1.65912 5.23001L1.91 11H7.77L8.02275 5.23001" stroke="white" stroke-width="1.5"/>
+              <path d="M0 3.21212H2.98M2.98 3.21212V1H6.7V3.21212M2.98 3.21212H6.7M6.7 3.21212H9.68" stroke="white" stroke-width="1.5"/>
             </svg>
           </div>
         </div>

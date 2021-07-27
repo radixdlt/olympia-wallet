@@ -4,7 +4,8 @@
     class="inline-flex items-center justify-center border font-normal leading-snug rounded transition-colors"
     :class="{
       'bg-rGray border-rGray text-rGrayDark cursor-not-allowed': disabled,
-      'bg-rGreen border-4 border-rGreen text-white hover:bg-rGreenDark active:bg-rGray': !disabled,
+      'bg-rRed border-4 border-rRed text-white hover:bg-opacity-80 active:bg-rGray': !disabled && destructive,
+      'bg-rGreen border-4 border-rGreen text-white hover:bg-rGreenDark active:bg-rGray': !disabled && !destructive,
       'px-6 py-4 w-72': !small,
       'px-2 py-2': small
     }"
@@ -24,6 +25,11 @@ const ButtonSubmit = defineComponent({
       required: true
     },
     small: {
+      type: Boolean,
+      required: false,
+      default: false
+    },
+    destructive: {
       type: Boolean,
       required: false,
       default: false

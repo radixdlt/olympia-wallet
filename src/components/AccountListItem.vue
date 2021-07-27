@@ -12,12 +12,12 @@
         <div class="font-medium leading-snug text-white hover:text-rGreen transition-colors cursor-pointer w-36 truncate">{{ nickName }}</div>
       </div>
 
-      <div v-if="shouldShowEdit" class="text-white hover:text-rGreen transition-colors cursor-pointer flex items-center" @click="$emit('edit')">
-        <svg width="15" height="14" viewBox="0 0 15 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M7.78758 13.5C4.11396 13.5 1.15231 10.5809 1.15231 7C1.15231 3.41913 4.11396 0.5 7.78758 0.5C11.4612 0.5 14.4229 3.41913 14.4229 7C14.4229 10.5809 11.4612 13.5 7.78758 13.5Z" class="stroke-current" />
-          <path d="M9.94199 2.99976L5.39062 7.46484L7.28703 9.32529L11.8384 4.86021L9.94199 2.99976Z" class="fill-current" />
-          <path d="M4.72949 9.99967L6.68661 9.91411L4.79018 8.05371L4.72949 9.99967Z" class="fill-current" />
+      <div v-if="shouldShowEdit" class="text-white hover:text-rGreen transition-colors cursor-pointer flex items-center justify-center w-5 h-5" @click="$emit('edit')">
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M7.30515 -5.35835e-06L0.926422 6.37872L3.58423 9.03653L9.96296 2.6578L7.30515 -5.35835e-06Z" fill="white"/>
+          <path d="M0 9.99999L2.7429 9.87776L0.0850602 7.22003L0 9.99999Z" fill="white"/>
         </svg>
+
       </div>
     </div>
     <div class="text-xs text-white relative z-20 flex justify-between">
