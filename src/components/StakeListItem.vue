@@ -32,20 +32,28 @@
           </a>
         </div>
       </div>
-
-      <dl v-if="validator" class="text-sm mx-4 flex flex-wrap border-b border-rGray items-center">
-        <dd class="mb-1 w-26 flex-grow-0 text-rGrayMed text-xs">{{ $t('staking.validatorFeeLabel') }}:</dd>
-        <dt class="mb-1 flex-1 text-rBlack">+{{validator.validatorFee}}%</dt>
-        <dd class="mb-1 w-26 flex-grow-0 text-rGrayMed text-xs">{{ $t('staking.recentUptimeLabel') }}:</dd>
-        <dt class="mb-1 flex-1 text-rBlack">{{validator.uptimePercentage}}%</dt>
-      </dl>
-
-      <dl v-if="validator" class="text-sm mx-4 mt-1 flex flex-wrap">
-        <dd class="mb-1 w-26 flex-grow-0 text-rGrayMed text-xs">{{ $t('staking.stakedLabel') }}:</dd>
-        <dt class="mb-1 flex-1 text-rBlack"><big-amount :amount="stakeAmount" /> <span class="text-rGrayDark ml-1 uppercase">{{ nativeToken.symbol }}</span></dt>
-        <dd v-if="unstakeAmount" class="mb-1 w-26 flex-grow-0 text-rGrayMed">{{ $t('staking.unstakingLabel') }}:</dd>
-        <dt v-if="unstakeAmount" class="mb-1 flex-1 text-rBlack"><big-amount :amount="unstakeAmount" /> <span class="text-rGrayDark ml-1 uppercase">{{ nativeToken.symbol }}</span></dt>
-      </dl>
+      <div v-if="validator" class="text-sm mx-4">
+        <dl class="border-b border-rGray">
+          <div class="flex items-center flex-wrap">
+            <div class="mb-1 w-26 flex-grow-0 text-rGrayMed text-xs">{{ $t('staking.validatorFeeLabel') }}:</div>
+            <div class="mb-1 flex-1 text-rBlack">+{{validator.validatorFee}}%</div>
+          </div>
+          <div class="flex items-center flex-wrap">
+            <div class="mb-1 w-26 flex-grow-0 text-rGrayMed text-xs">{{ $t('staking.recentUptimeLabel') }}:</div>
+            <div class="mb-1 flex-1 text-rBlack">{{validator.uptimePercentage}}%</div>
+          </div>
+        </dl>
+        <dl class="mt-1">
+          <div class="flex items-center flex-wrap">
+            <div class="mb-1 w-26 flex-grow-0 text-rGrayMed text-xs">{{ $t('staking.stakedLabel') }}:</div>
+            <div class="mb-1 flex-1 text-rBlack"><big-amount :amount="stakeAmount" /> <span class="text-rGrayDark ml-1 uppercase">{{ nativeToken.symbol }}</span></div>
+          </div>
+          <div class="flex items-center flex-wrap">
+            <div v-if="unstakeAmount" class="mb-1 w-26 flex-grow-0 text-rGrayMed">{{ $t('staking.unstakingLabel') }}:</div>
+            <div v-if="unstakeAmount" class="mb-1 flex-1 text-rBlack"><big-amount :amount="unstakeAmount" /> <span class="text-rGrayDark ml-1 uppercase">{{ nativeToken.symbol }}</span></div>
+          </div>
+        </dl>
+      </div>
       <div class="flex flex-row justify-end mb-px text-rGrayDark text-xs py-2 pr-4 bg-rGrayLightest">
         <button
           class="text-rBlue hover:text-rGreen transition-colors cursor-pointer pointer-events-auto mr-px outline-none focus:outline-none px-2"
