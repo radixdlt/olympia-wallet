@@ -20,21 +20,21 @@
         <div class="flex flex-col my-3 px-5 border-r border-rGray flex-1">
           <span class="text-sm text-rGrayDark">{{ $t('wallet.totalTokens') }}</span>
           <div class="flex flex-row items-end">
-            <big-amount :amount="availablePlusStakedAndUnstakedXRD" class="text-4xl font-light mr-4 text-rGreen" />
+            <big-amount :amount="availablePlusStakedAndUnstakedXRD" class="text-2xl font-light mr-4 text-rGreen" />
             <token-symbol>{{ nativeToken.symbol }}</token-symbol>
           </div>
         </div>
         <div class="flex flex-col my-3 px-5 border-r border-rGray flex-1">
           <span class="text-sm text-rGrayDark">{{ $t('wallet.availableTokens') }}</span>
           <div class="flex flex-row items-end">
-            <big-amount :amount="totalXRD" class="text-4xl font-light mr-4 text-rBlack" />
+            <big-amount :amount="totalXRD" class="text-2xl font-light mr-4 text-rBlack" />
             <token-symbol>{{ nativeToken.symbol }}</token-symbol>
           </div>
         </div>
         <div class="flex flex-col my-3 px-5 flex-1">
           <span class="text-sm text-rGrayDark">{{ $t('wallet.stakedTokens') }}</span>
           <div class="flex flex-row items-end">
-            <big-amount :amount="totalStakedAndUnstaked" class="text-4xl font-light mr-4 text-rBlack" />
+            <big-amount :amount="totalStakedAndUnstaked" class="text-2xl font-light mr-4 text-rBlack" />
             <token-symbol>{{ nativeToken.symbol }}</token-symbol>
           </div>
         </div>
@@ -80,7 +80,7 @@
         >
           <div class="flex flex-row py-1">
             <div class="flex-1 flex flex-row items-center px-4 overflow-x-auto p-2 m-2.5">
-              <big-amount :amount="tokenBalance.amount" class="text-4xl font-light mr-4 text-rBlack" />
+              <big-amount :amount="tokenBalance.amount" class="text-2xl font-light mr-4 text-rBlack" />
               <token-symbol>{{ tokenBalance.token.symbol.toUpperCase() }}</token-symbol>
             </div>
           </div>
