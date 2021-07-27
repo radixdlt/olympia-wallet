@@ -28,6 +28,7 @@
         @editName="setView('editName')"
         @connectHardwareWallet="connectHardwareWallet"
         @verifyHardwareAddress="verifyHardwareWalletAddress"
+        @deleteHWWalletPrompt="showDeleteHWWalletPrompt = true"
       />
     </transition>
 
@@ -131,6 +132,11 @@
         @closeLedgerModal="hardwareInteractionState = null"
         @retryLedgerAccountDerivation="connectHardwareWallet"
       />
+      <wallet-ledger-delete-modal
+        v-if="showDeleteHWWalletPrompt"
+        @forgetHardwareWallet="deleteLocalHardwareAddress"
+        @closeLedgerDeleteModal="showDeleteHWWalletPrompt = false"
+      />
     </template>
     <template v-else>
       <wallet-loading />
@@ -194,12 +200,14 @@ import {
   saveDerivedAccountsIndex,
   saveHardwareWalletAddress,
   getHardwareWalletAddress,
+  deleteHardwareWalletAddress,
   saveAccountName
 } from '@/actions/vue/data-store'
 import { useI18n } from 'vue-i18n'
 import { sendAPDU } from '@/actions/vue/hardware-wallet'
 import { HardwareWalletLedger } from '@radixdlt/hardware-ledger'
 import WalletLedgerVerifyAddressModal from '@/views/Wallet/WalletLedgerVerifyAddressModal.vue'
+import WalletLedgerDeleteModal from '@/views/Wallet/WalletLedgerDeleteModal.vue'
 
 const PAGE_SIZE = 50
 
@@ -220,7 +228,8 @@ const WalletIndex = defineComponent({
     WalletTransaction,
     WalletLoading,
     WalletLedgerInteractionModal,
-    WalletLedgerVerifyAddressModal
+    WalletLedgerVerifyAddressModal,
+    WalletLedgerDeleteModal
   },
 
   props: {
@@ -287,6 +296,7 @@ const WalletIndex = defineComponent({
     const hardwareAddress: Ref<string> = ref('')
     const hardwareWalletError: Ref<Error | null> = ref(null)
     getHardwareWalletAddress().then(a => { hardwareAddress.value = a })
+    const showDeleteHWWalletPrompt: Ref<boolean> = ref(false)
 
     // Set initial view if provided in props
     onBeforeMount(() => {
@@ -716,6 +726,13 @@ const WalletIndex = defineComponent({
       showLedgerVerify.value = true
     }
 
+    const deleteLocalHardwareAddress = () => {
+      deleteHardwareWalletAddress()
+      hardwareAddress.value = ''
+      showDeleteHWWalletPrompt.value = false
+      hardwareAccount.value = null
+    }
+
     onUnmounted(() => subs.unsubscribe())
 
     return {
@@ -756,6 +773,7 @@ const WalletIndex = defineComponent({
       // view flags
       view,
       sidebar,
+      showDeleteHWWalletPrompt,
 
       // boolean flags
       canGoNext,
@@ -777,6 +795,7 @@ const WalletIndex = defineComponent({
       verifyHardwareWalletAddress,
       decryptMessage,
       accountRenamed,
+      deleteLocalHardwareAddress,
 
       // child component refs
       walletTransactionComponent,

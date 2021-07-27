@@ -30,6 +30,10 @@ export const getHardwareAddress = (event: IpcMainInvokeEvent) => {
   return store.get('hardwareAddress')
 }
 
+export const deleteHardwareAddress = (event: IpcMainInvokeEvent) => {
+  return store.delete('hardwareAddress')
+}
+
 export const resetStore = (event: IpcMainInvokeEvent) => {
   return store.clear()
 }

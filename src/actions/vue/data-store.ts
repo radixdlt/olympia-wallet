@@ -22,6 +22,10 @@ export const getHardwareWalletAddress = (): Promise<string> => new Promise((reso
   resolve(window.ipcRenderer.invoke('get-hw-address'))
 })
 
+export const deleteHardwareWalletAddress = (): Promise<string> => new Promise((resolve) => {
+  resolve(window.ipcRenderer.invoke('delete-hw-address'))
+})
+
 export const resetStore = (): Promise<string> => new Promise((resolve) => {
   resolve(window.ipcRenderer.invoke('reset-store'))
 })
