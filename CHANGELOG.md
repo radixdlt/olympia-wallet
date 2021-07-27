@@ -1,5 +1,21 @@
 # Changelog
 
+### [0.14.10](https://www.github.com/radixdlt/olympia-wallet/compare/v0.14.9...v0.14.10) (2021-07-27)
+
+
+### ⚠ BREAKING CHANGES
+
+* prepare for maininet
+
+### Features
+
+* prepare for maininet ([26475ad](https://www.github.com/radixdlt/olympia-wallet/commit/26475ad3c2b58174cec7fa54e3e17e6583d0eeec))
+
+
+### Dependencies
+
+* release 0.14.10 ([3a335b8](https://www.github.com/radixdlt/olympia-wallet/commit/3a335b8f3b0eaccfb3ae9f1d4d0c2eee0796dac0))
+
 ### [0.14.9](https://www.github.com/radixdlt/olympia-wallet/compare/v0.14.8...v0.14.9) (2021-07-27)
 
 
