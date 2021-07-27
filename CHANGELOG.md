@@ -1,5 +1,23 @@
 # Changelog
 
+### [0.14.7](https://www.github.com/radixdlt/olympia-wallet/compare/v0.14.6...v0.14.7) (2021-07-27)
+
+
+### Features
+
+* forget hardware wallet ([#238](https://www.github.com/radixdlt/olympia-wallet/issues/238)) ([6a90012](https://www.github.com/radixdlt/olympia-wallet/commit/6a900129744327bc6e4b5ef9d7d4b02918c4853f))
+
+
+### Bug Fixes
+
+* Confirmation Modal should show warnings about the ledger not being connected for hardware wallets ([#236](https://www.github.com/radixdlt/olympia-wallet/issues/236)) ([9d9deb0](https://www.github.com/radixdlt/olympia-wallet/commit/9d9deb0807753e376481a33ba12fee756e1925a7))
+
+
+### Dependencies
+
+* reduce overview balance font size ([#239](https://www.github.com/radixdlt/olympia-wallet/issues/239)) ([e490a4e](https://www.github.com/radixdlt/olympia-wallet/commit/e490a4e6a67a6ec52710bb8b99ca6928237316c7))
+* Remove all the testnet ([#240](https://www.github.com/radixdlt/olympia-wallet/issues/240)) ([3364af3](https://www.github.com/radixdlt/olympia-wallet/commit/3364af3ec325e836b3de8f1e98d490c15f855a2f))
+
 ### [0.14.6](https://www.github.com/radixdlt/olympia-wallet/compare/v0.14.5...v0.14.6) (2021-07-26)
 
 
