@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.14.13](https://www.github.com/radixdlt/olympia-wallet/compare/v0.14.12...v0.14.13) (2021-07-28)
+
+
+### Dependencies
+
+* prepare for mainnet ([230fcca](https://www.github.com/radixdlt/olympia-wallet/commit/230fccaa2e10c7a8ab3f417186d32f09921e4fa1))
+
 ### [0.14.12](https://www.github.com/radixdlt/olympia-wallet/compare/v0.14.11...v0.14.12) (2021-07-27)
 
 
