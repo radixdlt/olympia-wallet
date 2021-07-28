@@ -1,5 +1,12 @@
 # Changelog
 
+### [1.0.1](https://www.github.com/radixdlt/olympia-wallet/compare/v1.0.0...v1.0.1) (2021-07-28)
+
+
+### Dependencies
+
+* remove a betanet tag we somehow missed. ([#262](https://www.github.com/radixdlt/olympia-wallet/issues/262)) ([826f4d3](https://www.github.com/radixdlt/olympia-wallet/commit/826f4d3482c44754722ce33de3830c07910b31a4))
+
 ## [1.0.0](https://www.github.com/radixdlt/olympia-wallet/compare/v0.14.13...v1.0.0) (2021-07-28)
 
 
