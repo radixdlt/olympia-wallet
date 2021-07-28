@@ -89,8 +89,8 @@ const CreateWallet = defineComponent({
     const enterPasscodeComponent = ref(null)
 
     const radix = Radix
-      .create({ network: Network.STOKENET })
-      .connect(process.env.VUE_APP_API || 'https://stokenet.radixdlt.com')
+      .create({ network: Network.MAINNET })
+      .connect(process.env.VUE_APP_API || 'https://mainnet.radixdlt.com')
     const subs = new Subscription()
 
     radix.errors

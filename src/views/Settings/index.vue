@@ -47,8 +47,8 @@ const SettingsIndex = defineComponent({
   setup () {
     const store = useStore()
     const radix = Radix
-      .create({ network: Network.STOKENET })
-      .connect(process.env.VUE_APP_API || 'https://stokenet.radixdlt.com')
+      .create({ network: Network.MAINNET })
+      .connect(process.env.VUE_APP_API || 'https://mainnet.radixdlt.com')
       .withWallet(store.state.wallet)
 
     const mnemonic = ref(null)

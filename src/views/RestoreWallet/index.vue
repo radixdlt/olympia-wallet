@@ -103,7 +103,7 @@ const RestoreWallet = defineComponent({
 
     // Create wallet with password and path to keystore
     const createWallet = (pass: string) => {
-      initWallet(mnemonic.value, pass, Network.STOKENET) // Temporarily hardcoded for betanet
+      initWallet(mnemonic.value, pass, Network.MAINNET)
         .then(wallet => {
           store.commit('setWallet', wallet)
           saveDerivedAccountsIndex(0)

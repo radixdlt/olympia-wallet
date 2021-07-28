@@ -313,8 +313,8 @@ const WalletIndex = defineComponent({
     if (!store.state.wallet) router.push('/')
 
     const radix = Radix
-      .create({ network: Network.STOKENET })
-      .connect(process.env.VUE_APP_API || 'https://stokenet.radixdlt.com')
+      .create({ network: Network.MAINNET })
+      .connect(process.env.VUE_APP_API || 'https://mainnet.radixdlt.com')
       .withWallet(store.state.wallet)
       .withTokenBalanceFetchTrigger(interval(5 * 1_000))
       .withStakingFetchTrigger(interval(5 * 1_000))
