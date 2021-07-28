@@ -86,14 +86,14 @@ const SettingsResetPassword = defineComponent({
     const updatedPassword: Ref<boolean> = ref(false)
 
     const radix = Radix
-      .create({ network: Network.STOKENET })
-      .connect(process.env.VUE_APP_API || 'https://stokenet.radixdlt.com')
+      .create({ network: Network.MAINNET })
+      .connect(process.env.VUE_APP_API || 'https://mainnet.radixdlt.com')
       .withWallet(store.state.wallet)
 
     const handleResetPassword = (newPassword: string) => {
       const getMnemonicForPassword = radix.revealMnemonic()
         .subscribe((m: MnemomicT) => {
-          initWallet(m, newPassword, Network.STOKENET) // Temporarily hardcoded for betanet
+          initWallet(m, newPassword, Network.MAINNET)
             .then(wallet => {
               store.commit('setWallet', wallet)
               resetForm()

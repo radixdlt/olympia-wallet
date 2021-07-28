@@ -116,7 +116,7 @@ const CreateWallet = defineComponent({
 
     // Create wallet with password and path to keystore
     const createWallet = (pass: string) => {
-      initWallet(mnemonic, pass, Network.STOKENET) // TEMP: Hardcoded for betanet
+      initWallet(mnemonic, pass, Network.MAINNET)
         .then((wallet: WalletT) => {
           store.commit('setWallet', wallet)
           saveDerivedAccountsIndex(0)
