@@ -520,11 +520,11 @@ const WalletIndex = defineComponent({
           error: () => {
             userDidCancel.next(true)
             shouldShowConfirmation.value = false
-            if (view.value === 'transaction' && !ledgerTxError) {
+            if (view.value === 'transaction') {
               walletTransactionComponent.value.setErrors({
                 amount: t('validations.transactionFailed')
               })
-            } else if (walletStakingComponent.value.$data.activeForm === 'stake') {
+            } else if (walletStakingComponent.value && walletStakingComponent.value.$data.activeForm === 'stake') {
               walletStakingComponent.value.setErrors({
                 amount: t('validations.stakeFailed')
               })
