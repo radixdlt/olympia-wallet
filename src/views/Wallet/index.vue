@@ -458,7 +458,7 @@ const WalletIndex = defineComponent({
           const errorEvent: TransactionStateError = event as TransactionStateError
           userDidCancel.next(true)
           shouldShowConfirmation.value = false
-          const isLedgerConnectedError = errorEvent.error.message.includes('Failed to sign tx with Ledger')
+          const isLedgerConnectedError = errorEvent.error.message && errorEvent.error.message.includes('Failed to sign tx with Ledger')
           if (isLedgerConnectedError) {
             ledgerTxError.value = errorEvent.error
             hardwareAccount.value = null
@@ -467,11 +467,11 @@ const WalletIndex = defineComponent({
             walletTransactionComponent.value.setErrors({
               amount: null
             })
-          } else if (view.value === 'transaction' && !ledgerTxError) {
+          } else if (view.value === 'transaction') {
             walletTransactionComponent.value.setErrors({
               amount: t('validations.transactionFailed')
             })
-          } else if (walletStakingComponent.value.$data.activeForm === 'stake') {
+          } else if (walletStakingComponent.value && walletStakingComponent.value.$data.activeForm === 'stake') {
             walletStakingComponent.value.setErrors({
               amount: t('validations.stakeFailed')
             })
