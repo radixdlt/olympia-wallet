@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.14.12](https://www.github.com/radixdlt/olympia-wallet/compare/v0.14.11...v0.14.12) (2021-07-27)
+
+
+### Dependencies
+
+* Add Apache 2.0 license ([#254](https://www.github.com/radixdlt/olympia-wallet/issues/254)) ([fd1ea6b](https://www.github.com/radixdlt/olympia-wallet/commit/fd1ea6be9ddef9754b9514df555823cd9ceb916d))
+
 ### [0.14.11](https://www.github.com/radixdlt/olympia-wallet/compare/v0.14.10...v0.14.11) (2021-07-27)
 
 
