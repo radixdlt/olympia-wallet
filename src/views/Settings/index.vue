@@ -34,6 +34,7 @@ import SettingsRevealMnemonic from './SettingsRevealMnemonic.vue'
 import SettingsResetPassword from './SettingsResetPassword.vue'
 import { useStore } from '@/store'
 import { ref } from '@nopr3d/vue-next-rx'
+import { radixConnection } from '@/helpers/network'
 
 const SettingsIndex = defineComponent({
   components: {
@@ -46,9 +47,7 @@ const SettingsIndex = defineComponent({
 
   setup () {
     const store = useStore()
-    const radix = Radix
-      .create({ network: Network.MAINNET })
-      .connect(process.env.VUE_APP_API || 'https://mainnet.radixdlt.com')
+    const radix = radixConnection()
       .withWallet(store.state.wallet)
 
     const mnemonic = ref(null)

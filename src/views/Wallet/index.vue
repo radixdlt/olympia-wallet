@@ -207,6 +207,7 @@ import { sendAPDU } from '@/actions/vue/hardware-wallet'
 import { HardwareWalletLedger } from '@radixdlt/hardware-ledger'
 import WalletLedgerVerifyAddressModal from '@/views/Wallet/WalletLedgerVerifyAddressModal.vue'
 import WalletLedgerDeleteModal from '@/views/Wallet/WalletLedgerDeleteModal.vue'
+import { radixConnection } from '@/helpers/network'
 
 const PAGE_SIZE = 50
 
@@ -312,9 +313,7 @@ const WalletIndex = defineComponent({
     // Return home if wallet is undefined
     if (!store.state.wallet) router.push('/')
 
-    const radix = Radix
-      .create({ network: Network.MAINNET })
-      .connect(process.env.VUE_APP_API || 'https://mainnet.radixdlt.com')
+    const radix = radixConnection()
       .withWallet(store.state.wallet)
       .withTokenBalanceFetchTrigger(interval(5 * 1_000))
       .withStakingFetchTrigger(interval(5 * 1_000))

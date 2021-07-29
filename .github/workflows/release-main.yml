@@ -46,9 +46,8 @@ jobs:
       - name: Build/release Electron app
         uses: samuelmeuli/action-electron-builder@v1
         env:
-          VUE_APP_API: https://mainnet.radixdlt.com
+          VUE_APP_NETWORK_NAME: mainnet
           VUE_APP_EXPLORER: https://explorer.radixdlt.com
-          VUE_APP_FAUCET: https://stokenet-faucet.radixdlt.com
           APPLE_ID: ${{ secrets.APPLE_ID }}
           APPLE_ID_PASSWORD: ${{ secrets.APPLE_ID_PASSWORD }}
         with:
