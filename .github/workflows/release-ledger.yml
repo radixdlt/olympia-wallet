@@ -20,26 +20,11 @@ jobs:
           node-version: '15'
           check-latest: true
 
-      - name: Install node-hid Dependencies
-        shell: bash
-        run: |
-          case $RUNNER_OS in
-            Linux)
-              echo "Building node-hid deps for Ubuntu"
-              sudo apt install build-essential git
-              sudo apt install gcc-4.8 g++-4.8 && export CXX=g++-4.8
-              sudo apt install libusb-1.0-0 libusb-1.0-0-dev
-              sudo apt install libudev-dev
-              ;;
-            *)
-              echo "No commands required for this OS"
-          esac
       - name: Build/release Electron app
         uses: samuelmeuli/action-electron-builder@v1
         env:
-          VUE_APP_API: https://sandpitnet.radixdlt.com
-          VUE_APP_EXPLORER: https://sandpitnet-explorer.radixdlt.com
-          VUE_APP_FAUCET: https://sandpitnet-faucet.radixdlt.com/faucet/request
+          VUE_APP_NETWORK_NAME: mainnet
+          VUE_APP_EXPLORER: https://explorer.radixdlt.com
           APPLE_ID: ${{ secrets.APPLE_ID }}
           APPLE_ID_PASSWORD: ${{ secrets.APPLE_ID_PASSWORD }}
         with:

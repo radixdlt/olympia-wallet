@@ -59,6 +59,7 @@ import { useI18n } from 'vue-i18n'
 import { ref } from '@nopr3d/vue-next-rx'
 import { filter } from 'rxjs/operators'
 import { resetStore } from '@/actions/vue/data-store'
+import { radixConnection } from '@/helpers/network'
 
 const CreateWallet = defineComponent({
   components: {
@@ -84,9 +85,7 @@ const CreateWallet = defineComponent({
 
     const enterPasscodeComponent = ref(null)
 
-    const radix = Radix
-      .create({ network: Network.MAINNET })
-      .connect(process.env.VUE_APP_API || 'https://mainnet.radixdlt.com')
+    const radix = radixConnection()
     const subs = new Subscription()
 
     radix.errors

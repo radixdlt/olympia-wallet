@@ -98,6 +98,7 @@ import { initWallet, storePin } from '@/actions/vue/create-wallet'
 import { useStore } from '@/store'
 import { ref } from '@nopr3d/vue-next-rx'
 import { saveDerivedAccountsIndex } from '@/actions/vue/data-store'
+import { network } from '@/helpers/network'
 
 const CreateWallet = defineComponent({
   components: {
@@ -113,10 +114,11 @@ const CreateWallet = defineComponent({
     const mnemonic: MnemomicT = Mnemonic.generateNew()
     const step = ref(0)
     const passcode = ref('')
+    const activeNetwork = network()
 
     // Create wallet with password and path to keystore
     const createWallet = (pass: string) => {
-      initWallet(mnemonic, pass, Network.MAINNET)
+      initWallet(mnemonic, pass, activeNetwork.network)
         .then((wallet: WalletT) => {
           store.commit('setWallet', wallet)
           saveDerivedAccountsIndex(0)

@@ -82,6 +82,7 @@ import ClickToCopy from '@/components/ClickToCopy.vue'
 import { Subscription } from 'rxjs'
 import { formatValidatorAddressForDisplay } from '@/helpers/formatter'
 import { Position } from '@/store/_types'
+import { radixConnection } from '@/helpers/network'
 
 const StakeListItem = defineComponent({
   components: {
@@ -102,11 +103,7 @@ const StakeListItem = defineComponent({
 
   setup (props) {
     const validator: Ref<Validator | null> = ref(null)
-
-    const radix = Radix
-      .create({ network: Network.MAINNET })
-      .connect(process.env.VUE_APP_API || 'https://mainnet.radixdlt.com')
-
+    const radix = radixConnection()
     const subs = new Subscription()
 
     subs
