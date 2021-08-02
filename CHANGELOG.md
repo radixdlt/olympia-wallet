@@ -1,15 +1,29 @@
 # Changelog
 
-## [1.0.0](https://www.github.com/radixdlt/olympia-wallet/compare/v0.14.12...v1.0.0) (2021-07-28)
+### [1.0.1](https://www.github.com/radixdlt/olympia-wallet/compare/v1.0.0...v1.0.1) (2021-07-28)
+
+
+### Dependencies
+
+* remove a betanet tag we somehow missed. ([#262](https://www.github.com/radixdlt/olympia-wallet/issues/262)) ([826f4d3](https://www.github.com/radixdlt/olympia-wallet/commit/826f4d3482c44754722ce33de3830c07910b31a4))
+
+## [1.0.0](https://www.github.com/radixdlt/olympia-wallet/compare/v0.14.13...v1.0.0) (2021-07-28)
 
 
 ### ⚠ BREAKING CHANGES
 
-* prepare for maininet (#250)
+* Release 1.0.0 (#260)
 
 ### Features
 
-* prepare for maininet ([#250](https://www.github.com/radixdlt/olympia-wallet/issues/250)) ([6631c02](https://www.github.com/radixdlt/olympia-wallet/commit/6631c02b52edcbcac7a98b7cb576916ac1e8cc68))
+* Release 1.0.0 ([#260](https://www.github.com/radixdlt/olympia-wallet/issues/260)) ([c3261ed](https://www.github.com/radixdlt/olympia-wallet/commit/c3261ed95e17dd9f118ce5cf172c06754880de2d))
+
+### [0.14.13](https://www.github.com/radixdlt/olympia-wallet/compare/v0.14.12...v0.14.13) (2021-07-28)
+
+
+### Dependencies
+
+* prepare for mainnet ([230fcca](https://www.github.com/radixdlt/olympia-wallet/commit/230fccaa2e10c7a8ab3f417186d32f09921e4fa1))
 
 ### [0.14.12](https://www.github.com/radixdlt/olympia-wallet/compare/v0.14.11...v0.14.12) (2021-07-27)
 

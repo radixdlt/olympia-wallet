@@ -207,6 +207,7 @@ import { sendAPDU } from '@/actions/vue/hardware-wallet'
 import { HardwareWalletLedger } from '@radixdlt/hardware-ledger'
 import WalletLedgerVerifyAddressModal from '@/views/Wallet/WalletLedgerVerifyAddressModal.vue'
 import WalletLedgerDeleteModal from '@/views/Wallet/WalletLedgerDeleteModal.vue'
+import { radixConnection } from '@/helpers/network'
 
 const PAGE_SIZE = 50
 
@@ -246,6 +247,7 @@ const WalletIndex = defineComponent({
     const activeAddress: Ref<AccountAddressT | null> = ref(null)
     const activeStakes: Ref<StakePositions | null> = ref(null)
     const activeUnstakes: Ref<UnstakePositions | null> = ref(null)
+    const activeTransaction: Ref<TransactionTracking | null> = ref(null)
     const accounts: Ref<AccountsT | null> = ref(null)
     const tokenBalances: Ref<TokenBalances | null> = ref(null)
     const transactionHistory: Ref<TransactionHistory> = ref({ transactions: [] })
@@ -312,9 +314,7 @@ const WalletIndex = defineComponent({
     // Return home if wallet is undefined
     if (!store.state.wallet) router.push('/')
 
-    const radix = Radix
-      .create({ network: Network.STOKENET })
-      .connect(process.env.VUE_APP_API || 'https://stokenet.radixdlt.com')
+    const radix = radixConnection()
       .withWallet(store.state.wallet)
       .withTokenBalanceFetchTrigger(interval(5 * 1_000))
       .withStakingFetchTrigger(interval(5 * 1_000))
@@ -426,6 +426,7 @@ const WalletIndex = defineComponent({
       .subscribe((tokenBalancesRes: TokenBalances) => { tokenBalances.value = tokenBalancesRes }))
 
     const confirmAndExecuteTransaction = (transactionTracking: TransactionTracking) => {
+      activeTransaction.value = transactionTracking
       const transactionDidComplete = new BehaviorSubject<boolean>(false)
       userDidCancel.next(false)
       transactionState.value = 'building'
@@ -458,7 +459,7 @@ const WalletIndex = defineComponent({
           const errorEvent: TransactionStateError = event as TransactionStateError
           userDidCancel.next(true)
           shouldShowConfirmation.value = false
-          const isLedgerConnectedError = errorEvent.error.message.includes('Failed to sign tx with Ledger')
+          const isLedgerConnectedError = errorEvent.error.message && errorEvent.error.message.includes('Failed to sign tx with Ledger')
           if (isLedgerConnectedError) {
             ledgerTxError.value = errorEvent.error
             hardwareAccount.value = null
@@ -467,11 +468,11 @@ const WalletIndex = defineComponent({
             walletTransactionComponent.value.setErrors({
               amount: null
             })
-          } else if (view.value === 'transaction' && !ledgerTxError) {
+          } else if (view.value === 'transaction') {
             walletTransactionComponent.value.setErrors({
               amount: t('validations.transactionFailed')
             })
-          } else if (walletStakingComponent.value.$data.activeForm === 'stake') {
+          } else if (walletStakingComponent.value && walletStakingComponent.value.$data.activeForm === 'stake') {
             walletStakingComponent.value.setErrors({
               amount: t('validations.stakeFailed')
             })
@@ -504,7 +505,7 @@ const WalletIndex = defineComponent({
         })
       subs.add(trackingSubmittedEvents)
 
-      // Log transaction completed/error to console for now
+      // When a transaction has been completed, remove it from pending transactions
       subs.add(transactionTracking.completion
         .subscribe({
           next: (txnID: TransactionIdentifierT) => {
@@ -516,23 +517,6 @@ const WalletIndex = defineComponent({
             view.value = 'history'
             hasCalculatedFee.value = false
             transactionDidComplete.next(true)
-          },
-          error: () => {
-            userDidCancel.next(true)
-            shouldShowConfirmation.value = false
-            if (view.value === 'transaction' && !ledgerTxError) {
-              walletTransactionComponent.value.setErrors({
-                amount: t('validations.transactionFailed')
-              })
-            } else if (walletStakingComponent.value.$data.activeForm === 'stake') {
-              walletStakingComponent.value.setErrors({
-                amount: t('validations.stakeFailed')
-              })
-            } else {
-              walletStakingComponent.value.setErrors({
-                amount: t('validations.unstakeFailed')
-              })
-            }
           }
         }))
 
