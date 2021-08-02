@@ -113,12 +113,12 @@
             />
           </div>
           <div class="flex justify-end items-center">
-            <button
-              class="text-rGrayDark py-3 px-4 text-base mx-auto mr-4"
+            <div
+              class="text-rGrayDark py-3 px-4 text-base mx-auto mr-4 cursor-pointer"
               @click="canCancel && $emit('cancel')"
             >
               {{ $t('transaction.cancelButton') }}
-            </button>
+            </div>
 
             <ButtonSubmit class="w-44 py-3" :disabled="disableSubmit" :small="true" >
               {{ $t('transaction.confirmButton') }}
