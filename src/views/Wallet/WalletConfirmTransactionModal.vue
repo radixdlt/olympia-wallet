@@ -203,6 +203,14 @@ const WalletConfirmTransactionModal = defineComponent({
     }
   },
 
+  mounted () {
+    window.addEventListener('keydown', this.escapeListener)
+  },
+
+  unmounted () {
+    window.removeEventListener('keydown', this.escapeListener)
+  },
+
   computed: {
     toContent (): string {
       if (this.stakeInput) {
@@ -256,6 +264,11 @@ const WalletConfirmTransactionModal = defineComponent({
     },
     handleUnfinishedPin () {
       this.isValidPin = false
+    },
+    escapeListener (event: KeyboardEvent) {
+      if (event.key === 'Escape') {
+        this.$emit('cancel')
+      }
     }
   },
 
