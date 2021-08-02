@@ -247,6 +247,7 @@ const WalletIndex = defineComponent({
     const activeAddress: Ref<AccountAddressT | null> = ref(null)
     const activeStakes: Ref<StakePositions | null> = ref(null)
     const activeUnstakes: Ref<UnstakePositions | null> = ref(null)
+    const activeTransaction: Ref<TransactionTracking | null> = ref(null)
     const accounts: Ref<AccountsT | null> = ref(null)
     const tokenBalances: Ref<TokenBalances | null> = ref(null)
     const transactionHistory: Ref<TransactionHistory> = ref({ transactions: [] })
@@ -425,6 +426,7 @@ const WalletIndex = defineComponent({
       .subscribe((tokenBalancesRes: TokenBalances) => { tokenBalances.value = tokenBalancesRes }))
 
     const confirmAndExecuteTransaction = (transactionTracking: TransactionTracking) => {
+      activeTransaction.value = transactionTracking
       const transactionDidComplete = new BehaviorSubject<boolean>(false)
       userDidCancel.next(false)
       transactionState.value = 'building'
@@ -503,7 +505,7 @@ const WalletIndex = defineComponent({
         })
       subs.add(trackingSubmittedEvents)
 
-      // Log transaction completed/error to console for now
+      // When a transaction has been completed, remove it from pending transactions
       subs.add(transactionTracking.completion
         .subscribe({
           next: (txnID: TransactionIdentifierT) => {
@@ -515,23 +517,6 @@ const WalletIndex = defineComponent({
             view.value = 'history'
             hasCalculatedFee.value = false
             transactionDidComplete.next(true)
-          },
-          error: () => {
-            userDidCancel.next(true)
-            shouldShowConfirmation.value = false
-            if (view.value === 'transaction') {
-              walletTransactionComponent.value.setErrors({
-                amount: t('validations.transactionFailed')
-              })
-            } else if (walletStakingComponent.value && walletStakingComponent.value.$data.activeForm === 'stake') {
-              walletStakingComponent.value.setErrors({
-                amount: t('validations.stakeFailed')
-              })
-            } else {
-              walletStakingComponent.value.setErrors({
-                amount: t('validations.unstakeFailed')
-              })
-            }
           }
         }))
 
