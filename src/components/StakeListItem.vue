@@ -12,7 +12,11 @@
                 <span class="bg-rRed w-2 h-2 rounded-full"></span>
                 <span class="text-rRed ml-2">unregistered</span>
               </div>
-              <a class="text-rBlack hover:text-rBlue" v-if="validator.infoURL" :href="validator.infoURL" target="__blank"> {{ validator.name }} </a>
+              <a class="relative text-rBlack hover:text-rBlue group" v-if="validator.infoURL" :href="validator.infoURL" target="__blank"> {{ validator.name }}
+              <div class="absolute invisible group-hover:visible -mt-full bg-rGrayLightest text-rBlack bottom-full text-xs p-1 rounded-sm shadow border border-solid border-rGrayLight w-40">
+                {{$t('staking.validatorWarning')}} {{validator.infoURL.toString()}}
+              </div>
+              </a>
               <span v-else>{{validator.name}}</span>
             </div>
           </div>
