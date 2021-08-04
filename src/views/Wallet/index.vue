@@ -238,8 +238,8 @@ const WalletIndex = defineComponent({
   },
 
   setup (props) {
-    const store = useStore()
     const router = useRouter()
+    const store = useStore()
     const { t } = useI18n({ useScope: 'global' })
 
     const activeAccount: Ref<AccountT | null> = ref(null)
@@ -697,6 +697,10 @@ const WalletIndex = defineComponent({
     }
 
     onUnmounted(() => subs.unsubscribe())
+
+    window.ipcRenderer.on('resetToHome', () => {
+      router.push({ name: 'Home', query: { modal: '' } })
+    })
 
     return {
       // data
