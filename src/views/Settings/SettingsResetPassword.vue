@@ -79,15 +79,17 @@ const SettingsResetPassword = defineComponent({
     FormErrorMessage
   },
 
-  setup () {
+  async setup () {
     const { errors, values, meta, setErrors, resetForm } = useForm<PasswordForm>()
     const store = useStore()
     const subs = new Subscription()
     const isLoading = ref(false)
     const updatedPassword: Ref<boolean> = ref(false)
 
-    const radix = radixConnection()
-      .withWallet(store.state.wallet)
+    onUnmounted(() => subs.unsubscribe())
+
+    const radix = await radixConnection()
+    radix.__withWallet(store.state.wallet)
 
     const handleResetPassword = (newPassword: string) => {
       const getMnemonicForPassword = radix.revealMnemonic()
@@ -103,8 +105,6 @@ const SettingsResetPassword = defineComponent({
 
       subs.add(getMnemonicForPassword)
     }
-
-    onUnmounted(() => subs.unsubscribe())
 
     return {
       errors,

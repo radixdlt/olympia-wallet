@@ -237,7 +237,7 @@ const WalletIndex = defineComponent({
     initialSidebar: String
   },
 
-  setup (props) {
+  async setup (props) {
     const router = useRouter()
     const store = useStore()
     const { t } = useI18n({ useScope: 'global' })
@@ -305,6 +305,8 @@ const WalletIndex = defineComponent({
       if (props.initialSidebar) sidebar.value = props.initialSidebar
     })
 
+    onUnmounted(() => subs.unsubscribe())
+
     const startLoading = () => {
       loadingBalances.value = true
       loadingHistory.value = true
@@ -314,8 +316,8 @@ const WalletIndex = defineComponent({
     // Return home if wallet is undefined
     if (!store.state.wallet) router.push('/')
 
-    const radix = radixConnection()
-      .withWallet(store.state.wallet)
+    const radix = await radixConnection()
+    radix.__withWallet(store.state.wallet)
       .withTokenBalanceFetchTrigger(interval(5 * 1_000))
       .withStakingFetchTrigger(interval(5 * 1_000))
 
@@ -696,9 +698,8 @@ const WalletIndex = defineComponent({
       hardwareAccount.value = null
     }
 
-    onUnmounted(() => subs.unsubscribe())
-
     window.ipcRenderer.on('resetToHome', () => {
+      radix.__reset()
       router.push({ name: 'Home', query: { modal: '' } })
     })
 

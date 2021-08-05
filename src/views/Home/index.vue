@@ -45,7 +45,7 @@
 
 <script lang="ts">
 import { defineComponent, reactive } from 'vue'
-import { Radix, ErrorNotification, WalletErrorCause, WalletT, Network } from '@radixdlt/application'
+import { ErrorNotification, WalletErrorCause, WalletT } from '@radixdlt/application'
 import { hasKeystore, touchKeystore } from '@/actions/vue/create-wallet'
 import { useStore } from '@/store'
 import HomeCreateAndRestore from './HomeCreateAndRestore.vue'
@@ -77,7 +77,7 @@ const CreateWallet = defineComponent({
     }
   },
 
-  setup () {
+  async setup () {
     const hasWallet = reactive({ value: null as boolean | null })
     const store = useStore()
     const router = useRouter()
@@ -85,7 +85,7 @@ const CreateWallet = defineComponent({
 
     const enterPasscodeComponent = ref(null)
 
-    const radix = radixConnection()
+    const radix = await radixConnection()
     const subs = new Subscription()
 
     radix.errors

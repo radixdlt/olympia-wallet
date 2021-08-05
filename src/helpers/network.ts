@@ -1,4 +1,4 @@
-import { Network, Radix, HRP } from '@radixdlt/application'
+import { Network, Radix, HRP, RadixT } from '@radixdlt/application'
 
 type ChosenNetworkT = {
   network: Network
@@ -27,9 +27,9 @@ export const network = (): ChosenNetworkT => {
   return response
 }
 
-export const radixConnection = () => {
+export const radixConnection = async (): Promise<RadixT> => {
   const activeNetwork = network()
-  return Radix
-    .create({ network: activeNetwork.network })
-    .connect(activeNetwork.networkURL)
+  const radix = Radix.create()
+  await radix.connect(activeNetwork.networkURL)
+  return radix
 }

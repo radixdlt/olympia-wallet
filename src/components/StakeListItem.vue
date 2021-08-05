@@ -101,9 +101,9 @@ const StakeListItem = defineComponent({
     }
   },
 
-  setup (props) {
+  async setup (props) {
     const validator: Ref<Validator | null> = ref(null)
-    const radix = radixConnection()
+    const radix = await radixConnection()
     const subs = new Subscription()
 
     subs
