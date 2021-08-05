@@ -16,6 +16,7 @@
           rules="required"
           data-ci="create-wallet-passcode-input"
           id="password"
+          :validateOnInput="true"
         />
       </div>
 

@@ -15,6 +15,7 @@
         rules="required"
         :label="$t('settings.currentPasswordLabel')"
         data-ci="create-wallet-passcode-input"
+        :validateOnInput="true"
       />
       <FormErrorMessage name="currentPassword" />
     </div>
@@ -27,6 +28,7 @@
         :placeholder="$t('settings.newPasswordLabel')"
         rules="required"
         data-ci="create-wallet-passcode-input"
+        :validateOnInput="true"
       />
       <FormErrorMessage name="password" />
     </div>
@@ -39,6 +41,7 @@
         :placeholder="$t('settings.confirmPasswordLabel')"
         rules="required|confirmed:@password"
         data-ci="create-wallet-confirm-input"
+        :validateOnInput="true"
       />
       <FormErrorMessage name="confirmation" />
     </div>

@@ -42,6 +42,7 @@
           :placeholder="$t('settings.passwordPlaceholder')"
           rules="required"
           data-ci="create-wallet-passcode-input"
+          :validateOnInput="true"
           />
           <FormErrorMessage name="password" />
           <ButtonSubmit

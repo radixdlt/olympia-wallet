@@ -25,7 +25,7 @@
 
 <script lang="ts">
 import { defineComponent, onUnmounted } from 'vue'
-import { Radix, mockedAPI, MnemomicT, Network } from '@radixdlt/application'
+import { MnemomicT } from '@radixdlt/application'
 import { combineLatest, Subject, Subscription } from 'rxjs'
 import TabsTab from '@/components/TabsTab.vue'
 import TabsContent from '@/components/TabsContent.vue'

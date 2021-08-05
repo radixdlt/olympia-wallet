@@ -15,6 +15,7 @@
       :placeholder="$t('settings.passwordRequiredLabel')"
       rules="required"
       data-ci="create-wallet-passcode-input"
+      :validateOnInput="true"
       @blur="activePin = 1"
       @click="activePin = 0"
     />
