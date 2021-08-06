@@ -10,6 +10,9 @@ contextBridge.exposeInMainWorld('ipcRenderer', {
   send: (channel: string, data: string[]) => {
     ipcRenderer.send(channel, data)
   },
+  on: (channel: string, listener: any) => {
+    ipcRenderer.on(channel, listener)
+  },
   invoke: (channel: string, args: string[]) =>
     ipcRenderer.invoke(channel, args)
 })

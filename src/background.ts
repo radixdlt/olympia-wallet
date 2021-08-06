@@ -18,8 +18,10 @@ import {
 } from './actions/electron/data-store'
 import { sendAPDU } from './actions/electron/hardware-wallet'
 import menu from './menu'
+import electron from 'electron'
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
+let win: BrowserWindow
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
@@ -30,7 +32,7 @@ async function createWindow () {
   // Create the browser window.
 
   contextMenu({})
-  const win = new BrowserWindow({
+  win = new BrowserWindow({
     width: 1200,
     height: 650,
     maxWidth: 1300,
@@ -81,6 +83,11 @@ app.on('activate', () => {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', async () => {
+
+  electron.powerMonitor.on('suspend', () => {
+    win.webContents.send('resetToHome')
+  })
+
   if (isDevelopment && !process.env.IS_TEST) {
     // Install Vue Devtools
     try {

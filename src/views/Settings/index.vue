@@ -45,10 +45,13 @@ const SettingsIndex = defineComponent({
     TabsTab
   },
 
-  setup () {
+  async setup () {
     const store = useStore()
-    const radix = radixConnection()
-      .withWallet(store.state.wallet)
+
+    onUnmounted(() => subs.unsubscribe())
+
+    const radix = await radixConnection()
+    radix.__withWallet(store.state.wallet)
 
     const mnemonic = ref(null)
     const userRequestedMnemonic = new Subject<boolean>()
@@ -65,8 +68,6 @@ const SettingsIndex = defineComponent({
     const handleAccessMnemonic = () => userRequestedMnemonic.next(true)
 
     const unsetMnemonic = () => userRequestedMnemonic.next(false)
-
-    onUnmounted(() => subs.unsubscribe())
 
     return {
       mnemonic,
