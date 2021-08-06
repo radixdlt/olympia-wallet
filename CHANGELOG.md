@@ -1,5 +1,28 @@
 # Changelog
 
+## [1.1.0](https://www.github.com/radixdlt/olympia-wallet/compare/v1.0.1...v1.1.0) (2021-08-06)
+
+
+### Features
+
+* On suspend, stop polling and send user home ([#271](https://www.github.com/radixdlt/olympia-wallet/issues/271)) ([9997aca](https://www.github.com/radixdlt/olympia-wallet/commit/9997aca994cbf233f19e3282239888fce55b6102))
+* The confirmation modal should submit on Enter, and Cancel on Escape. ([#268](https://www.github.com/radixdlt/olympia-wallet/issues/268)) ([1860a9c](https://www.github.com/radixdlt/olympia-wallet/commit/1860a9ca6bbb1fd76e9bdbdd30c295cddfff5c37))
+
+
+### Bug Fixes
+
+* prevent error on send screen when no balances ([#276](https://www.github.com/radixdlt/olympia-wallet/issues/276)) ([b9831d9](https://www.github.com/radixdlt/olympia-wallet/commit/b9831d97c015afdd349a9f38cf1cc12dfc44f4f9))
+* Remove error handling for the completion event on transaction tracking ([584a733](https://www.github.com/radixdlt/olympia-wallet/commit/584a733e6210ef4bfb86f36a2c50efbe0fb5b746))
+* Transaction Error Handling Regression ([#264](https://www.github.com/radixdlt/olympia-wallet/issues/264)) ([806d26e](https://www.github.com/radixdlt/olympia-wallet/commit/806d26ed6c28fddd1387f7b4c9129199e3fe3557))
+* validate network addresses for active network ([#267](https://www.github.com/radixdlt/olympia-wallet/issues/267)) ([0fe7bb7](https://www.github.com/radixdlt/olympia-wallet/commit/0fe7bb7dcb44a52840b9efda2418ae4bb0543e9c))
+* Validate password input when pasting string ([#272](https://www.github.com/radixdlt/olympia-wallet/issues/272)) ([e03bc08](https://www.github.com/radixdlt/olympia-wallet/commit/e03bc08a9d3fc903363a9211969d7ead37c6b902))
+
+
+### Dependencies
+
+* add txhistory retry ([#274](https://www.github.com/radixdlt/olympia-wallet/issues/274)) ([8c4d541](https://www.github.com/radixdlt/olympia-wallet/commit/8c4d54195e169a7668477119c2283dea43596f0f))
+* improve how we handle network selection ([#266](https://www.github.com/radixdlt/olympia-wallet/issues/266)) ([3cbc2f7](https://www.github.com/radixdlt/olympia-wallet/commit/3cbc2f7b6ad7bdb89034b00a55e86b60c7c5dd53))
+
 ### [1.0.1](https://www.github.com/radixdlt/olympia-wallet/compare/v1.0.0...v1.0.1) (2021-07-28)
 
 
