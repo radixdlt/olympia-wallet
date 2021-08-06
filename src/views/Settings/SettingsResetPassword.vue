@@ -67,7 +67,7 @@ import { touchKeystore, initWallet } from '@/actions/vue/create-wallet'
 import FormErrorMessage from '@/components/FormErrorMessage.vue'
 import FormField from '@/components/FormField.vue'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
-import { radixConnection } from '@/helpers/network'
+import { radixConnection, setNetwork } from '@/helpers/network'
 
 interface PasswordForm {
   currentPassword: string;
@@ -91,7 +91,8 @@ const SettingsResetPassword = defineComponent({
 
     onUnmounted(() => subs.unsubscribe())
 
-    const radix = await radixConnection()
+    let radix = await radixConnection()
+    radix = await setNetwork(radix, process.env.VUE_APP_NETWORK_NAME as Network)
     radix.__withWallet(store.state.wallet)
 
     const handleResetPassword = (newPassword: string) => {

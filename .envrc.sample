@@ -1,5 +1,5 @@
 export NODE_TLS_REJECT_UNAUTHORIZED=1
-export VUE_APP_NETWORK_NAME=mainnet
+export VUE_APP_NETWORK_NAME=MAINNET
 export VUE_APP_EXPLORER=https://explorer.radixdlt.com
 export VUE_APP_FAUCET=https://stokenet-faucet.radixdlt.com
 export APPLE_ID=
