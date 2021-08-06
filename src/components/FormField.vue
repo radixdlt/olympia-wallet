@@ -7,6 +7,7 @@
     :placeholder="placeholder"
     :rules="rules"
     :data-ci="dataCi"
+    :validateOnInput="validateOnInput"
   ></Field>
 </template>
 
@@ -43,6 +44,11 @@ const FormField = defineComponent({
     label: {
       type: String,
       required: false
+    },
+    validateOnInput: {
+      type: Boolean,
+      required: false,
+      default: false
     }
   }
 })
