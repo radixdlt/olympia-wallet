@@ -193,7 +193,7 @@ import WalletLoading from './WalletLoading.vue'
 import AccountEditName from '@/views/Account/AccountEditName.vue'
 import SettingsIndex from '@/views/Settings/index.vue'
 import WalletLedgerInteractionModal from '@/views/Wallet/WalletLedgerInteractionModal.vue'
-import { filter, mergeMap } from 'rxjs/operators'
+import { filter, mergeMap, retry } from 'rxjs/operators'
 import {
   getDerivedAccountsIndex,
   saveDerivedAccountsIndex,
@@ -409,7 +409,7 @@ const WalletIndex = defineComponent({
     subs.add(fetchTXHistoryTrigger
       .pipe(
         mergeMap(([params]: [TransactionHistoryOfKnownAddressRequestInput, number]) => {
-          return radix.transactionHistory(params)
+          return radix.transactionHistory(params).pipe(retry())
         })
       )
       .subscribe((history: TransactionHistory) => {
