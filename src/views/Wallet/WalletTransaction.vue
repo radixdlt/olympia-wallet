@@ -156,6 +156,9 @@ const WalletTransaction = defineComponent({
 
     // Set XRD as default and move to top of list of options. Ensure native token subscription has returned before doing so
     const setXRDByDefault = (nativeToken: Token) => {
+      if (props.tokenBalances.length === 0) {
+        return
+      }
       const nativeTokenBalance: TokenBalance | undefined = props.tokenBalances.find((tb: TokenBalance) => tb.token.rri.equals(nativeToken.rri))
       currency.value = nativeTokenBalance ? nativeTokenBalance.token.name : props.tokenBalances[0].token.name
 
