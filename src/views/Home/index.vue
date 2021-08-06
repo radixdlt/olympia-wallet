@@ -45,7 +45,7 @@
 
 <script lang="ts">
 import { defineComponent, reactive, ref, onBeforeMount } from 'vue'
-import { ErrorNotification, WalletErrorCause, WalletT } from '@radixdlt/application'
+import { WalletErrorCause, WalletT, Network } from '@radixdlt/application'
 import { hasKeystore, touchKeystore } from '@/actions/vue/create-wallet'
 import { useStore } from '@/store'
 import HomeCreateAndRestore from './HomeCreateAndRestore.vue'
@@ -59,7 +59,7 @@ import { useI18n } from 'vue-i18n'
 import { ref as rxRef } from '@nopr3d/vue-next-rx'
 import { filter } from 'rxjs/operators'
 import { resetStore } from '@/actions/vue/data-store'
-import { radixConnection } from '@/helpers/network'
+import { radixConnection, setNetwork } from '@/helpers/network'
 
 const CreateWallet = defineComponent({
   components: {
@@ -91,11 +91,12 @@ const CreateWallet = defineComponent({
 
     const enterPasscodeComponent = rxRef(null)
 
-    const radix = await radixConnection()
+    let radix = await radixConnection()
+    radix = await setNetwork(radix, process.env.VUE_APP_NETWORK_NAME as Network)
     const subs = new Subscription()
 
     radix.errors
-      .pipe(filter((errorNotification: ErrorNotification) => errorNotification.cause === WalletErrorCause.LOAD_KEYSTORE_FAILED))
+      .pipe(filter(errorNotification => errorNotification.cause === WalletErrorCause.LOAD_KEYSTORE_FAILED))
       .subscribe(
         () => {
           enterPasscodeComponent.value.setErrors({

@@ -1,10 +1,10 @@
 import { AccountAddress, AccountAddressT, Amount, AmountT, Token, ValidatorAddress, ValidatorAddressT } from '@radixdlt/application'
 import BigNumber from 'bignumber.js'
-import { network } from '@/helpers/network'
+import { getCurrentNetwork, network } from '@/helpers/network'
 
 export const safelyUnwrapAddress = (addressString: string): AccountAddressT | null => {
   const recipientAddressResult = AccountAddress.fromUnsafe(addressString)
-  const activeNetwork = network()
+  const activeNetwork = getCurrentNetwork()
   const validAddressForActiveNetwork = addressString.startsWith(activeNetwork.preamble)
 
   if (recipientAddressResult.isErr() || !validAddressForActiveNetwork) {

@@ -183,7 +183,8 @@ import {
   MessageInTransaction,
   ExecutedTransaction,
   TransactionStateError,
-  HDPathRadix
+  HDPathRadix,
+  Network
 } from '@radixdlt/application'
 import { safelyUnwrapAmount } from '@/helpers/validateRadixTypes'
 import { ref } from '@nopr3d/vue-next-rx'
@@ -215,7 +216,7 @@ import { sendAPDU } from '@/actions/vue/hardware-wallet'
 import { HardwareWalletLedger } from '@radixdlt/hardware-ledger'
 import WalletLedgerVerifyAddressModal from '@/views/Wallet/WalletLedgerVerifyAddressModal.vue'
 import WalletLedgerDeleteModal from '@/views/Wallet/WalletLedgerDeleteModal.vue'
-import { radixConnection } from '@/helpers/network'
+import { radixConnection, setNetwork } from '@/helpers/network'
 
 const PAGE_SIZE = 50
 
@@ -326,8 +327,10 @@ const WalletIndex = defineComponent({
     // Return home if wallet is undefined
     if (!store.state.wallet) router.push('/')
 
-    const radix = await radixConnection()
+    let radix = await radixConnection()
+    radix = await setNetwork(radix, process.env.VUE_APP_NETWORK_NAME as Network)
     radix.__withWallet(store.state.wallet)
+    radix
       .withTokenBalanceFetchTrigger(interval(5 * 1_000))
       .withStakingFetchTrigger(interval(5 * 1_000))
 

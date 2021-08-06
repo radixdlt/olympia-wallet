@@ -25,7 +25,7 @@
 
 <script lang="ts">
 import { defineComponent, onUnmounted } from 'vue'
-import { MnemomicT } from '@radixdlt/application'
+import { MnemomicT, Network } from '@radixdlt/application'
 import { combineLatest, Subject, Subscription } from 'rxjs'
 import TabsTab from '@/components/TabsTab.vue'
 import TabsContent from '@/components/TabsContent.vue'
@@ -34,7 +34,7 @@ import SettingsRevealMnemonic from './SettingsRevealMnemonic.vue'
 import SettingsResetPassword from './SettingsResetPassword.vue'
 import { useStore } from '@/store'
 import { ref } from '@nopr3d/vue-next-rx'
-import { radixConnection } from '@/helpers/network'
+import { radixConnection, setNetwork } from '@/helpers/network'
 
 const SettingsIndex = defineComponent({
   components: {
@@ -46,11 +46,11 @@ const SettingsIndex = defineComponent({
   },
 
   async setup () {
-    const store = useStore()
-
     onUnmounted(() => subs.unsubscribe())
 
-    const radix = await radixConnection()
+    const store = useStore()
+    let radix = await radixConnection()
+    radix = await setNetwork(radix, process.env.VUE_APP_NETWORK_NAME as Network)
     radix.__withWallet(store.state.wallet)
 
     const mnemonic = ref(null)
