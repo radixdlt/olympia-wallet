@@ -48,7 +48,6 @@ const SettingsIndex = defineComponent({
   setup () {
     const store = useStore()
     const radix = radixConnection()
-      .withWallet(store.state.wallet)
 
     const mnemonic = ref(null)
     const userRequestedMnemonic = new Subject<boolean>()

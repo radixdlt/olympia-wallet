@@ -45,7 +45,7 @@
 
 <script lang="ts">
 import { defineComponent, reactive } from 'vue'
-import { Radix, ErrorNotification, WalletErrorCause, WalletT, Network } from '@radixdlt/application'
+import { Radix, WalletErrorCause, WalletT, Network } from '@radixdlt/application'
 import { hasKeystore, touchKeystore } from '@/actions/vue/create-wallet'
 import { useStore } from '@/store'
 import HomeCreateAndRestore from './HomeCreateAndRestore.vue'
@@ -89,7 +89,7 @@ const CreateWallet = defineComponent({
     const subs = new Subscription()
 
     radix.errors
-      .pipe(filter((errorNotification: ErrorNotification) => errorNotification.cause === WalletErrorCause.LOAD_KEYSTORE_FAILED))
+      .pipe(filter(errorNotification => errorNotification.cause === WalletErrorCause.LOAD_KEYSTORE_FAILED))
       .subscribe(
         () => {
           enterPasscodeComponent.value.setErrors({

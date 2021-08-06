@@ -1,4 +1,4 @@
-import { Network, Radix, HRP } from '@radixdlt/application'
+import { Network, Radix, HRP, RadixT } from '@radixdlt/application'
 
 type ChosenNetworkT = {
   network: Network
@@ -6,9 +6,10 @@ type ChosenNetworkT = {
   preamble: string
 }
 
-export const network = (): ChosenNetworkT => {
+let currentNetwork: ChosenNetworkT
+
+export const network = (networkName: 'stokenet' | 'mainnet'): ChosenNetworkT => {
   let response: ChosenNetworkT
-  const networkName = process.env.VUE_APP_NETWORK_NAME
   if (networkName === 'stokenet') {
     response = {
       network: Network.STOKENET,
@@ -22,14 +23,21 @@ export const network = (): ChosenNetworkT => {
       preamble: HRP.MAINNET.account
     }
   } else {
-    throw new Error('Invalid Network Name Provided')
+    throw new Error(`Invalid Network Name ${networkName} Provided`)
   }
+  currentNetwork = response
   return response
 }
 
-export const radixConnection = () => {
-  const activeNetwork = network()
-  return Radix
-    .create({ network: activeNetwork.network })
-    .connect(activeNetwork.networkURL)
+const radix = Radix.create()
+
+export const radixConnection = () => radix
+
+export const getCurrentNetwork = () => currentNetwork
+
+export const setNetwork = async (name: 'stokenet' | 'mainnet') => {
+  await radix.connect(network(name).networkURL)
+  return radix
 }
+
+setNetwork(process.env.VUE_APP_NETWORK_NAME)

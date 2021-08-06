@@ -90,7 +90,6 @@ const SettingsResetPassword = defineComponent({
     const updatedPassword: Ref<boolean> = ref(false)
 
     const radix = radixConnection()
-      .withWallet(store.state.wallet)
 
     const handleResetPassword = (newPassword: string) => {
       const getMnemonicForPassword = radix.revealMnemonic()
