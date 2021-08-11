@@ -1,6 +1,6 @@
-import { Network, Radix, HRP, RadixT } from '@radixdlt/application'
+import { Network, Radix, RadixT, HRP } from '@radixdlt/application'
 
-type ChosenNetworkT = {
+export type ChosenNetworkT = {
   network: Network
   networkURL: string
   preamble: string
@@ -41,4 +41,25 @@ export const getCurrentNetwork = () => currentNetwork
 export const setNetwork = async (radix: RadixT, name: Network): Promise<RadixT> => {
   await radix.connect(network(name).networkURL)
   return radix
+}
+
+export const defaultNetworks: ChosenNetworkT[] = [
+  {
+    network: Network.STOKENET,
+    networkURL: 'https://stokenet.radixdlt.com',
+    preamble: HRP.STOKENET.account
+  },
+  {
+    network: Network.MAINNET,
+    networkURL: 'https://mainnet.radixdlt.com',
+    preamble: HRP.MAINNET.account
+  }
+]
+
+export const isDefaultNetwork = (network: ChosenNetworkT): boolean => {
+  return !!defaultNetworks.find((n: ChosenNetworkT) => n.networkURL === network.networkURL)
+}
+
+export const isCurrentNetwork = (network: ChosenNetworkT): boolean => {
+  return currentNetwork.networkURL === network.networkURL
 }

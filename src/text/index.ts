@@ -189,7 +189,10 @@ const messages = {
       passwordPlaceholder: 'password',
       accessSettingsButton: 'Access Settings',
       updatedPassword: 'You\'ve successfully updated your password.',
-      updatedPIN: 'You\'ve successfully updated your PIN.'
+      updatedPIN: 'You\'ve successfully updated your PIN.',
+      nodeDisclaimer: 'WRITE COPY',
+      nodeAddressLabel: 'Archive Node Address',
+      nodeNetworkLabel: 'Network'
     }
   }
 }
