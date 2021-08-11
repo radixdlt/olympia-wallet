@@ -5,6 +5,7 @@
         <tabs-tab :isActive="activeForm == 'password'" @click="() => handleClickTab('password')">Change Password</tabs-tab>
         <tabs-tab :isActive="activeForm == 'pin'" @click="() => handleClickTab('pin')">Change PIN</tabs-tab>
         <tabs-tab :isActive="activeForm == 'mnemonic'" @click="() => handleClickTab('mnemonic')">Reveal Seed Phrase</tabs-tab>
+        <tabs-tab :isActive="activeForm == 'nodes'" @click="() => handleClickTab('nodes')">Nodes</tabs-tab>
       </div>
       <tabs-content :leftTabIsActive="activeForm == 'password'">
         <settings-reset-password
@@ -17,6 +18,9 @@
           v-if="activeForm == 'mnemonic'"
           @clickAccessMnemonic="handleAccessMnemonic"
           :mnemonic="mnemonic"
+        />
+         <settings-select-node
+          v-if="activeForm == 'nodes'"
         />
       </tabs-content>
     </div>
@@ -32,6 +36,7 @@ import TabsContent from '@/components/TabsContent.vue'
 import SettingsResetPin from './SettingsResetPin.vue'
 import SettingsRevealMnemonic from './SettingsRevealMnemonic.vue'
 import SettingsResetPassword from './SettingsResetPassword.vue'
+import SettingsSelectNode from './SettingsSelectNode.vue'
 import { useStore } from '@/store'
 import { ref } from '@nopr3d/vue-next-rx'
 import { radixConnection, setNetwork } from '@/helpers/network'
@@ -41,6 +46,7 @@ const SettingsIndex = defineComponent({
     SettingsResetPassword,
     SettingsResetPin,
     SettingsRevealMnemonic,
+    SettingsSelectNode,
     TabsContent,
     TabsTab
   },
