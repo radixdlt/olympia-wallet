@@ -1,10 +1,10 @@
 <template>
-  <div class="w-60 px-5 py-8 flex flex-col">
-    <div class="flex">
+  <div class="w-60 pt-8 flex flex-col">
+    <div class="flex px-5">
       <img alt="Radix DLT Logo" src="../../assets/logo.svg" class="w-30 mb-10">
     </div>
 
-    <div class="flex flex-col text-white hover:text-rGreen transition-colors cursor-pointer mb-4" @click="$emit('open')">
+    <div class="flex flex-col text-white hover:text-rGreen transition-colors cursor-pointer mb-2 px-5" @click="$emit('open')">
       <div class="relative py-3">
         <account-list-item
           :account="activeAccount"
@@ -17,9 +17,9 @@
       </div>
     </div>
 
-    <div class="flex flex-col flex-1">
+    <div class="flex flex-col flex-1 px-5">
       <div
-        class="flex flex-row items-center my-5 cursor-pointer transition-opacity"
+        class="flex flex-row items-center my-4 cursor-pointer transition-opacity"
         :class="{ 'opacity-70': activeView !== 'overview' }"
         @click="$emit('setView', 'overview')"
       >
@@ -38,7 +38,7 @@
       </div>
 
       <div
-        class="flex flex-row items-center my-5 cursor-pointer transition-opacity"
+        class="flex flex-row items-center my-4 cursor-pointer transition-opacity"
         :class="{ 'opacity-70': activeView !== 'transaction' }"
         @click="$emit('setView', 'transaction')"
       >
@@ -52,7 +52,7 @@
       </div>
 
       <div
-        class="flex flex-row items-center my-5 cursor-pointer transition-opacity"
+        class="flex flex-row items-center my-4 cursor-pointer transition-opacity"
         :class="{ 'opacity-70': activeView !== 'staking' }"
         @click="$emit('setView', 'staking')"
       >
@@ -65,7 +65,7 @@
       </div>
 
       <div
-        class="flex flex-row items-center my-5 cursor-pointer transition-opacity"
+        class="flex flex-row items-center my-4 cursor-pointer transition-opacity"
         :class="{ 'opacity-70': activeView !== 'history' }"
         @click="$emit('setView', 'history')"
       >
@@ -78,7 +78,7 @@
       </div>
     </div>
 
-    <div class="flex flex-col">
+    <div class="flex flex-col px-5">
       <a
         href="https://learn.radixdlt.com/article/start-here-desktop-wallet-introduction"
         target="__blank"
@@ -93,7 +93,7 @@
       </a>
     </div>
 
-    <div class="flex flex-col">
+    <div class="flex flex-col px-5">
       <div
         class="flex flex-row items-center my-2 cursor-pointer transition-opacity"
         @click="$emit('setView', 'settings')"
@@ -106,6 +106,12 @@
         <div class="font-normal text-white">{{ $t('wallet.navSettings') }}</div>
       </div>
     </div>
+
+    <div class="bg-gradient-to-r from-rBlue to-rBlueDark w-60 mt-3">
+      <p class="text-white text-sm pt-3 pb-1 px-5"> <span class="opacity-80"> Version: </span> v1.0.1 </p>
+      <p class="text-white text-sm pb-3 pt-1 px-5"> <span class="opacity-80"> Network: </span> MAINNET </p>
+    </div>
+
   </div>
 </template>
 
