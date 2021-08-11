@@ -13,7 +13,7 @@
     </div>
 
     <account-list-item
-      v-for="(account, i) in accounts.all"
+      v-for="(account, i) in localAccounts"
       :key="i"
       :account="account"
       :activeAccount="activeAccount"
@@ -121,6 +121,12 @@ const WalletSidebarAccounts = defineComponent({
 
       const add:string = this.hardwareAddress
       return add.substring(0, 3) + '...' + add.substring(add.length - 9)
+    },
+
+    localAccounts (): AccountT[] {
+      return this.accounts.all.filter((account: AccountT) => {
+        return account.signingKey.isLocalHDSigningKey
+      })
     }
   },
 

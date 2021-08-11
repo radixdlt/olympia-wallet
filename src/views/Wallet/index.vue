@@ -175,8 +175,8 @@ import {
   TokenBalance,
   MessageInTransaction,
   ExecutedTransaction,
-  Network,
-  TransactionStateError
+  TransactionStateError,
+  HDPathRadix
 } from '@radixdlt/application'
 import { safelyUnwrapAmount } from '@/helpers/validateRadixTypes'
 import { ref } from '@nopr3d/vue-next-rx'
@@ -661,7 +661,9 @@ const WalletIndex = defineComponent({
       hardwareWalletError.value = null
       hardwareInteractionState.value = 'DERIVING'
       radix.deriveHWAccount({
-        keyDerivation: 'next',
+        keyDerivation: HDPathRadix.create({
+          address: { index: 0, isHardened: true }
+        }),
         hardwareWalletConnection: HardwareWalletLedger.create({
           send: sendAPDU
         }),
