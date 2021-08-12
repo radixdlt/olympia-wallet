@@ -13,9 +13,7 @@
                 <span class="text-rRed ml-2">unregistered</span>
               </div>
               <a class="relative text-rBlack hover:text-rBlue group" v-if="validator.infoURL" :href="validator.infoURL" target="__blank"> {{ validator.name }}
-              <div class="absolute invisible group-hover:visible -mt-full bg-rGrayLightest text-rBlack bottom-full text-xs p-1 rounded-sm shadow border border-solid border-rGrayLight w-60">
-                {{$t('staking.validatorWarning')}} {{validator.infoURL.toString()}}
-              </div>
+                <tooltip :descriptionText="$t('staking.validatorWarning') + '\n' + validator.infoURL.toString()" />
               </a>
               <span v-else>{{validator.name}}</span>
             </div>
@@ -87,11 +85,13 @@ import { Subscription } from 'rxjs'
 import { formatValidatorAddressForDisplay } from '@/helpers/formatter'
 import { Position } from '@/store/_types'
 import { radixConnection } from '@/helpers/network'
+import Tooltip from '@/components/Tooltip.vue'
 
 const StakeListItem = defineComponent({
   components: {
     BigAmount,
-    ClickToCopy
+    ClickToCopy,
+    Tooltip
   },
 
   props: {
