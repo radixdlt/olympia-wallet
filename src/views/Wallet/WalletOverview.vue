@@ -48,7 +48,11 @@
           :key="i"
           class="border border-rGray rounded-md  divide-rGray"
         >
-        <div class="flex justify-end">
+        <div class="flex flex-row py-1">
+          <div class="flex-1 flex flex-row items-center px-6 pt-3 overflow-x-auto">
+            <span class="text-sm text-rGrayDark">{{ tokenBalance.token.name }}</span>
+          </div>
+          <div>
           <a :href="createOtherTokenUrl(tokenBalance.token.rri.toString())" target="_blank" class="hover:text-rGreen transition-colors text-rGrayMed">
             <div class="rounded-full border border-solid border-rGray w-6 h-6 flex items-center justify-center">
               <svg width="8" height="8" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -57,11 +61,12 @@
               </svg>
             </div>
           </a>
+          </div>
         </div>
           <div class="flex flex-row py-1">
-            <div class="flex-1 flex flex-row items-center px-6 py-7 overflow-x-auto">
-              <big-amount :amount="tokenBalance.amount" class="text-2xl font-light mr-4 text-rBlack" />
-              <token-symbol>{{ tokenBalance.token.symbol.toUpperCase() }}</token-symbol>
+            <div class="flex-1 flex flex-row items-center px-6 py-3 overflow-x-auto">
+              <big-amount :amount="tokenBalance.amount" class="text-5xl font-light mr-4 text-rBlack" />
+              <token-symbol class="mt-3">{{ tokenBalance.token.symbol.toUpperCase() }}</token-symbol>
             </div>
           </div>
         </div>
