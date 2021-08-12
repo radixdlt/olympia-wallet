@@ -136,6 +136,13 @@
         @forgetHardwareWallet="deleteLocalHardwareAddress"
         @closeLedgerDeleteModal="showDeleteHWWalletPrompt = false"
       />
+      <wallet-error-modal
+        v-if="showLedgerAccountErrorModal"
+        @closeErrorModal="showLedgerAccountErrorModal = false"
+        :title="$t('errors.hardwareMismatchTitle')"
+        :copyOne="$t('errors.hardwareMismatchCopyOne')"
+        :copyTwo="$t('errors.hardwareMismatchCopyTwo')"
+      />
     </template>
     <template v-else>
       <wallet-loading />
@@ -193,6 +200,7 @@ import WalletLoading from './WalletLoading.vue'
 import AccountEditName from '@/views/Account/AccountEditName.vue'
 import SettingsIndex from '@/views/Settings/index.vue'
 import WalletLedgerInteractionModal from '@/views/Wallet/WalletLedgerInteractionModal.vue'
+import WalletErrorModal from '@/views/Wallet/WalletErrorModal.vue'
 import { filter, mergeMap, retry } from 'rxjs/operators'
 import {
   getDerivedAccountsIndex,
@@ -229,7 +237,8 @@ const WalletIndex = defineComponent({
     WalletLoading,
     WalletLedgerInteractionModal,
     WalletLedgerVerifyAddressModal,
-    WalletLedgerDeleteModal
+    WalletLedgerDeleteModal,
+    WalletErrorModal
   },
 
   props: {
@@ -298,6 +307,7 @@ const WalletIndex = defineComponent({
     const hardwareWalletError: Ref<Error | null> = ref(null)
     getHardwareWalletAddress().then(a => { hardwareAddress.value = a })
     const showDeleteHWWalletPrompt: Ref<boolean> = ref(false)
+    const showLedgerAccountErrorModal: Ref<boolean> = ref(false)
 
     // Set initial view if provided in props
     onBeforeMount(() => {
@@ -654,12 +664,18 @@ const WalletIndex = defineComponent({
     }
 
     const connectHardwareWallet = () => {
+      // if we already have a hardware account, we just switch to it.
       if (hardwareAccount.value) {
         switchAccount(hardwareAccount.value)
         return
       }
+      // If we don't have a hardware account, derive one.
+      // First, reset state.
       hardwareWalletError.value = null
       hardwareInteractionState.value = 'DERIVING'
+
+      // Derive the account
+      // Currently, we always derive the 0th index
       radix.deriveHWAccount({
         keyDerivation: HDPathRadix.create({
           address: { index: 0, isHardened: true }
@@ -667,19 +683,29 @@ const WalletIndex = defineComponent({
         hardwareWalletConnection: HardwareWalletLedger.create({
           send: sendAPDU
         }),
-        alsoSwitchTo: true,
+        alsoSwitchTo: false,
+        // only prompt to verify address if we don't have a hardware Address
         verificationPrompt: !hardwareAddress.value
       }).subscribe({
         next: (hwAccount: AccountT) => {
-          activeAccount.value = hwAccount
-          hardwareAccount.value = hwAccount
-          if (!hardwareAddress.value) {
-            saveHardwareWalletAddress(hwAccount.address.toString())
-            saveAccountName(hwAccount.address.toString(), 'Hardware Wallet')
-            hardwareAddress.value = hwAccount.address.toString()
+          // if the new hwAccount.address isn't equal to known hardwareAddress
+          // we need to abort, and show user an error
+          if (hardwareAddress.value && (hwAccount.address.toString() !== hardwareAddress.value)) {
+            showLedgerAccountErrorModal.value = true
+            hardwareInteractionState.value = ''
+          } else {
+            // otherwise load up the account and go!
+            switchAccount(hwAccount)
+            activeAccount.value = hwAccount
+            hardwareAccount.value = hwAccount
+            if (!hardwareAddress.value) {
+              saveHardwareWalletAddress(hwAccount.address.toString())
+              saveAccountName(hwAccount.address.toString(), 'Hardware Wallet')
+              hardwareAddress.value = hwAccount.address.toString()
+            }
+            sidebar.value = 'default'
+            hardwareInteractionState.value = ''
           }
-          sidebar.value = 'default'
-          hardwareInteractionState.value = ''
         },
         error: (err) => { hardwareWalletError.value = err }
       })
@@ -748,6 +774,7 @@ const WalletIndex = defineComponent({
       // boolean flags
       canGoNext,
       shouldShowConfirmation,
+      showLedgerAccountErrorModal,
 
       // methods
       switchAccount,

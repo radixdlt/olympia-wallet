@@ -190,6 +190,11 @@ const messages = {
       accessSettingsButton: 'Access Settings',
       updatedPassword: 'You\'ve successfully updated your password.',
       updatedPIN: 'You\'ve successfully updated your PIN.'
+    },
+    errors: {
+      hardwareMismatchTitle: 'Hardware Wallet Account Mismatch',
+      hardwareMismatchCopyOne: 'The account provided by the connected hardware wallet device does not match your current hardware wallet account address. Ensure you are using the same hardware wallet device.',
+      hardwareMismatchCopyTwo: 'If you would like to use a different hardware wallet device, please remove the existing hardware wallet account and add a new one with the desired device connected. You can always re-add a previous hardware wallet device account later.'
     }
   }
 }
