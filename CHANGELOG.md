@@ -1,5 +1,17 @@
 # Changelog
 
+### [1.1.1](https://www.github.com/radixdlt/olympia-wallet/compare/v1.1.0...v1.1.1) (2021-08-12)
+
+
+### Bug Fixes
+
+* Hardware Wallet account derivation ([#278](https://www.github.com/radixdlt/olympia-wallet/issues/278)) ([abd03d2](https://www.github.com/radixdlt/olympia-wallet/commit/abd03d259269ff5160679b89b9bdf08592c86d46))
+
+
+### Dependencies
+
+* show error when new hw address added ([#281](https://www.github.com/radixdlt/olympia-wallet/issues/281)) ([c5a1da8](https://www.github.com/radixdlt/olympia-wallet/commit/c5a1da83bbdabf5cb6bfb028bcbe67aa951fd954))
+
 ## [1.1.0](https://www.github.com/radixdlt/olympia-wallet/compare/v1.0.1...v1.1.0) (2021-08-06)
 
 
