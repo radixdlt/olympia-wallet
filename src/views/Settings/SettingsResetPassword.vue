@@ -56,7 +56,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onUnmounted, Ref } from 'vue'
+import { defineComponent, onUnmounted, PropType, Ref } from 'vue'
 import { useForm } from 'vee-validate'
 import { Radix, mockedAPI, Keystore, KeystoreT, MnemomicT, Network } from '@radixdlt/application'
 import { Result } from 'neverthrow'
@@ -67,7 +67,7 @@ import { touchKeystore, initWallet } from '@/actions/vue/create-wallet'
 import FormErrorMessage from '@/components/FormErrorMessage.vue'
 import FormField from '@/components/FormField.vue'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
-import { radixConnection, setNetwork } from '@/helpers/network'
+import RadixConnectService from '@/services/RadixConnectService'
 
 interface PasswordForm {
   currentPassword: string;
@@ -82,7 +82,7 @@ const SettingsResetPassword = defineComponent({
     FormErrorMessage
   },
 
-  async setup () {
+  async setup (props) {
     const { errors, values, meta, setErrors, resetForm } = useForm<PasswordForm>()
     const store = useStore()
     const subs = new Subscription()
@@ -91,8 +91,8 @@ const SettingsResetPassword = defineComponent({
 
     onUnmounted(() => subs.unsubscribe())
 
-    let radix = await radixConnection()
-    radix = await setNetwork(radix, process.env.VUE_APP_NETWORK_NAME as Network)
+    await props.radixConnectService.establishConnection()
+    const radix = props.radixConnectService.getRadixInstance()
     radix.__withWallet(store.state.wallet)
 
     const handleResetPassword = (newPassword: string) => {
@@ -153,6 +153,13 @@ const SettingsResetPassword = defineComponent({
             currentPassword: this.$t('validations.incorrectPassword')
           })
         })
+    }
+  },
+
+  props: {
+    radixConnectService: {
+      type: Object as PropType<RadixConnectService>,
+      required: true
     }
   },
 

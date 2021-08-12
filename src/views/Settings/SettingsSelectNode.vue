@@ -8,15 +8,17 @@
         v-for="(node, i) in defaultNetworks"
         :key="i"
         :node="node"
+        :radixConnectService="radixConnectService"
       />
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
 import { defaultNetworks } from '@/helpers/network'
 import NodeListItem from '@/components/NodeListItem.vue'
+import RadixConnectService from '@/services/RadixConnectService'
 
 export default defineComponent({
   components: {
@@ -26,6 +28,13 @@ export default defineComponent({
   setup () {
     return {
       defaultNetworks
+    }
+  },
+
+  props: {
+    radixConnectService: {
+      type: Object as PropType<RadixConnectService>,
+      required: true
     }
   }
 })

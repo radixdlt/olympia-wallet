@@ -4,7 +4,7 @@
     <div class="relative z-10 min-h-screen">
       <suspense>
         <template #default>
-          <router-view/>
+          <router-view :radixConnectService="radixConnectService" />
         </template>
         <template #fallback>
           <div class="bg-white h-full flex flex-col flex-1 w-full justify-around box-border">
@@ -20,5 +20,18 @@
   </div>
 </template>
 
-<style>
-</style>
+<script lang="ts">
+import { defineComponent, Ref } from 'vue'
+import RadixConnectService from '@/services/RadixConnectService'
+import { ref } from '@nopr3d/vue-next-rx'
+
+export default defineComponent({
+  setup () {
+    const radixConnectService: Ref<RadixConnectService> = ref(new RadixConnectService())
+
+    return {
+      radixConnectService
+    }
+  }
+})
+</script>

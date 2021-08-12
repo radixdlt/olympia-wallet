@@ -44,7 +44,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive } from 'vue'
+import { defineComponent, PropType, reactive } from 'vue'
 import { Radix, WalletErrorCause, WalletT, Network } from '@radixdlt/application'
 import { hasKeystore, touchKeystore } from '@/actions/vue/create-wallet'
 import { useStore } from '@/store'
@@ -59,9 +59,9 @@ import { useI18n } from 'vue-i18n'
 import { ref } from '@nopr3d/vue-next-rx'
 import { filter } from 'rxjs/operators'
 import { resetStore } from '@/actions/vue/data-store'
-import { radixConnection, setNetwork } from '@/helpers/network'
+import RadixConnectService from '@/services/RadixConnectService'
 
-const CreateWallet = defineComponent({
+const Home = defineComponent({
   components: {
     HomeCreateAndRestore,
     HomeEnterPasscode,
@@ -74,19 +74,22 @@ const CreateWallet = defineComponent({
     modal: {
       type: String,
       required: false
+    },
+    radixConnectService: {
+      type: Object as PropType<RadixConnectService>,
+      required: true
     }
   },
 
-  async setup () {
+  async setup (props) {
     const hasWallet = reactive({ value: null as boolean | null })
     const store = useStore()
     const router = useRouter()
     const { t } = useI18n({ useScope: 'global' })
-
     const enterPasscodeComponent = ref(null)
 
-    let radix = await radixConnection()
-    radix = await setNetwork(radix, process.env.VUE_APP_NETWORK_NAME as Network)
+    await props.radixConnectService.establishConnection()
+    const radix = props.radixConnectService.getRadixInstance()
     const subs = new Subscription()
 
     radix.errors
@@ -143,5 +146,5 @@ const CreateWallet = defineComponent({
   }
 })
 
-export default CreateWallet
+export default Home
 </script>

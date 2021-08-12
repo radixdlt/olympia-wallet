@@ -16,3 +16,7 @@ body {
 .Vue-Toastification__toast.Vue-Toastification__toast--success {
   @apply px-4 py-3 text-white rounded-none bg-rGreen min-w-min min-h-0
 }
+
+.Vue-Toastification__toast.Vue-Toastification__toast--error {
+  @apply px-4 py-3 text-white rounded-none bg-rRed min-w-min min-h-0
+}

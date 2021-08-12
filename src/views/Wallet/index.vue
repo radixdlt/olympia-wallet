@@ -53,9 +53,10 @@
           :activeAddress="activeAddress"
           :tokenBalances="tokenBalances.tokenBalances"
           :nativeToken="nativeToken"
+          :radixConnectService="radixConnectService"
           @transferTokens="transferTokens"
-          ref="walletTransactionComponent"
           @verifyHardwareAddress="verifyHardwareWalletAddress"
+          ref="walletTransactionComponent"
         />
         <wallet-loading v-else />
       </template>
@@ -69,6 +70,7 @@
           :tokenBalances="tokenBalances"
           :nativeToken="nativeToken"
           :nativeTokenBalance="nativeTokenBalance"
+          :radixConnectService="radixConnectService"
           @stakeTokens="stakeTokens"
           @unstakeTokens="unstakeTokens"
           ref="walletStakingComponent"
@@ -124,7 +126,10 @@
       @dismissVerify="showLedgerVerify = false"
     />
 
-      <settings-index v-if="view == 'settings' && !loading" />
+      <settings-index
+        v-if="view == 'settings'"
+        :radixConnectService="radixConnectService"
+      />
       <wallet-ledger-interaction-modal
         v-if="hardwareInteractionState && hardwareInteractionState.length > 0"
         :hardwareWalletError="hardwareWalletError"
@@ -144,7 +149,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onBeforeMount, onUnmounted, Ref } from 'vue'
+import { defineComponent, onBeforeMount, onUnmounted, Ref, PropType } from 'vue'
 import { Subscription, interval, Subject, Observable, combineLatest, from, BehaviorSubject, ReplaySubject, firstValueFrom } from 'rxjs'
 import {
   AccountAddressT,
@@ -208,7 +213,7 @@ import { sendAPDU } from '@/actions/vue/hardware-wallet'
 import { HardwareWalletLedger } from '@radixdlt/hardware-ledger'
 import WalletLedgerVerifyAddressModal from '@/views/Wallet/WalletLedgerVerifyAddressModal.vue'
 import WalletLedgerDeleteModal from '@/views/Wallet/WalletLedgerDeleteModal.vue'
-import { radixConnection, setNetwork } from '@/helpers/network'
+import RadixConnectService from '@/services/RadixConnectService'
 
 const PAGE_SIZE = 50
 
@@ -235,7 +240,11 @@ const WalletIndex = defineComponent({
 
   props: {
     initialView: String,
-    initialSidebar: String
+    initialSidebar: String,
+    radixConnectService: {
+      type: Object as PropType<RadixConnectService>,
+      required: true
+    }
   },
 
   async setup (props) {
@@ -317,8 +326,8 @@ const WalletIndex = defineComponent({
     // Return home if wallet is undefined
     if (!store.state.wallet) router.push('/')
 
-    let radix = await radixConnection()
-    radix = await setNetwork(radix, process.env.VUE_APP_NETWORK_NAME as Network)
+    await props.radixConnectService.establishConnection()
+    const radix = props.radixConnectService.getRadixInstance()
     radix.__withWallet(store.state.wallet)
     radix
       .withTokenBalanceFetchTrigger(interval(5 * 1_000))

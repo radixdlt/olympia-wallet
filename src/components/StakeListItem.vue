@@ -82,7 +82,7 @@ import ClickToCopy from '@/components/ClickToCopy.vue'
 import { Subscription } from 'rxjs'
 import { formatValidatorAddressForDisplay } from '@/helpers/formatter'
 import { Position } from '@/store/_types'
-import { radixConnection, setNetwork } from '@/helpers/network'
+import RadixConnectService from '@/services/RadixConnectService'
 
 const StakeListItem = defineComponent({
   components: {
@@ -98,13 +98,17 @@ const StakeListItem = defineComponent({
     nativeToken: {
       type: Object as PropType<Token>,
       required: true
+    },
+    radixConnectService: {
+      type: Object as PropType<RadixConnectService>,
+      required: true
     }
   },
 
   async setup (props) {
     const validator: Ref<Validator | null> = ref(null)
-    let radix = await radixConnection()
-    radix = await setNetwork(radix, process.env.VUE_APP_NETWORK_NAME as Network)
+    await props.radixConnectService.establishConnection()
+    const radix = props.radixConnectService.getRadixInstance()
     const subs = new Subscription()
 
     subs
