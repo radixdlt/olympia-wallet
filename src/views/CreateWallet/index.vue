@@ -87,7 +87,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
 import { Mnemonic, MnemomicT, Network, WalletT } from '@radixdlt/application'
 import CreateWalletCreatePasscode from './CreateWalletCreatePasscode.vue'
 import CreateWalletCreatePin from './CreateWalletCreatePin.vue'
@@ -98,7 +98,7 @@ import { initWallet, storePin } from '@/actions/vue/create-wallet'
 import { useStore } from '@/store'
 import { ref } from '@nopr3d/vue-next-rx'
 import { saveDerivedAccountsIndex } from '@/actions/vue/data-store'
-import { getCurrentNetwork, network } from '@/helpers/network'
+import RadixConnectService from '@/services/RadixConnectService'
 
 const CreateWallet = defineComponent({
   components: {
@@ -109,16 +109,17 @@ const CreateWallet = defineComponent({
     WizardHeading
   },
 
-  setup () {
+  async setup (props) {
     const store = useStore()
     const mnemonic: MnemomicT = Mnemonic.generateNew()
     const step = ref(0)
     const passcode = ref('')
-    const activeNetwork = getCurrentNetwork()
+    await props.radixConnectService.establishConnection()
+    const activeNetwork = props.radixConnectService.getActiveNetworkId()
 
     // Create wallet with password and path to keystore
     const createWallet = (pass: string) => {
-      initWallet(mnemonic, pass, activeNetwork.network)
+      initWallet(mnemonic, pass, activeNetwork)
         .then((wallet: WalletT) => {
           store.commit('setWallet', wallet)
           saveDerivedAccountsIndex(0)
@@ -144,6 +145,13 @@ const CreateWallet = defineComponent({
     handleCreatePin (pin: string) {
       storePin(pin)
       this.$router.push({ path: '/wallet', query: { initialView: 'editName', initialSidebar: 'accounts' } })
+    }
+  },
+
+  props: {
+    radixConnectService: {
+      type: Object as PropType<RadixConnectService>,
+      required: true
     }
   }
 })

@@ -35,7 +35,10 @@
                   type="text"
                   class="w-full font-mono placeholder-sans"
                   :placeholder="$t('transaction.recipientPlaceholder')"
-                  rules="required|validAddress"
+                  :rules="{
+                    required: true,
+                    validAddress: networkPreamble
+                  }"
                 />
                 <FormErrorMessage name="recipient" class="text-sm text-red-400" />
               </div>
@@ -131,6 +134,7 @@ import FormField from '@/components/FormField.vue'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
 import LoadingIcon from '@/components/LoadingIcon.vue'
 import FormCheckbox from '@/components/FormCheckbox.vue'
+import RadixConnectService from '@/services/RadixConnectService'
 
 interface TransactionForm {
   recipient: string;
@@ -153,6 +157,12 @@ const WalletTransaction = defineComponent({
     const { errors, values, meta, setErrors } = useForm<TransactionForm>()
     const currency: Ref<string | null> = ref(null)
     const tokenOptions: Ref<Array<TokenBalance>> = ref([])
+    const networkPreamble: Ref<string> = ref(props.radixConnectService.getNetworkPreamble())
+
+    // Update network preamble when network changes
+    props.radixConnectService.addEventListener('connect', () => {
+      networkPreamble.value = props.radixConnectService.getNetworkPreamble()
+    })
 
     // Set XRD as default and move to top of list of options. Ensure native token subscription has returned before doing so
     const setXRDByDefault = (nativeToken: Token) => {
@@ -175,7 +185,15 @@ const WalletTransaction = defineComponent({
       if (nativeToken) setXRDByDefault(nativeToken)
     })
 
-    return { errors, values, meta, setErrors, currency, tokenOptions }
+    return {
+      errors,
+      values,
+      meta,
+      setErrors,
+      currency,
+      tokenOptions,
+      networkPreamble
+    }
   },
 
   props: {
@@ -195,6 +213,10 @@ const WalletTransaction = defineComponent({
     ledgerError: {
       type: Error,
       required: false
+    },
+    radixConnectService: {
+      type: Object as PropType<RadixConnectService>,
+      required: true
     }
   },
 
@@ -241,7 +263,7 @@ const WalletTransaction = defineComponent({
 
     handleSubmit () {
       if (!this.meta.valid || !this.selectedCurrency) return false
-      const safeAddress = safelyUnwrapAddress(this.values.recipient)
+      const safeAddress = safelyUnwrapAddress(this.values.recipient, this.networkPreamble)
       const safeAmount = safelyUnwrapAmount(Number(this.values.amount))
       const token = this.selectedCurrency.token
       const greaterThanZero = safeAmount && validateGreaterThanZero(safeAmount)

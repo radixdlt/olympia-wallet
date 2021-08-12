@@ -1,12 +1,10 @@
-import { Network, Radix, RadixT, HRP } from '@radixdlt/application'
+import { Network, HRP } from '@radixdlt/application'
 
 export type ChosenNetworkT = {
   network: Network
   networkURL: string
   preamble: string
 }
-
-let currentNetwork: ChosenNetworkT
 
 export const network = (networkName: Network): ChosenNetworkT => {
   let response: ChosenNetworkT
@@ -25,22 +23,7 @@ export const network = (networkName: Network): ChosenNetworkT => {
   } else {
     throw new Error(`Invalid Network Name ${networkName} Provided`)
   }
-  currentNetwork = response
   return response
-}
-
-export const radixConnection = async (): Promise<RadixT> => {
-  const activeNetwork = network(process.env.VUE_APP_NETWORK_NAME as Network)
-  const radix = Radix.create()
-  await radix.connect(activeNetwork.networkURL)
-  return radix
-}
-
-export const getCurrentNetwork = () => currentNetwork
-
-export const setNetwork = async (radix: RadixT, name: Network): Promise<RadixT> => {
-  await radix.connect(network(name).networkURL)
-  return radix
 }
 
 export const defaultNetworks: ChosenNetworkT[] = [
@@ -58,8 +41,4 @@ export const defaultNetworks: ChosenNetworkT[] = [
 
 export const isDefaultNetwork = (network: ChosenNetworkT): boolean => {
   return !!defaultNetworks.find((n: ChosenNetworkT) => n.networkURL === network.networkURL)
-}
-
-export const isCurrentNetwork = (network: ChosenNetworkT): boolean => {
-  return currentNetwork.networkURL === network.networkURL
 }

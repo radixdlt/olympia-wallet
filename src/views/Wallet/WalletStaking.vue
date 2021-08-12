@@ -88,6 +88,7 @@
         :key="position.address"
         :position="position"
         :nativeToken="nativeToken"
+        :radixConnectService="radixConnectService"
         @addToValidator="handleAddToValidator"
         @reduceFromValidator="handleReduceFromValidator"
       >
@@ -109,6 +110,7 @@ import FormField from '@/components/FormField.vue'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
 import { asBigNumber } from '@/components/BigAmount.vue'
 import { Position } from '@/store/_types'
+import RadixConnectService from '@/services/RadixConnectService'
 
 interface StakeForm {
   validator: string;
@@ -154,6 +156,10 @@ const WalletStaking = defineComponent({
     nativeTokenBalance: {
       type: Object as PropType<TokenBalance>,
       required: false
+    },
+    radixConnectService: {
+      type: Object as PropType<RadixConnectService>,
+      required: true
     }
   },
 

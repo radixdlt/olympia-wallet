@@ -10,6 +10,7 @@
       <tabs-content :leftTabIsActive="activeForm == 'password'">
         <settings-reset-password
           v-if="activeForm == 'password'"
+          :radixConnectService="radixConnectService"
         />
         <settings-reset-pin
           v-if="activeForm == 'pin'"
@@ -21,6 +22,7 @@
         />
          <settings-select-node
           v-if="activeForm == 'nodes'"
+          :radixConnectService="radixConnectService"
         />
       </tabs-content>
     </div>
@@ -28,7 +30,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onUnmounted } from 'vue'
+import { defineComponent, onUnmounted, PropType } from 'vue'
 import { MnemomicT, Network } from '@radixdlt/application'
 import { combineLatest, Subject, Subscription } from 'rxjs'
 import TabsTab from '@/components/TabsTab.vue'
@@ -39,7 +41,7 @@ import SettingsResetPassword from './SettingsResetPassword.vue'
 import SettingsSelectNode from './SettingsSelectNode.vue'
 import { useStore } from '@/store'
 import { ref } from '@nopr3d/vue-next-rx'
-import { radixConnection, setNetwork } from '@/helpers/network'
+import RadixConnectService from '@/services/RadixConnectService'
 
 const SettingsIndex = defineComponent({
   components: {
@@ -51,12 +53,12 @@ const SettingsIndex = defineComponent({
     TabsTab
   },
 
-  async setup () {
+  async setup (props) {
     onUnmounted(() => subs.unsubscribe())
 
     const store = useStore()
-    let radix = await radixConnection()
-    radix = await setNetwork(radix, process.env.VUE_APP_NETWORK_NAME as Network)
+    await props.radixConnectService.establishConnection()
+    const radix = props.radixConnectService.getRadixInstance()
     radix.__withWallet(store.state.wallet)
 
     const mnemonic = ref(null)
@@ -95,6 +97,13 @@ const SettingsIndex = defineComponent({
         this.unsetMnemonic()
       }
       this.activeForm = tab
+    }
+  },
+
+  props: {
+    radixConnectService: {
+      type: Object as PropType<RadixConnectService>,
+      required: true
     }
   }
 })
