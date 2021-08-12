@@ -7,14 +7,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 
-const Tooltip = defineComponent({
-  props: {
-    descriptionText: {
-      type: String,
-      required: true
-    }
-  }
-})
+const Tooltip = defineComponent({})
 
 export default Tooltip
 </script>
