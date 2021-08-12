@@ -193,7 +193,9 @@ const messages = {
       updatedPIN: 'You\'ve successfully updated your PIN.',
       nodeDisclaimer: 'WRITE COPY',
       nodeAddressLabel: 'Archive Node Address',
-      nodeNetworkLabel: 'Network'
+      nodeNetworkLabel: 'Network',
+      addCustomNodeLabel: 'Add Custom Node Address:',
+      addNodeButton: 'add node'
     },
     errors: {
       hardwareMismatchTitle: 'Hardware Wallet Account Mismatch',
