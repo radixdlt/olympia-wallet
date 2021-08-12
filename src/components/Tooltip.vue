@@ -1,6 +1,6 @@
 <template>
   <div class="absolute invisible group-hover:visible -mt-full bg-rGrayLightest text-rBlack bottom-full text-xs p-1 rounded-sm shadow border border-solid border-rGrayLight w-60">
-    {{ descriptionText }}
+    <slot></slot>
   </div>
 </template>
 

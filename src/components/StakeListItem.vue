@@ -13,7 +13,9 @@
                 <span class="text-rRed ml-2">unregistered</span>
               </div>
               <a class="relative text-rBlack hover:text-rBlue group" v-if="validator.infoURL" :href="validator.infoURL" target="__blank"> {{ validator.name }}
-                <tooltip :descriptionText="$t('staking.validatorWarning') + '\n' + validator.infoURL.toString()" />
+                <tooltip>
+                  {{$t('staking.validatorWarning')}} {{validator.infoURL.toString()}}
+                </tooltip>
               </a>
               <span v-else>{{validator.name}}</span>
             </div>
