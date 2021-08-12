@@ -18,7 +18,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onUnmounted, PropType, Ref } from 'vue'
+import { defineComponent, onUnmounted, PropType } from 'vue'
 import { ChosenNetworkT, isDefaultNetwork } from '@/helpers/network'
 import RadixConnectService from '@/services/RadixConnectService'
 import AppRadioIndicator from '@/components/AppRadioIndicator.vue'
@@ -26,7 +26,7 @@ import IconRadixLogo from '@/components/IconRadixLogo.vue'
 import { Network, Radix } from '@radixdlt/application'
 import { Subscription } from 'rxjs'
 import { useToast } from 'vue-toastification'
-import { ref } from '@nopr3d/vue-next-rx'
+import { Ref, ref } from '@nopr3d/vue-next-rx'
 
 export default defineComponent({
   components: {
