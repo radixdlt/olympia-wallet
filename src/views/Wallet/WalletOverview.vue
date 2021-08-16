@@ -54,7 +54,7 @@
           </div>
           <div>
           <a :href="createOtherTokenUrl(tokenBalance.token.rri.toString())" target="_blank" class="hover:text-rGreen transition-colors text-rGrayMed">
-            <div class="rounded-full border border-solid border-rGray w-6 h-6 flex items-center justify-center">
+            <div class="rounded-full border border-solid border-rGray w-6 h-6 flex items-center justify-center mr-1">
               <svg width="8" height="8" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M1.08789 1H11.1344V11.0465" class="stroke-current" stroke-miterlimit="10"/>
                 <path d="M11.1339 1L1 11.134" class="stroke-current" stroke-miterlimit="10"/>
