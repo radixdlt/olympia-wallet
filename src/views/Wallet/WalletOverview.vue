@@ -63,6 +63,13 @@
           </a>
           </div>
         </div>
+        <div class="flex flex-row">
+          <div class="flex-1 flex flex-row items-center px-6 pt-3 overflow-x-auto">
+            <span class="text-sm text-rGrayDark">{{ truncateOtherToken(tokenBalance.token.rri.toString()) }}</span>
+            <click-to-copy :address="tokenBalance.token.rri.toString()">
+            </click-to-copy>
+          </div>
+        </div>
           <div class="flex flex-row py-1">
             <div class="flex-1 flex flex-row items-center px-6 py-3 overflow-x-auto">
               <big-amount :amount="tokenBalance.amount" class="text-5xl font-light mr-4 text-rBlack" />
@@ -83,6 +90,7 @@ import TokenSymbol from '@/components/TokenSymbol.vue'
 import ClickToCopy from '@/components/ClickToCopy.vue'
 import { ref } from '@nopr3d/vue-next-rx'
 import { sumAmounts, subtract, add } from '@/helpers/arithmetic'
+import { truncateRRIStringForDisplay } from '@/helpers/formatter'
 import { createRRIUrl } from '@/helpers/explorerLinks'
 
 const WalletOverview = defineComponent({
@@ -94,7 +102,8 @@ const WalletOverview = defineComponent({
 
   setup () {
     return {
-      createOtherTokenUrl: createRRIUrl
+      createOtherTokenUrl: createRRIUrl,
+      truncateOtherToken: truncateRRIStringForDisplay
     }
   },
 
