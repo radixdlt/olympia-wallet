@@ -30,6 +30,6 @@ export const truncateRRIStringForDisplay = function (rriString: string): any {
     return rriString.match(suffix)!.index // suffix.length // + matchDetails[1]
   })
 
-  const prefixLength = charsUntilSuffixEnd[0]! + 3
+  const prefixLength = charsUntilSuffixEnd[0]! + correctSuffix[0].length
   return rriString.substring(0, prefixLength) + '...' + rriString.substring(rriString.length - 9)
 }
