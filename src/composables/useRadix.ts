@@ -26,7 +26,9 @@ export default function useRadix (): useRadixInterface {
       if (!radix) {
         radix = Radix.create()
       }
-      return await radix.connect(selectedNetwork.networkURL)
+      const result = await radix.connect(selectedNetwork.networkURL)
+      connected.value = true
+      return result
     }
   }
 }

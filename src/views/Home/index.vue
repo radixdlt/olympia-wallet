@@ -44,7 +44,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onBeforeMount, watch, onMounted } from 'vue'
+import { defineComponent, ref, onBeforeMount, watch } from 'vue'
 import { ErrorT } from '@radixdlt/application'
 import HomeCreateAndRestore from './HomeCreateAndRestore.vue'
 import HomeEnterPasscode from './HomeEnterPasscode.vue'
@@ -81,7 +81,7 @@ const Home = defineComponent({
     })
 
     const router = useRouter()
-    const { radix, establishConnection } = useRadix()
+    const { radix } = useRadix()
     const { hasWallet, invalidPasswordError, loginWithWallet, resetWallet } = useWallet(radix, router)
     const { t } = useI18n({ useScope: 'global' })
 
@@ -97,8 +97,6 @@ const Home = defineComponent({
         }
       }
     )
-
-    onMounted(establishConnection)
 
     return {
       hasWallet,
