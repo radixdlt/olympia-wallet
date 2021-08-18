@@ -19,7 +19,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue'
+import { defineComponent } from 'vue'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
 
 const WalletLedgerDeleteModal = defineComponent({

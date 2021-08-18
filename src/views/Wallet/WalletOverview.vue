@@ -9,7 +9,7 @@
             <click-to-copy
               :address="activeAddress.toString()"
               :checkForHardwareAddress=true
-              @verifyHardwareAddress="$emit('verifyHardwareAddress')"
+              @verifyHardwareAddress="verifyHardwareWalletAddress()"
             />
           </div>
         </div>
@@ -84,15 +84,17 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, Ref } from 'vue'
-import { StakePosition, Token, TokenBalance, TokenBalances, AccountAddressT, Amount, AmountT, UnstakePosition } from '@radixdlt/application'
+import { defineComponent } from 'vue'
+import { StakePosition, TokenBalance, Amount, AmountT } from '@radixdlt/application'
 import BigAmount from '@/components/BigAmount.vue'
 import TokenSymbol from '@/components/TokenSymbol.vue'
 import ClickToCopy from '@/components/ClickToCopy.vue'
-import { ref } from '@nopr3d/vue-next-rx'
-import { sumAmounts, subtract, add } from '@/helpers/arithmetic'
-import { truncateRRIStringForDisplay } from '@/helpers/formatter'
 import { createRRIUrl } from '@/helpers/explorerLinks'
+
+import { sumAmounts, add } from '@/helpers/arithmetic'
+import { useRouter } from 'vue-router'
+import useRadix from '@/composables/useRadix'
+import useWallet from '@/composables/useWallet'
 
 const WalletOverview = defineComponent({
   components: {
@@ -102,36 +104,32 @@ const WalletOverview = defineComponent({
   },
 
   setup () {
-    return {
-      createOtherTokenUrl: createRRIUrl,
-      truncateOtherToken: truncateRRIStringForDisplay
-    }
-  },
+    const router = useRouter()
+    const { radix } = useRadix()
+    const {
+      activeAddress,
+      activeStakes,
+      activeUnstakes,
+      nativeToken,
+      nativeTokenBalance,
+      tokenBalances,
+      verifyHardwareWalletAddress,
+      hasWallet
+    } = useWallet(radix, router)
 
-  props: {
-    tokenBalances: {
-      type: Object as PropType<TokenBalances>,
-      required: true
-    },
-    activeAddress: {
-      type: Object as PropType<AccountAddressT>,
-      required: true
-    },
-    activeStakes: {
-      type: Array as PropType<Array<StakePosition>>,
-      required: true
-    },
-    activeUnstakes: {
-      type: Array as PropType<Array<UnstakePosition>>,
-      required: true
-    },
-    nativeToken: {
-      type: Object as PropType<Token>,
-      required: true
-    },
-    nativeTokenBalance: {
-      type: Object as PropType<TokenBalance>,
-      required: false
+    if (!hasWallet) {
+      router.push('/')
+      return {}
+    }
+    return {
+      activeAddress,
+      activeStakes,
+      activeUnstakes,
+      nativeToken,
+      nativeTokenBalance,
+      tokenBalances,
+      verifyHardwareWalletAddress,
+      createRRIUrl
     }
   },
 
@@ -142,6 +140,7 @@ const WalletOverview = defineComponent({
       return xrdAmount.isErr() ? Amount.fromUnsafe(0)._unsafeUnwrap() : xrdAmount.value
     },
     totalStakedAndUnstaked (): AmountT {
+      if (!this.activeStakes || !this.activeUnstakes) return Amount.fromUnsafe(0)._unsafeUnwrap()
       const totalStakedAndUnstaked = sumAmounts(this.activeStakes.flatMap((item: StakePosition) => item.amount)) || Amount.fromUnsafe(0)._unsafeUnwrap()
       const totalUnstaked = sumAmounts(this.activeUnstakes.flatMap((item: StakePosition) => item.amount)) || Amount.fromUnsafe(0)._unsafeUnwrap()
       return sumAmounts([totalStakedAndUnstaked, totalUnstaked]) || Amount.fromUnsafe(0)._unsafeUnwrap()
@@ -152,12 +151,12 @@ const WalletOverview = defineComponent({
       return add(totalXRD, totalStakedAndUnstaked)
     },
     otherTokenBalances (): TokenBalance[] {
-      if (!this.nativeToken || !this.tokenBalances.tokenBalances) return []
-      else return this.tokenBalances.tokenBalances.filter((tb: TokenBalance) => !tb.token.rri.equals(this.nativeToken.rri))
+      if (!this.nativeToken || !this.tokenBalances || !this.tokenBalances.tokenBalances) return []
+      return this.tokenBalances.tokenBalances.filter((tb: TokenBalance) => {
+        return this.nativeToken && !tb.token.rri.equals(this.nativeToken.rri)
+      })
     }
-  },
-
-  emits: ['verifyHardwareAddress']
+  }
 })
 
 export default WalletOverview

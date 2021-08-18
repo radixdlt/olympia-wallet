@@ -72,7 +72,7 @@
 
       <create-wallet-create-passcode
         v-if="step == 2"
-        @confirm="createWallet"
+        @confirm="handleCreateWallet"
       >
       </create-wallet-create-passcode>
 
@@ -87,18 +87,16 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue'
-import { Mnemonic, MnemomicT, Network, WalletT } from '@radixdlt/application'
+import { defineComponent, ref } from 'vue'
+import { Mnemonic, MnemomicT } from '@radixdlt/application'
 import CreateWalletCreatePasscode from './CreateWalletCreatePasscode.vue'
 import CreateWalletCreatePin from './CreateWalletCreatePin.vue'
 import CreateWalletViewMnemonic from './CreateWalletViewMnemonic.vue'
 import CreateWalletEnterMnemonic from './CreateWalletEnterMnemonic.vue'
 import WizardHeading from '@/components/WizardHeading.vue'
-import { initWallet, storePin } from '@/actions/vue/create-wallet'
-import { useStore } from '@/store'
-import { ref } from '@nopr3d/vue-next-rx'
-import { saveDerivedAccountsIndex } from '@/actions/vue/data-store'
-import RadixConnectService from '@/services/RadixConnectService'
+import useRadix from '@/composables/useRadix'
+import useWallet from '@/composables/useWallet'
+import { useRouter } from 'vue-router'
 
 const CreateWallet = defineComponent({
   components: {
@@ -109,49 +107,38 @@ const CreateWallet = defineComponent({
     WizardHeading
   },
 
-  async setup (props) {
-    const store = useStore()
+  setup () {
+    const router = useRouter()
+    const { network, radix } = useRadix()
+    const { createWallet, setPin } = useWallet(radix, router)
+
     const mnemonic: MnemomicT = Mnemonic.generateNew()
     const step = ref(0)
     const passcode = ref('')
-    await props.radixConnectService.establishConnection()
-    const activeNetwork = props.radixConnectService.getActiveNetworkId()
 
-    // Create wallet with password and path to keystore
-    const createWallet = (pass: string) => {
-      initWallet(mnemonic, pass, activeNetwork)
-        .then((wallet: WalletT) => {
-          store.commit('setWallet', wallet)
-          saveDerivedAccountsIndex(0)
-          step.value = 3
-          passcode.value = pass
-        })
+    const handleCreateWallet = (pass: string) => {
+      createWallet(mnemonic, pass, network.value).then(() => {
+        step.value = 3
+        passcode.value = pass
+      })
+    }
+
+    const handleEnterPin = (val: boolean): void => { step.value = val ? 4 : 3 }
+
+    const handleCreatePin = (pin: string): void => {
+      setPin(pin)
+      router.push({ path: '/wallet', query: { initialView: 'editName', initialSidebar: 'accounts' } })
     }
 
     return {
-      // state
       mnemonic,
       step,
       passcode,
+
       // methods
-      createWallet
-    }
-  },
-
-  methods: {
-    handleEnterPin (val: boolean) {
-      val ? this.step = 4 : this.step = 3
-    },
-    handleCreatePin (pin: string) {
-      storePin(pin)
-      this.$router.push({ path: '/wallet', query: { initialView: 'editName', initialSidebar: 'accounts' } })
-    }
-  },
-
-  props: {
-    radixConnectService: {
-      type: Object as PropType<RadixConnectService>,
-      required: true
+      handleCreateWallet,
+      handleEnterPin,
+      handleCreatePin
     }
   }
 })

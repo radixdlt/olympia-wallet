@@ -44,8 +44,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onBeforeMount, watch } from 'vue'
-import { ErrorT } from '@radixdlt/application'
+import { defineComponent, watch, onBeforeMount, ref } from 'vue'
+import { ErrorNotification } from '@radixdlt/application'
 import HomeCreateAndRestore from './HomeCreateAndRestore.vue'
 import HomeEnterPasscode from './HomeEnterPasscode.vue'
 import HomeLockedModal from './HomeLockedModal.vue'
@@ -82,14 +82,16 @@ const Home = defineComponent({
 
     const router = useRouter()
     const { radix } = useRadix()
-    const { hasWallet, invalidPasswordError, loginWithWallet, resetWallet } = useWallet(radix, router)
+    const { hasWallet, invalidPasswordError, loginWithWallet, resetWallet, walletLoaded } = useWallet(radix, router)
     const { t } = useI18n({ useScope: 'global' })
 
     const enterPasscodeComponent = rxRef(null)
 
+    walletLoaded()
+
     watch(
       () => invalidPasswordError.value,
-      (value: ErrorT<'wallet'> | null) => {
+      (value: ErrorNotification | null) => {
         if (value) {
           enterPasscodeComponent.value.setErrors({
             password: t('validations.incorrectPassword')

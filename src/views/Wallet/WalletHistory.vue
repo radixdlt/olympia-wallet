@@ -82,7 +82,7 @@ import { defineComponent, PropType } from 'vue'
 import { ExecutedTransaction, AccountAddressT, Token } from '@radixdlt/application'
 import TransactionListItem from '@/components/TransactionListItem.vue'
 import ClickToCopy from '@/components/ClickToCopy.vue'
-import { PendingTransaction } from '@/views/Wallet/index.vue'
+import { PendingTransaction } from '@/composables/useWallet'
 
 const WalletHistory = defineComponent({
   components: {

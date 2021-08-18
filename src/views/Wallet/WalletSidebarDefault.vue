@@ -4,78 +4,57 @@
       <img alt="Radix DLT Logo" src="../../assets/logo.svg" class="w-30 mb-10">
     </div>
 
-    <div class="flex flex-col text-white hover:text-rGreen transition-colors cursor-pointer mb-4" @click="$emit('open')">
+    <div class="flex flex-col text-white hover:text-rGreen transition-colors cursor-pointer mb-4" @click="setState(true)">
       <div class="relative py-3">
-        <account-list-item
-          :account="activeAccount"
-          :activeAccount="activeAccount"
-          :nameIndex="nameIndex"
-          @verifyHardwareAddress="$emit('verifyHardwareAddress')"
-        />
+        <account-list-item :account="activeAccount" />
         <div class="absolute bg-gradient-to-r from-blueEnd to-transparent inset-0 w-full h-full z-10 -mx-8 opacity-40">
         </div>
       </div>
     </div>
 
     <div class="flex flex-col flex-1">
-      <div
-        class="flex flex-row items-center my-5 cursor-pointer transition-opacity"
-        :class="{ 'opacity-70': activeView !== 'overview' }"
-        @click="$emit('setView', 'overview')"
-      >
-       <svg width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr-3">
-        <path d="M6.47435 13.5559L6.73728 14.4765C6.73736 16.057 5.45613 17.3382 3.87565 17.3382C2.29524 17.3382 1.01401 16.0569 1.01401 14.4765L1.24602 13.604" stroke="#00C389" stroke-width="1.5" stroke-miterlimit="10"/>
-        <path d="M22.9724 13.5411L23.2353 14.4618C23.2354 16.0423 21.9541 17.3234 20.3737 17.3234C18.7932 17.3234 17.512 16.0422 17.512 14.4618L17.744 13.5892" stroke="#00C389" stroke-width="1.5" stroke-miterlimit="10"/>
-        <path d="M12.1068 22.9787V19.6478" stroke="white" stroke-width="1.5" stroke-miterlimit="10"/>
-        <path d="M3.94185 23.5H20.2713" stroke="#00C389" stroke-width="1.5" stroke-miterlimit="10"/>
-        <path d="M12.1068 16.7533V0" stroke="white" stroke-width="1.5" stroke-miterlimit="10"/>
-        <path d="M23.1966 14.3256L20.2714 4.08594H3.94202L1 14.4617" stroke="white" stroke-width="1.5" stroke-miterlimit="10"/>
-        <path d="M20.2714 4.08594L17.512 14.4617" stroke="white" stroke-width="1.5" stroke-miterlimit="10"/>
-        <path d="M6.7231 14.4617L3.94185 4.08594" stroke="white" stroke-width="1.5" stroke-miterlimit="10"/>
-      </svg>
+      <router-link to="/wallet" custom v-slot="{ href, navigate, isActive }">
+        <wallet-nav-link :href="href" :navigate="navigate" :isActive="isActive" :title="$t('wallet.navBalances')">
+          <svg width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr-3">
+            <path d="M6.47435 13.5559L6.73728 14.4765C6.73736 16.057 5.45613 17.3382 3.87565 17.3382C2.29524 17.3382 1.01401 16.0569 1.01401 14.4765L1.24602 13.604" stroke="#00C389" stroke-width="1.5" stroke-miterlimit="10"/>
+            <path d="M22.9724 13.5411L23.2353 14.4618C23.2354 16.0423 21.9541 17.3234 20.3737 17.3234C18.7932 17.3234 17.512 16.0422 17.512 14.4618L17.744 13.5892" stroke="#00C389" stroke-width="1.5" stroke-miterlimit="10"/>
+            <path d="M12.1068 22.9787V19.6478" stroke="white" stroke-width="1.5" stroke-miterlimit="10"/>
+            <path d="M3.94185 23.5H20.2713" stroke="#00C389" stroke-width="1.5" stroke-miterlimit="10"/>
+            <path d="M12.1068 16.7533V0" stroke="white" stroke-width="1.5" stroke-miterlimit="10"/>
+            <path d="M23.1966 14.3256L20.2714 4.08594H3.94202L1 14.4617" stroke="white" stroke-width="1.5" stroke-miterlimit="10"/>
+            <path d="M20.2714 4.08594L17.512 14.4617" stroke="white" stroke-width="1.5" stroke-miterlimit="10"/>
+            <path d="M6.7231 14.4617L3.94185 4.08594" stroke="white" stroke-width="1.5" stroke-miterlimit="10"/>
+          </svg>
+        </wallet-nav-link>
+      </router-link>
 
-        <div class="font-normal text-white">{{ $t('wallet.navBalances') }}</div>
-      </div>
+      <router-link to="/wallet/transaction" custom v-slot="{ href, navigate, isActive }">
+        <wallet-nav-link :href="href" :navigate="navigate" :isActive="isActive" :title="$t('wallet.navTransaction')">
+          <svg width="28" height="20" viewBox="0 0 28 20" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr-3">
+            <path d="M27 9.8871L14.4194 1.5V9.8871" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M9.3871 9.88707H27L14.3338 18.2742V13.2419" stroke="#00C389" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M9.3871 9.88715C9.3871 8.94326 9.06866 8.02698 8.48331 7.28651C7.89795 6.54605 7.07991 6.02472 6.16151 5.80685C5.24311 5.58898 4.27806 5.68731 3.42248 6.08594C2.5669 6.48458 1.87083 7.1602 1.44685 8.00351C1.02288 8.84682 0.895806 9.8085 1.08619 10.733C1.27657 11.6575 1.77327 12.4907 2.49595 13.0979C3.21863 13.7051 4.12501 14.0507 5.06848 14.0788C6.01195 14.107 6.93733 13.816 7.69492 13.253" stroke="#00C389" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </wallet-nav-link>
+      </router-link>
 
-      <div
-        class="flex flex-row items-center my-5 cursor-pointer transition-opacity"
-        :class="{ 'opacity-70': activeView !== 'transaction' }"
-        @click="$emit('setView', 'transaction')"
-      >
-        <svg width="28" height="20" viewBox="0 0 28 20" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr-3">
-          <path d="M27 9.8871L14.4194 1.5V9.8871" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M9.3871 9.88707H27L14.3338 18.2742V13.2419" stroke="#00C389" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M9.3871 9.88715C9.3871 8.94326 9.06866 8.02698 8.48331 7.28651C7.89795 6.54605 7.07991 6.02472 6.16151 5.80685C5.24311 5.58898 4.27806 5.68731 3.42248 6.08594C2.5669 6.48458 1.87083 7.1602 1.44685 8.00351C1.02288 8.84682 0.895806 9.8085 1.08619 10.733C1.27657 11.6575 1.77327 12.4907 2.49595 13.0979C3.21863 13.7051 4.12501 14.0507 5.06848 14.0788C6.01195 14.107 6.93733 13.816 7.69492 13.253" stroke="#00C389" stroke-width="1.5" stroke-linecap="round"/>
-        </svg>
+      <router-link to="/wallet/staking" custom v-slot="{ href, navigate, isActive }">
+        <wallet-nav-link :href="href" :navigate="navigate" :isActive="isActive" :title="$t('wallet.navStake')">
+          <svg width="19" height="24" viewBox="0 0 19 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr-3">
+            <path d="M3.27832 9.8159V7.35169C3.27832 3.99519 5.99934 1.27417 9.35584 1.27417C12.7123 1.27417 15.4334 3.99519 15.4334 7.35169V9.8159" stroke="white" stroke-width="1.5" stroke-miterlimit="10"/>
+            <path d="M1 23.8483V9.6189H3.46252H15.2989H17.7614V23.1004H4.48513" stroke="#00C389" stroke-width="1.5" stroke-miterlimit="10"/>
+          </svg>
+        </wallet-nav-link>
+      </router-link>
 
-        <div class="font-normal text-white">{{ $t('wallet.navTransaction') }}</div>
-      </div>
-
-      <div
-        class="flex flex-row items-center my-5 cursor-pointer transition-opacity"
-        :class="{ 'opacity-70': activeView !== 'staking' }"
-        @click="$emit('setView', 'staking')"
-      >
-        <svg width="19" height="24" viewBox="0 0 19 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr-3">
-          <path d="M3.27832 9.8159V7.35169C3.27832 3.99519 5.99934 1.27417 9.35584 1.27417C12.7123 1.27417 15.4334 3.99519 15.4334 7.35169V9.8159" stroke="white" stroke-width="1.5" stroke-miterlimit="10"/>
-          <path d="M1 23.8483V9.6189H3.46252H15.2989H17.7614V23.1004H4.48513" stroke="#00C389" stroke-width="1.5" stroke-miterlimit="10"/>
-        </svg>
-
-        <div class="font-normal text-white">{{ $t('wallet.navStake') }}</div>
-      </div>
-
-      <div
-        class="flex flex-row items-center my-5 cursor-pointer transition-opacity"
-        :class="{ 'opacity-70': activeView !== 'history' }"
-        @click="$emit('setView', 'history')"
-      >
-        <svg width="20" height="24" viewBox="0 0 20 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr-3">
-          <path d="M1 13.3484V9.84839L19 9.84839V16.3484H1V22.8484H19V18.8484" stroke="white" stroke-width="1.5"/>
-          <path d="M1 3.34839V6.84839H19V0.848389H0" stroke="#00C389" stroke-width="1.5"/>
-        </svg>
-
-        <div class="font-normal text-white">{{ $t('wallet.navHistory') }}</div>
-      </div>
+      <router-link to="/wallet/history" custom v-slot="{ href, navigate, isActive }">
+        <wallet-nav-link :href="href" :navigate="navigate" :isActive="isActive" :title="$t('wallet.navHistory')">
+          <svg width="20" height="24" viewBox="0 0 20 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr-3">
+            <path d="M1 13.3484V9.84839L19 9.84839V16.3484H1V22.8484H19V18.8484" stroke="white" stroke-width="1.5"/>
+            <path d="M1 3.34839V6.84839H19V0.848389H0" stroke="#00C389" stroke-width="1.5"/>
+          </svg>
+        </wallet-nav-link>
+      </router-link>
     </div>
 
     <div class="flex flex-col">
@@ -110,31 +89,41 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue'
+import { defineComponent } from 'vue'
 import AccountListItem from '@/components/AccountListItem.vue'
-import { AccountT } from '@radixdlt/application'
-
+import WalletNavLink from './WalletNavLink.vue'
+import { useRadix, useWallet, useSidebar } from '@/composables'
+import { useRouter, useRoute } from 'vue-router'
 const WalletSidebarDefault = defineComponent({
   components: {
-    AccountListItem
+    AccountListItem,
+    WalletNavLink
   },
 
-  props: {
-    activeAccount: {
-      type: Object as PropType<AccountT>,
-      required: true
-    },
-    activeView: {
-      type: String,
-      required: true
-    },
-    nameIndex: {
-      type: Number,
-      required: true
+  setup () {
+    const { radix } = useRadix()
+    const router = useRouter()
+    const { activeAccount } = useWallet(radix, router)
+    const { open, setState } = useSidebar()
+    const route = useRoute()
+
+    console.log(activeAccount.value)
+
+    return {
+      activeAccount,
+      open,
+      route,
+      setState
     }
   },
 
-  emits: ['open', 'setView', 'openHelp', 'connectHW', 'verifyHardwareAddress']
+  computed: {
+    isOverview: function (): boolean {
+      return this.route.path === '/wallet'
+    }
+  },
+
+  emits: ['setView', 'openHelp', 'connectHW']
 })
 
 export default WalletSidebarDefault
