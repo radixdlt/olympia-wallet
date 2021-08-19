@@ -130,6 +130,7 @@ const messages = {
     staking: {
       currentStakesHeading: 'Current Stakes',
       viewAllValidators: 'View all Validators',
+      validatorWarning: 'This URL was provided by the node-runner and is unverified. Click at your own risk.',
       stakeTab: 'Stake Tokens',
       unstakeTab: 'Request Unstake',
       unstakingLabel: 'Unstaking',
