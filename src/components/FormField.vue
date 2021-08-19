@@ -8,6 +8,7 @@
     :rules="rules"
     :data-ci="dataCi"
     :validateOnInput="validateOnInput"
+    :validateOnBlur="validateOnBlur"
   ></Field>
 </template>
 
@@ -49,6 +50,11 @@ const FormField = defineComponent({
       type: Boolean,
       required: false,
       default: false
+    },
+    validateOnBlur: {
+      type: Boolean,
+      required: false,
+      default: true
     }
   }
 })

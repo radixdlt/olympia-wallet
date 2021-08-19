@@ -16,17 +16,19 @@
           rules="required"
           data-ci="create-wallet-passcode-input"
           id="password"
-          :validateOnInput="true"
+          :validateOnInput="false"
+          :validateOnBlur="false"
         />
+        <FormErrorMessage name="password" class="text-sm text-red-400" />
       </div>
 
       <ButtonSubmit class="w-96" :disabled="disableSubmit">
         {{ $t('home.passwordButton') }}
       </ButtonSubmit>
-      <div>
-        <a @click="this.$emit('forgotPassword')" class="w-96 text-rGrayMed text-sm text-center py-4 block">{{ $t('home.forgotPassword')}}</a>
-      </div>
     </form>
+    <div>
+      <button @click.prevent="forgotPassword" role="button" type="button" class="w-96 text-rGrayMed text-sm text-center py-4 block cursor-pointer focus:ring-0">{{ $t('home.forgotPassword')}}</button>
+    </div>
   </div>
 </template>
 
@@ -34,6 +36,8 @@
 import { defineComponent } from 'vue'
 import { useForm } from 'vee-validate'
 import FormField from '@/components/FormField.vue'
+import FormErrorMessage from '@/components/FormErrorMessage.vue'
+
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
 
 interface PasswordForm {
@@ -43,7 +47,8 @@ interface PasswordForm {
 const HomeEnterPasscode = defineComponent({
   components: {
     ButtonSubmit,
-    FormField
+    FormField,
+    FormErrorMessage
   },
 
   setup () {
@@ -68,7 +73,13 @@ const HomeEnterPasscode = defineComponent({
     if (passEl) passEl.focus()
   },
 
-  emits: ['submit', 'forgotPassword']
+  emits: ['submit', 'forgotPassword'],
+
+  methods: {
+    forgotPassword () {
+      this.$emit('forgotPassword')
+    }
+  }
 })
 
 export default HomeEnterPasscode
