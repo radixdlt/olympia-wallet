@@ -1,5 +1,14 @@
 # Changelog
 
+### [1.1.2](https://www.github.com/radixdlt/olympia-wallet/compare/v1.1.1...v1.1.2) (2021-08-19)
+
+
+### Bug Fixes
+
+* add tooltip text upon hovering over Validator Name ([#273](https://www.github.com/radixdlt/olympia-wallet/issues/273)) ([c9f9705](https://www.github.com/radixdlt/olympia-wallet/commit/c9f970586ccaa478b9f59e54048367a9abb0a8d9))
+* Regressions in password error messages and forgot password submission ([#284](https://www.github.com/radixdlt/olympia-wallet/issues/284)) ([b5e374f](https://www.github.com/radixdlt/olympia-wallet/commit/b5e374f55de2008873b7320ea7d227999796db2d))
+* Show Word Numbers when revealing the seed phrase in settings ([#286](https://www.github.com/radixdlt/olympia-wallet/issues/286)) ([d79b591](https://www.github.com/radixdlt/olympia-wallet/commit/d79b59146b3eb5ce0cfd870d8363357aa9c1df96))
+
 ### [1.1.1](https://www.github.com/radixdlt/olympia-wallet/compare/v1.1.0...v1.1.1) (2021-08-12)
 
 
