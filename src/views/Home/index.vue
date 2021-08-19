@@ -32,9 +32,9 @@
           ref="enterPasscodeComponent"
         />
       </div>
-      <home-locked-modal :open="modal === 'locked-out'" @close="closeModal"/>
+      <home-locked-modal :open="uiModal === 'locked-out'" @close="closeModal"/>
       <home-forgot-password
-        :open="modal === 'forgot-password'"
+        :open="uiModal === 'forgot-password'"
         @close="closeModal"
         @resetAndCreate="resetAndCreate"
         @resetAndRestore="resetAndRestore"
@@ -44,7 +44,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive } from 'vue'
+import { defineComponent, reactive, ref, onBeforeMount } from 'vue'
 import { ErrorNotification, WalletErrorCause, WalletT } from '@radixdlt/application'
 import { hasKeystore, touchKeystore } from '@/actions/vue/create-wallet'
 import { useStore } from '@/store'
@@ -56,7 +56,7 @@ import LoadingIcon from '@/components/LoadingIcon.vue'
 import { Subscription } from 'rxjs'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { ref } from '@nopr3d/vue-next-rx'
+import { ref as rxRef } from '@nopr3d/vue-next-rx'
 import { filter } from 'rxjs/operators'
 import { resetStore } from '@/actions/vue/data-store'
 import { radixConnection } from '@/helpers/network'
@@ -77,13 +77,19 @@ const CreateWallet = defineComponent({
     }
   },
 
-  async setup () {
+  async setup (props) {
+    const uiModal = ref('')
+
+    onBeforeMount(() => {
+      if (props.modal) { uiModal.value = props.modal }
+    })
+
     const hasWallet = reactive({ value: null as boolean | null })
     const store = useStore()
     const router = useRouter()
     const { t } = useI18n({ useScope: 'global' })
 
-    const enterPasscodeComponent = ref(null)
+    const enterPasscodeComponent = rxRef(null)
 
     const radix = await radixConnection()
     const subs = new Subscription()
@@ -115,16 +121,17 @@ const CreateWallet = defineComponent({
     return {
       // state
       hasWallet,
+      uiModal,
       // methods
       loginWithWallet,
       // component refs
       enterPasscodeComponent,
       closeModal () {
-        router.push({ name: 'Home', query: { modal: '' } })
+        uiModal.value = ''
       },
 
       forgotPassword () {
-        router.push({ name: 'Home', query: { modal: 'forgot-password' } })
+        uiModal.value = 'forgot-password'
       },
 
       resetAndCreate () {
