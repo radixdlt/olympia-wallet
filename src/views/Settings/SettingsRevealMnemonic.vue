@@ -15,6 +15,7 @@
       >
         <mnemonic-display
           :word="word"
+          :index="i"
           :obfuscate="!this.mnemonic"
         >
         </mnemonic-display>
