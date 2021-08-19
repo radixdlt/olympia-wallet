@@ -3,7 +3,7 @@
     class="w-40 border rounded-full border-rGray leading-tight h-16 justify-center inline-flex items-center"
   >
     <div :class="{ 'filter-blur': obfuscate }">
-      {{ word }}
+      {{index + 1}}. {{ word }}
     </div>
   </div>
 </template>
@@ -20,6 +20,10 @@ const MnemonicDisplay = defineComponent({
     word: {
       type: String,
       required: false
+    },
+    index: {
+      type: Number,
+      required: true
     }
   }
 })
