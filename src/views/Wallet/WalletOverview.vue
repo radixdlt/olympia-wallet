@@ -65,7 +65,7 @@
         </div>
         <div class="flex flex-row">
           <div class="flex-1 flex flex-row items-center px-6 pt-3 overflow-x-auto">
-            <span class="text-sm text-rGrayDark">{{ truncateOtherToken(tokenBalance.token.rri.toString()) }}</span>
+            <span class="text-sm font-mono text-rGrayDark">{{ truncateOtherToken(tokenBalance.token.rri.toString()) }}</span>
             <div class="hover:text-rGreen flex flex-row items-center cursor-pointer transition-colors">
               <click-to-copy :address="tokenBalance.token.rri.toString()"/>
             </div>
