@@ -49,23 +49,23 @@
           class="border border-rGray rounded-md  divide-rGray"
         >
         <div class="flex flex-row py-1">
-          <div class="flex-1 flex flex-row items-center px-6 pt-3 overflow-x-auto">
+          <div class="flex-1 flex flex-row items-center px-6 pt-3 overflow-x-auto justify-between">
             <span class="text-sm text-rGrayDark">{{ tokenBalance.token.name }}</span>
-          </div>
-          <div>
-          <a :href="createOtherTokenUrl(tokenBalance.token.rri.toString())" target="_blank" class="hover:text-rGreen transition-colors text-rGrayMed">
-            <div class="rounded-full border border-solid border-rGray w-6 h-6 flex items-center justify-center mr-1">
-              <svg width="8" height="8" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M1.08789 1H11.1344V11.0465" class="stroke-current" stroke-miterlimit="10"/>
-                <path d="M11.1339 1L1 11.134" class="stroke-current" stroke-miterlimit="10"/>
-              </svg>
+            <div>
+              <a :href="createOtherTokenUrl(tokenBalance.token.rri.toString())" target="_blank" class="hover:text-rGreen transition-colors text-rGrayMed">
+                <div class="rounded-full border border-solid border-rGray w-6 h-6 flex items-center justify-center ">
+                  <svg width="8" height="8" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M1.08789 1H11.1344V11.0465" class="stroke-current" stroke-miterlimit="10"/>
+                    <path d="M11.1339 1L1 11.134" class="stroke-current" stroke-miterlimit="10"/>
+                  </svg>
+                </div>
+              </a>
             </div>
-          </a>
           </div>
         </div>
         <div class="flex flex-row">
           <div class="flex-1 flex flex-row items-center px-6 pt-3 overflow-x-auto">
-            <span class="text-sm text-rGrayDark">{{ truncateOtherToken(tokenBalance.token.rri.toString()) }}</span>
+            <span class="text-sm font-mono text-rGrayDark">{{ truncateOtherToken(tokenBalance.token.rri.toString()) }}</span>
             <div class="hover:text-rGreen flex flex-row items-center cursor-pointer transition-colors">
               <click-to-copy :address="tokenBalance.token.rri.toString()"/>
             </div>
