@@ -107,8 +107,6 @@ const WalletSidebarDefault = defineComponent({
     const { open, setState } = useSidebar()
     const route = useRoute()
 
-    console.log(activeAccount.value)
-
     return {
       activeAccount,
       open,

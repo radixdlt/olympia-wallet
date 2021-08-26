@@ -143,6 +143,7 @@ interface useWalletInterface {
   readonly activeUnstakes: Ref<UnstakePositions | null>;
   readonly decryptedMessages: Ref<{id: string, message: string}[]>;
   readonly hardwareAccount: Ref<AccountT | null>;
+  readonly hardwareAddress: Ref<string | null>;
   readonly hardwareInteractionState: Ref<string>;
   readonly hasWallet: Ref<boolean>;
   readonly nativeToken: Ref<Token | null>;
@@ -197,8 +198,8 @@ export default function useWallet (radix: RadixT, router: Router): useWalletInte
     })
 
     radix
-      .withTokenBalanceFetchTrigger(interval(5 * 1_000))
-      .withStakingFetchTrigger(interval(5 * 1_000))
+      .withTokenBalanceFetchTrigger(interval(60 * 1_000))
+      .withStakingFetchTrigger(interval(60 * 1_000))
   }
 
   const allLoadedObservable = zip(
@@ -250,7 +251,7 @@ export default function useWallet (radix: RadixT, router: Router): useWalletInte
   // Fetch history when user navigates to next page and every 5 seconds
   const fetchTXHistoryTrigger = combineLatest<[TransactionHistoryOfKnownAddressRequestInput, number]>([
     historyPagination.asObservable(),
-    interval(5 * 1_000)
+    interval(60 * 1_000)
   ])
 
   subs.add(fetchTXHistoryTrigger
@@ -279,13 +280,11 @@ export default function useWallet (radix: RadixT, router: Router): useWalletInte
   const switchAccount = (account: AccountT) => {
     tokenBalances.value = null
     decryptedMessages.value = []
-    sidebar.value = 'default'
     radix.switchAccount({ toAccount: account })
   }
 
   const accountRenamed = () => {
     view.value = 'overview'
-    sidebar.value = 'default'
     accountNameIndex.value = accountNameIndex.value + 1
   }
 
@@ -593,6 +592,7 @@ export default function useWallet (radix: RadixT, router: Router): useWalletInte
     activeUnstakes,
     decryptedMessages,
     hardwareAccount,
+    hardwareAddress,
     hardwareInteractionState,
     hasWallet,
     invalidPasswordError,

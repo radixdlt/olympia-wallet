@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="relative">
     <wallet-sidebar-default />
     <transition
       enter-active-class="transition ease-out duration-100 transform"

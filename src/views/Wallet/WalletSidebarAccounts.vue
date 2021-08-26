@@ -1,6 +1,6 @@
 <template>
-  <div class="w-54 px-5 py-8 text-white overflow-y-auto fixed left-0 h-full bg-rBlueDark z-30 overflow-x-hidden">
-    <div @click="$emit('back')" class="hover:text-rGreen cursor-pointer transition-colors inline-flex flex-row items-center mb-4">
+  <div class="w-54 px-5 py-8 text-white overflow-y-auto fixed top-0 left-0 h-full bg-rBlueDark z-30 overflow-x-hidden">
+    <div @click="setState(false)" class="hover:text-rGreen cursor-pointer transition-colors inline-flex flex-row items-center mb-4">
       <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr-2">
         <circle cx="10" cy="10" r="9.5" transform="rotate(90 10 10)" fill="none" class="stroke-current" />
         <path d="M12 15L7 10L12 5" class="stroke-current" stroke-miterlimit="10"/>
@@ -18,13 +18,13 @@
       :account="account"
       :activeAccount="activeAccount"
       :shouldShowEdit="true"
-      @click="$emit('switchAccount', account)"
-      @edit="$emit('editName', account)"
+      @click="switchAccount(account)"
+      @edit="editName(account)"
       class="mb-8"
     >
     </account-list-item>
 
-    <div @click="$emit('addAccount')" class="mt-3 mb-4 inline-flex flex-row items-center cursor-pointer hover:text-rGreen transition-colors">
+    <div @click="addAccount" class="mt-3 mb-4 inline-flex flex-row items-center cursor-pointer hover:text-rGreen transition-colors">
       {{ $t('wallet.addAccount') }}
     </div>
     <br />
@@ -34,7 +34,7 @@
         <div class="flex justify-between">
 
           <a class="flex cursor-pointer"
-            @click="$emit('switchToHardwareAccount')"
+            @click="connectHardwareWallet"
             @mouseover="showHardwareHelper = true"
             @mouseleave="showHardwareHelper = false">
             <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -61,13 +61,13 @@
           <click-to-copy
               :address="hardwareAddress"
               :checkForHardwareAddress=true
-              @verifyHardwareAddress="$emit('verifyHardwareAddress')"
+              @verifyHardwareAddress="verifyHardwareWalletAddress"
             />
         </div>
       </div>
 
       <div v-else
-        @click="$emit('connectHardwareWallet')"
+        @click="connectHardwareWallet"
         class="group"
       >
         <div class="inline-flex flex-row items-center cursor-pointer hover:text-rGreen transition-colors">
@@ -83,10 +83,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue'
-import { AccountsT, AccountT } from '@radixdlt/application'
+import { defineComponent, ref, computed, ComputedRef } from 'vue'
+import { AccountT } from '@radixdlt/application'
 import AccountListItem from '@/components/AccountListItem.vue'
 import ClickToCopy from '@/components/ClickToCopy.vue'
+import { useRadix, useWallet, useSidebar } from '@/composables'
+import { useRouter } from 'vue-router'
 
 const WalletSidebarAccounts = defineComponent({
   components: {
@@ -94,39 +96,53 @@ const WalletSidebarAccounts = defineComponent({
     ClickToCopy
   },
 
-  props: {
-    accounts: {
-      type: Object as PropType<AccountsT>,
-      required: true
-    },
-    activeAccount: {
-      type: Object as PropType<AccountT>,
-      required: true
-    },
-    hardwareAddress: {
-      type: String,
-      required: false
-    }
-  },
+  setup () {
+    const { radix } = useRadix()
+    const router = useRouter()
+    const {
+      activeAccount,
+      accounts,
+      addAccount,
+      switchAccount,
+      connectHardwareWallet,
+      hardwareAccount,
+      hardwareAddress,
+      verifyHardwareWalletAddress
+    } = useWallet(radix, router)
+    const { setState } = useSidebar()
+    const showHardwareHelper = ref(false)
 
-  data () {
-    return {
-      showHardwareHelper: false
-    }
-  },
-
-  computed: {
-    displayHardwareAddress () {
-      if (!this.hardwareAddress) { return '' }
-
-      const add:string = this.hardwareAddress
+    const displayHardwareAddress: ComputedRef<string> = computed(() => {
+      if (!hardwareAddress.value) return ''
+      const add: string = hardwareAddress.value
       return add.substring(0, 3) + '...' + add.substring(add.length - 9)
-    },
+    })
 
-    localAccounts (): AccountT[] {
-      return this.accounts.all.filter((account: AccountT) => {
+    const localAccounts: ComputedRef<AccountT[]> = computed(() => {
+      if (!accounts.value) return []
+      return accounts.value.all.filter((account: AccountT) => {
         return account.signingKey.isLocalHDSigningKey
       })
+    })
+
+    return {
+      accounts,
+      activeAccount,
+      hardwareAccount,
+      hardwareAddress,
+      showHardwareHelper,
+      displayHardwareAddress,
+      localAccounts,
+      setState,
+      addAccount,
+      switchAccount,
+      editName (account: AccountT) {
+        setState(false)
+        router.push('/wallet/account-edit-name')
+        switchAccount(account)
+      },
+      connectHardwareWallet,
+      verifyHardwareWalletAddress
     }
   },
 

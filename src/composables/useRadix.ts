@@ -1,17 +1,21 @@
 import { ref, computed, ComputedRef } from 'vue'
-import { Network, Radix, RadixT } from '@radixdlt/application'
+import { Network, Radix, RadixT, HRP } from '@radixdlt/application'
 import { network, ChosenNetworkT } from '@/helpers/network'
 
 let radix: RadixT = Radix.create()
 
+const envNetworkName: string = process.env.VUE_APP_NETWORK_NAME || 'STOKENET'
+const typedNetwork = envNetworkName as Network
+
 const connected = ref(false)
-const activeNetwork = ref(Network.MAINNET)
+const activeNetwork = ref(typedNetwork)
 
 interface useRadixInterface {
   connected: ComputedRef<boolean>;
   radix: RadixT;
   network: ComputedRef<Network>;
-  establishConnection: () => Promise<void>
+  establishConnection: () => Promise<void>;
+  networkPreamble: ComputedRef<string>;
 }
 
 export default function useRadix (): useRadixInterface {
@@ -26,9 +30,21 @@ export default function useRadix (): useRadixInterface {
       if (!radix) {
         radix = Radix.create()
       }
+      console.log('hi', selectedNetwork)
       const result = await radix.connect(selectedNetwork.networkURL)
       connected.value = true
       return result
-    }
+    },
+
+    networkPreamble: computed(() => {
+      switch (activeNetwork.value) {
+        case Network.STOKENET:
+          return HRP.STOKENET.account
+        case HRP.MAINNET.account:
+          return HRP.MAINNET.account
+        default:
+          return ''
+      }
+    })
   }
 }
