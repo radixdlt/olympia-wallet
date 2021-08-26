@@ -5,6 +5,7 @@ import {
   AccountT,
   AmountT,
   ErrorT,
+  ErrorCategory,
   ExecutedTransaction,
   FinalizedTransaction,
   HDPathRadix,
@@ -57,6 +58,8 @@ import { HardwareWalletLedger } from '@radixdlt/hardware-ledger'
 export interface PendingTransaction extends TransactionStateSuccess {
   actions: IntendedAction[]
 }
+
+export type WalletError = ErrorT<ErrorCategory.WALLET>
 
 const hasWallet = ref(false)
 const wallet: Ref<WalletT | null> = ref(null)
@@ -148,7 +151,7 @@ interface useWalletInterface {
   readonly hasWallet: Ref<boolean>;
   readonly nativeToken: Ref<Token | null>;
   readonly nativeTokenBalance: Ref<TokenBalance | null>;
-  readonly invalidPasswordError: Ref<ErrorT<'wallet'> | null>;
+  readonly invalidPasswordError: Ref<WalletError | null>;
   readonly shouldShowConfirmation: Ref<boolean>;
   readonly showDeleteHWWalletPrompt: Ref<boolean>;
   readonly showLedgerVerify: Ref<boolean>;
@@ -183,7 +186,7 @@ interface useWalletInterface {
 }
 
 export default function useWallet (radix: RadixT, router: Router): useWalletInterface {
-  const invalidPasswordError: Ref<ErrorT<'wallet'> | null> = ref(null)
+  const invalidPasswordError: Ref<WalletError | null> = ref(null)
 
   radix.errors
     .pipe(filter(errorNotification => errorNotification.cause === WalletErrorCause.LOAD_KEYSTORE_FAILED))
@@ -280,7 +283,7 @@ export default function useWallet (radix: RadixT, router: Router): useWalletInte
   const switchAccount = (account: AccountT) => {
     tokenBalances.value = null
     decryptedMessages.value = []
-    console.log('account changed', radix.switchAccount({ toAccount: account }))
+    radix.switchAccount({ toAccount: account })
   }
 
   const accountRenamed = () => {

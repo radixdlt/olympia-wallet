@@ -45,7 +45,6 @@
 
 <script lang="ts">
 import { defineComponent, watch, onBeforeMount, ref } from 'vue'
-import { ErrorT } from '@radixdlt/application'
 import HomeCreateAndRestore from './HomeCreateAndRestore.vue'
 import HomeEnterPasscode from './HomeEnterPasscode.vue'
 import HomeLockedModal from './HomeLockedModal.vue'
@@ -55,7 +54,7 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { ref as rxRef } from '@nopr3d/vue-next-rx'
 import useRadix from '@/composables/useRadix'
-import useWallet from '@/composables/useWallet'
+import useWallet, { WalletError } from '@/composables/useWallet'
 
 const Home = defineComponent({
   components: {
@@ -91,7 +90,7 @@ const Home = defineComponent({
 
     watch(
       () => invalidPasswordError.value,
-      (value: ErrorT<'wallet'> | null) => {
+      (value: WalletError | null) => {
         if (value) {
           enterPasscodeComponent.value.setErrors({
             password: t('validations.incorrectPassword')
