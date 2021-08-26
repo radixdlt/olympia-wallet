@@ -67,8 +67,8 @@
           </svg>
         </div>
 
-        <span v-if="messageState == 'plaintext'">{{ transaction.message }}</span>
-        <span v-if="messageState == 'decrypted'">{{decryptedMessage}}</span>
+        <span v-if="messageState == 'plaintext'" class="select-text">{{ transaction.message }}</span>
+        <span v-if="messageState == 'decrypted'" class="select-text">{{decryptedMessage}}</span>
         <button v-if="messageState == 'encrypted'" class="text-rGreen underline hover:text-rGreenDark transition-colors" @click="decrypt">{{ $t('history.clickToDecryptLabel') }}</button>
       </div>
      </div>
