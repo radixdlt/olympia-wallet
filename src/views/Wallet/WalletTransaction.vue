@@ -193,7 +193,7 @@ const WalletTransaction = defineComponent({
     })
 
     const disableSubmit: ComputedRef<boolean> = computed(() => {
-      return meta.value.dirty ? meta.value.valid : true
+      return meta.value.dirty ? !meta.value.valid : true
     })
 
     return {
@@ -228,7 +228,7 @@ const WalletTransaction = defineComponent({
           return
         }
 
-        if (safeAddress) {
+        if (!safeAddress) {
           setErrors({
             recipient: t('validations.validAddress')
           })
