@@ -45,7 +45,7 @@
 
 <script lang="ts">
 import { defineComponent, watch, onBeforeMount, ref } from 'vue'
-import { ErrorNotification } from '@radixdlt/application'
+import { ErrorT } from '@radixdlt/application'
 import HomeCreateAndRestore from './HomeCreateAndRestore.vue'
 import HomeEnterPasscode from './HomeEnterPasscode.vue'
 import HomeLockedModal from './HomeLockedModal.vue'
@@ -91,7 +91,7 @@ const Home = defineComponent({
 
     watch(
       () => invalidPasswordError.value,
-      (value: ErrorNotification | null) => {
+      (value: ErrorT<'wallet'> | null) => {
         if (value) {
           enterPasscodeComponent.value.setErrors({
             password: t('validations.incorrectPassword')

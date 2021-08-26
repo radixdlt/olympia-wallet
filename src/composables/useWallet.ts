@@ -4,6 +4,7 @@ import {
   AccountsT,
   AccountT,
   AmountT,
+  ErrorT,
   ExecutedTransaction,
   FinalizedTransaction,
   HDPathRadix,
@@ -32,7 +33,6 @@ import {
   UnstakeOptions,
   UnstakePositions,
   UnstakeTokensInput,
-  ErrorNotification,
   WalletErrorCause,
   WalletT
 } from '@radixdlt/application'
@@ -148,7 +148,7 @@ interface useWalletInterface {
   readonly hasWallet: Ref<boolean>;
   readonly nativeToken: Ref<Token | null>;
   readonly nativeTokenBalance: Ref<TokenBalance | null>;
-  readonly invalidPasswordError: Ref<ErrorNotification | null>;
+  readonly invalidPasswordError: Ref<ErrorT<'wallet'> | null>;
   readonly shouldShowConfirmation: Ref<boolean>;
   readonly showDeleteHWWalletPrompt: Ref<boolean>;
   readonly showLedgerVerify: Ref<boolean>;
@@ -183,11 +183,11 @@ interface useWalletInterface {
 }
 
 export default function useWallet (radix: RadixT, router: Router): useWalletInterface {
-  const invalidPasswordError: Ref<ErrorNotification | null> = ref(null)
+  const invalidPasswordError: Ref<ErrorT<'wallet'> | null> = ref(null)
 
   radix.errors
     .pipe(filter(errorNotification => errorNotification.cause === WalletErrorCause.LOAD_KEYSTORE_FAILED))
-    .subscribe((errorNotification: ErrorNotification) => { invalidPasswordError.value = errorNotification })
+    .subscribe((errorNotification: ErrorT<'wallet'>) => { invalidPasswordError.value = errorNotification })
 
   hasKeystore().then((res: boolean) => { hasWallet.value = res })
 
@@ -280,7 +280,7 @@ export default function useWallet (radix: RadixT, router: Router): useWalletInte
   const switchAccount = (account: AccountT) => {
     tokenBalances.value = null
     decryptedMessages.value = []
-    radix.switchAccount({ toAccount: account })
+    console.log('account changed', radix.switchAccount({ toAccount: account }))
   }
 
   const accountRenamed = () => {
