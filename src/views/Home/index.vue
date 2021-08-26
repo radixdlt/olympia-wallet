@@ -44,7 +44,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, watch, onBeforeMount, ref } from 'vue'
+import { defineComponent, watch } from 'vue'
 import HomeCreateAndRestore from './HomeCreateAndRestore.vue'
 import HomeEnterPasscode from './HomeEnterPasscode.vue'
 import HomeLockedModal from './HomeLockedModal.vue'
@@ -52,9 +52,9 @@ import HomeForgotPassword from './HomeForgotPassword.vue'
 import LoadingIcon from '@/components/LoadingIcon.vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { ref as rxRef } from '@nopr3d/vue-next-rx'
-import useRadix from '@/composables/useRadix'
+import { useHomeModal, useRadix } from '@/composables'
 import useWallet, { WalletError } from '@/composables/useWallet'
+import { ref } from '@nopr3d/vue-next-rx'
 
 const Home = defineComponent({
   components: {
@@ -65,26 +65,14 @@ const Home = defineComponent({
     LoadingIcon
   },
 
-  props: {
-    modal: {
-      type: String,
-      required: false
-    }
-  },
-
-  setup (props) {
-    const uiModal = ref('')
-
-    onBeforeMount(() => {
-      if (props.modal) { uiModal.value = props.modal }
-    })
-
+  setup () {
+    const { modal, setModal } = useHomeModal()
     const router = useRouter()
     const { radix } = useRadix()
     const { hasWallet, invalidPasswordError, loginWithWallet, resetWallet, walletLoaded } = useWallet(radix, router)
     const { t } = useI18n({ useScope: 'global' })
 
-    const enterPasscodeComponent = rxRef(null)
+    const enterPasscodeComponent = ref(null)
 
     walletLoaded()
 
@@ -101,17 +89,16 @@ const Home = defineComponent({
 
     return {
       hasWallet,
-      uiModal,
-      // methods
+      modal,
       loginWithWallet,
       enterPasscodeComponent,
 
       closeModal () {
-        uiModal.value = ''
+        setModal(null)
       },
 
       forgotPassword () {
-        uiModal.value = 'forgot-password'
+        setModal('forgot-password')
       },
 
       resetAndCreate () {

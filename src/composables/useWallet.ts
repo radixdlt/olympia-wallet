@@ -61,39 +61,40 @@ export interface PendingTransaction extends TransactionStateSuccess {
 
 export type WalletError = ErrorT<ErrorCategory.WALLET>
 
-const hasWallet = ref(false)
-const wallet: Ref<WalletT | null> = ref(null)
-const activeAccount: Ref<AccountT | null> = ref(null)
-const hardwareAccount: Ref<AccountT | null> = ref(null)
-const activeAddress: Ref<AccountAddressT | null> = ref(null)
-const activeStakes: Ref<StakePositions | null> = ref(null)
-const activeUnstakes: Ref<UnstakePositions | null> = ref(null)
-const activeTransaction: Ref<TransactionTracking | null> = ref(null)
 const accounts: Ref<AccountsT | null> = ref(null)
-const tokenBalances: Ref<TokenBalances | null> = ref(null)
-const transactionHistory: Ref<TransactionHistory> = ref({ transactions: [], cursor: '' })
-const decryptedMessages: Ref<{id: string, message: string}[]> = ref([])
-
-const activeMessageInTransaction: Ref<MessageInTransaction | null> = ref(null)
-const shouldShowConfirmation: Ref<boolean> = ref(false)
-const confirmationMode: Ref<string | null> = ref(null)
-const transferInput: Ref<TransferTokensInput | null> = ref(null)
-const stakeInput: Ref<StakeTokensInput | null> = ref(null)
-const transactionFee: Ref<AmountT | null> = ref(null)
-const hasCalculatedFee: Ref<boolean> = ref(false)
-const transactionToConfirm: Ref<ManualUserConfirmTX | null> = ref(null)
-const pendingTransactions: Ref<Array<PendingTransaction>> = ref([])
-const view: Ref<string> = ref('overview')
-const sidebar = ref('default')
-const draftTransaction: Ref<TransactionIntent | null> = ref(null)
-const cursorStack: Ref<string[]> = ref([])
-const canGoNext: Ref<boolean> = ref(false)
-const nativeToken: Ref<Token | null> = ref(null)
-const selectedCurrency: Ref<TokenBalance | null> = ref(null)
-const nativeTokenBalance: Ref<TokenBalance | null> = ref(null)
+const activeAccount: Ref<AccountT | null> = ref(null)
+const activeAddress: Ref<AccountAddressT | null> = ref(null)
 const activeMessage: Ref<string> = ref('')
-const showLedgerVerify: Ref<boolean> = ref(false)
+const activeMessageInTransaction: Ref<MessageInTransaction | null> = ref(null)
+const activeStakes: Ref<StakePositions | null> = ref(null)
+const activeTransaction: Ref<TransactionTracking | null> = ref(null)
+const activeTransactionForm: Ref<string | null> = ref(null)
+const activeUnstakes: Ref<UnstakePositions | null> = ref(null)
+const canGoNext: Ref<boolean> = ref(false)
+const confirmationMode: Ref<string | null> = ref(null)
+const cursorStack: Ref<string[]> = ref([])
+const decryptedMessages: Ref<{id: string, message: string}[]> = ref([])
+const draftTransaction: Ref<TransactionIntent | null> = ref(null)
+const hardwareAccount: Ref<AccountT | null> = ref(null)
+const hasCalculatedFee: Ref<boolean> = ref(false)
+const hasWallet = ref(false)
+const ledgerTxError: Ref<Error | null> = ref(null)
 const ledgerVerifyError: Ref<Error | null> = ref(null)
+const nativeToken: Ref<Token | null> = ref(null)
+const nativeTokenBalance: Ref<TokenBalance | null> = ref(null)
+const pendingTransactions: Ref<Array<PendingTransaction>> = ref([])
+const selectedCurrency: Ref<TokenBalance | null> = ref(null)
+const shouldShowConfirmation: Ref<boolean> = ref(false)
+const showLedgerVerify: Ref<boolean> = ref(false)
+const sidebar = ref('default')
+const stakeInput: Ref<StakeTokensInput | null> = ref(null)
+const tokenBalances: Ref<TokenBalances | null> = ref(null)
+const transactionErrorMessage: Ref<string | null> = ref(null)
+const transactionFee: Ref<AmountT | null> = ref(null)
+const transactionHistory: Ref<TransactionHistory> = ref({ transactions: [], cursor: '' })
+const transactionToConfirm: Ref<ManualUserConfirmTX | null> = ref(null)
+const transferInput: Ref<TransferTokensInput | null> = ref(null)
+const wallet: Ref<WalletT | null> = ref(null)
 
 // a dirty trick to get the account list item in the default wallet sidebar when the name changes
 const accountNameIndex: Ref<number> = ref(0)
@@ -141,22 +142,33 @@ interface useWalletInterface {
   readonly accounts: Ref<AccountsT | null>;
   readonly activeAccount: Ref<AccountT | null>;
   readonly activeAddress: Ref<AccountAddressT | null>;
+  readonly activeMessageInTransaction: Ref<MessageInTransaction | null>;
   readonly activeStakes: Ref<StakePositions | null>;
   readonly activeTransaction: Ref<TransactionTracking | null>;
+  readonly activeTransactionForm: Ref<string | null>;
   readonly activeUnstakes: Ref<UnstakePositions | null>;
+  readonly confirmationMode: Ref<string | null>;
   readonly decryptedMessages: Ref<{id: string, message: string}[]>;
   readonly hardwareAccount: Ref<AccountT | null>;
   readonly hardwareAddress: Ref<string | null>;
   readonly hardwareInteractionState: Ref<string>;
   readonly hasWallet: Ref<boolean>;
+  readonly ledgerTxError: Ref<Error | null>;
+  readonly ledgerVerifyError: Ref<Error | null>;
   readonly nativeToken: Ref<Token | null>;
   readonly nativeTokenBalance: Ref<TokenBalance | null>;
   readonly invalidPasswordError: Ref<WalletError | null>;
+  readonly selectedCurrency: Ref<TokenBalance | null>;
   readonly shouldShowConfirmation: Ref<boolean>;
   readonly showDeleteHWWalletPrompt: Ref<boolean>;
   readonly showLedgerVerify: Ref<boolean>;
+  readonly stakeInput: Ref<StakeTokensInput | null>;
+  readonly transactionState: Ref<string>;
+  readonly transferInput: Ref<TransferTokensInput | null>;
+  readonly transactionFee: Ref<AmountT | null>;
   readonly tokenBalances: Ref<TokenBalances | null>;
   readonly transactionHistory: Ref<TransactionHistory>;
+  readonly transactionErrorMessage: Ref<string | null>;
   readonly walletHasLoaded: ComputedRef<boolean>;
 
   accountRenamed: () => void;
@@ -176,6 +188,7 @@ interface useWalletInterface {
   resetWallet: (nextRoute: 'create-wallet' | 'restore-wallet') => void;
   setPin: (pin: string) => Promise<string>;
   setWallet: (newWallet: WalletT) => WalletT;
+  setActiveTransactionForm: (val: string) => void;
   stakeTokens: (input: StakeTokensInput) => void;
   switchAccount: (account: AccountT) => void;
   transferTokens: (input: TransferTokensInput, message: MessageInTransaction, sc: TokenBalance) => void;
@@ -287,7 +300,7 @@ export default function useWallet (radix: RadixT, router: Router): useWalletInte
   }
 
   const accountRenamed = () => {
-    view.value = 'overview'
+    router.push('/wallet')
     accountNameIndex.value = accountNameIndex.value + 1
   }
 
@@ -304,6 +317,10 @@ export default function useWallet (radix: RadixT, router: Router): useWalletInte
   const cancelTransaction = () => {
     userDidCancel.next(true)
     hasCalculatedFee.value = false
+  }
+
+  const setActiveTransactionForm = (val: string) => {
+    activeTransactionForm.value = val
   }
 
   const confirmAndExecuteTransaction = (transactionTracking: TransactionTracking) => {
@@ -337,33 +354,22 @@ export default function useWallet (radix: RadixT, router: Router): useWalletInte
         return errorEvent && errorEvent.error != null
       }))
       .subscribe((event: TransactionStateUpdate) => {
-        // const errorEvent: TransactionStateError = event as TransactionStateError
+        const errorEvent: TransactionStateError = event as TransactionStateError
         userDidCancel.next(true)
         shouldShowConfirmation.value = false
+        const isLedgerConnectedError = errorEvent.error.message && errorEvent.error.message.includes('Failed to sign tx with Ledger')
+        if (isLedgerConnectedError) {
+          ledgerTxError.value = errorEvent.error
+          hardwareAccount.value = null
+          hardwareInteractionState.value = 'FAILED_TO_SIGN'
+          hardwareWalletError.value = new Error('validations.failedToSign')
+          transactionErrorMessage.value = null
+          return
+        }
+
+        transactionErrorMessage.value = `validations.${activeTransactionForm.value}Failed`
       })
-      //   const isLedgerConnectedError = errorEvent.error.message && errorEvent.error.message.includes('Failed to sign tx with Ledger')
-      //   if (isLedgerConnectedError) {
-      //     ledgerTxError.value = errorEvent.error
-      //     hardwareAccount.value = null
-      //     hardwareInteractionState.value = 'FAILED_TO_SIGN'
-      //     hardwareWalletError.value = new Error(t('validations.failedToSign'))
-      //     // walletTransactionComponent.value.setErrors({
-      //     //   amount: null
-      //     // })
-      //   } else if (view.value === 'transaction') {
-      //     // walletTransactionComponent.value.setErrors({
-      //     //   amount: t('validations.transactionFailed')
-      //     // })
-      //   } else if (walletStakingComponent.value && walletStakingComponent.value.$data.activeForm === 'stake') {
-      //     // walletStakingComponent.value.setErrors({
-      //     //   amount: t('validations.stakeFailed')
-      //     // })
-      //   } else {
-      //     // walletStakingComponent.value.setErrors({
-      //     //   amount: t('validations.unstakeFailed')
-      //     // })
-      //   }
-      // })
+
     subs.add(trackingSubmittedEventErrors)
 
     // Store draft transaction actions
@@ -396,7 +402,7 @@ export default function useWallet (radix: RadixT, router: Router): useWalletInte
             return txnID.toString() !== transactionState.txID.toString()
           })
           shouldShowConfirmation.value = false
-          view.value = 'history'
+          router.push('/wallet')
           hasCalculatedFee.value = false
           transactionDidComplete.next(true)
         }
@@ -409,6 +415,7 @@ export default function useWallet (radix: RadixT, router: Router): useWalletInte
       watchUserDidConfirm.unsubscribe()
       trackingSubmittedEvents.unsubscribe()
       hasCalculatedFee.value = false
+      transactionErrorMessage.value = null
     }
 
     userDidCancel.subscribe((didCancel: boolean) => {
@@ -590,22 +597,33 @@ export default function useWallet (radix: RadixT, router: Router): useWalletInte
     accounts,
     activeAccount,
     activeAddress,
+    activeMessageInTransaction,
+    activeTransactionForm,
     activeStakes,
     activeTransaction,
     activeUnstakes,
+    confirmationMode,
     decryptedMessages,
     hardwareAccount,
     hardwareAddress,
     hardwareInteractionState,
     hasWallet,
     invalidPasswordError,
+    ledgerTxError,
+    ledgerVerifyError,
     nativeToken,
     nativeTokenBalance,
+    selectedCurrency,
     shouldShowConfirmation,
     showDeleteHWWalletPrompt,
     showLedgerVerify,
+    stakeInput,
     tokenBalances,
+    transactionErrorMessage,
+    transactionFee,
     transactionHistory,
+    transactionState,
+    transferInput,
     walletHasLoaded: computed(() => {
       return activeAddress.value != null && activeStakes.value != null && activeUnstakes.value != null && tokenBalances.value != null && nativeToken.value != null
     }),
@@ -636,6 +654,7 @@ export default function useWallet (radix: RadixT, router: Router): useWalletInte
     nextPage,
     previousPage,
     refreshHistory,
+    setActiveTransactionForm,
     setPin,
     setWallet,
     stakeTokens,

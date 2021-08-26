@@ -119,7 +119,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, Ref, ref, ComputedRef, computed } from 'vue'
+import { defineComponent, Ref, ref, ComputedRef, computed, watch } from 'vue'
 import { useForm } from 'vee-validate'
 
 import { safelyUnwrapAddress, safelyUnwrapAmount, validateAmountOfType, validateGreaterThanZero } from '@/helpers/validateRadixTypes'
@@ -156,10 +156,16 @@ const WalletTransaction = defineComponent({
     const { errors, values, meta, setErrors } = useForm<TransactionForm>()
     const router = useRouter()
     const { radix, networkPreamble } = useRadix()
-    const { activeAddress, tokenBalances, nativeToken, transferTokens } = useWallet(radix, router)
+    const { activeAddress, tokenBalances, nativeToken, transactionErrorMessage, transferTokens } = useWallet(radix, router)
     const { t } = useI18n({ useScope: 'global' })
 
     if (!activeAddress.value || !nativeToken.value || !tokenBalances.value) return
+
+    watch(transactionErrorMessage, (val) => {
+      if (val) {
+        setErrors({ amount: t(val) })
+      }
+    })
 
     const currency: Ref<string | null> = ref(null)
     const tokenOptions: Ref<Array<TokenBalance>> = ref([])
@@ -251,6 +257,17 @@ const WalletTransaction = defineComponent({
         }
       }
     }
+  },
+
+  beforeRouteEnter () {
+    const router = useRouter()
+    const { radix, connected } = useRadix()
+    const { setActiveTransactionForm, hasWallet } = useWallet(radix, router)
+    if (!connected || !hasWallet.value) {
+      router.push('/')
+      return false
+    }
+    setActiveTransactionForm('transaction')
   },
 
   emits: ['transferTokens', 'verifyHardwareAddress']

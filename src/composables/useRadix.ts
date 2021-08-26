@@ -14,6 +14,7 @@ interface useRadixInterface {
   connected: ComputedRef<boolean>;
   radix: RadixT;
   network: ComputedRef<Network>;
+  reset: () => void;
   establishConnection: () => Promise<void>;
   networkPreamble: ComputedRef<string>;
 }
@@ -24,13 +25,16 @@ export default function useRadix (): useRadixInterface {
     radix,
     network: computed(() => activeNetwork.value),
 
+    reset: () => {
+      radix.__reset()
+    },
+
     async establishConnection (): Promise<void> {
       const selectedNetwork: ChosenNetworkT = network(activeNetwork.value)
       activeNetwork.value = selectedNetwork.network
       if (!radix) {
         radix = Radix.create()
       }
-      console.log('hi', selectedNetwork)
       const result = await radix.connect(selectedNetwork.networkURL)
       connected.value = true
       return result

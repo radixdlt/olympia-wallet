@@ -69,14 +69,14 @@
             </div>
           </div>
 
-          <div class="border-b border-rGray py-3.5 flex items-center" v-if="activeMessage && !this.stakeInput">
+          <div class="border-b border-rGray py-3.5 flex items-center" v-if="activeMessageInTransaction && !this.stakeInput">
             <div class="w-26 text-right text-rGrayDark mr-6">{{ $t('transaction.messageLabel') }}</div>
             <div class="flex-1">
               <div class="flex">
                 <div class="flex-1 text-sm">
-                  {{ activeMessage.plaintext }}
+                  {{ activeMessageInTransaction.plaintext }}
                 </div>
-                <div class="flex-grow-0" v-if="activeMessage.encrypt">
+                <div class="flex-grow-0" v-if="activeMessageInTransaction.encrypt">
                   <svg width="10" height="12" viewBox="0 0 10 12" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-5 mr-3.5">
                     <path d="M2.04883 4.93512V3.79987C2.04883 2.25355 3.30238 1 4.8487 1C6.39502 1 7.64857 2.25355 7.64857 3.79987V4.93512" stroke="#7A99AC" stroke-width="1.5" stroke-miterlimit="10"/>
                     <path d="M1 11.4001V4.84473H2.13447H7.58739H8.72185V11.0556H2.60558" stroke="#7A99AC" stroke-width="1.5" stroke-miterlimit="10"/>
@@ -131,13 +131,16 @@
 </template>
 
 <script lang="ts">
-import { AccountAddressT, AmountOrUnsafeInput, AmountT, MessageInTransaction, StakeTokensInput, Token, TokenBalance, TransferTokensInput } from '@radixdlt/application'
-import { defineComponent, PropType } from 'vue'
+import { AmountOrUnsafeInput } from '@radixdlt/application'
+import { defineComponent, ref, onMounted, onUnmounted, computed, ComputedRef } from 'vue'
 import { useForm } from 'vee-validate'
 import BigAmount from '@/components/BigAmount.vue'
 import PinInput from '@/components/PinInput.vue'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
 import { validatePin } from '@/actions/vue/create-wallet'
+import { useRouter } from 'vue-router'
+import { useHomeModal, useRadix, useWallet } from '@/composables'
+import { useI18n } from 'vue-i18n'
 
 interface ConfirmationForm {
   pin: string;
@@ -152,127 +155,132 @@ const WalletConfirmTransactionModal = defineComponent({
 
   setup () {
     const { errors, meta, values, setErrors, resetForm } = useForm<ConfirmationForm>()
-    return { errors, meta, values, setErrors, resetForm }
-  },
+    const { setModal } = useHomeModal()
+    const router = useRouter()
 
-  props: {
-    activeAddress: {
-      type: Object as PropType<AccountAddressT>,
-      required: true
-    },
-    transferInput: {
-      type: Object as PropType<TransferTokensInput>,
-      required: false
-    },
-    stakeInput: {
-      type: Object as PropType<StakeTokensInput>,
-      required: false
-    },
-    transactionFee: {
-      type: Object as PropType<AmountT>,
-      required: true
-    },
-    selectedCurrency: {
-      type: Object as PropType<TokenBalance>,
-      required: true
-    },
-    nativeToken: {
-      type: Object as PropType<Token>,
-      required: true
-    },
-    transactionState: {
-      type: String,
-      required: true
-    },
-    activeMessage: {
-      type: Object as PropType<MessageInTransaction>,
-      required: false
-    },
-    confirmationMode: {
-      type: String,
-      required: false,
-      default: 'transfer'
+    const canCancel = ref(true)
+    const isValidPin = ref(false)
+    const pinAttempts = ref(0)
+    const { t } = useI18n({ useScope: 'global' })
+
+    const { radix, reset } = useRadix()
+    const {
+      activeAddress,
+      activeMessageInTransaction,
+      cancelTransaction,
+      confirmationMode,
+      confirmTransaction,
+      nativeToken,
+      selectedCurrency,
+      stakeInput,
+      transactionFee,
+      transactionState,
+      transferInput
+    } = useWallet(radix, router)
+
+    const escapeListener = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        cancelTransaction()
+      }
     }
-  },
 
-  data () {
-    return {
-      canCancel: true,
-      isValidPin: false,
-      pinAttempts: 0
-    }
-  },
+    onMounted(() => {
+      window.addEventListener('keydown', escapeListener)
+    })
 
-  mounted () {
-    window.addEventListener('keydown', this.escapeListener)
-  },
+    onUnmounted(() => {
+      window.removeEventListener('keydown', escapeListener)
+    })
 
-  unmounted () {
-    window.removeEventListener('keydown', this.escapeListener)
-  },
-
-  computed: {
-    toContent (): string {
-      if (this.stakeInput) {
-        return this.stakeInput.validator.toString()
-      } else if (this.transferInput) {
-        return this.transferInput.to.toString()
+    const toContent: ComputedRef<string> = computed(() => {
+      if (stakeInput.value) {
+        return stakeInput.value.validator.toString()
+      }
+      if (transferInput.value) {
+        return transferInput.value.to.toString()
       }
       return ''
-    },
-    amount (): AmountOrUnsafeInput {
-      if (this.stakeInput) {
-        return this.stakeInput.amount
-      } else if (this.transferInput) {
-        return this.transferInput.amount
+    })
+
+    const amount: ComputedRef<AmountOrUnsafeInput> = computed(() => {
+      if (stakeInput.value) {
+        return stakeInput.value.amount
+      }
+      if (transferInput.value) {
+        return transferInput.value.amount
       }
       return 0
-    },
-    disableSubmit (): boolean {
-      return !this.isValidPin
-    },
+    })
 
-    fromLabel (): string {
-      return this.$t(`confirmation.${this.confirmationMode}FromLabel`)
-    },
+    const disableSubmit: ComputedRef<boolean> = computed(() => {
+      return !isValidPin.value
+    })
 
-    toLabel (): string {
-      return this.$t(`confirmation.${this.confirmationMode}ToLabel`)
+    const fromLabel: ComputedRef<string> = computed(() => {
+      return t(`confirmation.${confirmationMode.value}FromLabel`)
+    })
+
+    const toLabel: ComputedRef<string> = computed(() => {
+      return t(`confirmation.${confirmationMode.value}ToLabel`)
+    })
+
+    const handleConfirm = () => {
+      canCancel.value = false
+      confirmTransaction()
     }
-  },
 
-  methods: {
-    handleConfirm () {
-      this.canCancel = false
-      this.$emit('confirm')
-    },
-    handleValidatePin () {
-      validatePin(this.values.pin)
+    const handleValidatePin = () => {
+      validatePin(values.pin)
         .then((isValid: boolean) => {
-          this.isValidPin = isValid
+          isValidPin.value = isValid
           if (!isValid) {
-            this.resetForm()
-            this.setErrors({
-              pin: this.$t('validations.invalidPin')
+            resetForm()
+            setErrors({
+              pin: t('validations.invalidPin')
             })
-            this.pinAttempts++
-            if (this.pinAttempts === 3) {
-              this.$router.push('/?modal=locked-out')
+
+            pinAttempts.value++
+            if (pinAttempts.value === 3) {
+              setModal('locked-out')
+              router.push('/')
+              reset()
             }
           }
         })
-    },
-    handleUnfinishedPin () {
-      this.isValidPin = false
-    },
-    escapeListener (event: KeyboardEvent) {
-      if (event.key === 'Escape') {
-        this.$emit('cancel')
-      }
     }
-  },
 
-  emits: ['confirm', 'cancel']
+    const handleUnfinishedPin = () => {
+      isValidPin.value = false
+    }
+
+    return {
+      activeAddress,
+      activeMessageInTransaction,
+      amount,
+      canCancel,
+      confirmationMode,
+      disableSubmit,
+      errors,
+      fromLabel,
+      handleConfirm,
+      handleUnfinishedPin,
+      handleValidatePin,
+      isValidPin,
+      meta,
+      nativeToken,
+      pinAttempts,
+      resetForm,
+      selectedCurrency,
+      setErrors,
+      stakeInput,
+      toContent,
+      toLabel,
+      transactionFee,
+      transactionState,
+      transferInput,
+      values
+    }
+  }
 })
 
 export default WalletConfirmTransactionModal
