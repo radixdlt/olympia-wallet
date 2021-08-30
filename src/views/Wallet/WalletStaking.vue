@@ -88,7 +88,6 @@
         :key="position.address"
         :position="position"
         :nativeToken="nativeToken"
-        :radixConnectService="radixConnectService"
         @addToValidator="handleAddToValidator"
         @reduceFromValidator="handleReduceFromValidator"
       >
@@ -98,8 +97,8 @@
 </template>
 
 <script lang="ts">
-import { StakePosition, TokenBalance, TokenBalances, UnstakePosition, AccountAddressT, Amount, AmountT, Token, ValidatorAddressT, TransactionIdentifierT, Validator } from '@radixdlt/application'
-import { defineComponent, PropType } from 'vue'
+import { StakePosition, UnstakePosition, AccountAddressT, Amount, AmountT } from '@radixdlt/application'
+import { computed, defineComponent, Ref, ref, ComputedRef } from 'vue'
 import { useForm } from 'vee-validate'
 import StakeListItem from '@/components/StakeListItem.vue'
 import { safelyUnwrapAmount, safelyUnwrapValidator, validateAmountOfType, validateGreaterThanZero } from '@/helpers/validateRadixTypes'
@@ -110,7 +109,9 @@ import FormField from '@/components/FormField.vue'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
 import { asBigNumber } from '@/components/BigAmount.vue'
 import { Position } from '@/store/_types'
-import RadixConnectService from '@/services/RadixConnectService'
+import { useRadix, useWallet } from '@/composables'
+import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 
 interface StakeForm {
   validator: string;
@@ -128,66 +129,37 @@ const WalletStaking = defineComponent({
   },
 
   setup () {
+    const activeForm: Ref<string> = ref('stake')
+    const { t } = useI18n({ useScope: 'global' })
     const { errors, values, meta, setErrors, resetForm } = useForm<StakeForm>()
-    return { errors, values, meta, setErrors, resetForm }
-  },
+    const { radix } = useRadix()
+    const router = useRouter()
+    const {
+      activeAddress,
+      tokenBalances,
+      nativeToken,
+      activeStakes,
+      activeUnstakes,
+      nativeTokenBalance,
+      stakeTokens,
+      unstakeTokens
+    } = useWallet(radix, router)
 
-  props: {
-    activeAddress: {
-      type: Object as PropType<AccountAddressT>,
-      required: true
-    },
-    activeStakes: {
-      type: Array as PropType<Array<StakePosition>>,
-      required: true
-    },
-    activeUnstakes: {
-      type: Object as PropType<Array<UnstakePosition>>,
-      required: true
-    },
-    tokenBalances: {
-      type: Object as PropType<TokenBalances>,
-      required: true
-    },
-    nativeToken: {
-      type: Object as PropType<Token>,
-      required: true
-    },
-    nativeTokenBalance: {
-      type: Object as PropType<TokenBalance>,
-      required: false
-    },
-    radixConnectService: {
-      type: Object as PropType<RadixConnectService>,
-      required: true
+    const setForm = (form: string) => {
+      activeForm.value = form
+      resetForm()
     }
-  },
 
-  data () {
-    return {
-      activeForm: 'stake',
-      stakeUrl: 'https://learn.radixdlt.com'
-    }
-  },
+    // Computed Values
+    const xrdBalance: ComputedRef<AmountT> = computed(() =>
+      nativeTokenBalance.value ? nativeTokenBalance.value.amount : Amount.fromUnsafe(0)._unsafeUnwrap())
 
-  computed: {
-    stakingDisclaimer (): string {
-      return this.activeForm === 'stake' ? this.$t('staking.stakeDisclaimer') : this.$t('staking.unstakeDisclaimer')
-    },
-    xrdBalance (): AmountT {
-      return this.nativeTokenBalance ? this.nativeTokenBalance.amount : Amount.fromUnsafe(0)._unsafeUnwrap()
-    },
-    submitMethod (): 'stakeTokens' | 'unstakeTokens' {
-      return this.activeForm === 'stake' ? 'stakeTokens' : 'unstakeTokens'
-    },
-    stakeButtonCopy (): string {
-      return this.activeForm === 'stake' ? this.$t('staking.stakeButton') : this.$t('staking.unstakeButton')
-    },
-    sortedPositions (): Array<Position> {
+    const sortedPositions: ComputedRef<Array<Position>> = computed(() => {
+      if (!activeStakes.value || !activeUnstakes.value) return []
       // If more than 1 stake exists for the same validator, only display the validator once and sum their amounts
       let positions: Position[] = []
 
-      this.activeStakes.forEach((stake: StakePosition) => {
+      activeStakes.value.forEach((stake: StakePosition) => {
         const existingPositionIndex = positions.findIndex((pos: Position) => pos.validator.equals(stake.validator))
         const address = stake.validator.toString()
         if (existingPositionIndex === -1) {
@@ -197,7 +169,7 @@ const WalletStaking = defineComponent({
         }
       })
 
-      this.activeUnstakes.forEach((unstake: UnstakePosition) => {
+      activeUnstakes.value.forEach((unstake: UnstakePosition) => {
         const address = unstake.validator.toString()
         const existingPositionIndex = positions.findIndex((pos: Position) => pos.validator.equals(unstake.validator))
         if (existingPositionIndex === -1) {
@@ -215,72 +187,88 @@ const WalletStaking = defineComponent({
         if (bTotal > aTotal) return 1
         return 0
       })
-    },
-    disableSubmit (): boolean {
-      return this.meta.dirty ? !this.meta.valid : true
-    },
-    amountPlaceholder (): string {
-      if (this.xrdBalance && this.activeForm === 'stake') {
-        return `${this.$t('staking.amountPlaceholder')} ${asBigNumber(this.xrdBalance)} `
-      }
+    })
 
-      return this.$t('staking.availableBalancePlaceholder')
-    },
-    explorerUrl (): string {
-      return `${process.env.VUE_APP_EXPLORER}/#/validators`
+    const stakingDisclaimer: ComputedRef<string> = computed(() =>
+      activeForm.value === 'stake' ? t('staking.stakeDisclaimer') : t('staking.unstakeDisclaimer'))
+
+    const stakeButtonCopy: ComputedRef<string> = computed(() =>
+      activeForm.value === 'stake' ? t('staking.stakeButton') : t('staking.unstakeButton'))
+
+    const disableSubmit: ComputedRef<boolean> = computed(() => meta.value.dirty ? !meta.value.valid : true)
+
+    const amountPlaceholder: ComputedRef<string> = computed(() =>
+      (xrdBalance.value && activeForm.value === 'stake')
+        ? `${t('staking.amountPlaceholder')} ${asBigNumber(xrdBalance.value)} `
+        : t('staking.availableBalancePlaceholder'))
+
+    const explorerUrl: ComputedRef<string> = computed(() => `${process.env.VUE_APP_EXPLORER}/#/validators`)
+
+    // Methods
+    const handleAddToValidator = (validator: AccountAddressT) => {
+      activeForm.value = 'stake'
+      values.validator = validator.toString()
     }
-  },
 
-  methods: {
-    setForm (form: string) {
-      this.activeForm = form
-      this.resetForm()
-    },
-    handleAddToValidator (validator: AccountAddressT) {
-      this.activeForm = 'stake'
-      this.values.validator = validator.toString()
-    },
-    handleReduceFromValidator (validator: AccountAddressT) {
-      this.activeForm = 'unstake'
-      this.values.validator = validator.toString()
-    },
-    validAmountForValidator (amount: AmountT, validator: ValidatorAddressT | null, method: string) {
-      if (method === 'stakeTokens') {
-        return true
-      } else {
-        if (!validator) return false
-        const stakedValidator = this.activeStakes.find(stake => stake.validator.toString() === validator.toString())
-        if (!stakedValidator) return false
-        if (amount > stakedValidator.amount) return false
-        return true
-      }
-    },
-    handleSubmitStake () {
-      if (this.meta.valid && this.nativeTokenBalance) {
-        const safeAddress = safelyUnwrapValidator(this.values.validator)
-        const safeAmount = safelyUnwrapAmount(Number(this.values.amount))
+    const handleReduceFromValidator = (validator: AccountAddressT) => {
+      activeForm.value = 'unstake'
+      values.validator = validator.toString()
+    }
+
+    const handleSubmitStake = () => {
+      if (meta.value.valid && nativeTokenBalance.value) {
+        const safeAddress = safelyUnwrapValidator(values.validator)
+        const safeAmount = safelyUnwrapAmount(Number(values.amount))
         const greaterThanZero = safeAmount && validateGreaterThanZero(safeAmount)
-        const validAmount = safeAmount && validateAmountOfType(safeAmount, this.nativeTokenBalance.token)
+        const validAmount = safeAmount && validateAmountOfType(safeAmount, nativeTokenBalance.value.token)
 
         if (!greaterThanZero) {
-          this.setErrors({
-            amount: this.$t('validations.greaterThanZero')
+          setErrors({
+            amount: t('validations.greaterThanZero')
           })
         } else if (!validAmount) {
-          this.setErrors({
-            amount: this.$t('validations.amountOfType', { granularity: this.nativeTokenBalance.token.granularity.toString() })
+          setErrors({
+            amount: t('validations.amountOfType', { granularity: nativeTokenBalance.value.token.granularity.toString() })
           })
         } else {
-          this.$emit(this.submitMethod, {
-            validator: safeAddress,
-            amount: safeAmount
-          })
+          if (!safeAddress || !safeAmount) return
+          activeForm.value === 'stake'
+            ? stakeTokens({
+              validator: safeAddress,
+              amount: safeAmount
+            })
+            : unstakeTokens({
+              validator: safeAddress,
+              amount: safeAmount
+            })
         }
       }
     }
-  },
 
-  emits: ['stakeTokens', 'unstakeTokens']
+    return {
+      stakeUrl: 'https://learn.radixdlt.com',
+      activeForm,
+      activeAddress,
+      tokenBalances,
+      nativeToken,
+      errors,
+      values,
+      meta,
+      setErrors,
+      resetForm,
+      sortedPositions,
+      xrdBalance,
+      stakingDisclaimer,
+      stakeButtonCopy,
+      disableSubmit,
+      amountPlaceholder,
+      explorerUrl,
+      setForm,
+      handleAddToValidator,
+      handleReduceFromValidator,
+      handleSubmitStake
+    }
+  }
 })
 
 export default WalletStaking

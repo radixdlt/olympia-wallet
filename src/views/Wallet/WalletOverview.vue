@@ -52,7 +52,7 @@
           <div class="flex-1 flex flex-row items-center px-6 pt-3 overflow-x-auto justify-between">
             <span class="text-sm text-rGrayDark">{{ tokenBalance.token.name }}</span>
             <div>
-              <a :href="createOtherTokenUrl(tokenBalance.token.rri.toString())" target="_blank" class="hover:text-rGreen transition-colors text-rGrayMed">
+              <a :href="createRRIUrl(tokenBalance.token.rri.toString())" target="_blank" class="hover:text-rGreen transition-colors text-rGrayMed">
                 <div class="rounded-full border border-solid border-rGray w-6 h-6 flex items-center justify-center ">
                   <svg width="8" height="8" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M1.08789 1H11.1344V11.0465" class="stroke-current" stroke-miterlimit="10"/>
@@ -65,7 +65,7 @@
         </div>
         <div class="flex flex-row">
           <div class="flex-1 flex flex-row items-center px-6 pt-3 overflow-x-auto">
-            <span class="text-sm font-mono text-rGrayDark">{{ truncateOtherToken(tokenBalance.token.rri.toString()) }}</span>
+            <span class="text-sm font-mono text-rGrayDark">{{ truncateRRIStringForDisplay(tokenBalance.token.rri.toString()) }}</span>
             <div class="hover:text-rGreen flex flex-row items-center cursor-pointer transition-colors">
               <click-to-copy :address="tokenBalance.token.rri.toString()"/>
             </div>
@@ -90,7 +90,7 @@ import BigAmount from '@/components/BigAmount.vue'
 import TokenSymbol from '@/components/TokenSymbol.vue'
 import ClickToCopy from '@/components/ClickToCopy.vue'
 import { createRRIUrl } from '@/helpers/explorerLinks'
-
+import { truncateRRIStringForDisplay } from '@/helpers/formatter'
 import { sumAmounts, add } from '@/helpers/arithmetic'
 import { useRouter } from 'vue-router'
 import useRadix from '@/composables/useRadix'
@@ -129,7 +129,8 @@ const WalletOverview = defineComponent({
       nativeTokenBalance,
       tokenBalances,
       verifyHardwareWalletAddress,
-      createRRIUrl
+      createRRIUrl,
+      truncateRRIStringForDisplay
     }
   },
 

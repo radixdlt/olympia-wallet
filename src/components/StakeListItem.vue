@@ -79,7 +79,7 @@
 </template>
 
 <script lang="ts">
-import { Radix, Token, UnstakePosition, Validator, Network, Amount, AmountT, StakePosition } from '@radixdlt/application'
+import { Token, UnstakePosition, Validator, Amount, AmountT, StakePosition } from '@radixdlt/application'
 import { defineComponent, PropType, Ref, ref } from 'vue'
 import BigAmount from '@/components/BigAmount.vue'
 import ClickToCopy from '@/components/ClickToCopy.vue'
@@ -87,7 +87,7 @@ import { Subscription } from 'rxjs'
 import { formatValidatorAddressForDisplay } from '@/helpers/formatter'
 import { Position } from '@/store/_types'
 import Tooltip from '@/components/Tooltip.vue'
-import RadixConnectService from '@/services/RadixConnectService'
+import { useRadix } from '@/composables'
 
 const StakeListItem = defineComponent({
   components: {
@@ -104,17 +104,12 @@ const StakeListItem = defineComponent({
     nativeToken: {
       type: Object as PropType<Token>,
       required: true
-    },
-    radixConnectService: {
-      type: Object as PropType<RadixConnectService>,
-      required: true
     }
   },
 
-  async setup (props) {
+  setup (props) {
     const validator: Ref<Validator | null> = ref(null)
-    await props.radixConnectService.establishConnection()
-    const radix = props.radixConnectService.getRadixInstance()
+    const { radix } = useRadix()
     const subs = new Subscription()
 
     subs
