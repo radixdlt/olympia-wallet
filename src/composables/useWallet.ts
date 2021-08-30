@@ -170,6 +170,10 @@ interface useWalletInterface {
   readonly transactionHistory: Ref<TransactionHistory>;
   readonly transactionErrorMessage: Ref<string | null>;
   readonly walletHasLoaded: ComputedRef<boolean>;
+  readonly pendingTransactions: Ref<Array<PendingTransaction>>;
+  readonly canGoBack: ComputedRef<boolean>;
+  readonly canGoNext: Ref<boolean>;
+  readonly loadingHistory: Ref<boolean>;
 
   accountRenamed: () => void;
   addAccount: () => void;
@@ -264,17 +268,13 @@ export default function useWallet (radix: RadixT, router: Router): useWalletInte
         }
       })
   }
-  // Fetch history when user navigates to next page and every 5 seconds
-  const fetchTXHistoryTrigger = combineLatest<[TransactionHistoryOfKnownAddressRequestInput, number]>([
-    historyPagination.asObservable(),
-    interval(60 * 1_000)
-  ])
 
-  subs.add(fetchTXHistoryTrigger
+  // Fetch history when user navigates to next page
+  subs.add(historyPagination.asObservable()
     .pipe(
-      mergeMap(([params]: [TransactionHistoryOfKnownAddressRequestInput, number]) => {
-        return radix.transactionHistory(params).pipe(retry())
-      })
+      mergeMap((params: TransactionHistoryOfKnownAddressRequestInput) =>
+        radix.transactionHistory(params).pipe(retry())
+      )
     )
     .subscribe((history: TransactionHistory) => {
       loadingHistory.value = false
@@ -402,7 +402,7 @@ export default function useWallet (radix: RadixT, router: Router): useWalletInte
             return txnID.toString() !== transactionState.txID.toString()
           })
           shouldShowConfirmation.value = false
-          router.push('/wallet')
+          router.push('/wallet/history')
           hasCalculatedFee.value = false
           transactionDidComplete.next(true)
         }
@@ -509,8 +509,6 @@ export default function useWallet (radix: RadixT, router: Router): useWalletInte
 
     confirmAndExecuteTransaction(unstakingTransactionTracking)
   }
-
-  historyPagination.next({ size: PAGE_SIZE })
 
   const refreshHistory = () => {
     historyPagination.next({ size: PAGE_SIZE })
@@ -624,9 +622,13 @@ export default function useWallet (radix: RadixT, router: Router): useWalletInte
     transactionHistory,
     transactionState,
     transferInput,
+    pendingTransactions,
+    canGoNext,
+    loadingHistory,
     walletHasLoaded: computed(() => {
       return activeAddress.value != null && activeStakes.value != null && activeUnstakes.value != null && tokenBalances.value != null && nativeToken.value != null
     }),
+    canGoBack: computed(() => cursorStack.value.length > 0),
 
     async loginWithWallet (password: string) {
       const client = await radix.login(password, touchKeystore)

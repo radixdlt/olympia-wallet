@@ -9,7 +9,7 @@
             <click-to-copy
               :address="activeAddress.toString()"
               :checkForHardwareAddress=true
-              @verifyHardwareAddress="$emit('verifyHardwareAddress')"
+              @verifyHardwareAddress="verifyHardwareWalletAddress"
             />
           </div>
         </div>
@@ -17,7 +17,7 @@
     </div>
 
     <div class="text-rBlack py-6 min-h-full text-sm">
-      <div v-if="!loadingHistoryPage">
+      <div>
         <transaction-list-item
           v-for="(txn, i) in pendingTransactions"
           :key="i"
@@ -37,12 +37,12 @@
           :activeAddress="activeAddress"
           :pending="false"
           :nativeToken="nativeToken"
-          @decryptMessage = "(data) => $emit('decryptMessage', data)"
+          @decryptMessage = "(data) => decryptMessage(data)"
         />
       </div>
 
       <div class="flex flex-row items-center text-rGrayDark justify-between py-5 px-8">
-        <button v-if="canGoBack" @click="$emit('previous')" class="flex flex-row items-center hover:text-rGreen transition-colors">
+        <button v-if="canGoBack" @click="previousPage" class="flex flex-row items-center hover:text-rGreen transition-colors">
           <svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr-3">
             <g clip-path="url(#clip0)">
             <path d="M9.95508 14.7568L4.83414 9.6359L9.95508 4.51496" class="stroke-current" stroke-miterlimit="10"/>
@@ -57,7 +57,7 @@
           <span>{{ $t('history.previous') }}</span>
         </button>
         <div v-else></div>
-        <button v-if="canGoNext" @click="$emit('next')" class="flex flex-row items-center hover:text-rGreen">
+        <button v-if="canGoNext" @click="nextPage" class="flex flex-row items-center hover:text-rGreen">
           <span class="mr-3">{{ $t('history.next') }}</span>
           <svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg">
             <g clip-path="url(#clip0)">
@@ -78,11 +78,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue'
-import { ExecutedTransaction, AccountAddressT, Token } from '@radixdlt/application'
+import { computed, defineComponent, onMounted } from 'vue'
 import TransactionListItem from '@/components/TransactionListItem.vue'
 import ClickToCopy from '@/components/ClickToCopy.vue'
-import { PendingTransaction } from '@/composables/useWallet'
+import useWallet from '@/composables/useWallet'
+import { useRouter } from 'vue-router'
+import { useRadix } from '@/composables'
 
 const WalletHistory = defineComponent({
   components: {
@@ -90,59 +91,55 @@ const WalletHistory = defineComponent({
     ClickToCopy
   },
 
-  props: {
-    transactions: {
-      type: Array as PropType<Array<ExecutedTransaction>>,
-      required: true,
-      default: []
-    },
-    decryptedMessages: {
-      type: Array as PropType<Array<{id: string, message: string }>>,
-      required: false,
-      default: []
-    },
-    activeAddress: {
-      type: Object as PropType<AccountAddressT>,
-      required: true
-    },
-    pendingTransactions: {
-      type: Array as PropType<Array<PendingTransaction>>,
-      required: true,
-      default: []
-    },
-    canGoBack: {
-      type: Boolean,
-      required: true
-    },
-    canGoNext: {
-      type: Boolean,
-      required: true
-    },
-    loadingHistoryPage: {
-      type: Boolean,
-      required: true
-    },
-    nativeToken: {
-      type: Object as PropType<Token>,
-      required: true
-    }
-  },
+  setup () {
+    const router = useRouter()
+    const { radix } = useRadix()
+    const {
+      transactionHistory,
+      decryptedMessages,
+      activeAddress,
+      pendingTransactions,
+      canGoBack,
+      canGoNext,
+      loadingHistory,
+      nativeToken,
+      previousPage,
+      nextPage,
+      decryptMessage,
+      verifyHardwareWalletAddress,
+      refreshHistory
+    } = useWallet(radix, router)
 
-  emits: ['next', 'previous', 'decryptMessage', 'verifyHardwareAddress'],
-
-  computed: {
-    transactionsWithMessages (): {tx: ExecutedTransaction, decryptedMessage?: string}[] {
-      return this.transactions.map((tx) => {
-        const msg = this.decryptedMessages.find((msg) => msg.id === tx.txID.toString())
-        if (!msg) {
-          return { tx }
-        }
-
-        return {
+    const transactionsWithMessages = computed(() =>
+      transactionHistory.value.transactions.map((tx) => {
+        const msg = decryptedMessages.value.find((msg) => msg.id === tx.txID.toString())
+        return !msg ? { tx } : {
           tx,
           decryptedMessage: msg.message
         }
       })
+    )
+
+    // Fetch initial history on route load
+    onMounted(() => {
+      refreshHistory()
+    })
+
+    return {
+      transactionHistory,
+      decryptedMessages,
+      activeAddress,
+      pendingTransactions,
+      canGoBack,
+      canGoNext,
+      loadingHistory,
+      nativeToken,
+      previousPage,
+      nextPage,
+      decryptMessage,
+      verifyHardwareWalletAddress,
+      transactionsWithMessages,
+      refreshHistory
     }
   }
 })
