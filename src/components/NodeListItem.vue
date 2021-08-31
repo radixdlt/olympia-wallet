@@ -3,8 +3,9 @@
     <div class="flex flex-row items-center">
       <AppRadioIndicator
         :enabled="isActive"
+        :disabled="loading"
         @click="handleSelectNode"
-        class="mr-2 cursor-pointer"
+        class="mr-2"
       />
       <span class="mr-4">{{ $t('settings.nodeAddressLabel') }}:</span>
       <a :href="node.networkURL" target="_blank" class="text-rBlue`">{{ node.networkURL }}</a>
@@ -18,14 +19,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onUnmounted, PropType } from 'vue'
+import { computed, ComputedRef, defineComponent, onUnmounted, PropType } from 'vue'
 import { ChosenNetworkT, isDefaultNetwork } from '@/helpers/network'
 import AppRadioIndicator from '@/components/AppRadioIndicator.vue'
 import IconRadixLogo from '@/components/IconRadixLogo.vue'
-import { Network, Radix } from '@radixdlt/application'
-import { Subscription } from 'rxjs'
 import { useToast } from 'vue-toastification'
-import { Ref, ref } from '@nopr3d/vue-next-rx'
+import { useConnectableRadix, useRadix } from '@/composables'
 
 export default defineComponent({
   components: {
@@ -41,40 +40,32 @@ export default defineComponent({
   },
 
   setup (props) {
-    const subs = new Subscription()
     const toast = useToast()
-    // const isActive: Ref<boolean> = ref(props.radixConnectService.isCurrentNetworkById(props.node.network))
-    const isActive: Ref<boolean> = ref(false)
+    const { network, updateConnection } = useRadix()
+    const { connected, loading, networkId, testConnection, cleanupSubscriptions } = useConnectableRadix()
 
-    // Update selected icon when network changes
-    // props.radixConnectService.addEventListener('connect', () => {
-    //   isActive.value = props.radixConnectService.isCurrentNetworkById(props.node.network)
-    // })
+    const isActive: ComputedRef<boolean> = computed(() => network.value === networkId.value)
 
     const handleSelectNode = () => {
-      // First, try to get a vaild networkId from the selected network URL
-      const tempRadix = Radix.create()
-
-      subs.add(tempRadix.ledger.networkId().subscribe({
-        next: (networkId: Network) => {
-          // Connect true radix instance to new node if successful
-          // props.radixConnectService.connectToNode(props.node.networkURL, networkId)
-          toast.success(`Switched to new node: ${networkId}`)
-        },
-        error: () => {
-          // Present user with an error if not
-          toast.error('Invalid network, unable to connect')
-        }
-      }))
-      tempRadix.connect(props.node.networkURL)
+      if (!connected.value) toast.error('Invalid network, unable to connect')
+      else {
+        updateConnection(props.node)
+          .then(() => {
+            toast.success(`Switched to new node: ${networkId.value}`)
+          })
+      }
     }
 
-    onUnmounted(() => subs.unsubscribe())
+    testConnection(props.node.networkURL)
+
+    onUnmounted(() => cleanupSubscriptions())
 
     return {
       showRadixLogo: isDefaultNetwork(props.node),
       isActive,
-      handleSelectNode
+      handleSelectNode,
+      loading,
+      connected
     }
   }
 })
