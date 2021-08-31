@@ -112,7 +112,7 @@ let userConfirmation = new ReplaySubject<ManualUserConfirmTX>()
 const historyPagination = new Subject<TransactionHistoryOfKnownAddressRequestInput>()
 
 const hardwareAddress: Ref<string> = ref('')
-const hardwareWalletError: Ref<Error | null> = ref(null)
+const hardwareError: Ref<Error | null> = ref(null)
 getHardwareWalletAddress().then(a => { hardwareAddress.value = a })
 const showDeleteHWWalletPrompt: Ref<boolean> = ref(false)
 
@@ -151,6 +151,7 @@ interface useWalletInterface {
   readonly decryptedMessages: Ref<{id: string, message: string}[]>;
   readonly hardwareAccount: Ref<AccountT | null>;
   readonly hardwareAddress: Ref<string | null>;
+  readonly hardwareError: Ref<Error | null>;
   readonly hardwareInteractionState: Ref<string>;
   readonly hasWallet: Ref<boolean>;
   readonly ledgerTxError: Ref<Error | null>;
@@ -362,7 +363,7 @@ export default function useWallet (radix: RadixT, router: Router): useWalletInte
           ledgerTxError.value = errorEvent.error
           hardwareAccount.value = null
           hardwareInteractionState.value = 'FAILED_TO_SIGN'
-          hardwareWalletError.value = new Error('validations.failedToSign')
+          hardwareError.value = new Error('validations.failedToSign')
           transactionErrorMessage.value = null
           return
         }
@@ -543,7 +544,7 @@ export default function useWallet (radix: RadixT, router: Router): useWalletInte
       switchAccount(hardwareAccount.value)
       return
     }
-    hardwareWalletError.value = null
+    hardwareError.value = null
     hardwareInteractionState.value = 'DERIVING'
     radix.deriveHWAccount({
       keyDerivation: HDPathRadix.create({
@@ -566,7 +567,7 @@ export default function useWallet (radix: RadixT, router: Router): useWalletInte
         sidebar.value = 'default'
         hardwareInteractionState.value = ''
       },
-      error: (err) => { hardwareWalletError.value = err }
+      error: (err) => { hardwareError.value = err }
     })
   }
 
@@ -604,6 +605,7 @@ export default function useWallet (radix: RadixT, router: Router): useWalletInte
     decryptedMessages,
     hardwareAccount,
     hardwareAddress,
+    hardwareError,
     hardwareInteractionState,
     hasWallet,
     invalidPasswordError,
