@@ -8,7 +8,6 @@
         v-for="(node, i) in defaultNetworks"
         :key="i"
         :node="node"
-        :radixConnectService="radixConnectService"
       />
 
        {{ '' && 'To Do: Render other saved networks from electron storage here' }}
@@ -49,16 +48,14 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, PropType } from 'vue'
+import { computed, ComputedRef, defineComponent } from 'vue'
 import { defaultNetworks } from '@/helpers/network'
 import NodeListItem from '@/components/NodeListItem.vue'
-import RadixConnectService from '@/services/RadixConnectService'
 import FormErrorMessage from '@/components/FormErrorMessage.vue'
 import FormField from '@/components/FormField.vue'
 import { useForm } from 'vee-validate'
 import { Network, Radix } from '@radixdlt/application'
 import { Subscription } from 'rxjs'
-import { ref, Ref } from '@nopr3d/vue-next-rx'
 import { useToast } from 'vue-toastification'
 
 interface AddNodeForm {
@@ -72,7 +69,7 @@ export default defineComponent({
     NodeListItem
   },
 
-  setup (props) {
+  setup () {
     const { values, meta, setErrors } = useForm<AddNodeForm>()
     const subs = new Subscription()
     const toast = useToast()
@@ -84,7 +81,7 @@ export default defineComponent({
       subs.add(tempRadix.ledger.networkId().subscribe({
         next: (networkId: Network) => {
           // Connect true radix instance to new node if successful
-          props.radixConnectService.connectToNode(values.nodeURL, Network.STOKENET) // Set the identifier some other way
+          // props.radixConnectService.connectToNode(values.nodeURL, Network.STOKENET) // Set the identifier some other way
           toast.success(`validated nodeURL has id of: ${networkId}`)
 
           // To Do: Store valid url in electron storage
@@ -116,13 +113,6 @@ export default defineComponent({
       submitDisabled,
       showRedHighlight,
       handleAddNode
-    }
-  },
-
-  props: {
-    radixConnectService: {
-      type: Object as PropType<RadixConnectService>,
-      required: true
     }
   }
 })
