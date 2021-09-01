@@ -185,7 +185,6 @@ interface useWalletInterface {
   decryptMessage: (tx: ExecutedTransaction) => void;
   deleteLocalHardwareAddress: () => void;
   initWallet: () => void;
-  isActiveAccount: (account: AccountT) => boolean;
   loginWithWallet: (password: string) => Promise<RadixT>;
   nextPage: () => void;
   previousPage: () => void;
@@ -586,12 +585,6 @@ export default function useWallet (radix: RadixT, router: Router): useWalletInte
     hardwareAccount.value = null
   }
 
-  const isActiveAccount = (account: AccountT) => {
-    const activeAccountKey: string = activeAccount.value?.hdPath ? activeAccount.value?.hdPath.toString() : 'active'
-    const accountKey: string = account.hdPath ? account.hdPath.toString() : 'account'
-    return activeAccountKey === accountKey
-  }
-
   return {
     accounts,
     activeAccount,
@@ -654,7 +647,6 @@ export default function useWallet (radix: RadixT, router: Router): useWalletInte
     decryptMessage,
     deleteLocalHardwareAddress,
     initWallet,
-    isActiveAccount,
     nextPage,
     previousPage,
     refreshHistory,

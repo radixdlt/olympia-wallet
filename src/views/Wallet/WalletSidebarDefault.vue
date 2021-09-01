@@ -1,5 +1,5 @@
 <template>
-  <div class="w-60 px-5 py-8 flex flex-col">
+  <div class="w-60 px-5 pt-8 pb-3 flex flex-col h-full">
     <div class="flex">
       <img alt="Radix DLT Logo" src="../../assets/logo.svg" class="w-30 mb-10">
     </div>
@@ -13,8 +13,8 @@
     </div>
 
     <div class="flex flex-col flex-1">
-      <router-link to="/wallet" custom v-slot="{ href, navigate, isActive }">
-        <wallet-nav-link :href="href" :navigate="navigate" :isActive="isActive" :title="$t('wallet.navBalances')">
+      <router-link to="/wallet" custom v-slot="{ href, navigate, isExactActive }">
+        <wallet-nav-link :href="href" :navigate="navigate" :isActive="isExactActive" :title="$t('wallet.navBalances')">
           <svg width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr-3">
             <path d="M6.47435 13.5559L6.73728 14.4765C6.73736 16.057 5.45613 17.3382 3.87565 17.3382C2.29524 17.3382 1.01401 16.0569 1.01401 14.4765L1.24602 13.604" stroke="#00C389" stroke-width="1.5" stroke-miterlimit="10"/>
             <path d="M22.9724 13.5411L23.2353 14.4618C23.2354 16.0423 21.9541 17.3234 20.3737 17.3234C18.7932 17.3234 17.512 16.0422 17.512 14.4618L17.744 13.5892" stroke="#00C389" stroke-width="1.5" stroke-miterlimit="10"/>

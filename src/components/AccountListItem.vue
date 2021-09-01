@@ -34,7 +34,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, watchEffect, toRef } from 'vue'
+import { defineComponent, PropType, watchEffect, toRef, computed, ComputedRef } from 'vue'
 import { AccountT } from '@radixdlt/application'
 import ClickToCopy from '@/components/ClickToCopy.vue'
 import { ref } from '@nopr3d/vue-next-rx'
@@ -69,7 +69,7 @@ const AccountListItem = defineComponent({
     }
     const router = useRouter()
     const { radix } = useRadix()
-    const { activeAccount, isActiveAccount, switchAccount, verifyHardwareWalletAddress } = useWallet(radix, router)
+    const { activeAccount, switchAccount, verifyHardwareWalletAddress } = useWallet(radix, router)
     const { setState } = useSidebar()
     const account = toRef(props, 'account')
     if (!account.value) {
@@ -91,7 +91,21 @@ const AccountListItem = defineComponent({
     const address = account.value.address.toString()
     const displayAddress = formatWalletAddressForDisplay(account.value.address)
 
-    return { address, displayAddress, nickName, activeAccount, editName, isActiveAccount, verifyHardwareWalletAddress }
+    const isActiveAccount: ComputedRef<boolean> = computed(() => {
+      const activeAccountKey: string = activeAccount.value?.hdPath ? activeAccount.value?.hdPath.toString() : 'active'
+      const accountKey: string = props.account.hdPath ? props.account.hdPath.toString() : 'account'
+      return activeAccountKey === accountKey
+    })
+
+    return {
+      address,
+      displayAddress,
+      nickName,
+      activeAccount,
+      editName,
+      isActiveAccount,
+      verifyHardwareWalletAddress
+    }
   }
 })
 
