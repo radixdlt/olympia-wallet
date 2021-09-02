@@ -152,7 +152,7 @@
 
 <script lang="ts">
 import { defineComponent, onBeforeMount, onUnmounted, Ref } from 'vue'
-import { Subscription, interval, Subject, Observable, combineLatest, from, BehaviorSubject, ReplaySubject, firstValueFrom } from 'rxjs'
+import { Subscription, interval, Subject, Observable, combineLatest, BehaviorSubject, ReplaySubject, firstValueFrom, of } from 'rxjs'
 import {
   AccountAddressT,
   Radix,
@@ -201,7 +201,7 @@ import AccountEditName from '@/views/Account/AccountEditName.vue'
 import SettingsIndex from '@/views/Settings/index.vue'
 import WalletLedgerInteractionModal from '@/views/Wallet/WalletLedgerInteractionModal.vue'
 import WalletErrorModal from '@/views/Wallet/WalletErrorModal.vue'
-import { filter, mergeMap, retry } from 'rxjs/operators'
+import { catchError, delay, filter, mergeMap, retryWhen, take } from 'rxjs/operators'
 import {
   getDerivedAccountsIndex,
   saveDerivedAccountsIndex,
@@ -421,7 +421,13 @@ const WalletIndex = defineComponent({
     subs.add(fetchTXHistoryTrigger
       .pipe(
         mergeMap(([params]: [TransactionHistoryOfKnownAddressRequestInput, number]) => {
-          return radix.transactionHistory(params).pipe(retry())
+          return radix.transactionHistory(params).pipe(
+            retryWhen(error => error.pipe(
+              delay(5000),
+              take(1),
+              catchError(e => of(e))
+            ))
+          )
         })
       )
       .subscribe((history: TransactionHistory) => {
