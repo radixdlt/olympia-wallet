@@ -108,7 +108,8 @@ const messages = {
       stakeAction: 'Stake',
       otherAction: 'Other',
       previous: 'Previous',
-      next: 'Next'
+      next: 'Next',
+      noHistory: 'Sorry, but you don\'t have transaction history for this account.'
     },
     transaction: {
       transactionHeading: 'Send Tokens',

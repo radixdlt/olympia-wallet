@@ -15,13 +15,16 @@
         </div>
       </div>
 
+      <div v-if="!tokenBalances" class="p-4 flex items-center justify-center">
+        <loading-icon class="text-rGrayDark" />
+      </div>
       <form
         @submit.prevent="handleSubmit"
-        v-if="tokenBalances.length > 0"
+        v-else-if="tokenBalances.tokenBalances.length > 0 && nativeToken && selectedCurrency"
         class="flex flex-col items-end"
       >
         <div class="bg-white rounded-md border border-rGray text-rBlack mb-8 w-full">
-          <template v-if="nativeToken && selectedCurrency">
+          <template v-if="true">
             <div class="border-b border-rGray py-7 flex items-center">
               <div class="w-32 text-right text-rGrayDark mr-8">{{ $t('transaction.fromLabel') }}</div>
               <div class="flex-1 font-mono">{{ activeAddress.toString() }}</div>
@@ -153,13 +156,23 @@ const WalletTransaction = defineComponent({
   },
 
   setup () {
-    const { errors, values, meta, setErrors } = useForm<TransactionForm>()
+    const { errors, values, meta, setErrors, resetForm } = useForm<TransactionForm>()
     const router = useRouter()
     const { radix, networkPreamble } = useRadix()
     const { activeAddress, tokenBalances, nativeToken, transactionErrorMessage, transferTokens } = useWallet(radix, router)
     const { t } = useI18n({ useScope: 'global' })
 
     if (!activeAddress.value || !nativeToken.value || !tokenBalances.value) return
+
+    // Clear form input and validation errors when switching accounts
+    watch(activeAddress, () => {
+      resetForm()
+    })
+
+    // reset currency when required state has loaded. Especially necessary when switching account
+    watch([nativeToken, tokenBalances], ([nt, tb]) => {
+      if (tb && nt) setXRDByDefault(nt)
+    })
 
     watch(transactionErrorMessage, (val) => {
       if (val) {
@@ -203,7 +216,7 @@ const WalletTransaction = defineComponent({
     })
 
     return {
-      tokenBalances: tokenBalances.value.tokenBalances,
+      tokenBalances,
       errors,
       values,
       meta,
@@ -259,18 +272,7 @@ const WalletTransaction = defineComponent({
     }
   },
 
-  beforeRouteEnter () {
-    const router = useRouter()
-    const { radix, connected } = useRadix()
-    const { setActiveTransactionForm, hasWallet } = useWallet(radix, router)
-    if (!connected || !hasWallet.value) {
-      router.push('/')
-      return false
-    }
-    setActiveTransactionForm('transaction')
-  },
-
-  emits: ['transferTokens', 'verifyHardwareAddress']
+  emits: ['verifyHardwareAddress']
 })
 
 export default WalletTransaction

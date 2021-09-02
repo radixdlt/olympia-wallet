@@ -511,6 +511,7 @@ export default function useWallet (radix: RadixT, router: Router): useWalletInte
   }
 
   const refreshHistory = () => {
+    loadingHistory.value = true
     historyPagination.next({ size: PAGE_SIZE })
   }
 

@@ -17,69 +17,78 @@
     </div>
 
     <div class="text-rBlack py-6 min-h-full text-sm">
-      <div>
-        <transaction-list-item
-          v-for="(txn, i) in pendingTransactions"
-          :key="i"
-          :transaction="txn"
-          :index="i"
-          :activeAddress="activeAddress"
-          :pending="true"
-          :nativeToken="nativeToken"
-        />
-
-        <transaction-list-item
-          v-for="(txn, i) in transactionsWithMessages"
-          :key="i"
-          :transaction="txn.tx"
-          :decryptedMessage="txn.decryptedMessage"
-          :index="i"
-          :activeAddress="activeAddress"
-          :pending="false"
-          :nativeToken="nativeToken"
-          @decryptMessage = "(data) => decryptMessage(data)"
-        />
+      <div v-if="loadingHistory" class="p-4 flex items-center justify-center">
+        <loading-icon class="text-rGrayDark" />
       </div>
+      <template v-else-if="pendingTransactions.length > 0 || transactionsWithMessages.length > 0">
+        <div>
+          <transaction-list-item
+            v-for="(txn, i) in pendingTransactions"
+            :key="i"
+            :transaction="txn"
+            :index="i"
+            :activeAddress="activeAddress"
+            :pending="true"
+            :nativeToken="nativeToken"
+          />
 
-      <div class="flex flex-row items-center text-rGrayDark justify-between py-5 px-8">
-        <button v-if="canGoBack" @click="previousPage" class="flex flex-row items-center hover:text-rGreen transition-colors">
-          <svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr-3">
-            <g clip-path="url(#clip0)">
-            <path d="M9.95508 14.7568L4.83414 9.6359L9.95508 4.51496" class="stroke-current" stroke-miterlimit="10"/>
-            <path d="M4.83451 9.63627L15.1655 9.63622" class="stroke-current" stroke-miterlimit="10"/>
-            </g>
-            <defs>
-            <clipPath id="clip0">
-            <rect width="20" height="20" fill="white" transform="translate(0 0.5)"/>
-            </clipPath>
-            </defs>
-          </svg>
-          <span>{{ $t('history.previous') }}</span>
-        </button>
-        <div v-else></div>
-        <button v-if="canGoNext" @click="nextPage" class="flex flex-row items-center hover:text-rGreen">
-          <span class="mr-3">{{ $t('history.next') }}</span>
-          <svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <g clip-path="url(#clip0)">
-            <path d="M10.0449 5.24316L15.1659 10.3641L10.0449 15.485" class="stroke-current" stroke-miterlimit="10"/>
-            <path d="M15.1655 10.3637L4.83446 10.3638" class="stroke-current" stroke-miterlimit="10"/>
-            </g>
-            <defs>
-            <clipPath id="clip0">
-            <rect width="20" height="20" fill="white" transform="translate(0 0.5)"/>
-            </clipPath>
-            </defs>
-          </svg>
-        </button>
-        <div v-else></div>
+          <transaction-list-item
+            v-for="(txn, i) in transactionsWithMessages"
+            :key="i"
+            :transaction="txn.tx"
+            :decryptedMessage="txn.decryptedMessage"
+            :index="i"
+            :activeAddress="activeAddress"
+            :pending="false"
+            :nativeToken="nativeToken"
+            @decryptMessage = "(data) => decryptMessage(data)"
+          />
+        </div>
+
+        <div class="flex flex-row items-center text-rGrayDark justify-between py-5 px-8">
+          <button v-if="canGoBack" @click="previousPage" class="flex flex-row items-center hover:text-rGreen transition-colors">
+            <svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr-3">
+              <g clip-path="url(#clip0)">
+              <path d="M9.95508 14.7568L4.83414 9.6359L9.95508 4.51496" class="stroke-current" stroke-miterlimit="10"/>
+              <path d="M4.83451 9.63627L15.1655 9.63622" class="stroke-current" stroke-miterlimit="10"/>
+              </g>
+              <defs>
+              <clipPath id="clip0">
+              <rect width="20" height="20" fill="white" transform="translate(0 0.5)"/>
+              </clipPath>
+              </defs>
+            </svg>
+            <span>{{ $t('history.previous') }}</span>
+          </button>
+          <div v-else></div>
+          <button v-if="canGoNext" @click="nextPage" class="flex flex-row items-center hover:text-rGreen">
+            <span class="mr-3">{{ $t('history.next') }}</span>
+            <svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <g clip-path="url(#clip0)">
+              <path d="M10.0449 5.24316L15.1659 10.3641L10.0449 15.485" class="stroke-current" stroke-miterlimit="10"/>
+              <path d="M15.1655 10.3637L4.83446 10.3638" class="stroke-current" stroke-miterlimit="10"/>
+              </g>
+              <defs>
+              <clipPath id="clip0">
+              <rect width="20" height="20" fill="white" transform="translate(0 0.5)"/>
+              </clipPath>
+              </defs>
+            </svg>
+          </button>
+          <div v-else></div>
+        </div>
+      </template>
+      <div v-else class="px-8 text-base">
+        {{ $t('history.noHistory') }}
       </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted } from 'vue'
+import { computed, defineComponent, onMounted, watch } from 'vue'
 import TransactionListItem from '@/components/TransactionListItem.vue'
+import LoadingIcon from '@/components/LoadingIcon.vue'
 import ClickToCopy from '@/components/ClickToCopy.vue'
 import useWallet from '@/composables/useWallet'
 import { useRouter } from 'vue-router'
@@ -87,8 +96,9 @@ import { useRadix } from '@/composables'
 
 const WalletHistory = defineComponent({
   components: {
-    TransactionListItem,
-    ClickToCopy
+    LoadingIcon,
+    ClickToCopy,
+    TransactionListItem
   },
 
   setup () {
@@ -107,18 +117,22 @@ const WalletHistory = defineComponent({
       nextPage,
       decryptMessage,
       verifyHardwareWalletAddress,
-      refreshHistory
+      refreshHistory,
+      activeAccount
     } = useWallet(radix, router)
 
-    const transactionsWithMessages = computed(() =>
-      transactionHistory.value.transactions.map((tx) => {
+    const transactionsWithMessages = computed(() => {
+      return transactionHistory.value.transactions.map((tx) => {
         const msg = decryptedMessages.value.find((msg) => msg.id === tx.txID.toString())
         return !msg ? { tx } : {
           tx,
           decryptedMessage: msg.message
         }
       })
-    )
+    })
+
+    // Fetch new history when active account changes
+    watch((activeAccount), () => { refreshHistory() })
 
     // Fetch initial history on route load
     onMounted(() => {
@@ -126,6 +140,7 @@ const WalletHistory = defineComponent({
     })
 
     return {
+      activeAccount,
       transactionHistory,
       decryptedMessages,
       activeAddress,
