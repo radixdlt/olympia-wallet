@@ -89,7 +89,7 @@ const AccountListItem = defineComponent({
     }
 
     const address = account.value.address.toString()
-    const displayAddress = formatWalletAddressForDisplay(account.value.address)
+    const displayAddress: ComputedRef<string> = computed(() => formatWalletAddressForDisplay(account.value.address))
 
     const isActiveAccount: ComputedRef<boolean> = computed(() => {
       const activeAccountKey: string = activeAccount.value?.hdPath ? activeAccount.value?.hdPath.toString() : 'active'
