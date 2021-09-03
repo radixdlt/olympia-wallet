@@ -19,12 +19,15 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, onUnmounted, PropType } from 'vue'
+import { computed, ComputedRef, defineComponent, onUnmounted, PropType, Ref, watch } from 'vue'
 import { ChosenNetworkT, isDefaultNetwork } from '@/helpers/network'
 import AppRadioIndicator from '@/components/AppRadioIndicator.vue'
 import IconRadixLogo from '@/components/IconRadixLogo.vue'
 import { useToast } from 'vue-toastification'
-import { useConnectableRadix, useRadix } from '@/composables'
+import { useConnectableRadix, useRadix, useWallet } from '@/composables'
+import { useRouter } from 'vue-router'
+import { ref } from '@nopr3d/vue-next-rx'
+import { AccountT } from '@radixdlt/application'
 
 export default defineComponent({
   components: {
@@ -41,8 +44,11 @@ export default defineComponent({
 
   setup (props) {
     const toast = useToast()
-    const { network, updateConnection } = useRadix()
+    const router = useRouter()
+    const { radix, network, updateConnection } = useRadix()
+    const { accounts, switchAccount } = useWallet(radix, router)
     const { connected, loading, networkId, testConnection, cleanupSubscriptions } = useConnectableRadix()
+    const updatedConnection: Ref<boolean> = ref(false)
 
     const isActive: ComputedRef<boolean> = computed(() => network.value === networkId.value)
 
@@ -52,9 +58,19 @@ export default defineComponent({
         updateConnection(props.node)
           .then(() => {
             toast.success(`Switched to new node: ${networkId.value}`)
+            updatedConnection.value = true
           })
       }
     }
+
+    // watch connection updated and addresses. if updated, switch to [0] account
+    watch([accounts, updatedConnection], ([a, uc], [oldA, oldUc]) => {
+      if (uc && a && oldA && a.all.length > 0 && [...a.all] !== [...oldA.all]) {
+        // Force a switch to the 0 index account when we update to a new node connection
+        switchAccount(a.all[0] as AccountT)
+        updatedConnection.value = false
+      }
+    })
 
     testConnection(props.node.networkURL)
 
