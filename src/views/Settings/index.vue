@@ -5,7 +5,7 @@
         <tabs-tab :isActive="activeForm == 'password'" @click="() => handleClickTab('password')">Change Password</tabs-tab>
         <tabs-tab :isActive="activeForm == 'pin'" @click="() => handleClickTab('pin')">Change PIN</tabs-tab>
         <tabs-tab :isActive="activeForm == 'mnemonic'" @click="() => handleClickTab('mnemonic')">Reveal Seed Phrase</tabs-tab>
-        <tabs-tab :isActive="activeForm == 'nodes'" @click="() => handleClickTab('nodes')">Nodes</tabs-tab>
+        <tabs-tab :isActive="activeForm == 'nodes'" @click="() => handleClickTab('nodes')">Choose Node/Network</tabs-tab>
       </div>
       <tabs-content :leftTabIsActive="activeForm == 'password'">
         <settings-reset-password

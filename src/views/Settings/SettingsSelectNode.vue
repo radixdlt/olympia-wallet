@@ -1,7 +1,8 @@
 <template>
   <div class="pt-6 px-6 pb-4">
-    <div class="text-rGrayDark text-sm mb-7 w-full max-w-lg">
-      {{ $t('settings.nodeDisclaimer') }}
+    <div class="text-rGrayDark text-sm mb-7 w-full max-w-xl">
+      <p>{{ $t('settings.nodeDisclaimer') }}</p>
+      <p class="mt-2">{{ $t('settings.nodeDisclaimerWarning') }}</p>
     </div>
     <div class="flex flex-row flex-wrap relative">
       <NodeListItem
