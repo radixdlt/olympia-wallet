@@ -16,9 +16,9 @@
           ref="enterPasscodeComponent"
         />
       </div>
-      <home-locked-modal :open="uiModal === 'locked-out'" @close="closeModal"/>
+      <home-locked-modal :open="modal === 'locked-out'" @close="closeModal"/>
       <home-forgot-password
-        :open="uiModal === 'forgot-password'"
+        :open="modal === 'forgot-password'"
         @close="closeModal"
         @resetAndCreate="resetAndCreate"
         @resetAndRestore="resetAndRestore"

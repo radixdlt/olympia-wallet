@@ -37,7 +37,7 @@ import {
   WalletErrorCause,
   WalletT
 } from '@radixdlt/application'
-
+import { AccountName } from '@/actions/electron/data-store'
 import { Router } from 'vue-router'
 import { Subscription, interval, Subject, Observable, combineLatest, BehaviorSubject, ReplaySubject, firstValueFrom, zip } from 'rxjs'
 import { filter, mergeMap, retry } from 'rxjs/operators'
@@ -49,7 +49,8 @@ import {
   resetStore,
   saveAccountName,
   saveDerivedAccountsIndex,
-  saveHardwareWalletAddress
+  saveHardwareWalletAddress,
+  getAccountNames
 } from '@/actions/vue/data-store'
 
 import { sendAPDU } from '@/actions/vue/hardware-wallet'
@@ -62,6 +63,7 @@ export interface PendingTransaction extends TransactionStateSuccess {
 export type WalletError = ErrorT<ErrorCategory.WALLET>
 
 const accounts: Ref<AccountsT | null> = ref(null)
+const accountNames: Ref<AccountName[]> = ref([])
 const activeAccount: Ref<AccountT | null> = ref(null)
 const activeAddress: Ref<AccountAddressT | null> = ref(null)
 const activeMessage: Ref<string> = ref('')
@@ -96,8 +98,6 @@ const transactionToConfirm: Ref<ManualUserConfirmTX | null> = ref(null)
 const transferInput: Ref<TransferTokensInput | null> = ref(null)
 const wallet: Ref<WalletT | null> = ref(null)
 
-// a dirty trick to get the account list item in the default wallet sidebar when the name changes
-const accountNameIndex: Ref<number> = ref(0)
 const loadingHistory: Ref<boolean> = ref(true)
 const loadingHistoryPage: Ref<boolean> = ref(true)
 
@@ -176,7 +176,8 @@ interface useWalletInterface {
   readonly canGoNext: Ref<boolean>;
   readonly loadingHistory: Ref<boolean>;
 
-  accountRenamed: () => void;
+  accountNameFor: (address: AccountAddressT) => string;
+  accountRenamed: (newName: string) => void;
   addAccount: () => void;
   cancelTransaction: () => void;
   confirmTransaction: () => void;
@@ -267,6 +268,10 @@ export default function useWallet (radix: RadixT, router: Router): useWalletInte
           saveDerivedAccountsIndex(0)
         }
       })
+
+    getAccountNames().then((names) => {
+      accountNames.value = names
+    })
   }
 
   // Fetch history when user navigates to next page
@@ -299,9 +304,27 @@ export default function useWallet (radix: RadixT, router: Router): useWalletInte
     radix.switchAccount({ toAccount: account })
   }
 
-  const accountRenamed = () => {
+  const accountNameFor = (accountAddress: AccountAddressT): string => {
+    const accountName = accountNames.value.find((accountName: AccountName) => accountAddress.toString() === accountName.address)
+    return accountName ? accountName.name : ''
+  }
+
+  const accountRenamed = (newName: string) => {
+    if (!activeAddress.value) return
     router.push('/wallet')
-    accountNameIndex.value = accountNameIndex.value + 1
+    const existingName = accountNames.value.find((accountName: AccountName) => activeAddress.value && activeAddress.value.toString() === accountName.address)
+    if (!existingName) {
+      accountNames.value.push({ name: newName, address: activeAddress.value.toString() })
+      return
+    }
+
+    accountNames.value = accountNames.value.map((accountName: AccountName) => {
+      if (!activeAddress.value) return accountName
+      if (accountName === existingName) {
+        return { ...accountName, name: newName }
+      }
+      return accountName
+    })
   }
 
   const confirmTransaction = () => {
@@ -638,7 +661,7 @@ export default function useWallet (radix: RadixT, router: Router): useWalletInte
       resetStore()
       router.push(`/${nextRoute}`)
     },
-
+    accountNameFor,
     accountRenamed,
     addAccount,
     cancelTransaction,

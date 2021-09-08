@@ -7,7 +7,7 @@ import path from 'path'
 import contextMenu from 'electron-context-menu'
 import { copyToClipboard, getKeystoreFile, storePin, validatePin, writeKeystoreFile } from '@/actions/electron/create-wallet'
 import {
-  getAccountName,
+  getAccountNames,
   saveAccountName,
   getDerivedAccountsIndex,
   saveDerivedAccountsIndex,
@@ -106,7 +106,7 @@ ipcMain.handle('get-keystore-message', getKeystoreFile)
 ipcMain.on('copy-to-clipboard', copyToClipboard)
 ipcMain.handle('create-pin', storePin)
 ipcMain.handle('save-account-name', saveAccountName)
-ipcMain.handle('get-account-name', getAccountName)
+ipcMain.handle('get-account-names', getAccountNames)
 ipcMain.handle('save-num-accounts', saveDerivedAccountsIndex)
 ipcMain.handle('get-num-accounts', getDerivedAccountsIndex)
 ipcMain.handle('validate-pin-message', validatePin)

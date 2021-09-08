@@ -41,7 +41,7 @@ const routes: Array<RouteRecordRaw> = [
         component: WalletHistory
       },
       {
-        path: 'account-edit-account',
+        path: 'account-edit-name',
         component: AccountEditName
       },
       {

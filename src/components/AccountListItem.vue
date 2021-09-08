@@ -38,7 +38,6 @@ import { defineComponent, PropType, watchEffect, toRef, computed, ComputedRef } 
 import { AccountT } from '@radixdlt/application'
 import ClickToCopy from '@/components/ClickToCopy.vue'
 import { ref } from '@nopr3d/vue-next-rx'
-import { getAccountName } from '@/actions/vue/data-store'
 import { formatWalletAddressForDisplay } from '@/helpers/formatter'
 import { useRadix, useWallet, useSidebar } from '@/composables'
 import { useRouter } from 'vue-router'
@@ -62,14 +61,14 @@ const AccountListItem = defineComponent({
 
   setup (props) {
     const nickName = ref('')
-
-    const fetchAccountName = (account: AccountT) => {
-      getAccountName(account.address.toString())
-        .then((storedName: string) => { nickName.value = storedName || account.address.toString() })
-    }
     const router = useRouter()
     const { radix } = useRadix()
-    const { activeAccount, switchAccount, verifyHardwareWalletAddress } = useWallet(radix, router)
+    const { accountNameFor, activeAccount, switchAccount, verifyHardwareWalletAddress } = useWallet(radix, router)
+
+    const fetchAccountName = (account: AccountT) => {
+      const storedName = accountNameFor(account.address)
+      nickName.value = storedName || account.address.toString()
+    }
     const { setState } = useSidebar()
     const account = toRef(props, 'account')
     if (!account.value) {

@@ -1,9 +1,11 @@
+import { AccountName } from '../electron/data-store'
+
 export const saveAccountName = (accountAddress: string, prettyName: string): Promise<string> => new Promise((resolve) => {
   resolve(window.ipcRenderer.invoke('save-account-name', JSON.stringify({ accountAddress, prettyName })))
 })
 
-export const getAccountName = (accountAddress: string): Promise<string> => new Promise((resolve) => {
-  resolve(window.ipcRenderer.invoke('get-account-name', accountAddress))
+export const getAccountNames = (): Promise<AccountName[]> => new Promise((resolve) => {
+  resolve(window.ipcRenderer.invoke('get-account-names'))
 })
 
 export const saveDerivedAccountsIndex = (numAccounts: number): Promise<string> => new Promise((resolve) => {

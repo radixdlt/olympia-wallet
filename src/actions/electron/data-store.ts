@@ -1,6 +1,8 @@
 import { IpcMainInvokeEvent } from 'electron/main'
 import Store from 'electron-store'
 
+export type AccountName = { address: string; name: string; }
+
 export const store = new Store({
   name: 'wallet'
 })
@@ -10,8 +12,13 @@ export const saveAccountName = (event: IpcMainInvokeEvent, data: string) => {
   return store.set(`account.${accountAddress}`, prettyName)
 }
 
-export const getAccountName = (event: IpcMainInvokeEvent, accountAddress: string) => {
-  return store.get(`account.${accountAddress}`)
+export const getAccountNames = (): AccountName[] => {
+  const accounts = store.get('account', {}) as { [key: string]: string; }
+  const asAccounts: AccountName[] = []
+  Object.keys(accounts).forEach((key) => {
+    asAccounts.push({ address: key, name: accounts[key] })
+  })
+  return asAccounts
 }
 
 export const saveDerivedAccountsIndex = (event: IpcMainInvokeEvent, num: string) => {
