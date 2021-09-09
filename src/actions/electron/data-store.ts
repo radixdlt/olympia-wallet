@@ -1,10 +1,12 @@
 import { IpcMainInvokeEvent } from 'electron/main'
 import Store from 'electron-store'
+import migrations from '@/electron-store/migrations'
 
 export type AccountName = { address: string; name: string; }
 
 export const store = new Store({
-  name: 'wallet'
+  name: 'wallet',
+  migrations
 })
 
 export const saveAccountName = (event: IpcMainInvokeEvent, data: string) => {
