@@ -6,9 +6,9 @@
     </div>
     <div class="flex flex-row flex-wrap relative">
       <NodeListItem
-        v-for="(node, i) in defaultNetworks"
+        v-for="(url, i) in defaultNetworkUrls"
         :key="i"
-        :node="node"
+        :url="url"
       />
 
        {{ '' && 'To Do: Render other saved networks from electron storage here' }}
@@ -50,7 +50,7 @@
 
 <script lang="ts">
 import { computed, ComputedRef, defineComponent } from 'vue'
-import { defaultNetworks } from '@/helpers/network'
+import { ChosenNetworkT, defaultNetworks } from '@/helpers/network'
 import NodeListItem from '@/components/NodeListItem.vue'
 import FormErrorMessage from '@/components/FormErrorMessage.vue'
 import FormField from '@/components/FormField.vue'
@@ -106,8 +106,12 @@ export default defineComponent({
       return meta.value.dirty && !meta.value.valid
     })
 
+    const defaultNetworkUrls: ComputedRef<string[]> = computed(() => {
+      return defaultNetworks.map((net: ChosenNetworkT) => net.networkURL)
+    })
+
     return {
-      defaultNetworks,
+      defaultNetworkUrls,
       setErrors,
       values,
       meta,

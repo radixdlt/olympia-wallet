@@ -100,6 +100,7 @@ const transactionHistory: Ref<TransactionHistory> = ref({ transactions: [], curs
 const transactionToConfirm: Ref<ManualUserConfirmTX | null> = ref(null)
 const transferInput: Ref<TransferTokensInput | null> = ref(null)
 const wallet: Ref<WalletT | null> = ref(null)
+const nodeUrl: Ref<string | null> = ref(null)
 
 const loadingHistory: Ref<boolean> = ref(true)
 const loadingHistoryPage: Ref<boolean> = ref(true)
@@ -191,6 +192,7 @@ interface useWalletInterface {
   initWallet: () => void;
   loginWithWallet: (password: string) => Promise<RadixT>;
   nextPage: () => void;
+  persistNodeUrl: (url: string) => Promise<void>;
   previousPage: () => void;
   refreshHistory: () => void;
   resetWallet: (nextRoute: 'create-wallet' | 'restore-wallet') => void;
@@ -616,6 +618,12 @@ export default function useWallet (radix: RadixT, router: Router): useWalletInte
     return signedHash.toDER()
   }
 
+  const persistNodeUrl = async (url: string): Promise<void> => {
+    if (!activeAccount.value) return
+    const hash = await hashNodeUrl(url, activeAccount.value)
+    const saveToStore = await persistNodeSelection(url, hash)
+  }
+
   const fetchSavedNodeUrl = async (account: AccountT): Promise<string> => {
     console.log('fetching')
     const { selectedNode, selectedNodeHash } = await fetchSelectedNodeFromStore()
@@ -624,7 +632,7 @@ export default function useWallet (radix: RadixT, router: Router): useWalletInte
       // set a default node, one did not exist.
       const defaultToMainnet = 'https://mainnet.radixdlt.com'
       const hash = await hashNodeUrl(defaultToMainnet, account)
-      const saveToNode = await persistNodeSelection(defaultToMainnet, hash)
+      const saveToStore = await persistNodeSelection(defaultToMainnet, hash)
       return defaultToMainnet
     }
     const rehash = await hashNodeUrl(selectedNode, account)
@@ -678,9 +686,9 @@ export default function useWallet (radix: RadixT, router: Router): useWalletInte
       const firstActive = await firstValueFrom(client.activeAccount)
       const url = await fetchSavedNodeUrl(firstActive)
       const connected = await client.connect(url)
+      nodeUrl.value = url
       initWallet()
       const loaded = await waitUntilAllLoaded()
-      router.push('/wallet')
       return client
     },
 
@@ -700,6 +708,7 @@ export default function useWallet (radix: RadixT, router: Router): useWalletInte
     deleteLocalHardwareAddress,
     initWallet,
     nextPage,
+    persistNodeUrl,
     previousPage,
     refreshHistory,
     setActiveTransactionForm,

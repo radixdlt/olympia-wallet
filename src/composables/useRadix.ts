@@ -1,6 +1,7 @@
 import { ref, computed, ComputedRef } from 'vue'
 import { Network, Radix, RadixT, HRP } from '@radixdlt/application'
 import { network, ChosenNetworkT } from '@/helpers/network'
+import { firstValueFrom } from 'rxjs'
 
 let radix: RadixT = Radix.create()
 
@@ -15,8 +16,9 @@ interface useRadixInterface {
   radix: RadixT;
   network: ComputedRef<Network>;
   reset: () => void;
+  setNetwork: (network: Network) => void;
   establishConnection: () => Promise<void>;
-  updateConnection: (n: ChosenNetworkT) => Promise<void>;
+  updateConnection: (n: string) => Promise<void>;
   networkPreamble: ComputedRef<string>;
 }
 
@@ -41,9 +43,14 @@ export default function useRadix (): useRadixInterface {
       return result
     },
 
-    async updateConnection (node: ChosenNetworkT): Promise<void> {
-      await radix.connect(node.networkURL)
-      activeNetwork.value = node.network
+    async updateConnection (url: string): Promise<void> {
+      await radix.connect(url)
+      const network = await firstValueFrom(radix.ledger.networkId())
+      activeNetwork.value = network
+    },
+
+    setNetwork (network: Network) {
+      activeNetwork.value = network
     },
 
     networkPreamble: computed(() => {

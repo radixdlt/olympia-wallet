@@ -11,7 +11,7 @@
         class="bg-white pt-8 pb-4 px-11 max-w-lg rounded mx-auto"
       >
         <home-enter-passcode
-          @submit="loginWithWallet"
+          @submit="authenticate"
           @forgotPassword="forgotPassword"
           ref="enterPasscodeComponent"
         />
@@ -44,7 +44,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, watch } from 'vue'
+import { defineComponent, watch, ref, Ref } from 'vue'
 import HomeCreateAndRestore from './HomeCreateAndRestore.vue'
 import HomeEnterPasscode from './HomeEnterPasscode.vue'
 import HomeLockedModal from './HomeLockedModal.vue'
@@ -54,7 +54,8 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useHomeModal, useRadix } from '@/composables'
 import useWallet, { WalletError } from '@/composables/useWallet'
-import { ref } from '@nopr3d/vue-next-rx'
+import { ref as rxRef } from '@nopr3d/vue-next-rx'
+import { firstValueFrom } from 'rxjs'
 
 const Home = defineComponent({
   components: {
@@ -66,13 +67,23 @@ const Home = defineComponent({
   },
 
   setup () {
+    const isAuthenticating : Ref<boolean> = ref(false)
     const { modal, setModal } = useHomeModal()
     const router = useRouter()
-    const { radix } = useRadix()
+    const { radix, setNetwork } = useRadix()
     const { hasWallet, invalidPasswordError, loginWithWallet, resetWallet, walletLoaded } = useWallet(radix, router)
     const { t } = useI18n({ useScope: 'global' })
 
-    const enterPasscodeComponent = ref(null)
+    const enterPasscodeComponent = rxRef(null)
+
+    const authenticate = async (password: string) => {
+      isAuthenticating.value = true
+      const connectedClient = await loginWithWallet(password)
+      const network = await firstValueFrom(connectedClient.ledger.networkId())
+      setNetwork(network)
+      console.log(network)
+      router.push('/wallet')
+    }
 
     walletLoaded()
 
@@ -90,7 +101,7 @@ const Home = defineComponent({
     return {
       hasWallet,
       modal,
-      loginWithWallet,
+      authenticate,
       enterPasscodeComponent,
 
       closeModal () {

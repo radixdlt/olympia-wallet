@@ -8,9 +8,9 @@
         class="mr-2"
       />
       <span class="mr-4">{{ $t('settings.nodeAddressLabel') }}:</span>
-      <a :href="node.networkURL" target="_blank" class="text-rBlue`">{{ node.networkURL }}</a>
+      <a :href="url" target="_blank" class="text-rBlue`">{{ url }}</a>
     </div>
-    <div>{{ $t('settings.nodeNetworkLabel')}}: <span class="text-rGreen uppercase">{{ node.network }}</span></div>
+    <div>{{ $t('settings.nodeNetworkLabel')}}: <span class="text-rGreen uppercase">{{ networkId }}</span></div>
     <IconRadixLogo
       v-if="showRadixLogo"
       class="text-rGrayDark"
@@ -19,8 +19,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, onUnmounted, PropType, Ref, watch } from 'vue'
-import { ChosenNetworkT, isDefaultNetwork } from '@/helpers/network'
+import { computed, ComputedRef, defineComponent, onUnmounted, Ref, watch } from 'vue'
 import AppRadioIndicator from '@/components/AppRadioIndicator.vue'
 import IconRadixLogo from '@/components/IconRadixLogo.vue'
 import { useToast } from 'vue-toastification'
@@ -36,9 +35,14 @@ export default defineComponent({
   },
 
   props: {
-    node: {
-      type: Object as PropType<ChosenNetworkT>,
+    url: {
+      type: String,
       required: true
+    },
+    isDefault: {
+      type: Boolean,
+      required: false,
+      default: false
     }
   },
 
@@ -46,21 +50,23 @@ export default defineComponent({
     const toast = useToast()
     const router = useRouter()
     const { radix, network, updateConnection } = useRadix()
-    const { accounts, switchAccount } = useWallet(radix, router)
+    const { accounts, persistNodeUrl, switchAccount } = useWallet(radix, router)
     const { connected, loading, networkId, testConnection, cleanupSubscriptions } = useConnectableRadix()
     const updatedConnection: Ref<boolean> = ref(false)
 
     const isActive: ComputedRef<boolean> = computed(() => network.value === networkId.value)
 
     const handleSelectNode = () => {
-      if (!connected.value) toast.error('Invalid network, unable to connect')
-      else {
-        updateConnection(props.node)
-          .then(() => {
-            toast.success(`Switched to new node: ${networkId.value}`)
-            updatedConnection.value = true
-          })
+      if (!connected.value) {
+        toast.error('Invalid network, unable to connect')
+        return
       }
+      updateConnection(props.url)
+        .then(() => {
+          persistNodeUrl(props.url)
+          toast.success(`Switched to new node: ${networkId.value}`)
+          updatedConnection.value = true
+        })
     }
 
     // watch connection updated and addresses. if updated, switch to [0] account
@@ -72,16 +78,17 @@ export default defineComponent({
       }
     })
 
-    testConnection(props.node.networkURL)
+    testConnection(props.url)
 
     onUnmounted(() => cleanupSubscriptions())
 
     return {
-      showRadixLogo: isDefaultNetwork(props.node),
+      showRadixLogo: props.isDefault,
       isActive,
       handleSelectNode,
       loading,
-      connected
+      connected,
+      networkId
     }
   }
 })
