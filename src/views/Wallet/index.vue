@@ -24,7 +24,6 @@ import WalletLedgerDeleteModal from '@/views/Wallet/WalletLedgerDeleteModal.vue'
 import { useRouter, onBeforeRouteUpdate } from 'vue-router'
 import useRadix from '@/composables/useRadix'
 import useWallet from '@/composables/useWallet'
-
 const WalletIndex = defineComponent({
   components: {
     WalletConfirmTransactionModal,

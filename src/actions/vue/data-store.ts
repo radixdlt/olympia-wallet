@@ -1,4 +1,4 @@
-import { AccountName } from '../electron/data-store'
+import { AccountName, SelectedNode } from '../electron/data-store'
 
 export const saveAccountName = (accountAddress: string, prettyName: string): Promise<string> => new Promise((resolve) => {
   resolve(window.ipcRenderer.invoke('save-account-name', JSON.stringify({ accountAddress, prettyName })))
@@ -31,3 +31,12 @@ export const deleteHardwareWalletAddress = (): Promise<string> => new Promise((r
 export const resetStore = (): Promise<string> => new Promise((resolve) => {
   resolve(window.ipcRenderer.invoke('reset-store'))
 })
+
+export const persistNodeSelection = (nodeUrl: string, hash: string): Promise<string> => new Promise((resolve) => {
+  resolve(window.ipcRenderer.invoke('persist-node-selection', JSON.stringify({ nodeUrl, hash })))
+})
+
+export const fetchSelectedNodeFromStore = async (): Promise<SelectedNode> => {
+  const data = await window.ipcRenderer.invoke('fetch-selected-node') as SelectedNode
+  return data
+}

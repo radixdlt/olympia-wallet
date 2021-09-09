@@ -50,8 +50,11 @@ import {
   saveAccountName,
   saveDerivedAccountsIndex,
   saveHardwareWalletAddress,
-  getAccountNames
+  getAccountNames,
+  persistNodeSelection,
+  fetchSelectedNodeFromStore
 } from '@/actions/vue/data-store'
+import { sha256Twice } from '@radixdlt/crypto'
 
 import { sendAPDU } from '@/actions/vue/hardware-wallet'
 import { HardwareWalletLedger } from '@radixdlt/hardware-ledger'
@@ -213,10 +216,7 @@ export default function useWallet (radix: RadixT, router: Router): useWalletInte
   hasKeystore().then((res: boolean) => { hasWallet.value = res })
 
   const walletLoaded = () => {
-    radix.__wallet.subscribe((newWallet: WalletT) => {
-      wallet.value = newWallet
-      router.push('/wallet')
-    })
+    radix.__wallet.subscribe((newWallet: WalletT) => { wallet.value = newWallet })
 
     radix
       .withTokenBalanceFetchTrigger(interval(60 * 1_000))
@@ -609,6 +609,30 @@ export default function useWallet (radix: RadixT, router: Router): useWalletInte
     hardwareAccount.value = null
   }
 
+  const hashNodeUrl = async (url:string, account: AccountT): Promise<string> => {
+    const hashedUrl = sha256Twice(url)
+    const signed = account.signHash(hashedUrl)
+    const signedHash = await firstValueFrom(signed)
+    return signedHash.toDER()
+  }
+
+  const fetchSavedNodeUrl = async (account: AccountT): Promise<string> => {
+    console.log('fetching')
+    const { selectedNode, selectedNodeHash } = await fetchSelectedNodeFromStore()
+    console.log('selected', selectedNode)
+    if (!selectedNode) {
+      // set a default node, one did not exist.
+      const defaultToMainnet = 'https://mainnet.radixdlt.com'
+      const hash = await hashNodeUrl(defaultToMainnet, account)
+      const saveToNode = await persistNodeSelection(defaultToMainnet, hash)
+      return defaultToMainnet
+    }
+    const rehash = await hashNodeUrl(selectedNode, account)
+
+    if (rehash !== selectedNodeHash) throw new Error('Invalid Node Hash!')
+    return selectedNode
+  }
+
   return {
     accounts,
     activeAccount,
@@ -651,8 +675,12 @@ export default function useWallet (radix: RadixT, router: Router): useWalletInte
 
     async loginWithWallet (password: string) {
       const client = await radix.login(password, touchKeystore)
+      const firstActive = await firstValueFrom(client.activeAccount)
+      const url = await fetchSavedNodeUrl(firstActive)
+      const connected = await client.connect(url)
       initWallet()
       const loaded = await waitUntilAllLoaded()
+      router.push('/wallet')
       return client
     },
 

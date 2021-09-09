@@ -14,7 +14,9 @@ import {
   saveHardwareAddress,
   getHardwareAddress,
   deleteHardwareAddress,
-  resetStore
+  resetStore,
+  persistNodeSelection,
+  fetchSelectedNode,
 } from './actions/electron/data-store'
 import { sendAPDU } from './actions/electron/hardware-wallet'
 import menu from './menu'
@@ -115,7 +117,8 @@ ipcMain.handle('get-hw-address', getHardwareAddress)
 ipcMain.handle('delete-hw-address', deleteHardwareAddress)
 ipcMain.handle('send-apdu', sendAPDU)
 ipcMain.handle('reset-store', resetStore)
-
+ipcMain.handle('persist-node-selection', persistNodeSelection)
+ipcMain.handle('fetch-selected-node', fetchSelectedNode)
 // Exit cleanly on request from parent process in development mode.
 if (isDevelopment) {
   if (process.platform === 'win32') {
