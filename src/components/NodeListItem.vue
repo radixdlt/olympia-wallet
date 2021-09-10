@@ -49,8 +49,8 @@ export default defineComponent({
   setup (props) {
     const toast = useToast()
     const router = useRouter()
-    const { radix, network, updateConnection } = useRadix()
-    const { accounts, persistNodeUrl, switchAccount } = useWallet(radix, router)
+    const { radix, network, updateConnection, setSwitching } = useRadix()
+    const { accounts, persistNodeUrl, switchAccount, networkSwitched } = useWallet(radix, router)
     const { connected, loading, networkId, testConnection, cleanupSubscriptions } = useConnectableRadix()
     const updatedConnection: Ref<boolean> = ref(false)
 
@@ -61,11 +61,16 @@ export default defineComponent({
         toast.error('Invalid network, unable to connect')
         return
       }
+      setSwitching(true)
       updateConnection(props.url)
+        .then(() => {
+          return networkSwitched()
+        })
         .then(() => {
           persistNodeUrl(props.url)
           toast.success(`Switched to new node: ${networkId.value}`)
           updatedConnection.value = true
+          setSwitching(false)
         })
     }
 
@@ -90,6 +95,7 @@ export default defineComponent({
       connected,
       networkId
     }
-  }
+  },
+  emits: []
 })
 </script>

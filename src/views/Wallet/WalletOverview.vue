@@ -84,7 +84,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, computed, ComputedRef } from 'vue'
 import { StakePosition, TokenBalance, Amount, AmountT } from '@radixdlt/application'
 import BigAmount from '@/components/BigAmount.vue'
 import TokenSymbol from '@/components/TokenSymbol.vue'
@@ -121,6 +121,34 @@ const WalletOverview = defineComponent({
       router.push('/')
       return {}
     }
+
+    const totalXRD: ComputedRef<AmountT> = computed(() => {
+      if (!nativeTokenBalance.value) return Amount.fromUnsafe(0)._unsafeUnwrap()
+      const xrdAmount = Amount.fromUnsafe(nativeTokenBalance.value.amount)
+      return xrdAmount.isErr() ? Amount.fromUnsafe(0)._unsafeUnwrap() : xrdAmount.value
+    })
+
+    const totalStakedAndUnstaked: ComputedRef<AmountT> = computed(() => {
+      if (!activeStakes.value || !activeUnstakes.value) return Amount.fromUnsafe(0)._unsafeUnwrap()
+      const totalStakedAndUnstaked = sumAmounts(activeStakes.value.flatMap((item: StakePosition) => item.amount)) || Amount.fromUnsafe(0)._unsafeUnwrap()
+      const totalUnstaked = sumAmounts(activeUnstakes.value.flatMap((item: StakePosition) => item.amount)) || Amount.fromUnsafe(0)._unsafeUnwrap()
+      return sumAmounts([totalStakedAndUnstaked, totalUnstaked]) || Amount.fromUnsafe(0)._unsafeUnwrap()
+    })
+
+    const availablePlusStakedAndUnstakedXRD: ComputedRef<AmountT> = computed(() => {
+      if (!nativeTokenBalance.value) return Amount.fromUnsafe(0)._unsafeUnwrap()
+      if (!activeStakes.value || !activeUnstakes.value) return Amount.fromUnsafe(0)._unsafeUnwrap()
+
+      const xrdAmount = Amount.fromUnsafe(nativeTokenBalance.value.amount)
+      const totalXRD = xrdAmount.isErr() ? Amount.fromUnsafe(0)._unsafeUnwrap() : xrdAmount.value
+
+      const totalStakedAndUnstaked = sumAmounts(activeStakes.value.flatMap((item: StakePosition) => item.amount)) || Amount.fromUnsafe(0)._unsafeUnwrap()
+      const totalUnstaked = sumAmounts(activeUnstakes.value.flatMap((item: StakePosition) => item.amount)) || Amount.fromUnsafe(0)._unsafeUnwrap()
+      const totalStakedAndUnstakedSum = sumAmounts([totalStakedAndUnstaked, totalUnstaked]) || Amount.fromUnsafe(0)._unsafeUnwrap()
+
+      return add(totalXRD, totalStakedAndUnstakedSum)
+    })
+
     return {
       activeAddress,
       activeStakes,
@@ -128,6 +156,9 @@ const WalletOverview = defineComponent({
       nativeToken,
       nativeTokenBalance,
       tokenBalances,
+      totalXRD,
+      totalStakedAndUnstaked,
+      availablePlusStakedAndUnstakedXRD,
       verifyHardwareWalletAddress,
       createRRIUrl,
       truncateRRIStringForDisplay
@@ -135,22 +166,6 @@ const WalletOverview = defineComponent({
   },
 
   computed: {
-    totalXRD (): AmountT {
-      if (!this.nativeTokenBalance) return Amount.fromUnsafe(0)._unsafeUnwrap()
-      const xrdAmount = Amount.fromUnsafe(this.nativeTokenBalance.amount)
-      return xrdAmount.isErr() ? Amount.fromUnsafe(0)._unsafeUnwrap() : xrdAmount.value
-    },
-    totalStakedAndUnstaked (): AmountT {
-      if (!this.activeStakes || !this.activeUnstakes) return Amount.fromUnsafe(0)._unsafeUnwrap()
-      const totalStakedAndUnstaked = sumAmounts(this.activeStakes.flatMap((item: StakePosition) => item.amount)) || Amount.fromUnsafe(0)._unsafeUnwrap()
-      const totalUnstaked = sumAmounts(this.activeUnstakes.flatMap((item: StakePosition) => item.amount)) || Amount.fromUnsafe(0)._unsafeUnwrap()
-      return sumAmounts([totalStakedAndUnstaked, totalUnstaked]) || Amount.fromUnsafe(0)._unsafeUnwrap()
-    },
-    availablePlusStakedAndUnstakedXRD (): AmountT {
-      const totalXRD: AmountT = this.totalXRD || Amount.fromUnsafe(0)._unsafeUnwrap()
-      const totalStakedAndUnstaked: AmountT = this.totalStakedAndUnstaked || Amount.fromUnsafe(0)._unsafeUnwrap()
-      return add(totalXRD, totalStakedAndUnstaked)
-    },
     otherTokenBalances (): TokenBalance[] {
       if (!this.nativeToken || !this.tokenBalances || !this.tokenBalances.tokenBalances) return []
       return this.tokenBalances.tokenBalances.filter((tb: TokenBalance) => {

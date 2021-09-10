@@ -6,7 +6,7 @@
 
     <div class="flex flex-col text-white hover:text-rGreen transition-colors cursor-pointer mb-4" @click="setState(true)">
       <div class="relative py-3">
-        <account-list-item :account="activeAccount" />
+        <account-list-item :account="activeAccount" v-if="activeAccount"/>
         <div class="absolute bg-gradient-to-r from-blueEnd to-transparent inset-0 w-full h-full z-10 -mx-8 opacity-40">
         </div>
       </div>

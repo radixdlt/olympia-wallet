@@ -8,15 +8,18 @@ let radix: RadixT = Radix.create()
 const envNetworkName: string = process.env.VUE_APP_NETWORK_NAME || 'STOKENET'
 const typedNetwork = envNetworkName as Network
 
+const switching = ref(false)
 const connected = ref(false)
 const activeNetwork = ref(typedNetwork)
 
 interface useRadixInterface {
   connected: ComputedRef<boolean>;
+  switching: ComputedRef<boolean>;
   radix: RadixT;
   network: ComputedRef<Network>;
   reset: () => void;
   setNetwork: (network: Network) => void;
+  setSwitching: (value: boolean) => void;
   establishConnection: () => Promise<void>;
   updateConnection: (n: string) => Promise<void>;
   networkPreamble: ComputedRef<string>;
@@ -25,6 +28,7 @@ interface useRadixInterface {
 export default function useRadix (): useRadixInterface {
   return {
     connected: computed(() => connected.value),
+    switching: computed(() => switching.value),
     radix,
     network: computed(() => activeNetwork.value),
 
@@ -51,6 +55,10 @@ export default function useRadix (): useRadixInterface {
 
     setNetwork (network: Network) {
       activeNetwork.value = network
+    },
+
+    setSwitching (value: boolean) {
+      switching.value = value
     },
 
     networkPreamble: computed(() => {

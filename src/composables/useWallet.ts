@@ -192,6 +192,7 @@ interface useWalletInterface {
   initWallet: () => void;
   loginWithWallet: (password: string) => Promise<RadixT>;
   nextPage: () => void;
+  networkSwitched: () => Promise<void>;
   persistNodeUrl: (url: string) => Promise<void>;
   previousPage: () => void;
   refreshHistory: () => void;
@@ -238,13 +239,14 @@ export default function useWallet (radix: RadixT, router: Router): useWalletInte
   const waitUntilAllLoaded = async () => firstValueFrom(allLoadedObservable)
 
   const initWallet = (): void => {
+    subs.add(radix.ledger.nativeToken().subscribe((nativeTokenRes: Token) => { nativeToken.value = nativeTokenRes }))
+
     subs.add(radix.tokenBalances.subscribe((tokenBalancesRes: TokenBalances) => { tokenBalances.value = tokenBalancesRes }))
     subs.add(radix.activeAccount.subscribe((account: AccountT) => { activeAccount.value = account }))
     subs.add(radix.stakingPositions.subscribe((stakes: StakePositions) => { activeStakes.value = stakes }))
     subs.add(radix.accounts.subscribe((accountsRes: AccountsT) => { accounts.value = accountsRes }))
     subs.add(radix.activeAddress.subscribe((addressRes: AccountAddressT) => { activeAddress.value = addressRes }))
     subs.add(radix.unstakingPositions.subscribe(unstakes => { activeUnstakes.value = unstakes }))
-    subs.add(radix.ledger.nativeToken().subscribe((nativeTokenRes: Token) => { nativeToken.value = nativeTokenRes }))
 
     const fetchNativeTokenBalanceTrigger = combineLatest<[TokenBalances, Token]>([
       radix.tokenBalances,
@@ -274,6 +276,25 @@ export default function useWallet (radix: RadixT, router: Router): useWalletInte
     getAccountNames().then((names) => {
       accountNames.value = names
     })
+  }
+
+  const networkSwitched = async () => {
+    subs.unsubscribe()
+    if (!accounts.value) return
+    const account = accounts.value.all[0] as AccountT
+    switchAccount(account)
+    initWallet()
+
+    const allReloaded = zip(
+      radix.tokenBalances,
+      radix.activeAccount,
+      radix.stakingPositions,
+      radix.accounts,
+      radix.activeAddress,
+      radix.unstakingPositions,
+      radix.ledger.nativeToken()
+    )
+    const allDone = await firstValueFrom(allReloaded)
   }
 
   // Fetch history when user navigates to next page
@@ -625,9 +646,7 @@ export default function useWallet (radix: RadixT, router: Router): useWalletInte
   }
 
   const fetchSavedNodeUrl = async (account: AccountT): Promise<string> => {
-    console.log('fetching')
     const { selectedNode, selectedNodeHash } = await fetchSelectedNodeFromStore()
-    console.log('selected', selectedNode)
     if (!selectedNode) {
       // set a default node, one did not exist.
       const defaultToMainnet = 'https://mainnet.radixdlt.com'
@@ -708,6 +727,7 @@ export default function useWallet (radix: RadixT, router: Router): useWalletInte
     deleteLocalHardwareAddress,
     initWallet,
     nextPage,
+    networkSwitched,
     persistNodeUrl,
     previousPage,
     refreshHistory,

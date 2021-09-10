@@ -18,7 +18,7 @@
       :account="account"
       :activeAccount="activeAccount"
       :shouldShowEdit="true"
-      @click="switchAccount(account)"
+      @click="debugSwitch(account)"
       @edit="editName(account)"
       class="mb-8"
     >
@@ -136,6 +136,10 @@ const WalletSidebarAccounts = defineComponent({
       setState,
       addAccount,
       switchAccount,
+      debugSwitch (account: AccountT) {
+        console.log(account)
+        switchAccount(account)
+      },
       editName (account: AccountT) {
         setState(false)
         router.push('/wallet/account-edit-name')
