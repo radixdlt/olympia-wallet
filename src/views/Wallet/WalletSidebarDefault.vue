@@ -1,8 +1,6 @@
 <template>
   <div class="w-60 px-5 pt-8 pb-3 flex flex-col h-full">
-    <div class="flex">
-      <img alt="Radix DLT Logo" src="../../assets/logo.svg" class="w-30 mb-10">
-    </div>
+    <AppLogo class="mb-10" />
 
     <div class="flex flex-col text-white hover:text-rGreen transition-colors cursor-pointer mb-4" @click="setState(true)">
       <div class="relative py-3">
@@ -91,8 +89,11 @@ import AccountListItem from '@/components/AccountListItem.vue'
 import WalletNavLink from './WalletNavLink.vue'
 import { useRadix, useWallet, useSidebar } from '@/composables'
 import { useRouter, useRoute } from 'vue-router'
+import AppLogo from '@/components/AppLogo.vue'
+
 const WalletSidebarDefault = defineComponent({
   components: {
+    AppLogo,
     AccountListItem,
     WalletNavLink
   },

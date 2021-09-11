@@ -24,6 +24,9 @@ module.exports = {
           greenLight: 'rgba(0, 195, 137, 0.4)'
         }
       },
+      fontSize: {
+        xxs: '10px'
+      },
       height: {
         tallest: '99999999999px',
         modal: '600px',
