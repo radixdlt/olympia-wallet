@@ -40,7 +40,7 @@ import {
 import { AccountName } from '@/actions/electron/data-store'
 import { Router } from 'vue-router'
 import { Subscription, interval, Subject, Observable, combineLatest, BehaviorSubject, ReplaySubject, firstValueFrom, zip } from 'rxjs'
-import { filter, mergeMap, retry } from 'rxjs/operators'
+import { filter, mergeMap, retry, switchMap } from 'rxjs/operators'
 import { touchKeystore, hasKeystore, initWallet, storePin } from '@/actions/vue/create-wallet'
 import {
   deleteHardwareWalletAddress,
@@ -114,6 +114,7 @@ const userDidConfirm = new Subject<boolean>()
 const userDidCancel = new Subject<boolean>()
 let userConfirmation = new ReplaySubject<ManualUserConfirmTX>()
 const historyPagination = new Subject<TransactionHistoryOfKnownAddressRequestInput>()
+const reloadTrigger = new Subject<number>()
 
 const hardwareAddress: Ref<string> = ref('')
 const hardwareError: Ref<Error | null> = ref(null)
@@ -187,6 +188,7 @@ interface useWalletInterface {
   confirmTransaction: () => void;
   connectHardwareWallet: () => void;
   createWallet: (mnemonic: MnemomicT, pass: string, network: Network) => Promise<WalletT>;
+  reloadSubscriptions: () => void;
   decryptMessage: (tx: ExecutedTransaction) => void;
   deleteLocalHardwareAddress: () => void;
   initWallet: () => void;
@@ -238,15 +240,57 @@ export default function useWallet (radix: RadixT, router: Router): useWalletInte
 
   const waitUntilAllLoaded = async () => firstValueFrom(allLoadedObservable)
 
+  const reloadSubscriptions = () => reloadTrigger.next(Math.random())
+
   const initWallet = (): void => {
+    subs.add(reloadTrigger.asObservable().subscribe((val) => { console.log('got network change', val) }))
+
     subs.add(radix.ledger.nativeToken().subscribe((nativeTokenRes: Token) => { nativeToken.value = nativeTokenRes }))
 
-    subs.add(radix.tokenBalances.subscribe((tokenBalancesRes: TokenBalances) => { tokenBalances.value = tokenBalancesRes }))
-    subs.add(radix.activeAccount.subscribe((account: AccountT) => { activeAccount.value = account }))
-    subs.add(radix.stakingPositions.subscribe((stakes: StakePositions) => { activeStakes.value = stakes }))
-    subs.add(radix.accounts.subscribe((accountsRes: AccountsT) => { accounts.value = accountsRes }))
-    subs.add(radix.activeAddress.subscribe((addressRes: AccountAddressT) => { activeAddress.value = addressRes }))
-    subs.add(radix.unstakingPositions.subscribe(unstakes => { activeUnstakes.value = unstakes }))
+    subs.add(reloadTrigger.asObservable()
+      .pipe(switchMap(() => radix.tokenBalances))
+      .subscribe((tokenBalancesRes: TokenBalances) => {
+        tokenBalances.value = tokenBalancesRes
+        console.log('getting token balances', tokenBalancesRes)
+      }))
+
+    subs.add(reloadTrigger.asObservable()
+      .pipe(switchMap(() => radix.activeAccount))
+      .subscribe((account: AccountT) => {
+        activeAccount.value = account
+        console.log('getting active account', account)
+      }))
+
+    subs.add(reloadTrigger.asObservable()
+      .pipe(switchMap(() => radix.stakingPositions))
+      .subscribe((stakes: StakePositions) => {
+        activeStakes.value = stakes
+        console.log('getting active stakes', stakes)
+      }))
+
+    subs.add(reloadTrigger.asObservable()
+      .pipe(switchMap(() => radix.accounts))
+      .subscribe((accountsRes: AccountsT) => {
+        accounts.value = accountsRes
+        console.log('getting accounts', accountsRes)
+      }))
+
+    subs.add(reloadTrigger.asObservable()
+      .pipe(switchMap(() => radix.activeAddress))
+      .subscribe((addressRes: AccountAddressT) => {
+        activeAddress.value = addressRes
+        console.log('getting active address', addressRes)
+      }))
+
+    subs.add(reloadTrigger.asObservable()
+      .pipe(switchMap(() => radix.unstakingPositions))
+      .subscribe((unstakes: UnstakePositions) => {
+        activeUnstakes.value = unstakes
+        console.log('getting unstakes', unstakes)
+      }))
+
+    reloadSubscriptions()
+    refreshHistory()
 
     const fetchNativeTokenBalanceTrigger = combineLatest<[TokenBalances, Token]>([
       radix.tokenBalances,
@@ -279,11 +323,12 @@ export default function useWallet (radix: RadixT, router: Router): useWalletInte
   }
 
   const networkSwitched = async () => {
-    subs.unsubscribe()
-    if (!accounts.value) return
-    const account = accounts.value.all[0] as AccountT
-    switchAccount(account)
-    initWallet()
+    // // subs.unsubscribe()
+    // if (!accounts.value) return
+    // const account = accounts.value.all[0] as AccountT
+    // switchAccount(account)
+    // initWallet()
+    console.warn('#######################')
 
     const allReloaded = zip(
       radix.tokenBalances,
@@ -295,6 +340,7 @@ export default function useWallet (radix: RadixT, router: Router): useWalletInte
       radix.ledger.nativeToken()
     )
     const allDone = await firstValueFrom(allReloaded)
+    console.log('allDone', allDone)
   }
 
   // Fetch history when user navigates to next page
@@ -695,6 +741,7 @@ export default function useWallet (radix: RadixT, router: Router): useWalletInte
     pendingTransactions,
     canGoNext,
     loadingHistory,
+    reloadSubscriptions,
     walletHasLoaded: computed(() => {
       return activeAddress.value != null && activeStakes.value != null && activeUnstakes.value != null && tokenBalances.value != null && nativeToken.value != null
     }),

@@ -21,21 +21,21 @@
           <span class="text-sm text-rGrayDark">{{ $t('wallet.totalTokens') }}</span>
           <div class="flex flex-row items-end">
             <big-amount :amount="availablePlusStakedAndUnstakedXRD" class="text-2xl font-light mr-4 text-rGreen" />
-            <token-symbol>{{ nativeToken.symbol }}</token-symbol>
+            <token-symbol>{{ nativeToken && nativeToken.symbol }}</token-symbol>
           </div>
         </div>
         <div class="flex flex-col my-3 px-5 border-r border-rGray flex-1">
           <span class="text-sm text-rGrayDark">{{ $t('wallet.availableTokens') }}</span>
           <div class="flex flex-row items-end">
             <big-amount :amount="totalXRD" class="text-2xl font-light mr-4 text-rBlack" />
-            <token-symbol>{{ nativeToken.symbol }}</token-symbol>
+            <token-symbol>{{ nativeToken && nativeToken.symbol }}</token-symbol>
           </div>
         </div>
         <div class="flex flex-col my-3 px-5 flex-1">
           <span class="text-sm text-rGrayDark">{{ $t('wallet.stakedTokens') }}</span>
           <div class="flex flex-row items-end">
             <big-amount :amount="totalStakedAndUnstaked" class="text-2xl font-light mr-4 text-rBlack" />
-            <token-symbol>{{ nativeToken.symbol }}</token-symbol>
+            <token-symbol>{{ nativeToken && nativeToken.symbol }}</token-symbol>
           </div>
         </div>
       </div>
@@ -80,6 +80,8 @@
         </div>
       </div>
     </div>
+
+    <button @click="reloadSubscriptions">Click to refresh</button>
   </div>
 </template>
 
@@ -114,7 +116,8 @@ const WalletOverview = defineComponent({
       nativeTokenBalance,
       tokenBalances,
       verifyHardwareWalletAddress,
-      hasWallet
+      hasWallet,
+      reloadSubscriptions
     } = useWallet(radix, router)
 
     if (!hasWallet) {
@@ -161,7 +164,8 @@ const WalletOverview = defineComponent({
       availablePlusStakedAndUnstakedXRD,
       verifyHardwareWalletAddress,
       createRRIUrl,
-      truncateRRIStringForDisplay
+      truncateRRIStringForDisplay,
+      reloadSubscriptions
     }
   },
 

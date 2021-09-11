@@ -15,8 +15,8 @@
         </div>
       </div>
 
-      <div v-if="!tokenBalances" class="p-4 flex items-center justify-center">
-        <loading-icon class="text-rGrayDark" />
+      <div v-if="!tokenBalances || !tokenBalances.tokenBalances" class="p-4 flex items-center justify-center">
+        {{ $t('transaction.insufficientFunds') }}
       </div>
       <form
         @submit.prevent="handleSubmit"
@@ -113,10 +113,6 @@
           {{ $t('transaction.sendButton') }}
         </ButtonSubmit>
       </form>
-
-      <div v-else>
-        {{ $t('transaction.insufficientFunds') }}
-      </div>
     </div>
   </div>
 </template>
@@ -161,6 +157,8 @@ const WalletTransaction = defineComponent({
     const { radix, networkPreamble } = useRadix()
     const { activeAddress, tokenBalances, nativeToken, transactionErrorMessage, transferTokens } = useWallet(radix, router)
     const { t } = useI18n({ useScope: 'global' })
+
+    console.log('empty??', activeAddress.value, tokenBalances.value)
 
     if (!activeAddress.value || !nativeToken.value || !tokenBalances.value) return
 
