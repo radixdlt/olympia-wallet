@@ -80,8 +80,6 @@
         </div>
       </div>
     </div>
-
-    <button @click="reloadSubscriptions">Click to refresh</button>
   </div>
 </template>
 
@@ -116,8 +114,7 @@ const WalletOverview = defineComponent({
       nativeTokenBalance,
       tokenBalances,
       verifyHardwareWalletAddress,
-      hasWallet,
-      reloadSubscriptions
+      hasWallet
     } = useWallet(radix, router)
 
     if (!hasWallet) {
@@ -152,6 +149,13 @@ const WalletOverview = defineComponent({
       return add(totalXRD, totalStakedAndUnstakedSum)
     })
 
+    const otherTokenBalances: ComputedRef<TokenBalance[]> = computed(() => {
+      if (!nativeToken.value || !tokenBalances.value || !tokenBalances.value.tokenBalances) return []
+      return tokenBalances.value.tokenBalances.filter((tb: TokenBalance) => {
+        return nativeToken.value && !tb.token.rri.equals(nativeToken.value.rri)
+      })
+    })
+
     return {
       activeAddress,
       activeStakes,
@@ -161,20 +165,11 @@ const WalletOverview = defineComponent({
       tokenBalances,
       totalXRD,
       totalStakedAndUnstaked,
+      otherTokenBalances,
       availablePlusStakedAndUnstakedXRD,
       verifyHardwareWalletAddress,
       createRRIUrl,
-      truncateRRIStringForDisplay,
-      reloadSubscriptions
-    }
-  },
-
-  computed: {
-    otherTokenBalances (): TokenBalance[] {
-      if (!this.nativeToken || !this.tokenBalances || !this.tokenBalances.tokenBalances) return []
-      return this.tokenBalances.tokenBalances.filter((tb: TokenBalance) => {
-        return this.nativeToken && !tb.token.rri.equals(this.nativeToken.rri)
-      })
+      truncateRRIStringForDisplay
     }
   }
 })
