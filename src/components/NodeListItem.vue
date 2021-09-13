@@ -50,7 +50,7 @@ export default defineComponent({
     const toast = useToast()
     const router = useRouter()
     const { radix, network, updateConnection, setSwitching } = useRadix()
-    const { accounts, persistNodeUrl, switchAccount, networkSwitched, reloadSubscriptions } = useWallet(radix, router)
+    const { accounts, persistNodeUrl, switchAccount, reloadSubscriptions } = useWallet(radix, router)
     const { connected, loading, networkId, testConnection, cleanupSubscriptions } = useConnectableRadix()
     const updatedConnection: Ref<boolean> = ref(false)
 

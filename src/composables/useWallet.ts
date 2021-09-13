@@ -194,7 +194,6 @@ interface useWalletInterface {
   initWallet: () => void;
   loginWithWallet: (password: string) => Promise<RadixT>;
   nextPage: () => void;
-  networkSwitched: () => Promise<void>;
   persistNodeUrl: (url: string) => Promise<void>;
   previousPage: () => void;
   refreshHistory: () => void;
@@ -243,51 +242,31 @@ export default function useWallet (radix: RadixT, router: Router): useWalletInte
   const reloadSubscriptions = () => reloadTrigger.next(Math.random())
 
   const initWallet = (): void => {
-    subs.add(reloadTrigger.asObservable().subscribe((val) => { console.log('got network change', val) }))
-
     subs.add(radix.ledger.nativeToken().subscribe((nativeTokenRes: Token) => { nativeToken.value = nativeTokenRes }))
 
     subs.add(reloadTrigger.asObservable()
       .pipe(switchMap(() => radix.tokenBalances))
-      .subscribe((tokenBalancesRes: TokenBalances) => {
-        tokenBalances.value = tokenBalancesRes
-        console.log('getting token balances', tokenBalancesRes)
-      }))
+      .subscribe((tokenBalancesRes: TokenBalances) => { tokenBalances.value = tokenBalancesRes }))
 
     subs.add(reloadTrigger.asObservable()
       .pipe(switchMap(() => radix.activeAccount))
-      .subscribe((account: AccountT) => {
-        activeAccount.value = account
-        console.log('getting active account', account)
-      }))
+      .subscribe((account: AccountT) => { activeAccount.value = account }))
 
     subs.add(reloadTrigger.asObservable()
       .pipe(switchMap(() => radix.stakingPositions))
-      .subscribe((stakes: StakePositions) => {
-        activeStakes.value = stakes
-        console.log('getting active stakes', stakes)
-      }))
+      .subscribe((stakes: StakePositions) => { activeStakes.value = stakes }))
 
     subs.add(reloadTrigger.asObservable()
       .pipe(switchMap(() => radix.accounts))
-      .subscribe((accountsRes: AccountsT) => {
-        accounts.value = accountsRes
-        console.log('getting accounts', accountsRes)
-      }))
+      .subscribe((accountsRes: AccountsT) => { accounts.value = accountsRes }))
 
     subs.add(reloadTrigger.asObservable()
       .pipe(switchMap(() => radix.activeAddress))
-      .subscribe((addressRes: AccountAddressT) => {
-        activeAddress.value = addressRes
-        console.log('getting active address', addressRes)
-      }))
+      .subscribe((addressRes: AccountAddressT) => { activeAddress.value = addressRes }))
 
     subs.add(reloadTrigger.asObservable()
       .pipe(switchMap(() => radix.unstakingPositions))
-      .subscribe((unstakes: UnstakePositions) => {
-        activeUnstakes.value = unstakes
-        console.log('getting unstakes', unstakes)
-      }))
+      .subscribe((unstakes: UnstakePositions) => { activeUnstakes.value = unstakes }))
 
     reloadSubscriptions()
     refreshHistory()
@@ -320,27 +299,6 @@ export default function useWallet (radix: RadixT, router: Router): useWalletInte
     getAccountNames().then((names) => {
       accountNames.value = names
     })
-  }
-
-  const networkSwitched = async () => {
-    // // subs.unsubscribe()
-    // if (!accounts.value) return
-    // const account = accounts.value.all[0] as AccountT
-    // switchAccount(account)
-    // initWallet()
-    console.warn('#######################')
-
-    const allReloaded = zip(
-      radix.tokenBalances,
-      radix.activeAccount,
-      radix.stakingPositions,
-      radix.accounts,
-      radix.activeAddress,
-      radix.unstakingPositions,
-      radix.ledger.nativeToken()
-    )
-    const allDone = await firstValueFrom(allReloaded)
-    console.log('allDone', allDone)
   }
 
   // Fetch history when user navigates to next page
@@ -774,7 +732,6 @@ export default function useWallet (radix: RadixT, router: Router): useWalletInte
     deleteLocalHardwareAddress,
     initWallet,
     nextPage,
-    networkSwitched,
     persistNodeUrl,
     previousPage,
     refreshHistory,
