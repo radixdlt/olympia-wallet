@@ -11,6 +11,7 @@
         class="bg-white pt-8 pb-4 px-11 max-w-lg rounded mx-auto"
       >
         <home-enter-passcode
+          :isAuthenticating="isAuthenticating"
           @submit="authenticate"
           @forgotPassword="forgotPassword"
           ref="enterPasscodeComponent"
@@ -103,6 +104,7 @@ const Home = defineComponent({
       modal,
       authenticate,
       enterPasscodeComponent,
+      isAuthenticating,
 
       closeModal () {
         setModal(null)

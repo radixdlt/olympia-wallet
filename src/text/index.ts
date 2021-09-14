@@ -29,6 +29,7 @@ const messages = {
       passwordTitle: 'Enter your password to access your wallet',
       passwordPlaceholder: 'enter password',
       passwordButton: 'Open Wallet',
+      authenticating: 'Authenticating...',
       createTitle: 'I don\'t have a wallet yet.',
       createContent: 'You’re new to Radix. Create a new wallet to get started holding, sending, and staking XRD tokens.',
       createButton: 'Create a new wallet',

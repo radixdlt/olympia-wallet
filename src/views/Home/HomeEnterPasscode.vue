@@ -23,7 +23,12 @@
       </div>
 
       <ButtonSubmit class="w-96" :disabled="disableSubmit">
-        {{ $t('home.passwordButton') }}
+        <span v-if="isAuthenticating">
+          {{ $t('home.authenticating') }}
+        </span>
+        <span v-else>
+          {{ $t('home.passwordButton') }}
+        </span>
       </ButtonSubmit>
     </form>
     <div>
@@ -33,7 +38,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, toRefs, computed, ComputedRef } from 'vue'
 import { useForm } from 'vee-validate'
 import FormField from '@/components/FormField.vue'
 import FormErrorMessage from '@/components/FormErrorMessage.vue'
@@ -51,20 +56,29 @@ const HomeEnterPasscode = defineComponent({
     FormErrorMessage
   },
 
-  setup () {
+  props: {
+    isAuthenticating: {
+      type: Boolean,
+      default: false
+    }
+  },
+
+  setup (props) {
+    const { isAuthenticating } = toRefs(props)
     const { errors, values, meta, setErrors } = useForm<PasswordForm>()
+
+    const disableSubmit: ComputedRef<boolean> = computed(() => {
+      const metaIsDirty = meta.value.dirty ? !meta.value.valid : true
+      return isAuthenticating.value || metaIsDirty
+    })
 
     return {
       errors,
       values,
       meta,
-      setErrors
-    }
-  },
-
-  computed: {
-    disableSubmit (): boolean {
-      return this.meta.dirty ? !this.meta.valid : true
+      props,
+      setErrors,
+      disableSubmit
     }
   },
 
