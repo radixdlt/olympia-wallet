@@ -85,7 +85,7 @@ import BigAmount from '@/components/BigAmount.vue'
 import ClickToCopy from '@/components/ClickToCopy.vue'
 import { Subscription } from 'rxjs'
 import { formatValidatorAddressForDisplay } from '@/helpers/formatter'
-import { Position } from '@/store/_types'
+import { Position } from '@/services/_types'
 import Tooltip from '@/components/Tooltip.vue'
 import { useRadix } from '@/composables'
 

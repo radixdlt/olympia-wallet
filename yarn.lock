@@ -4154,11 +4154,6 @@ cacheable-request@^7.0.1:
     normalize-url "^4.1.0"
     responselike "^2.0.0"
 
-caf@^9.0.0:
-  version "9.1.0"
-  resolved "https://registry.yarnpkg.com/caf/-/caf-9.1.0.tgz#cefe5653e6ed13224d4282542167e4f5257cf76a"
-  integrity sha512-QN7gQXrDQiZwK7EJzSxPhfveyfZtJn7O2tzrJEmo534Q+DuSjjDVcEs0pWuEwKSPVO+qkVEJikHjP2ZXq+Xp4Q==
-
 call-bind@^1.0.0, call-bind@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/call-bind/-/call-bind-1.0.2.tgz#b1d4e89e688119c3c9a903ad30abb2f6a919be3c"
@@ -14330,13 +14325,6 @@ vue-cli-plugin-tailwind@~2.0.6:
   resolved "https://registry.yarnpkg.com/vue-cli-plugin-tailwind/-/vue-cli-plugin-tailwind-2.0.6.tgz#c68d5f00aaae49896cf88d5dd341bcbdc900ee0a"
   integrity sha512-HgR3gSmlnypNU+hlqoiRBJsnShXSoig4XTFNZiPlyVZBtkDZdfD884wTxz+GDJHzWLPtv4wnAyuO95UCsPbyoQ==
 
-vue-concurrency@^2.0.3:
-  version "2.0.3"
-  resolved "https://registry.yarnpkg.com/vue-concurrency/-/vue-concurrency-2.0.3.tgz#25208685b1fc1b2d71bf6153b8de75801d9a2d04"
-  integrity sha512-/Z+EJ1kpSQORZTWSoEKAMGiF4gr9eqSliQ6hGuNy9dF79osDD8ju3/+ggjMKlCOnFAraoyELw2o7FEv/90zfKA==
-  dependencies:
-    caf "^9.0.0"
-
 vue-eslint-parser@^7.0.0, vue-eslint-parser@^7.6.0:
   version "7.6.0"
   resolved "https://registry.yarnpkg.com/vue-eslint-parser/-/vue-eslint-parser-7.6.0.tgz#01ea1a2932f581ff244336565d712801f8f72561"
@@ -14424,11 +14412,6 @@ vue@^3.0.4:
     "@vue/compiler-dom" "3.1.4"
     "@vue/runtime-dom" "3.1.4"
     "@vue/shared" "3.1.4"
-
-vuex@^4.0.0:
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/vuex/-/vuex-4.0.0.tgz#ac877aa76a9c45368c979471e461b520d38e6cf5"
-  integrity sha512-56VPujlHscP5q/e7Jlpqc40sja4vOhC4uJD1llBCWolVI8ND4+VzisDVkUMl+z5y0MpIImW6HjhNc+ZvuizgOw==
 
 w3c-hr-time@^1.0.1, w3c-hr-time@^1.0.2:
   version "1.0.2"

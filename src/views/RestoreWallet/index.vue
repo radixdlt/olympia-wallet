@@ -77,13 +77,12 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { WalletT, Mnemonic, Network } from '@radixdlt/application'
+import { Mnemonic, Network } from '@radixdlt/application'
 import WizardHeading from '@/components/WizardHeading.vue'
 import { initWallet, storePin } from '@/actions/vue/create-wallet'
 import RestoreWalletEnterMnemonic from './RestoreWalletEnterMnemonic.vue'
 import CreateWalletCreatePasscode from '@/views/CreateWallet/CreateWalletCreatePasscode.vue'
 import CreateWalletCreatePin from '@/views/CreateWallet/CreateWalletCreatePin.vue'
-import { useStore } from '@/store'
 import { ref } from '@nopr3d/vue-next-rx'
 import { saveDerivedAccountsIndex } from '@/actions/vue/data-store'
 
@@ -96,7 +95,6 @@ const RestoreWallet = defineComponent({
   },
 
   setup () {
-    const store = useStore()
     const step = ref(0)
     const passcode = ref('')
     const mnemonic = ref(null)
@@ -104,8 +102,7 @@ const RestoreWallet = defineComponent({
     // Create wallet with password and path to keystore
     const createWallet = (pass: string) => {
       initWallet(mnemonic.value, pass, Network.MAINNET)
-        .then(wallet => {
-          store.commit('setWallet', wallet)
+        .then(() => {
           saveDerivedAccountsIndex(0)
           step.value = 2
           passcode.value = pass
