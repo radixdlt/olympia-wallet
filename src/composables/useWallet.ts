@@ -39,7 +39,7 @@ import {
 } from '@radixdlt/application'
 import { AccountName } from '@/actions/electron/data-store'
 import { Router } from 'vue-router'
-import { Subscription, interval, Subject, Observable, combineLatest, BehaviorSubject, ReplaySubject, firstValueFrom, zip } from 'rxjs'
+import { Subscription, interval, Subject, Observable, combineLatest, BehaviorSubject, ReplaySubject, firstValueFrom, zip, merge } from 'rxjs'
 import { filter, mergeMap, retry, switchMap } from 'rxjs/operators'
 import { touchKeystore, hasKeystore, initWallet, storePin } from '@/actions/vue/create-wallet'
 import {
@@ -210,6 +210,11 @@ interface useWalletInterface {
   waitUntilAllLoaded: () => Promise<any>;
 }
 
+const tokenBalanceTrigger = merge(
+  interval(60 * 1_000),
+  reloadTrigger.asObservable()
+)
+
 export default function useWallet (radix: RadixT, router: Router): useWalletInterface {
   const invalidPasswordError: Ref<WalletError | null> = ref(null)
 
@@ -223,7 +228,7 @@ export default function useWallet (radix: RadixT, router: Router): useWalletInte
     radix.__wallet.subscribe((newWallet: WalletT) => { wallet.value = newWallet })
 
     radix
-      .withTokenBalanceFetchTrigger(interval(60 * 1_000))
+      .withTokenBalanceFetchTrigger(tokenBalanceTrigger)
       .withStakingFetchTrigger(interval(60 * 1_000))
   }
 

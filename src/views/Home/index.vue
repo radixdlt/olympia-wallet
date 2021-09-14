@@ -80,8 +80,8 @@ const Home = defineComponent({
       isAuthenticating.value = true
       const connectedClient = await loginWithWallet(password)
       const network = await firstValueFrom(connectedClient.ledger.networkId())
+      isAuthenticating.value = false
       setNetwork(network)
-      console.log(network)
       router.push('/wallet')
     }
 
