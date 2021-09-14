@@ -24,7 +24,7 @@
         class="flex flex-col items-end"
       >
         <div class="bg-white rounded-md border border-rGray text-rBlack mb-8 w-full">
-          <template v-if="true">
+          <template v-if="loadedAllData">
             <div class="border-b border-rGray py-7 flex items-center">
               <div class="w-32 text-right text-rGrayDark mr-8">{{ $t('transaction.fromLabel') }}</div>
               <div class="flex-1 font-mono">{{ activeAddress.toString() }}</div>
@@ -160,8 +160,6 @@ const WalletTransaction = defineComponent({
 
     console.log('empty??', activeAddress.value, tokenBalances.value)
 
-    if (!activeAddress.value || !nativeToken.value || !tokenBalances.value) return
-
     // Clear form input and validation errors when switching accounts
     watch(activeAddress, () => {
       resetForm()
@@ -180,7 +178,7 @@ const WalletTransaction = defineComponent({
 
     const currency: Ref<string | null> = ref(null)
     const tokenOptions: Ref<Array<TokenBalance>> = ref([])
-    const balances = tokenBalances.value.tokenBalances
+    const balances = tokenBalances.value ? tokenBalances.value.tokenBalances : []
 
     // Set XRD as default and move to top of list of options. Ensure native token subscription has returned before doing so
     const setXRDByDefault = (nativeToken: Token) => {
@@ -213,6 +211,11 @@ const WalletTransaction = defineComponent({
       return meta.value.dirty ? !meta.value.valid : true
     })
 
+    const loadedAllData: ComputedRef<boolean> = computed(() => {
+      if (activeAddress && activeAddress.value && nativeToken.value && tokenBalances.value) return true
+      return false
+    })
+
     return {
       tokenBalances,
       errors,
@@ -227,6 +230,7 @@ const WalletTransaction = defineComponent({
       amountPlaceholder,
       activeAddress,
       disableSubmit,
+      loadedAllData,
       handleSubmit () {
         if (!meta.value.valid || !selectedCurrency.value) return false
         const safeAddress = safelyUnwrapAddress(values.recipient, networkPreamble.value)
