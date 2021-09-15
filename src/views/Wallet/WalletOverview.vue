@@ -150,7 +150,7 @@ const WalletOverview = defineComponent({
     })
 
     const otherTokenBalances: ComputedRef<TokenBalance[]> = computed(() => {
-      if (!nativeToken.value || !tokenBalances.value || !tokenBalances.value.tokenBalances) return []
+      if (!nativeToken.value || !tokenBalances.value) return []
       return tokenBalances.value.tokenBalances.filter((tb: TokenBalance) => {
         return nativeToken.value && !tb.token.rri.equals(nativeToken.value.rri)
       })

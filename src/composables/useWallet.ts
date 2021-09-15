@@ -215,7 +215,7 @@ interface useWalletInterface {
 }
 
 const tokenBalanceTrigger = merge(
-  interval(60 * 1_000),
+  interval(5 * 1_000),
   reloadTrigger.asObservable()
 )
 
@@ -233,7 +233,7 @@ export default function useWallet (radix: RadixT, router: Router): useWalletInte
 
     radix
       .withTokenBalanceFetchTrigger(tokenBalanceTrigger)
-      .withStakingFetchTrigger(interval(60 * 1_000))
+      .withStakingFetchTrigger(interval(5 * 1_000))
   }
 
   const allLoadedObservable = zip(
@@ -251,7 +251,9 @@ export default function useWallet (radix: RadixT, router: Router): useWalletInte
   const reloadSubscriptions = () => reloadTrigger.next(Math.random())
 
   const initWallet = (): void => {
-    subs.add(radix.ledger.nativeToken().subscribe((nativeTokenRes: Token) => { nativeToken.value = nativeTokenRes }))
+    subs.add(reloadTrigger.asObservable()
+      .pipe(switchMap(() => radix.ledger.nativeToken()))
+      .subscribe((nativeTokenRes: Token) => { nativeToken.value = nativeTokenRes }))
 
     subs.add(reloadTrigger.asObservable()
       .pipe(switchMap(() => radix.tokenBalances))

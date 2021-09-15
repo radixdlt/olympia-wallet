@@ -79,14 +79,18 @@ const Home = defineComponent({
 
     const authenticate = async (password: string) => {
       isAuthenticating.value = true
-      const connectedClient = await loginWithWallet(password)
-      const network = await firstValueFrom(connectedClient.ledger.networkId())
-      isAuthenticating.value = false
-      setNetwork(network)
-      router.push('/wallet')
+      loginWithWallet(password).then((client) => {
+        return firstValueFrom(client.ledger.networkId())
+      }).then((network) => {
+        setNetwork(network)
+        isAuthenticating.value = false
+        router.push('/wallet')
+        walletLoaded()
+      }).catch(error => {
+        console.log('error happened!', error)
+        isAuthenticating.value = false
+      })
     }
-
-    walletLoaded()
 
     watch(
       () => invalidPasswordError.value,

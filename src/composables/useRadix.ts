@@ -1,9 +1,9 @@
 import { ref, computed, ComputedRef } from 'vue'
-import { Network, Radix, RadixT, HRP } from '@radixdlt/application'
-import { network, ChosenNetworkT } from '@/helpers/network'
+import { Network, Radix, RadixT, HRP, ErrorT } from '@radixdlt/application'
 import { firstValueFrom } from 'rxjs'
+import { filter } from 'rxjs/operators'
 
-let radix: RadixT = Radix.create()
+const radix: RadixT = Radix.create()
 
 const envNetworkName: string = process.env.VUE_APP_NETWORK_NAME || 'STOKENET'
 const typedNetwork = envNetworkName as Network
@@ -11,6 +11,12 @@ const typedNetwork = envNetworkName as Network
 const switching = ref(false)
 const connected = ref(false)
 const activeNetwork = ref(typedNetwork)
+
+radix.errors
+  .pipe(filter(errorNotification => errorNotification.category === 'api'))
+  .subscribe((error: ErrorT<'wallet'>) => {
+    console.log(error)
+  })
 
 interface useRadixInterface {
   connected: ComputedRef<boolean>;
@@ -20,7 +26,6 @@ interface useRadixInterface {
   reset: () => void;
   setNetwork: (network: Network) => void;
   setSwitching: (value: boolean) => void;
-  establishConnection: () => Promise<void>;
   updateConnection: (n: string) => Promise<void>;
   networkPreamble: ComputedRef<string>;
 }
@@ -34,17 +39,6 @@ export default function useRadix (): useRadixInterface {
 
     reset: () => {
       radix.__reset()
-    },
-
-    async establishConnection (): Promise<void> {
-      const selectedNetwork: ChosenNetworkT = network(activeNetwork.value)
-      activeNetwork.value = selectedNetwork.network
-      if (!radix) {
-        radix = Radix.create()
-      }
-      radix.connect(selectedNetwork.networkURL).then(() => {
-        connected.value = true
-      })
     },
 
     async updateConnection (url: string): Promise<void> {

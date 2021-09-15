@@ -17,16 +17,9 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted } from 'vue'
-import useRadix from '@/composables/useRadix'
+import { defineComponent } from 'vue'
 
-const App = defineComponent({
-  setup () {
-    const { establishConnection } = useRadix()
-    onMounted(establishConnection)
-    return { }
-  }
-})
+const App = defineComponent({})
 
 export default App
 </script>
