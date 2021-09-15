@@ -42,9 +42,9 @@ export default function useRadix (): useRadixInterface {
       if (!radix) {
         radix = Radix.create()
       }
-      const result = await radix.connect(selectedNetwork.networkURL)
-      connected.value = true
-      return result
+      radix.connect(selectedNetwork.networkURL).then(() => {
+        connected.value = true
+      })
     },
 
     async updateConnection (url: string): Promise<void> {

@@ -15,6 +15,8 @@ import {
   MnemomicT,
   Network,
   RadixT,
+  SigningKeychain,
+  SigningKeychainT,
   StakeOptions,
   StakePositions,
   StakeTokensInput,
@@ -35,7 +37,8 @@ import {
   UnstakePositions,
   UnstakeTokensInput,
   WalletErrorCause,
-  WalletT
+  WalletT,
+  walletError
 } from '@radixdlt/application'
 import { AccountName } from '@/actions/electron/data-store'
 import { Router } from 'vue-router'
@@ -101,6 +104,7 @@ const transactionToConfirm: Ref<ManualUserConfirmTX | null> = ref(null)
 const transferInput: Ref<TransferTokensInput | null> = ref(null)
 const wallet: Ref<WalletT | null> = ref(null)
 const nodeUrl: Ref<string | null> = ref(null)
+const signingKeychain: Ref<SigningKeychainT | null> = ref(null)
 
 const loadingHistory: Ref<boolean> = ref(true)
 const loadingHistoryPage: Ref<boolean> = ref(true)
@@ -641,29 +645,29 @@ export default function useWallet (radix: RadixT, router: Router): useWalletInte
     hardwareAccount.value = null
   }
 
-  const hashNodeUrl = async (url:string, account: AccountT): Promise<string> => {
+  const hashNodeUrl = async (url:string, signingKeychain: SigningKeychainT): Promise<string> => {
     const hashedUrl = sha256Twice(url)
-    const signed = account.signHash(hashedUrl)
+    const signed = signingKeychain.signHash(hashedUrl)
     const signedHash = await firstValueFrom(signed)
     return signedHash.toDER()
   }
 
   const persistNodeUrl = async (url: string): Promise<void> => {
-    if (!activeAccount.value) return
-    const hash = await hashNodeUrl(url, activeAccount.value)
+    if (!signingKeychain.value) return
+    const hash = await hashNodeUrl(url, signingKeychain.value)
     const saveToStore = await persistNodeSelection(url, hash)
   }
 
-  const fetchSavedNodeUrl = async (account: AccountT): Promise<string> => {
+  const fetchSavedNodeUrl = async (signingKeychain: SigningKeychainT): Promise<string> => {
     const { selectedNode, selectedNodeHash } = await fetchSelectedNodeFromStore()
     if (!selectedNode) {
       // set a default node, one did not exist.
       const defaultToMainnet = 'https://mainnet.radixdlt.com'
-      const hash = await hashNodeUrl(defaultToMainnet, account)
+      const hash = await hashNodeUrl(defaultToMainnet, signingKeychain)
       const saveToStore = await persistNodeSelection(defaultToMainnet, hash)
       return defaultToMainnet
     }
-    const rehash = await hashNodeUrl(selectedNode, account)
+    const rehash = await hashNodeUrl(selectedNode, signingKeychain)
 
     if (rehash !== selectedNodeHash) throw new Error('Invalid Node Hash!')
     return selectedNode
@@ -711,13 +715,23 @@ export default function useWallet (radix: RadixT, router: Router): useWalletInte
     canGoBack: computed(() => cursorStack.value.length > 0),
 
     async loginWithWallet (password: string) {
+      const signingKeychainResult = await SigningKeychain.byLoadingAndDecryptingKeystore({
+        password,
+        load: touchKeystore
+      })
+
+      if (signingKeychainResult.isErr()) {
+        throw walletError(new Error('Invalid Password'))
+      }
+
+      signingKeychain.value = signingKeychainResult._unsafeUnwrap()
+
+      const url = await fetchSavedNodeUrl(signingKeychain.value)
+      radix.connect(url)
       const client = await radix.login(password, touchKeystore)
-      const firstActive = await firstValueFrom(client.activeAccount)
-      const url = await fetchSavedNodeUrl(firstActive)
-      const connected = await client.connect(url)
       nodeUrl.value = url
       initWallet()
-      const loaded = await waitUntilAllLoaded()
+      // const loaded = await waitUntilAllLoaded()
       return client
     },
 

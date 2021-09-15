@@ -3,8 +3,8 @@
     <div class="bg-rGrayLightest px-8">
       <div class="flex justify-between mb-4 pt-4">
         <h3 class="font-medium text-rBlack">{{ $t('wallet.balancesHeading') }}</h3>
-        <div class="flex items-center text-rBlack text-sm">
-          <span class="text-rGrayDark mr-2">{{ $t('wallet.currentAddress') }}</span> <span class="font-mono text-rBlack" v-if="activeAddress">{{ activeAddress.toString() }}</span>
+        <div class="flex items-center text-rBlack text-sm" v-if="activeAddress">
+          <span class="text-rGrayDark mr-2">{{ $t('wallet.currentAddress') }}</span> <span class="font-mono text-rBlack">{{ activeAddress.toString() }}</span>
           <div class="hover:text-rGreen flex flex-row items-center cursor-pointer transition-colors">
             <click-to-copy
               :address="activeAddress.toString()"
