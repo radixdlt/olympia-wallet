@@ -13,7 +13,6 @@ const connected = ref(false)
 const activeNetwork = ref(typedNetwork)
 
 radix.errors
-  .pipe(filter(errorNotification => errorNotification.category === 'api'))
   .subscribe((error: ErrorT<'wallet'>) => {
     console.log(error)
   })

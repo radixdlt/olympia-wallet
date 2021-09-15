@@ -42,8 +42,8 @@ import {
 } from '@radixdlt/application'
 import { AccountName } from '@/actions/electron/data-store'
 import { Router } from 'vue-router'
-import { Subscription, interval, Subject, Observable, combineLatest, BehaviorSubject, ReplaySubject, firstValueFrom, zip, merge } from 'rxjs'
-import { filter, mergeMap, retry, switchMap } from 'rxjs/operators'
+import { Subscription, interval, Subject, Observable, combineLatest, BehaviorSubject, ReplaySubject, firstValueFrom, zip, merge, of } from 'rxjs'
+import { catchError, delay, filter, mergeMap, retry, retryWhen, switchMap, take } from 'rxjs/operators'
 import { touchKeystore, hasKeystore, initWallet, storePin } from '@/actions/vue/create-wallet'
 import {
   deleteHardwareWalletAddress,
@@ -252,7 +252,17 @@ export default function useWallet (radix: RadixT, router: Router): useWalletInte
 
   const initWallet = (): void => {
     subs.add(reloadTrigger.asObservable()
-      .pipe(switchMap(() => radix.ledger.nativeToken()))
+      .pipe(
+        switchMap(() => radix.ledger.nativeToken()),
+        retryWhen(error => {
+          console.log('GOT AN ERROR')
+          return error.pipe(
+            delay(1000),
+            take(5),
+            catchError(e => of(e))
+          )
+        })
+      )
       .subscribe((nativeTokenRes: Token) => { nativeToken.value = nativeTokenRes }))
 
     subs.add(reloadTrigger.asObservable()

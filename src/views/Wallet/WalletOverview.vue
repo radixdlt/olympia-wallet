@@ -114,14 +114,17 @@ const WalletOverview = defineComponent({
       nativeTokenBalance,
       tokenBalances,
       verifyHardwareWalletAddress,
-      hasWallet
+      hasWallet,
+      reloadSubscriptions
     } = useWallet(radix, router)
 
     if (!hasWallet) {
       router.push('/')
       return {}
     }
-
+    if (!tokenBalances.value) {
+      reloadSubscriptions()
+    }
     const totalXRD: ComputedRef<AmountT> = computed(() => {
       if (!nativeTokenBalance.value) return Amount.fromUnsafe(0)._unsafeUnwrap()
       const xrdAmount = Amount.fromUnsafe(nativeTokenBalance.value.amount)
@@ -150,6 +153,10 @@ const WalletOverview = defineComponent({
     })
 
     const otherTokenBalances: ComputedRef<TokenBalance[]> = computed(() => {
+      // console.log('nativeToken', nativeToken.value)
+      if (!tokenBalances.value) {
+        console.log('no token balances')
+      }
       if (!nativeToken.value || !tokenBalances.value) return []
       return tokenBalances.value.tokenBalances.filter((tb: TokenBalance) => {
         return nativeToken.value && !tb.token.rri.equals(nativeToken.value.rri)
