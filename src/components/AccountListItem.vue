@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="flex flex-row mb-4 justify-between">
+    <div class="flex flex-row mb-4 justify-between" v-if="account">
       <div class="flex flex-row">
         <svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr-4 text-rGreen">
           <path d="M23.7138 12C23.7138 18.1997 18.5868 23.25 12.2319 23.25C5.87702 23.25 0.75 18.1997 0.75 12C0.75 5.80026 5.87702 0.75 12.2319 0.75C18.5868 0.75 23.7138 5.80026 23.7138 12Z" stroke="white" stroke-width="1.5" :class="{'fill-current': isActiveAccount}"/>
@@ -60,26 +60,12 @@ const AccountListItem = defineComponent({
   },
 
   setup (props) {
-    const nickName = ref('')
     const router = useRouter()
     const { radix } = useRadix()
     const { accountNameFor, activeAccount, switchAccount, verifyHardwareWalletAddress } = useWallet(radix, router)
 
-    const fetchAccountName = (account: AccountT) => {
-      const storedName = accountNameFor(account.address)
-      nickName.value = storedName || account.address.toString()
-    }
     const { setState } = useSidebar()
     const account = toRef(props, 'account')
-    if (!account.value) {
-      return
-    }
-
-    fetchAccountName(account.value)
-
-    watchEffect(() => {
-      fetchAccountName(account.value)
-    })
 
     const editName = () => {
       setState(false)
@@ -99,7 +85,11 @@ const AccountListItem = defineComponent({
     return {
       address,
       displayAddress,
-      nickName,
+      nickName: computed(() => {
+        if (!account.value) return ''
+        const storedName = accountNameFor(account.value.address)
+        return storedName || account.value.address.toString()
+      }),
       activeAccount,
       editName,
       isActiveAccount,

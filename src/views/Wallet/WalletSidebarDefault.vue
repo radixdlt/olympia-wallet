@@ -10,7 +10,7 @@
       </div>
     </div>
 
-    <div class="flex flex-col flex-1">
+    <div class="flex flex-col flex-1" v-if="activeAccount">
       <router-link to="/wallet" custom v-slot="{ href, navigate, isExactActive }">
         <wallet-nav-link :href="href" :navigate="navigate" :isActive="isExactActive" :title="$t('wallet.navBalances')">
           <svg width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr-3">
