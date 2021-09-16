@@ -24,7 +24,7 @@
     <div v-else class="bg-rGrayLightest text-rGrayDark text-sm pl-3 w-40 flex items-center">
       {{ sentAt }}
     </div>
-    <div class="flex-1">
+    <div class="flex-1" v-if="nativeToken">
       <div class="py-3.5 px-3">
         <div v-for="(action, i) in relatedActions" :key="i">
           <action-list-item-stake-tokens

@@ -17,7 +17,7 @@
     </div>
 
     <div class="text-rBlack py-6 min-h-full text-sm">
-      <div v-if="loadingHistory" class="p-4 flex items-center justify-center">
+      <div v-if="loading" class="p-4 flex items-center justify-center">
         <loading-icon class="text-rGrayDark" />
       </div>
       <template v-else-if="pendingTransactions.length > 0 || transactionsWithMessages.length > 0">
@@ -86,7 +86,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, watch } from 'vue'
+import { computed, ComputedRef, defineComponent, onMounted, watch } from 'vue'
 import TransactionListItem from '@/components/TransactionListItem.vue'
 import LoadingIcon from '@/components/LoadingIcon.vue'
 import ClickToCopy from '@/components/ClickToCopy.vue'
@@ -143,6 +143,10 @@ const WalletHistory = defineComponent({
       nativeTokenUnsub()
     })
 
+    const loading: ComputedRef<boolean> = computed(() => {
+      return !nativeToken.value && loadingHistory.value
+    })
+
     return {
       activeAccount,
       transactionHistory,
@@ -151,7 +155,7 @@ const WalletHistory = defineComponent({
       pendingTransactions,
       canGoBack,
       canGoNext,
-      loadingHistory,
+      loading,
       nativeToken,
       previousPage,
       nextPage,

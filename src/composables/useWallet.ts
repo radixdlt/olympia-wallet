@@ -18,11 +18,8 @@ import {
   SigningKeychain,
   SigningKeychainT,
   StakeOptions,
-  StakePositions,
   StakeTokensInput,
-  Token,
   TokenBalance,
-  TokenBalances,
   TransactionHistory,
   TransactionHistoryOfKnownAddressRequestInput,
   TransactionIdentifierT,
@@ -34,7 +31,6 @@ import {
   TransferTokensInput,
   TransferTokensOptions,
   UnstakeOptions,
-  UnstakePositions,
   UnstakeTokensInput,
   WalletErrorCause,
   WalletT,
@@ -43,7 +39,7 @@ import {
 import { AccountName } from '@/actions/electron/data-store'
 import { Router } from 'vue-router'
 import { Subscription, interval, Subject, Observable, combineLatest, BehaviorSubject, ReplaySubject, firstValueFrom, zip, merge, of } from 'rxjs'
-import { catchError, delay, filter, mergeMap, retry, retryWhen, switchMap, take } from 'rxjs/operators'
+import { filter, mergeMap, retry, switchMap } from 'rxjs/operators'
 import { touchKeystore, hasKeystore, initWallet, storePin } from '@/actions/vue/create-wallet'
 import {
   deleteHardwareWalletAddress,
@@ -74,10 +70,8 @@ const activeAccount: Ref<AccountT | null> = ref(null)
 const activeAddress: Ref<AccountAddressT | null> = ref(null)
 const activeMessage: Ref<string> = ref('')
 const activeMessageInTransaction: Ref<MessageInTransaction | null> = ref(null)
-const activeStakes: Ref<StakePositions | null> = ref(null)
 const activeTransaction: Ref<TransactionTracking | null> = ref(null)
 const activeTransactionForm: Ref<string | null> = ref(null)
-const activeUnstakes: Ref<UnstakePositions | null> = ref(null)
 const canGoNext: Ref<boolean> = ref(false)
 const confirmationMode: Ref<string | null> = ref(null)
 const cursorStack: Ref<string[]> = ref([])
@@ -149,10 +143,8 @@ interface useWalletInterface {
   readonly activeAccount: Ref<AccountT | null>;
   readonly activeAddress: Ref<AccountAddressT | null>;
   readonly activeMessageInTransaction: Ref<MessageInTransaction | null>;
-  readonly activeStakes: Ref<StakePositions | null>;
   readonly activeTransaction: Ref<TransactionTracking | null>;
   readonly activeTransactionForm: Ref<string | null>;
-  readonly activeUnstakes: Ref<UnstakePositions | null>;
   readonly confirmationMode: Ref<string | null>;
   readonly decryptedMessages: Ref<{id: string, message: string}[]>;
   readonly hardwareAccount: Ref<AccountT | null>;
@@ -248,20 +240,12 @@ export default function useWallet (radix: RadixT, router: Router): useWalletInte
       .subscribe((account: AccountT) => { activeAccount.value = account }))
 
     subs.add(reloadTrigger.asObservable()
-      .pipe(switchMap(() => radix.stakingPositions))
-      .subscribe((stakes: StakePositions) => { activeStakes.value = stakes }))
-
-    subs.add(reloadTrigger.asObservable()
       .pipe(switchMap(() => radix.accounts))
       .subscribe((accountsRes: AccountsT) => { accounts.value = accountsRes }))
 
     subs.add(reloadTrigger.asObservable()
       .pipe(switchMap(() => radix.activeAddress))
       .subscribe((addressRes: AccountAddressT) => { activeAddress.value = addressRes }))
-
-    subs.add(reloadTrigger.asObservable()
-      .pipe(switchMap(() => radix.unstakingPositions))
-      .subscribe((unstakes: UnstakePositions) => { activeUnstakes.value = unstakes }))
 
     reloadSubscriptions()
     refreshHistory()
@@ -647,9 +631,7 @@ export default function useWallet (radix: RadixT, router: Router): useWalletInte
     activeAddress,
     activeMessageInTransaction,
     activeTransactionForm,
-    activeStakes,
     activeTransaction,
-    activeUnstakes,
     confirmationMode,
     decryptedMessages,
     hardwareAccount,
@@ -675,7 +657,7 @@ export default function useWallet (radix: RadixT, router: Router): useWalletInte
     loadingHistory,
     reloadSubscriptions,
     walletHasLoaded: computed(() => {
-      return activeAddress.value != null && activeStakes.value != null && activeUnstakes.value != null
+      return activeAddress.value != null
     }),
     canGoBack: computed(() => cursorStack.value.length > 0),
 
