@@ -15,12 +15,12 @@
         </div>
       </div>
 
-      <div v-if="!tokenBalances || !tokenBalances.tokenBalances" class="p-4 flex items-center justify-center">
+      <div v-if="!hasTokenBalances" class="p-4 flex items-center justify-center">
         {{ $t('transaction.insufficientFunds') }}
       </div>
       <form
         @submit.prevent="handleSubmit"
-        v-else-if="tokenBalances.tokenBalances.length > 0 && nativeToken && selectedCurrency"
+        v-else-if="hasTokenBalances && nativeToken && selectedCurrency"
         class="flex flex-col items-end"
       >
         <div class="bg-white rounded-md border border-rGray text-rBlack mb-8 w-full">
@@ -130,8 +130,8 @@ import FormField from '@/components/FormField.vue'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
 import LoadingIcon from '@/components/LoadingIcon.vue'
 import FormCheckbox from '@/components/FormCheckbox.vue'
-import { useRadix, useWallet } from '@/composables'
-import { useRouter } from 'vue-router'
+import { useNativeToken, useRadix, useTransactions, useTokenBalances, useWallet } from '@/composables'
+import { useRouter, onBeforeRouteLeave } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 
 interface TransactionForm {
@@ -155,10 +155,25 @@ const WalletTransaction = defineComponent({
     const { errors, values, meta, setErrors, resetForm } = useForm<TransactionForm>()
     const router = useRouter()
     const { radix, networkPreamble } = useRadix()
-    const { activeAddress, tokenBalances, nativeToken, transactionErrorMessage, transferTokens } = useWallet(radix, router)
-    const { t } = useI18n({ useScope: 'global' })
+    const { activeAddress, activeAccount, hardwareAccount, hardwareAccountFailedToSign } = useWallet(radix, router)
 
-    console.log('empty??', activeAddress.value, tokenBalances.value)
+    const { transactionErrorMessage, transferTokens, transactionUnsub } = useTransactions(radix, router, activeAccount.value, hardwareAccount.value, {
+      ledgerSigningError: () => {
+        hardwareAccountFailedToSign()
+      }
+    })
+
+    const { t } = useI18n({ useScope: 'global' })
+    const { nativeToken, nativeTokenUnsub } = useNativeToken(radix)
+    const { tokenBalances, tokenBalanceFor, tokenBalancesUnsub } = useTokenBalances(radix)
+
+    console.log(tokenBalances.value?.tokenBalances)
+
+    onBeforeRouteLeave(() => {
+      nativeTokenUnsub()
+      tokenBalancesUnsub()
+      transactionUnsub()
+    })
 
     // Clear form input and validation errors when switching accounts
     watch(activeAddress, () => {
@@ -183,7 +198,7 @@ const WalletTransaction = defineComponent({
     // Set XRD as default and move to top of list of options. Ensure native token subscription has returned before doing so
     const setXRDByDefault = (nativeToken: Token) => {
       if (!tokenBalances.value || tokenBalances.value.tokenBalances.length === 0) return
-      const nativeTokenBalance: TokenBalance | undefined = tokenBalances.value.tokenBalances.find((tb: TokenBalance) => tb.token.rri.equals(nativeToken.rri))
+      const nativeTokenBalance = tokenBalanceFor(nativeToken)
       currency.value = nativeTokenBalance ? nativeTokenBalance.token.name : balances[0].token.name
 
       tokenOptions.value = balances
@@ -194,6 +209,12 @@ const WalletTransaction = defineComponent({
     }
 
     if (nativeToken.value) setXRDByDefault(nativeToken.value)
+
+    const hasTokenBalances = computed(() => {
+      if (!tokenBalances.value?.tokenBalances) return false
+      console.log(tokenBalances.value?.tokenBalances.length > 0)
+      return tokenBalances.value?.tokenBalances.length > 0
+    })
 
     const selectedCurrency: ComputedRef<TokenBalance | null> = computed(() => {
       if (!tokenBalances.value || tokenBalances.value.tokenBalances.length <= 0) return null
@@ -221,6 +242,7 @@ const WalletTransaction = defineComponent({
       errors,
       values,
       meta,
+      hasTokenBalances,
       setErrors,
       currency,
       tokenOptions,

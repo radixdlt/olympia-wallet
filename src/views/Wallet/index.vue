@@ -21,9 +21,9 @@ import WalletLedgerInteractionModal from '@/views/Wallet/WalletLedgerInteraction
 import WalletLoading from './WalletLoading.vue'
 import WalletLedgerVerifyAddressModal from '@/views/Wallet/WalletLedgerVerifyAddressModal.vue'
 import WalletLedgerDeleteModal from '@/views/Wallet/WalletLedgerDeleteModal.vue'
-import { useRouter, onBeforeRouteUpdate } from 'vue-router'
-import useRadix from '@/composables/useRadix'
-import useWallet from '@/composables/useWallet'
+import { useRouter, onBeforeRouteUpdate, onBeforeRouteLeave } from 'vue-router'
+import { useRadix, useTransactions, useWallet } from '@/composables'
+
 const WalletIndex = defineComponent({
   components: {
     WalletConfirmTransactionModal,
@@ -39,18 +39,30 @@ const WalletIndex = defineComponent({
 
     const { radix } = useRadix()
     const {
+      activeAccount,
+      hardwareAccount,
       hardwareInteractionState,
       hasWallet,
-      shouldShowConfirmation,
       showDeleteHWWalletPrompt,
       showLedgerVerify,
       walletLoaded,
+      hardwareAccountFailedToSign,
       waitUntilAllLoaded
     } = useWallet(radix, router)
+
+    const { shouldShowConfirmation, transactionUnsub } = useTransactions(radix, router, activeAccount.value, hardwareAccount.value, {
+      ledgerSigningError: () => {
+        hardwareAccountFailedToSign()
+      }
+    })
 
     onBeforeRouteUpdate(async () => {
       await waitUntilAllLoaded()
       return true
+    })
+
+    onBeforeRouteLeave(() => {
+      transactionUnsub()
     })
 
     // Return home if wallet is undefined

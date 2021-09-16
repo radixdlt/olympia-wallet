@@ -89,7 +89,7 @@
 
           <div class="py-4 flex items-center">
             <div class="w-26 text-right text-rGrayDark mr-8">{{ $t('transaction.feeLabel') }}</div>
-            <div class="flex-1 flex flex-row items-center">
+            <div class="flex-1 flex flex-row items-center" v-if="transactionFee">
               <big-amount :amount="transactionFee"  class="mr-1" />
               <span class="uppercase">{{ nativeToken.symbol }}</span>
             </div>
@@ -139,7 +139,7 @@ import PinInput from '@/components/PinInput.vue'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
 import { validatePin } from '@/actions/vue/create-wallet'
 import { useRouter } from 'vue-router'
-import { useHomeModal, useRadix, useWallet } from '@/composables'
+import { useNativeToken, useHomeModal, useRadix, useTransactions, useWallet } from '@/composables'
 import { useI18n } from 'vue-i18n'
 
 interface ConfirmationForm {
@@ -154,6 +154,7 @@ const WalletConfirmTransactionModal = defineComponent({
   },
 
   setup () {
+    console.log('load form')
     const { errors, meta, values, setErrors, resetForm } = useForm<ConfirmationForm>()
     const { setModal } = useHomeModal()
     const router = useRouter()
@@ -166,17 +167,28 @@ const WalletConfirmTransactionModal = defineComponent({
     const { radix, reset } = useRadix()
     const {
       activeAddress,
+      activeAccount,
+      hardwareAccount,
+      hardwareAccountFailedToSign
+    } = useWallet(radix, router)
+    const { nativeToken, nativeTokenUnsub } = useNativeToken(radix)
+
+    const {
       activeMessageInTransaction,
       cancelTransaction,
       confirmationMode,
       confirmTransaction,
-      nativeToken,
       selectedCurrency,
       stakeInput,
       transactionFee,
       transactionState,
-      transferInput
-    } = useWallet(radix, router)
+      transferInput,
+      transactionUnsub
+    } = useTransactions(radix, router, activeAccount.value, hardwareAccount.value, {
+      ledgerSigningError: () => {
+        hardwareAccountFailedToSign()
+      }
+    })
 
     const escapeListener = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
@@ -189,6 +201,8 @@ const WalletConfirmTransactionModal = defineComponent({
     })
 
     onUnmounted(() => {
+      nativeTokenUnsub()
+      transactionUnsub()
       window.removeEventListener('keydown', escapeListener)
     })
 

@@ -17,7 +17,7 @@
     </div>
 
     <div class="text-rBlack py-6 min-h-full text-sm">
-      <div v-if="loadingHistory" class="p-4 flex items-center justify-center">
+      <div v-if="loading" class="p-4 flex items-center justify-center">
         <loading-icon class="text-rGrayDark" />
       </div>
       <template v-else-if="pendingTransactions.length > 0 || transactionsWithMessages.length > 0">
@@ -86,13 +86,12 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, watch } from 'vue'
+import { computed, ComputedRef, defineComponent, onMounted, watch } from 'vue'
 import TransactionListItem from '@/components/TransactionListItem.vue'
 import LoadingIcon from '@/components/LoadingIcon.vue'
 import ClickToCopy from '@/components/ClickToCopy.vue'
-import useWallet from '@/composables/useWallet'
-import { useRouter } from 'vue-router'
-import { useRadix } from '@/composables'
+import { useNativeToken, useRadix, useTransactions, useWallet } from '@/composables'
+import { useRouter, onBeforeRouteLeave } from 'vue-router'
 
 const WalletHistory = defineComponent({
   components: {
@@ -105,21 +104,32 @@ const WalletHistory = defineComponent({
     const router = useRouter()
     const { radix } = useRadix()
     const {
-      transactionHistory,
-      decryptedMessages,
       activeAddress,
-      pendingTransactions,
+      hardwareAccount,
+      hardwareAccountFailedToSign,
+      verifyHardwareWalletAddress,
+      activeAccount
+    } = useWallet(radix, router)
+
+    const {
       canGoBack,
       canGoNext,
+      decryptedMessages,
       loadingHistory,
-      nativeToken,
+      pendingTransactions,
+      transactionHistory,
       previousPage,
       nextPage,
       decryptMessage,
-      verifyHardwareWalletAddress,
       refreshHistory,
-      activeAccount
-    } = useWallet(radix, router)
+      transactionUnsub
+    } = useTransactions(radix, router, activeAccount.value, hardwareAccount.value, {
+      ledgerSigningError: () => {
+        hardwareAccountFailedToSign()
+      }
+    })
+
+    const { nativeToken, nativeTokenUnsub } = useNativeToken(radix)
 
     const transactionsWithMessages = computed(() => {
       return transactionHistory.value.transactions.map((tx) => {
@@ -139,6 +149,15 @@ const WalletHistory = defineComponent({
       refreshHistory()
     })
 
+    onBeforeRouteLeave(() => {
+      nativeTokenUnsub()
+      transactionUnsub()
+    })
+
+    const loading: ComputedRef<boolean> = computed(() => {
+      return !nativeToken.value && loadingHistory.value
+    })
+
     return {
       activeAccount,
       transactionHistory,
@@ -147,7 +166,7 @@ const WalletHistory = defineComponent({
       pendingTransactions,
       canGoBack,
       canGoNext,
-      loadingHistory,
+      loading,
       nativeToken,
       previousPage,
       nextPage,
