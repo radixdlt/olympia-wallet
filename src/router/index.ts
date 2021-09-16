@@ -3,6 +3,12 @@ import Home from '../views/Home/index.vue'
 import CreateWallet from '../views/CreateWallet/index.vue'
 import RestoreWallet from '../views/RestoreWallet/index.vue'
 import Wallet from '../views/Wallet/index.vue'
+import WalletOverview from '../views/Wallet/WalletOverview.vue'
+import WalletTransaction from '../views/Wallet/WalletTransaction.vue'
+import WalletStaking from '../views/Wallet/WalletStaking.vue'
+import WalletHistory from '../views/Wallet/WalletHistory.vue'
+import AccountEditName from '@/views/Account/AccountEditName.vue'
+import SettingsIndex from '@/views/Settings/index.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -17,10 +23,32 @@ const routes: Array<RouteRecordRaw> = [
     path: '/wallet',
     name: 'Wallet',
     component: Wallet,
-    props: route => ({
-      initialView: route.query.initialView,
-      initialSidebar: route.query.initialSidebar
-    })
+    children: [
+      {
+        path: '',
+        component: WalletOverview
+      },
+      {
+        path: 'transaction',
+        component: WalletTransaction
+      },
+      {
+        path: 'staking',
+        component: WalletStaking
+      },
+      {
+        path: 'history',
+        component: WalletHistory
+      },
+      {
+        path: 'account-edit-name',
+        component: AccountEditName
+      },
+      {
+        path: 'settings',
+        component: SettingsIndex
+      }
+    ]
   },
   {
     path: '/create-wallet',

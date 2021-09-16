@@ -5,7 +5,7 @@
         <img src="@/assets/unstakeTokens.svg" alt="receive tokens" />
         <span class="ml-2 text-sm">{{ $t('history.unstakeAction') }}</span>
       </div>
-      <div><big-amount :amount="action.amount" class="text-rBlack text-base"/> {{ nativeToken.symbol.toUpperCase() }}</div>
+      <div v-if="action.amount && nativeToken"><big-amount :amount="action.amount" class="text-rBlack text-base"/> {{ nativeToken.symbol.toUpperCase() }}</div>
     </div>
     <div class="flex flex-col items-end">
       <div class="flex flex-row flex-1 min-w-0 items-center">

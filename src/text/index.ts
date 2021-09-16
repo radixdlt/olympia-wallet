@@ -29,6 +29,7 @@ const messages = {
       passwordTitle: 'Enter your password to access your wallet',
       passwordPlaceholder: 'enter password',
       passwordButton: 'Open Wallet',
+      authenticating: 'Authenticating...',
       createTitle: 'I don\'t have a wallet yet.',
       createContent: 'You’re new to Radix. Create a new wallet to get started holding, sending, and staking XRD tokens.',
       createButton: 'Create a new wallet',
@@ -108,7 +109,8 @@ const messages = {
       stakeAction: 'Stake',
       otherAction: 'Other',
       previous: 'Previous',
-      next: 'Next'
+      next: 'Next',
+      noHistory: 'Sorry, but you don\'t have transaction history for this account.'
     },
     transaction: {
       transactionHeading: 'Send Tokens',
@@ -190,7 +192,13 @@ const messages = {
       passwordPlaceholder: 'password',
       accessSettingsButton: 'Access Settings',
       updatedPassword: 'You\'ve successfully updated your password.',
-      updatedPIN: 'You\'ve successfully updated your PIN.'
+      updatedPIN: 'You\'ve successfully updated your PIN.',
+      nodeDisclaimer: 'Select the node that the Wallet will connect to, or add a new node of your choice. The choice of node also selects which network the Wallet will use.',
+      nodeDisclaimerWarning: 'NOTE: Only the MAINNET network carries legitimate tokens and transactions for the Radix Public Network.',
+      nodeAddressLabel: 'Archive Node Address',
+      nodeNetworkLabel: 'Network',
+      addCustomNodeLabel: 'Add Custom Node Address:',
+      addNodeButton: 'add node'
     },
     errors: {
       hardwareMismatchTitle: 'Hardware Wallet Account Mismatch',

@@ -6,7 +6,6 @@ import Toast, { PluginOptions, POSITION } from 'vue-toastification'
 import './assets/tailwind.css'
 import 'vue-toastification/dist/index.css'
 import '@/validations'
-import { store, key } from '@/store'
 import { i18n } from '@/text'
 
 const options: PluginOptions = {
@@ -21,7 +20,6 @@ const options: PluginOptions = {
 createApp(App)
   .use(router)
   .use(VueRx)
-  .use(store, key)
   .use(i18n)
   .use(Toast, options)
   .mount('#app')

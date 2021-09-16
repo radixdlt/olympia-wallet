@@ -5,6 +5,7 @@
         <tabs-tab :isActive="activeForm == 'password'" @click="() => handleClickTab('password')">Change Password</tabs-tab>
         <tabs-tab :isActive="activeForm == 'pin'" @click="() => handleClickTab('pin')">Change PIN</tabs-tab>
         <tabs-tab :isActive="activeForm == 'mnemonic'" @click="() => handleClickTab('mnemonic')">Reveal Seed Phrase</tabs-tab>
+        <tabs-tab :isActive="activeForm == 'nodes'" @click="() => handleClickTab('nodes')">Choose Node/Network</tabs-tab>
       </div>
       <tabs-content :leftTabIsActive="activeForm == 'password'">
         <settings-reset-password
@@ -17,6 +18,9 @@
           v-if="activeForm == 'mnemonic'"
           @clickAccessMnemonic="handleAccessMnemonic"
           :mnemonic="mnemonic"
+        />
+         <settings-select-node
+          v-if="activeForm == 'nodes'"
         />
       </tabs-content>
     </div>
@@ -32,31 +36,26 @@ import TabsContent from '@/components/TabsContent.vue'
 import SettingsResetPin from './SettingsResetPin.vue'
 import SettingsRevealMnemonic from './SettingsRevealMnemonic.vue'
 import SettingsResetPassword from './SettingsResetPassword.vue'
-import { useStore } from '@/store'
-import { ref } from '@nopr3d/vue-next-rx'
-import { radixConnection } from '@/helpers/network'
+import SettingsSelectNode from './SettingsSelectNode.vue'
+import { Ref, ref } from '@nopr3d/vue-next-rx'
+import { useRadix } from '@/composables'
 
 const SettingsIndex = defineComponent({
   components: {
     SettingsResetPassword,
     SettingsResetPin,
     SettingsRevealMnemonic,
+    SettingsSelectNode,
     TabsContent,
     TabsTab
   },
 
-  async setup () {
-    const store = useStore()
-
-    onUnmounted(() => subs.unsubscribe())
-
-    const radix = await radixConnection()
-    radix.__withWallet(store.state.wallet)
-
-    const mnemonic = ref(null)
-    const userRequestedMnemonic = new Subject<boolean>()
-
+  setup () {
     const subs = new Subscription()
+    const mnemonic: Ref<MnemomicT | null> = ref(null)
+    const userRequestedMnemonic = new Subject<boolean>()
+    const activeForm: Ref<string> = ref('password')
+    const { radix } = useRadix()
 
     // Only fetch mnemonic if user confirms pin
     const watchUserDidRequstMnemonic = combineLatest<[MnemomicT, boolean]>([radix.revealMnemonic(), userRequestedMnemonic])
@@ -69,26 +68,22 @@ const SettingsIndex = defineComponent({
 
     const unsetMnemonic = () => userRequestedMnemonic.next(false)
 
+    const handleClickTab = (tab: string) => {
+      if (tab !== 'mnemonic') {
+        mnemonic.value = null
+        unsetMnemonic()
+      }
+      activeForm.value = tab
+    }
+
+    onUnmounted(() => subs.unsubscribe())
+
     return {
       mnemonic,
       handleAccessMnemonic,
-      unsetMnemonic
-    }
-  },
-
-  data () {
-    return {
-      activeForm: 'password'
-    }
-  },
-
-  methods: {
-    handleClickTab (tab: string) {
-      if (tab !== 'mnemonic') {
-        this.mnemonic = null
-        this.unsetMnemonic()
-      }
-      this.activeForm = tab
+      unsetMnemonic,
+      handleClickTab,
+      activeForm
     }
   }
 })

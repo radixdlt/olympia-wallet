@@ -3,7 +3,7 @@
     <div class="py-6 px-8 bg-gray h-full">
       <div class="flex justify-between mb-16">
         <h3 class="font-medium text-rBlack">{{ $t('transaction.transactionHeading') }}</h3>
-        <div class="flex items-center text-rBlack text-sm">
+        <div class="flex items-center text-rBlack text-sm" v-if="activeAddress">
           <span class="text-rGrayDark mr-2">{{ $t('wallet.currentAddress') }}</span> <span class="font-mono text-rBlack">{{ activeAddress.toString() }}</span>
           <div class="hover:text-rGreen flex flex-row items-center cursor-pointer transition-colors">
             <click-to-copy
@@ -15,13 +15,16 @@
         </div>
       </div>
 
+      <div v-if="!hasTokenBalances" class="p-4 flex items-center justify-center">
+        {{ $t('transaction.insufficientFunds') }}
+      </div>
       <form
         @submit.prevent="handleSubmit"
-        v-if="tokenBalances.length > 0"
+        v-else-if="hasTokenBalances && nativeToken && selectedCurrency"
         class="flex flex-col items-end"
       >
         <div class="bg-white rounded-md border border-rGray text-rBlack mb-8 w-full">
-          <template v-if="nativeToken && selectedCurrency">
+          <template v-if="loadedAllData">
             <div class="border-b border-rGray py-7 flex items-center">
               <div class="w-32 text-right text-rGrayDark mr-8">{{ $t('transaction.fromLabel') }}</div>
               <div class="flex-1 font-mono">{{ activeAddress.toString() }}</div>
@@ -35,7 +38,10 @@
                   type="text"
                   class="w-full font-mono placeholder-sans"
                   :placeholder="$t('transaction.recipientPlaceholder')"
-                  rules="required|validAddress"
+                  :rules="{
+                    required: true,
+                    validAddress: networkPreamble
+                  }"
                 />
                 <FormErrorMessage name="recipient" class="text-sm text-red-400" />
               </div>
@@ -106,24 +112,17 @@
         <ButtonSubmit :disabled="disableSubmit" class="w-52 ml-full">
           {{ $t('transaction.sendButton') }}
         </ButtonSubmit>
-        <div v-if="ledgerError" class="text-rRed">
-          Your Transaction could not be finalized because your Ledger device could not be found.
-        </div>
       </form>
-
-      <div v-else>
-        {{ $t('transaction.insufficientFunds') }}
-      </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, Ref, ref, watch } from 'vue'
+import { defineComponent, Ref, ref, ComputedRef, computed, watch } from 'vue'
 import { useForm } from 'vee-validate'
 
 import { safelyUnwrapAddress, safelyUnwrapAmount, validateAmountOfType, validateGreaterThanZero } from '@/helpers/validateRadixTypes'
-import { Token, TokenBalance, AccountAddressT } from '@radixdlt/application'
+import { Token, TokenBalance } from '@radixdlt/application'
 import { asBigNumber } from '@/components/BigAmount.vue'
 import ClickToCopy from '@/components/ClickToCopy.vue'
 import FormErrorMessage from '@/components/FormErrorMessage.vue'
@@ -131,6 +130,9 @@ import FormField from '@/components/FormField.vue'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
 import LoadingIcon from '@/components/LoadingIcon.vue'
 import FormCheckbox from '@/components/FormCheckbox.vue'
+import { useNativeToken, useRadix, useTransactions, useTokenBalances, useWallet } from '@/composables'
+import { useRouter, onBeforeRouteLeave } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 
 interface TransactionForm {
   recipient: string;
@@ -149,127 +151,152 @@ const WalletTransaction = defineComponent({
     LoadingIcon
   },
 
-  setup (props) {
-    const { errors, values, meta, setErrors } = useForm<TransactionForm>()
+  setup () {
+    const { errors, values, meta, setErrors, resetForm } = useForm<TransactionForm>()
+    const router = useRouter()
+    const { radix, networkPreamble } = useRadix()
+    const { activeAddress, activeAccount, hardwareAccount, hardwareAccountFailedToSign } = useWallet(radix, router)
+
+    const { transactionErrorMessage, transferTokens, transactionUnsub } = useTransactions(radix, router, activeAccount.value, hardwareAccount.value, {
+      ledgerSigningError: () => {
+        hardwareAccountFailedToSign()
+      }
+    })
+
+    const { t } = useI18n({ useScope: 'global' })
+    const { nativeToken, nativeTokenUnsub } = useNativeToken(radix)
+    const { tokenBalances, tokenBalanceFor, tokenBalancesUnsub } = useTokenBalances(radix)
+
+    console.log(tokenBalances.value?.tokenBalances)
+
+    onBeforeRouteLeave(() => {
+      nativeTokenUnsub()
+      tokenBalancesUnsub()
+      transactionUnsub()
+    })
+
+    // Clear form input and validation errors when switching accounts
+    watch(activeAddress, () => {
+      resetForm()
+    })
+
+    // reset currency when required state has loaded. Especially necessary when switching account
+    watch([nativeToken, tokenBalances], ([nt, tb]) => {
+      if (tb && nt) setXRDByDefault(nt)
+    })
+
+    watch(transactionErrorMessage, (val) => {
+      if (val) {
+        setErrors({ amount: t(val) })
+      }
+    })
+
     const currency: Ref<string | null> = ref(null)
     const tokenOptions: Ref<Array<TokenBalance>> = ref([])
+    const balances = tokenBalances.value ? tokenBalances.value.tokenBalances : []
 
     // Set XRD as default and move to top of list of options. Ensure native token subscription has returned before doing so
     const setXRDByDefault = (nativeToken: Token) => {
-      if (props.tokenBalances.length === 0) {
-        return
-      }
-      const nativeTokenBalance: TokenBalance | undefined = props.tokenBalances.find((tb: TokenBalance) => tb.token.rri.equals(nativeToken.rri))
-      currency.value = nativeTokenBalance ? nativeTokenBalance.token.name : props.tokenBalances[0].token.name
+      if (!tokenBalances.value || tokenBalances.value.tokenBalances.length === 0) return
+      const nativeTokenBalance = tokenBalanceFor(nativeToken)
+      currency.value = nativeTokenBalance ? nativeTokenBalance.token.name : balances[0].token.name
 
-      tokenOptions.value = props.tokenBalances
+      tokenOptions.value = balances
         .reduce((acc: TokenBalance[], tb: TokenBalance) => {
           if (tb.token.rri.equals(nativeToken.rri)) return [tb, ...acc]
           return [...acc, tb]
         }, [])
     }
 
-    if (props.nativeToken) setXRDByDefault(props.nativeToken)
+    if (nativeToken.value) setXRDByDefault(nativeToken.value)
 
-    watch(() => props.nativeToken, (nativeToken: Token | undefined) => {
-      if (nativeToken) setXRDByDefault(nativeToken)
+    const hasTokenBalances = computed(() => {
+      if (!tokenBalances.value?.tokenBalances) return false
+      console.log(tokenBalances.value?.tokenBalances.length > 0)
+      return tokenBalances.value?.tokenBalances.length > 0
     })
 
-    return { errors, values, meta, setErrors, currency, tokenOptions }
-  },
+    const selectedCurrency: ComputedRef<TokenBalance | null> = computed(() => {
+      if (!tokenBalances.value || tokenBalances.value.tokenBalances.length <= 0) return null
 
-  props: {
-    activeAddress: {
-      type: Object as PropType<AccountAddressT>,
-      required: true
-    },
-    tokenBalances: {
-      type: Object as PropType<Array<TokenBalance>>,
-      required: true,
-      default: []
-    },
-    nativeToken: {
-      type: Object as PropType<Token>,
-      required: false
-    },
-    ledgerError: {
-      type: Error,
-      required: false
-    }
-  },
-
-  computed: {
-    selectedCurrency (): TokenBalance | null {
-      if (this.tokenBalances.length <= 0) return null
-      const selectedCurrency = this.tokenBalances.find((tokenBalance: TokenBalance) => tokenBalance.token.name === this.currency)
+      const selectedCurrency = tokenBalances.value.tokenBalances.find((tokenBalance: TokenBalance) => tokenBalance.token.name === currency.value)
       return selectedCurrency || null
-    },
-    amountPlaceholder (): string {
-      if (this.selectedCurrency && this.selectedCurrency.amount) {
-        return `${this.$t('transaction.amountPlaceholder')} ${asBigNumber(this.selectedCurrency.amount)} `
+    })
+
+    const amountPlaceholder: ComputedRef<string> = computed(() => {
+      if (!selectedCurrency.value || !selectedCurrency.value.amount) return ''
+      return `${t('transaction.amountPlaceholder')} ${asBigNumber(selectedCurrency.value.amount)} `
+    })
+
+    const disableSubmit: ComputedRef<boolean> = computed(() => {
+      return meta.value.dirty ? !meta.value.valid : true
+    })
+
+    const loadedAllData: ComputedRef<boolean> = computed(() => {
+      if (activeAddress && activeAddress.value && nativeToken.value && tokenBalances.value) return true
+      return false
+    })
+
+    return {
+      tokenBalances,
+      errors,
+      values,
+      meta,
+      hasTokenBalances,
+      setErrors,
+      currency,
+      tokenOptions,
+      selectedCurrency,
+      nativeToken,
+      networkPreamble,
+      amountPlaceholder,
+      activeAddress,
+      disableSubmit,
+      loadedAllData,
+      handleSubmit () {
+        if (!meta.value.valid || !selectedCurrency.value) return false
+        const safeAddress = safelyUnwrapAddress(values.recipient, networkPreamble.value)
+        const safeAmount = safelyUnwrapAmount(Number(values.amount))
+        const token = selectedCurrency.value.token
+        const greaterThanZero = safeAmount && validateGreaterThanZero(safeAmount)
+        const validAmount = safeAmount && validateAmountOfType(safeAmount, token) && validateGreaterThanZero(safeAmount)
+        if (!greaterThanZero) {
+          setErrors({ amount: t('validations.greaterThanZero') })
+          return
+        }
+        if (!validAmount) {
+          setErrors({
+            amount: t('validations.amountOfType', { granularity: token.granularity.toString() })
+          })
+          return
+        }
+
+        if (!safeAddress) {
+          setErrors({
+            recipient: t('validations.validAddress')
+          })
+          return
+        }
+
+        if (safeAddress && safeAmount) {
+          transferTokens(
+            {
+              to: safeAddress,
+              amount: safeAmount,
+              tokenIdentifier: token.rri.toString()
+            },
+            {
+              plaintext: values.message,
+              encrypt: values.encrypt
+            },
+            selectedCurrency.value
+          )
+        }
       }
-      return ''
-    },
-    disableSubmit (): boolean {
-      return this.meta.dirty ? !this.meta.valid : true
     }
   },
 
-  methods: {
-    validAmount () {
-      if (!this.selectedCurrency) return false
-
-      const safeAmount = safelyUnwrapAmount(Number(this.values.amount))
-      const token = this.selectedCurrency.token
-      const greaterThanZero = safeAmount && validateGreaterThanZero(safeAmount)
-      const validAmount = safeAmount && validateAmountOfType(safeAmount, token) && validateGreaterThanZero(safeAmount)
-      if (!greaterThanZero) {
-        this.setErrors({
-          amount: this.$t('validations.greaterThanZero')
-        })
-        return false
-      }
-
-      if (!validAmount) {
-        this.setErrors({
-          amount: this.$t('validations.amountOfType', { granularity: token.granularity.toString() })
-        })
-        return false
-      }
-      return true
-    },
-
-    handleSubmit () {
-      if (!this.meta.valid || !this.selectedCurrency) return false
-      const safeAddress = safelyUnwrapAddress(this.values.recipient)
-      const safeAmount = safelyUnwrapAmount(Number(this.values.amount))
-      const token = this.selectedCurrency.token
-      const greaterThanZero = safeAmount && validateGreaterThanZero(safeAmount)
-      const validAmount = safeAmount && validateAmountOfType(safeAmount, token) && validateGreaterThanZero(safeAmount)
-      if (!greaterThanZero) {
-        this.setErrors({
-          amount: this.$t('validations.greaterThanZero')
-        })
-      } else if (!validAmount) {
-        this.setErrors({
-          amount: this.$t('validations.amountOfType', { granularity: token.granularity.toString() })
-        })
-      } else {
-        this.$emit('transferTokens', {
-          to: safeAddress,
-          amount: safeAmount,
-          tokenIdentifier: token.rri.toString()
-        },
-        {
-          plaintext: this.values.message,
-          encrypt: this.values.encrypt
-        },
-        this.selectedCurrency)
-      }
-    }
-  },
-
-  emits: ['transferTokens', 'verifyHardwareAddress']
+  emits: ['verifyHardwareAddress']
 })
 
 export default WalletTransaction

@@ -34,6 +34,8 @@ import ClickToCopy from '@/components/ClickToCopy.vue'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
 import { copyToClipboard } from '@/actions/vue/create-wallet'
 import { useToast } from 'vue-toastification'
+import { useRadix, useWallet } from '@/composables'
+import { useRouter } from 'vue-router'
 
 const WalletLedgerVerifyAddressModal = defineComponent({
   components: {
@@ -41,20 +43,12 @@ const WalletLedgerVerifyAddressModal = defineComponent({
     ClickToCopy
   },
 
-  props: {
-    hardwareAddress: {
-      type: String,
-      required: true
-    },
-    hardwareError: {
-      type: Error,
-      required: false
-    }
-  },
-
   setup () {
     const toast = useToast()
-    return { toast }
+    const router = useRouter()
+    const { radix } = useRadix()
+    const { hardwareAddress, hardwareError } = useWallet(radix, router)
+    return { toast, hardwareAddress, hardwareError }
   },
 
   computed: {
@@ -66,8 +60,10 @@ const WalletLedgerVerifyAddressModal = defineComponent({
 
   methods: {
     copyText () {
-      copyToClipboard(this.hardwareAddress)
-      this.toast.success('Copied to Clipboard')
+      if (this.hardwareAddress) {
+        copyToClipboard(this.hardwareAddress)
+        this.toast.success('Copied to Clipboard')
+      }
     }
   },
 

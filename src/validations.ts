@@ -37,8 +37,8 @@ defineRule('insufficientFunds', (value: number, [max]: [string]) => {
   return value <= Number(max)
 })
 
-defineRule('validAddress', (addressString: string) => {
-  const safeAddress = safelyUnwrapAddress(addressString)
+defineRule('validAddress', (addressString: string, [preamble]: [string]) => {
+  const safeAddress = safelyUnwrapAddress(addressString, preamble)
   return !!safeAddress
 })
 

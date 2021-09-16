@@ -21,48 +21,40 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, watch } from 'vue'
-import { getAccountName, saveAccountName } from '@/actions/vue/data-store'
-import { AccountAddressT } from '@radixdlt/application'
+import { defineComponent } from 'vue'
+import { saveAccountName } from '@/actions/vue/data-store'
 import { ref } from '@nopr3d/vue-next-rx'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
+import { useRadix, useWallet } from '@/composables'
+import { useRouter } from 'vue-router'
 
 const AccountEditName = defineComponent({
   components: {
     ButtonSubmit
   },
 
-  props: {
-    activeAddress: {
-      type: Object as PropType<AccountAddressT>,
-      required: true
-    }
-  },
-
-  setup (props) {
+  setup () {
     const name = ref('')
-
-    // Set initial value for input field
-    getAccountName(props.activeAddress.toString())
-      .then((storedName: string) => { name.value = storedName })
+    const router = useRouter()
+    const { radix } = useRadix()
+    const { accountNameFor, activeAddress, accountRenamed } = useWallet(radix, router)
+    if (!activeAddress.value) {
+      router.push('/')
+      return
+    }
 
     // Update input value if active address changes
-    watch(() => props.activeAddress, (activeAddress) => {
-      getAccountName(activeAddress.toString())
-        .then((storedName: string) => { name.value = storedName })
-    })
+    const storedName = accountNameFor(activeAddress.value)
+    name.value = storedName
 
-    return { name }
-  },
-
-  methods: {
-    handleSubmit () {
-      saveAccountName(this.activeAddress.toString(), this.name)
-        .then(() => this.$emit('saved'))
+    const handleSubmit = () => {
+      if (!activeAddress.value) return
+      saveAccountName(activeAddress.value.toString(), name.value)
+        .then(() => accountRenamed(name.value))
     }
-  },
 
-  emits: ['saved']
+    return { name, handleSubmit }
+  }
 })
 
 export default AccountEditName

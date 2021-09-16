@@ -1,6 +1,32 @@
 <template>
-  <div data-ci="home-view" class="flex flex-row min-h-screen" :class="{'items-center': hasWallet.value}">
-    <template v-if="!hasWallet.value">
+  <div data-ci="home-view" class="flex flex-row min-h-screen" :class="{'items-center': hasWallet}">
+    <template v-if="hasWallet">
+      <img alt="Radix DLT Logo" src="../../assets/logo.svg" class="absolute inset-0 mt-6 mx-4">
+      <div v-if="hasWallet == null" class="flex w-full justify-center items-center">
+        <loading-icon/>
+      </div>
+
+      <div
+        v-if="hasWallet == true"
+        class="bg-white pt-8 pb-4 px-11 max-w-lg rounded mx-auto"
+      >
+        <home-enter-passcode
+          :isAuthenticating="isAuthenticating"
+          @submit="authenticate"
+          @forgotPassword="forgotPassword"
+          ref="enterPasscodeComponent"
+        />
+      </div>
+      <home-locked-modal :open="modal === 'locked-out'" @close="closeModal"/>
+      <home-forgot-password
+        :open="modal === 'forgot-password'"
+        @close="closeModal"
+        @resetAndCreate="resetAndCreate"
+        @resetAndRestore="resetAndRestore"
+      />
+    </template>
+
+    <template v-else>
       <div class="w-72 mx-5 py-8">
         <div class="flex">
           <img alt="Radix DLT Logo" src="../../assets/logo.svg" class="w-30 mb-8">
@@ -15,53 +41,24 @@
         <home-create-and-restore/>
       </div>
     </template>
-
-    <template v-else>
-      <img alt="Radix DLT Logo" src="../../assets/logo.svg" class="absolute inset-0 mt-6 mx-4">
-      <div v-if="hasWallet.value == null" class="flex w-full justify-center items-center">
-        <loading-icon/>
-      </div>
-
-      <div
-        v-if="hasWallet.value == true"
-        class="bg-white pt-8 pb-4 px-11 max-w-lg rounded mx-auto"
-      >
-        <home-enter-passcode
-          @submit="loginWithWallet"
-          @forgotPassword="forgotPassword"
-          ref="enterPasscodeComponent"
-        />
-      </div>
-      <home-locked-modal :open="uiModal === 'locked-out'" @close="closeModal"/>
-      <home-forgot-password
-        :open="uiModal === 'forgot-password'"
-        @close="closeModal"
-        @resetAndCreate="resetAndCreate"
-        @resetAndRestore="resetAndRestore"
-      />
-    </template>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, ref, onBeforeMount } from 'vue'
-import { ErrorNotification, WalletErrorCause, WalletT } from '@radixdlt/application'
-import { hasKeystore, touchKeystore } from '@/actions/vue/create-wallet'
-import { useStore } from '@/store'
+import { defineComponent, watch, ref, Ref } from 'vue'
 import HomeCreateAndRestore from './HomeCreateAndRestore.vue'
 import HomeEnterPasscode from './HomeEnterPasscode.vue'
 import HomeLockedModal from './HomeLockedModal.vue'
 import HomeForgotPassword from './HomeForgotPassword.vue'
 import LoadingIcon from '@/components/LoadingIcon.vue'
-import { Subscription } from 'rxjs'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import { useHomeModal, useRadix } from '@/composables'
+import useWallet, { WalletError } from '@/composables/useWallet'
 import { ref as rxRef } from '@nopr3d/vue-next-rx'
-import { filter } from 'rxjs/operators'
-import { resetStore } from '@/actions/vue/data-store'
-import { radixConnection } from '@/helpers/network'
+import { firstValueFrom } from 'rxjs'
 
-const CreateWallet = defineComponent({
+const Home = defineComponent({
   components: {
     HomeCreateAndRestore,
     HomeEnterPasscode,
@@ -70,84 +67,67 @@ const CreateWallet = defineComponent({
     LoadingIcon
   },
 
-  props: {
-    modal: {
-      type: String,
-      required: false
-    }
-  },
-
-  async setup (props) {
-    const uiModal = ref('')
-
-    onBeforeMount(() => {
-      if (props.modal) { uiModal.value = props.modal }
-    })
-
-    const hasWallet = reactive({ value: null as boolean | null })
-    const store = useStore()
+  setup () {
+    const isAuthenticating : Ref<boolean> = ref(false)
+    const { modal, setModal } = useHomeModal()
     const router = useRouter()
+    const { radix, setNetwork } = useRadix()
+    const { hasWallet, invalidPasswordError, loginWithWallet, resetWallet, walletLoaded } = useWallet(radix, router)
     const { t } = useI18n({ useScope: 'global' })
 
     const enterPasscodeComponent = rxRef(null)
 
-    const radix = await radixConnection()
-    const subs = new Subscription()
+    const authenticate = async (password: string) => {
+      isAuthenticating.value = true
+      loginWithWallet(password).then((client) => {
+        return firstValueFrom(client.ledger.networkId())
+      }).then((network) => {
+        setNetwork(network)
+        isAuthenticating.value = false
+        router.push('/wallet')
+        walletLoaded()
+      }).catch(error => {
+        console.log('error happened!', error)
+        isAuthenticating.value = false
+      })
+    }
 
-    radix.errors
-      .pipe(filter((errorNotification: ErrorNotification) => errorNotification.cause === WalletErrorCause.LOAD_KEYSTORE_FAILED))
-      .subscribe(
-        () => {
+    watch(
+      () => invalidPasswordError.value,
+      (value: WalletError | null) => {
+        if (value) {
           enterPasscodeComponent.value.setErrors({
             password: t('validations.incorrectPassword')
           })
         }
-      )
-
-    // Move user to wallet when a wallet is successfully retrieved
-    subs.add(radix.__wallet.subscribe((wallet: WalletT) => {
-      store.commit('setWallet', wallet)
-      router.push('/wallet')
-    }))
-
-    // Login with password and path to keystore
-    const loginWithWallet = (password: string) => {
-      radix.login(password, touchKeystore)
-    }
-
-    // Check if keystore exists
-    hasKeystore().then((res: boolean) => { hasWallet.value = res })
+      }
+    )
 
     return {
-      // state
       hasWallet,
-      uiModal,
-      // methods
-      loginWithWallet,
-      // component refs
+      modal,
+      authenticate,
       enterPasscodeComponent,
+      isAuthenticating,
+
       closeModal () {
-        uiModal.value = ''
+        setModal(null)
       },
 
       forgotPassword () {
-        uiModal.value = 'forgot-password'
+        setModal('forgot-password')
       },
 
       resetAndCreate () {
-        resetStore()
-        hasWallet.value = false
-        router.push('/create-wallet')
+        resetWallet('create-wallet')
       },
 
       resetAndRestore () {
-        resetStore()
-        hasWallet.value = false
-        router.push('/restore-wallet')
+        resetWallet('restore-wallet')
       }
     }
   }
 })
 
-export default CreateWallet
+export default Home
 </script>

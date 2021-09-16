@@ -1,35 +1,44 @@
-import { Network, Radix, HRP, RadixT } from '@radixdlt/application'
+import { Network, HRP } from '@radixdlt/application'
 
-type ChosenNetworkT = {
+export type ChosenNetworkT = {
   network: Network
   networkURL: string
   preamble: string
 }
 
-export const network = (): ChosenNetworkT => {
+export const network = (networkName: Network): ChosenNetworkT => {
   let response: ChosenNetworkT
-  const networkName = process.env.VUE_APP_NETWORK_NAME
-  if (networkName === 'stokenet') {
+  if (networkName === 'STOKENET') {
     response = {
       network: Network.STOKENET,
       networkURL: 'https://stokenet.radixdlt.com',
       preamble: HRP.STOKENET.account
     }
-  } else if (networkName === 'mainnet') {
+  } else if (networkName === 'MAINNET') {
     response = {
       network: Network.MAINNET,
       networkURL: 'https://mainnet.radixdlt.com',
       preamble: HRP.MAINNET.account
     }
   } else {
-    throw new Error('Invalid Network Name Provided')
+    throw new Error(`Invalid Network Name ${networkName} Provided`)
   }
   return response
 }
 
-export const radixConnection = async (): Promise<RadixT> => {
-  const activeNetwork = network()
-  const radix = Radix.create()
-  await radix.connect(activeNetwork.networkURL)
-  return radix
+export const defaultNetworks: ChosenNetworkT[] = [
+  {
+    network: Network.STOKENET,
+    networkURL: 'https://stokenet.radixdlt.com',
+    preamble: HRP.STOKENET.account
+  },
+  {
+    network: Network.MAINNET,
+    networkURL: 'https://mainnet.radixdlt.com',
+    preamble: HRP.MAINNET.account
+  }
+]
+
+export const isDefaultNetwork = (network: ChosenNetworkT): boolean => {
+  return !!defaultNetworks.find((n: ChosenNetworkT) => n.networkURL === network.networkURL)
 }

@@ -56,18 +56,18 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onUnmounted, Ref } from 'vue'
+import { computed, ComputedRef, defineComponent, onUnmounted, Ref } from 'vue'
 import { useForm } from 'vee-validate'
-import { Radix, mockedAPI, Keystore, KeystoreT, MnemomicT, Network } from '@radixdlt/application'
+import { Keystore, KeystoreT, MnemomicT, Network } from '@radixdlt/application'
 import { Result } from 'neverthrow'
 import { Subscription } from 'rxjs'
 import { ref } from '@nopr3d/vue-next-rx'
-import { useStore } from '@/store'
 import { touchKeystore, initWallet } from '@/actions/vue/create-wallet'
 import FormErrorMessage from '@/components/FormErrorMessage.vue'
 import FormField from '@/components/FormField.vue'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
-import { radixConnection } from '@/helpers/network'
+import { useRadix } from '@/composables'
+import { useI18n } from 'vue-i18n'
 
 interface PasswordForm {
   currentPassword: string;
@@ -82,24 +82,21 @@ const SettingsResetPassword = defineComponent({
     FormErrorMessage
   },
 
-  async setup () {
+  setup () {
     const { errors, values, meta, setErrors, resetForm } = useForm<PasswordForm>()
-    const store = useStore()
+    const { t } = useI18n({ useScope: 'global' })
     const subs = new Subscription()
+    const { radix } = useRadix()
     const isLoading = ref(false)
     const updatedPassword: Ref<boolean> = ref(false)
 
-    onUnmounted(() => subs.unsubscribe())
-
-    const radix = await radixConnection()
-    radix.__withWallet(store.state.wallet)
+    const disableSubmit: ComputedRef<boolean> = computed(() => meta.value.dirty ? !meta.value.valid : true)
 
     const handleResetPassword = (newPassword: string) => {
       const getMnemonicForPassword = radix.revealMnemonic()
         .subscribe((m: MnemomicT) => {
           initWallet(m, newPassword, Network.MAINNET)
-            .then(wallet => {
-              store.commit('setWallet', wallet)
+            .then(() => {
               resetForm()
               updatedPassword.value = true
             })
@@ -109,53 +106,47 @@ const SettingsResetPassword = defineComponent({
       subs.add(getMnemonicForPassword)
     }
 
+    const handleSubmit = () => {
+      isLoading.value = true
+      touchKeystore()
+        .then((keystore: KeystoreT) =>
+          Keystore.decrypt({
+            keystore,
+            password: values.currentPassword
+          })
+        )
+        .then((res: Result<Buffer, Error>) => {
+          if (res.isOk()) {
+            handleResetPassword(values.password)
+          } else {
+            isLoading.value = false
+            setErrors({
+              currentPassword: t('validations.incorrectPassword')
+            })
+          }
+        })
+        .catch(() => {
+          isLoading.value = false
+          setErrors({
+            currentPassword: t('validations.incorrectPassword')
+          })
+        })
+    }
+
+    onUnmounted(() => subs.unsubscribe())
+
     return {
       errors,
       values,
       meta,
       setErrors,
-      handleResetPassword,
       isLoading,
-      updatedPassword
+      updatedPassword,
+      disableSubmit,
+      handleResetPassword,
+      handleSubmit
     }
-  },
-
-  computed: {
-    disableSubmit (): boolean {
-      return this.meta.dirty ? !this.meta.valid : true
-    }
-  },
-
-  methods: {
-    handleSubmit () {
-      this.isLoading = true
-      touchKeystore()
-        .then((keystore: KeystoreT) =>
-          Keystore.decrypt({
-            keystore,
-            password: this.values.currentPassword
-          })
-        )
-        .then((res: Result<Buffer, Error>) => {
-          if (res.isOk()) {
-            this.handleResetPassword(this.values.password)
-          } else {
-            this.isLoading = false
-            this.setErrors({
-              currentPassword: this.$t('validations.incorrectPassword')
-            })
-          }
-        })
-        .catch(() => {
-          this.isLoading = false
-          this.setErrors({
-            currentPassword: this.$t('validations.incorrectPassword')
-          })
-        })
-    }
-  },
-
-  emits: ['submit']
+  }
 })
 
 export default SettingsResetPassword

@@ -3,13 +3,13 @@
     <div class="bg-rGrayLightest px-8">
       <div class="flex justify-between mb-4 pt-4">
         <h3 class="font-medium text-rBlack">{{ $t('wallet.balancesHeading') }}</h3>
-        <div class="flex items-center text-rBlack text-sm">
+        <div class="flex items-center text-rBlack text-sm" v-if="activeAddress">
           <span class="text-rGrayDark mr-2">{{ $t('wallet.currentAddress') }}</span> <span class="font-mono text-rBlack">{{ activeAddress.toString() }}</span>
           <div class="hover:text-rGreen flex flex-row items-center cursor-pointer transition-colors">
             <click-to-copy
               :address="activeAddress.toString()"
               :checkForHardwareAddress=true
-              @verifyHardwareAddress="$emit('verifyHardwareAddress')"
+              @verifyHardwareAddress="verifyHardwareWalletAddress()"
             />
           </div>
         </div>
@@ -21,21 +21,21 @@
           <span class="text-sm text-rGrayDark">{{ $t('wallet.totalTokens') }}</span>
           <div class="flex flex-row items-end">
             <big-amount :amount="availablePlusStakedAndUnstakedXRD" class="text-2xl font-light mr-4 text-rGreen" />
-            <token-symbol>{{ nativeToken.symbol }}</token-symbol>
+            <token-symbol>{{ nativeToken && nativeToken.symbol }}</token-symbol>
           </div>
         </div>
         <div class="flex flex-col my-3 px-5 border-r border-rGray flex-1">
           <span class="text-sm text-rGrayDark">{{ $t('wallet.availableTokens') }}</span>
           <div class="flex flex-row items-end">
             <big-amount :amount="totalXRD" class="text-2xl font-light mr-4 text-rBlack" />
-            <token-symbol>{{ nativeToken.symbol }}</token-symbol>
+            <token-symbol>{{ nativeToken && nativeToken.symbol }}</token-symbol>
           </div>
         </div>
         <div class="flex flex-col my-3 px-5 flex-1">
           <span class="text-sm text-rGrayDark">{{ $t('wallet.stakedTokens') }}</span>
           <div class="flex flex-row items-end">
             <big-amount :amount="totalStakedAndUnstaked" class="text-2xl font-light mr-4 text-rBlack" />
-            <token-symbol>{{ nativeToken.symbol }}</token-symbol>
+            <token-symbol>{{ nativeToken && nativeToken.symbol }}</token-symbol>
           </div>
         </div>
       </div>
@@ -52,7 +52,7 @@
           <div class="flex-1 flex flex-row items-center px-6 pt-3 overflow-x-auto justify-between">
             <span class="text-sm text-rGrayDark">{{ tokenBalance.token.name }}</span>
             <div>
-              <a :href="createOtherTokenUrl(tokenBalance.token.rri.toString())" target="_blank" class="hover:text-rGreen transition-colors text-rGrayMed">
+              <a :href="createRRIUrl(tokenBalance.token.rri.toString())" target="_blank" class="hover:text-rGreen transition-colors text-rGrayMed">
                 <div class="rounded-full border border-solid border-rGray w-6 h-6 flex items-center justify-center ">
                   <svg width="8" height="8" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M1.08789 1H11.1344V11.0465" class="stroke-current" stroke-miterlimit="10"/>
@@ -65,7 +65,7 @@
         </div>
         <div class="flex flex-row">
           <div class="flex-1 flex flex-row items-center px-6 pt-3 overflow-x-auto">
-            <span class="text-sm font-mono text-rGrayDark">{{ truncateOtherToken(tokenBalance.token.rri.toString()) }}</span>
+            <span class="text-sm font-mono text-rGrayDark">{{ truncateRRIStringForDisplay(tokenBalance.token.rri.toString()) }}</span>
             <div class="hover:text-rGreen flex flex-row items-center cursor-pointer transition-colors">
               <click-to-copy :address="tokenBalance.token.rri.toString()"/>
             </div>
@@ -84,15 +84,16 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, Ref } from 'vue'
-import { StakePosition, Token, TokenBalance, TokenBalances, AccountAddressT, Amount, AmountT, UnstakePosition } from '@radixdlt/application'
+import { defineComponent, computed, ComputedRef } from 'vue'
+import { StakePosition, TokenBalance, Amount, AmountT } from '@radixdlt/application'
 import BigAmount from '@/components/BigAmount.vue'
 import TokenSymbol from '@/components/TokenSymbol.vue'
 import ClickToCopy from '@/components/ClickToCopy.vue'
-import { ref } from '@nopr3d/vue-next-rx'
-import { sumAmounts, subtract, add } from '@/helpers/arithmetic'
-import { truncateRRIStringForDisplay } from '@/helpers/formatter'
 import { createRRIUrl } from '@/helpers/explorerLinks'
+import { truncateRRIStringForDisplay } from '@/helpers/formatter'
+import { sumAmounts, add } from '@/helpers/arithmetic'
+import { useRouter, onBeforeRouteLeave } from 'vue-router'
+import { useNativeToken, useRadix, useStaking, useWallet, useTokenBalances } from '@/composables'
 
 const WalletOverview = defineComponent({
   components: {
@@ -102,62 +103,82 @@ const WalletOverview = defineComponent({
   },
 
   setup () {
-    return {
-      createOtherTokenUrl: createRRIUrl,
-      truncateOtherToken: truncateRRIStringForDisplay
-    }
-  },
+    const router = useRouter()
+    const { radix } = useRadix()
+    const {
+      activeAddress,
+      verifyHardwareWalletAddress,
+      hasWallet
+    } = useWallet(radix, router)
 
-  props: {
-    tokenBalances: {
-      type: Object as PropType<TokenBalances>,
-      required: true
-    },
-    activeAddress: {
-      type: Object as PropType<AccountAddressT>,
-      required: true
-    },
-    activeStakes: {
-      type: Array as PropType<Array<StakePosition>>,
-      required: true
-    },
-    activeUnstakes: {
-      type: Array as PropType<Array<UnstakePosition>>,
-      required: true
-    },
-    nativeToken: {
-      type: Object as PropType<Token>,
-      required: true
-    },
-    nativeTokenBalance: {
-      type: Object as PropType<TokenBalance>,
-      required: false
-    }
-  },
+    const { tokenBalances, tokenBalancesUnsub, tokenBalanceFor } = useTokenBalances(radix)
+    const { nativeToken, nativeTokenUnsub } = useNativeToken(radix)
+    const { activeStakes, activeUnstakes, stakingUnsub } = useStaking(radix)
 
-  computed: {
-    totalXRD (): AmountT {
-      if (!this.nativeTokenBalance) return Amount.fromUnsafe(0)._unsafeUnwrap()
-      const xrdAmount = Amount.fromUnsafe(this.nativeTokenBalance.amount)
+    onBeforeRouteLeave(() => {
+      tokenBalancesUnsub()
+      nativeTokenUnsub()
+      stakingUnsub()
+    })
+
+    if (!hasWallet) {
+      router.push('/')
+      return {}
+    }
+
+    const totalXRD: ComputedRef<AmountT> = computed(() => {
+      if (!tokenBalances.value || !nativeToken.value) return Amount.fromUnsafe(0)._unsafeUnwrap()
+      const nativeTokenBalance = tokenBalanceFor(nativeToken.value)
+      if (!nativeTokenBalance) return Amount.fromUnsafe(0)._unsafeUnwrap()
+      const xrdAmount = Amount.fromUnsafe(nativeTokenBalance.amount)
       return xrdAmount.isErr() ? Amount.fromUnsafe(0)._unsafeUnwrap() : xrdAmount.value
-    },
-    totalStakedAndUnstaked (): AmountT {
-      const totalStakedAndUnstaked = sumAmounts(this.activeStakes.flatMap((item: StakePosition) => item.amount)) || Amount.fromUnsafe(0)._unsafeUnwrap()
-      const totalUnstaked = sumAmounts(this.activeUnstakes.flatMap((item: StakePosition) => item.amount)) || Amount.fromUnsafe(0)._unsafeUnwrap()
-      return sumAmounts([totalStakedAndUnstaked, totalUnstaked]) || Amount.fromUnsafe(0)._unsafeUnwrap()
-    },
-    availablePlusStakedAndUnstakedXRD (): AmountT {
-      const totalXRD: AmountT = this.totalXRD || Amount.fromUnsafe(0)._unsafeUnwrap()
-      const totalStakedAndUnstaked: AmountT = this.totalStakedAndUnstaked || Amount.fromUnsafe(0)._unsafeUnwrap()
-      return add(totalXRD, totalStakedAndUnstaked)
-    },
-    otherTokenBalances (): TokenBalance[] {
-      if (!this.nativeToken || !this.tokenBalances.tokenBalances) return []
-      else return this.tokenBalances.tokenBalances.filter((tb: TokenBalance) => !tb.token.rri.equals(this.nativeToken.rri))
-    }
-  },
+    })
 
-  emits: ['verifyHardwareAddress']
+    const totalStakedAndUnstaked: ComputedRef<AmountT> = computed(() => {
+      if (!activeStakes.value || !activeUnstakes.value) return Amount.fromUnsafe(0)._unsafeUnwrap()
+      const totalStakedAndUnstaked = sumAmounts(activeStakes.value.flatMap((item: StakePosition) => item.amount)) || Amount.fromUnsafe(0)._unsafeUnwrap()
+      const totalUnstaked = sumAmounts(activeUnstakes.value.flatMap((item: StakePosition) => item.amount)) || Amount.fromUnsafe(0)._unsafeUnwrap()
+      return sumAmounts([totalStakedAndUnstaked, totalUnstaked]) || Amount.fromUnsafe(0)._unsafeUnwrap()
+    })
+
+    const availablePlusStakedAndUnstakedXRD: ComputedRef<AmountT> = computed(() => {
+      if (!tokenBalances.value || !nativeToken.value) return Amount.fromUnsafe(0)._unsafeUnwrap()
+      const nativeTokenBalance = tokenBalanceFor(nativeToken.value)
+      if (!nativeTokenBalance) return Amount.fromUnsafe(0)._unsafeUnwrap()
+      if (!activeStakes.value || !activeUnstakes.value) return Amount.fromUnsafe(0)._unsafeUnwrap()
+
+      const xrdAmount = Amount.fromUnsafe(nativeTokenBalance.amount)
+      const totalXRD = xrdAmount.isErr() ? Amount.fromUnsafe(0)._unsafeUnwrap() : xrdAmount.value
+
+      const totalStakedAndUnstaked = sumAmounts(activeStakes.value.flatMap((item: StakePosition) => item.amount)) || Amount.fromUnsafe(0)._unsafeUnwrap()
+      const totalUnstaked = sumAmounts(activeUnstakes.value.flatMap((item: StakePosition) => item.amount)) || Amount.fromUnsafe(0)._unsafeUnwrap()
+      const totalStakedAndUnstakedSum = sumAmounts([totalStakedAndUnstaked, totalUnstaked]) || Amount.fromUnsafe(0)._unsafeUnwrap()
+
+      return add(totalXRD, totalStakedAndUnstakedSum)
+    })
+
+    const otherTokenBalances: ComputedRef<TokenBalance[]> = computed(() => {
+      if (!tokenBalances.value || !nativeToken.value) return []
+      return tokenBalances.value.tokenBalances.filter((tb: TokenBalance) => {
+        return nativeToken.value && !tb.token.rri.equals(nativeToken.value.rri)
+      })
+    })
+
+    return {
+      activeAddress,
+      activeStakes,
+      activeUnstakes,
+      nativeToken,
+      tokenBalances,
+      totalXRD,
+      totalStakedAndUnstaked,
+      otherTokenBalances,
+      availablePlusStakedAndUnstakedXRD,
+      verifyHardwareWalletAddress,
+      createRRIUrl,
+      truncateRRIStringForDisplay
+    }
+  }
 })
 
 export default WalletOverview

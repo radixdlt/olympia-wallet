@@ -7,14 +7,16 @@ import path from 'path'
 import contextMenu from 'electron-context-menu'
 import { copyToClipboard, getKeystoreFile, storePin, validatePin, writeKeystoreFile } from '@/actions/electron/create-wallet'
 import {
-  getAccountName,
+  getAccountNames,
   saveAccountName,
   getDerivedAccountsIndex,
   saveDerivedAccountsIndex,
   saveHardwareAddress,
   getHardwareAddress,
   deleteHardwareAddress,
-  resetStore
+  resetStore,
+  persistNodeSelection,
+  fetchSelectedNode,
 } from './actions/electron/data-store'
 import { sendAPDU } from './actions/electron/hardware-wallet'
 import menu from './menu'
@@ -106,7 +108,7 @@ ipcMain.handle('get-keystore-message', getKeystoreFile)
 ipcMain.on('copy-to-clipboard', copyToClipboard)
 ipcMain.handle('create-pin', storePin)
 ipcMain.handle('save-account-name', saveAccountName)
-ipcMain.handle('get-account-name', getAccountName)
+ipcMain.handle('get-account-names', getAccountNames)
 ipcMain.handle('save-num-accounts', saveDerivedAccountsIndex)
 ipcMain.handle('get-num-accounts', getDerivedAccountsIndex)
 ipcMain.handle('validate-pin-message', validatePin)
@@ -115,7 +117,8 @@ ipcMain.handle('get-hw-address', getHardwareAddress)
 ipcMain.handle('delete-hw-address', deleteHardwareAddress)
 ipcMain.handle('send-apdu', sendAPDU)
 ipcMain.handle('reset-store', resetStore)
-
+ipcMain.handle('persist-node-selection', persistNodeSelection)
+ipcMain.handle('fetch-selected-node', fetchSelectedNode)
 // Exit cleanly on request from parent process in development mode.
 if (isDevelopment) {
   if (process.platform === 'win32') {
