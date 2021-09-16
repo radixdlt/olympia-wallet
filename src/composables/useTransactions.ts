@@ -1,6 +1,16 @@
 import { computed, ComputedRef, ref, Ref } from 'vue'
-import { BehaviorSubject, combineLatest, firstValueFrom, Observable, ReplaySubject, Subject, Subscription } from 'rxjs'
-import { mergeMap, retry, filter } from 'rxjs/operators'
+import {
+  BehaviorSubject,
+  combineLatest,
+  firstValueFrom,
+  interval,
+  Observable,
+  of,
+  ReplaySubject,
+  Subject,
+  Subscription
+} from 'rxjs'
+import { catchError, delay, mergeMap, retryWhen, take, filter } from 'rxjs/operators'
 import {
   AmountT,
   ExecutedTransaction,
@@ -130,11 +140,24 @@ export default function useTransactions (radix: RadixT, router: Router, activeAc
       decryptedMessages.value.push({ id: tx.txID.toString(), message: val })
     })
   }
+
+  // Fetch history when user navigates to next page and every 5 seconds
+  const fetchTXHistoryTrigger = combineLatest<[TransactionHistoryOfKnownAddressRequestInput, number]>([
+    historyPagination.asObservable(),
+    interval(5 * 1_000)
+  ])
+
   // Fetch history when user navigates to next page
-  const historySub = historyPagination.asObservable()
+  const historySub = fetchTXHistoryTrigger
     .pipe(
-      mergeMap((params: TransactionHistoryOfKnownAddressRequestInput) =>
-        radix.transactionHistory(params).pipe(retry())
+      mergeMap(([params]: [TransactionHistoryOfKnownAddressRequestInput, number]) =>
+        radix.transactionHistory(params).pipe(
+          retryWhen(error => error.pipe(
+            delay(5000),
+            take(1),
+            catchError(e => of(e))
+          ))
+        )
       )
     )
     .subscribe((history: TransactionHistory) => {

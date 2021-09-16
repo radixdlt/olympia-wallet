@@ -119,7 +119,7 @@ export default defineComponent({
     },
     nativeToken: {
       type: Object as PropType<Token>,
-      required: true
+      required: false
     },
     decryptedMessage: {
       type: String as PropType<string>,

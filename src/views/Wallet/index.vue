@@ -13,7 +13,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, watchEffect } from 'vue'
+import { defineComponent } from 'vue'
 
 import WalletConfirmTransactionModal from './WalletConfirmTransactionModal.vue'
 import WalletSidebar from './WalletSidebar.vue'
@@ -71,10 +71,6 @@ const WalletIndex = defineComponent({
     window.ipcRenderer.on('resetToHome', () => {
       radix.__reset()
       router.push({ name: 'Home', query: { modal: '' } })
-    })
-
-    watchEffect(() => {
-      console.log('confirm', shouldShowConfirmation.value)
     })
 
     return {
