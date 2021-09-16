@@ -88,15 +88,12 @@ const hasCalculatedFee: Ref<boolean> = ref(false)
 const hasWallet = ref(false)
 const ledgerTxError: Ref<Error | null> = ref(null)
 const ledgerVerifyError: Ref<Error | null> = ref(null)
-const nativeToken: Ref<Token | null> = ref(null)
-const nativeTokenBalance: Ref<TokenBalance | null> = ref(null)
 const pendingTransactions: Ref<Array<PendingTransaction>> = ref([])
 const selectedCurrency: Ref<TokenBalance | null> = ref(null)
 const shouldShowConfirmation: Ref<boolean> = ref(false)
 const showLedgerVerify: Ref<boolean> = ref(false)
 const sidebar = ref('default')
 const stakeInput: Ref<StakeTokensInput | null> = ref(null)
-const tokenBalances: Ref<TokenBalances | null> = ref(null)
 const transactionErrorMessage: Ref<string | null> = ref(null)
 const transactionFee: Ref<AmountT | null> = ref(null)
 const transactionHistory: Ref<TransactionHistory> = ref({ transactions: [], cursor: '' })
@@ -165,8 +162,6 @@ interface useWalletInterface {
   readonly hasWallet: Ref<boolean>;
   readonly ledgerTxError: Ref<Error | null>;
   readonly ledgerVerifyError: Ref<Error | null>;
-  readonly nativeToken: Ref<Token | null>;
-  readonly nativeTokenBalance: Ref<TokenBalance | null>;
   readonly invalidPasswordError: Ref<WalletError | null>;
   readonly selectedCurrency: Ref<TokenBalance | null>;
   readonly shouldShowConfirmation: Ref<boolean>;
@@ -176,7 +171,6 @@ interface useWalletInterface {
   readonly transactionState: Ref<string>;
   readonly transferInput: Ref<TransferTokensInput | null>;
   readonly transactionFee: Ref<AmountT | null>;
-  readonly tokenBalances: Ref<TokenBalances | null>;
   readonly transactionHistory: Ref<TransactionHistory>;
   readonly transactionErrorMessage: Ref<string | null>;
   readonly walletHasLoaded: ComputedRef<boolean>;
@@ -237,13 +231,11 @@ export default function useWallet (radix: RadixT, router: Router): useWalletInte
   }
 
   const allLoadedObservable = zip(
-    radix.tokenBalances,
     radix.activeAccount,
     radix.stakingPositions,
     radix.accounts,
     radix.activeAddress,
-    radix.unstakingPositions,
-    radix.ledger.nativeToken()
+    radix.unstakingPositions
   )
 
   const waitUntilAllLoaded = async () => firstValueFrom(allLoadedObservable)
@@ -251,24 +243,6 @@ export default function useWallet (radix: RadixT, router: Router): useWalletInte
   const reloadSubscriptions = () => reloadTrigger.next(Math.random())
 
   const initWallet = (): void => {
-    subs.add(reloadTrigger.asObservable()
-      .pipe(
-        switchMap(() => radix.ledger.nativeToken()),
-        retryWhen(error => {
-          console.log('GOT AN ERROR')
-          return error.pipe(
-            delay(1000),
-            take(5),
-            catchError(e => of(e))
-          )
-        })
-      )
-      .subscribe((nativeTokenRes: Token) => { nativeToken.value = nativeTokenRes }))
-
-    subs.add(reloadTrigger.asObservable()
-      .pipe(switchMap(() => radix.tokenBalances))
-      .subscribe((tokenBalancesRes: TokenBalances) => { tokenBalances.value = tokenBalancesRes }))
-
     subs.add(reloadTrigger.asObservable()
       .pipe(switchMap(() => radix.activeAccount))
       .subscribe((account: AccountT) => { activeAccount.value = account }))
@@ -291,20 +265,6 @@ export default function useWallet (radix: RadixT, router: Router): useWalletInte
 
     reloadSubscriptions()
     refreshHistory()
-
-    const fetchNativeTokenBalanceTrigger = combineLatest<[TokenBalances, Token]>([
-      radix.tokenBalances,
-      radix.ledger.nativeToken()
-    ])
-
-    subs.add(fetchNativeTokenBalanceTrigger
-      .subscribe(([tokenBalancesRes, nativeTokenRes]: [TokenBalances, Token]) => {
-        if (nativeTokenRes && tokenBalancesRes.tokenBalances && tokenBalancesRes.tokenBalances.length > 0) {
-          nativeTokenBalance.value = tokenBalancesRes.tokenBalances.find((tb: TokenBalance) => tb.token.rri.equals(nativeTokenRes.rri)) || null
-        } else {
-          nativeTokenBalance.value = null
-        }
-      }))
 
     getDerivedAccountsIndex()
       .then((accountsIndex: string) => {
@@ -341,13 +301,11 @@ export default function useWallet (radix: RadixT, router: Router): useWalletInte
     getDerivedAccountsIndex()
       .then((index: string) => {
         saveDerivedAccountsIndex(Number(index) + 1)
-        tokenBalances.value = null
         radix.deriveNextAccount({ alsoSwitchTo: true })
       })
   }
 
   const switchAccount = (account: AccountT) => {
-    tokenBalances.value = null
     decryptedMessages.value = []
     radix.switchAccount({ toAccount: account })
   }
@@ -542,7 +500,6 @@ export default function useWallet (radix: RadixT, router: Router): useWalletInte
     let pollTXStatusTrigger: Observable<unknown>
     cleanupInputs()
     stakeInput.value = stakeTokensInput
-    selectedCurrency.value = nativeTokenBalance.value
     confirmationMode.value = 'stake'
 
     const buildTransferTokens = (): StakeOptions => ({
@@ -564,7 +521,6 @@ export default function useWallet (radix: RadixT, router: Router): useWalletInte
     let pollTXStatusTrigger: Observable<unknown>
     cleanupInputs()
     stakeInput.value = unstakeTokensInput
-    selectedCurrency.value = nativeTokenBalance.value
     confirmationMode.value = 'unstake'
 
     const buildTransferTokens = (): UnstakeOptions => ({
@@ -704,14 +660,11 @@ export default function useWallet (radix: RadixT, router: Router): useWalletInte
     invalidPasswordError,
     ledgerTxError,
     ledgerVerifyError,
-    nativeToken,
-    nativeTokenBalance,
     selectedCurrency,
     shouldShowConfirmation,
     showDeleteHWWalletPrompt,
     showLedgerVerify,
     stakeInput,
-    tokenBalances,
     transactionErrorMessage,
     transactionFee,
     transactionHistory,
@@ -722,7 +675,7 @@ export default function useWallet (radix: RadixT, router: Router): useWalletInte
     loadingHistory,
     reloadSubscriptions,
     walletHasLoaded: computed(() => {
-      return activeAddress.value != null && activeStakes.value != null && activeUnstakes.value != null && tokenBalances.value != null && nativeToken.value != null
+      return activeAddress.value != null && activeStakes.value != null && activeUnstakes.value != null
     }),
     canGoBack: computed(() => cursorStack.value.length > 0),
 

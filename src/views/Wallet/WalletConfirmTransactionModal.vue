@@ -139,7 +139,7 @@ import PinInput from '@/components/PinInput.vue'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
 import { validatePin } from '@/actions/vue/create-wallet'
 import { useRouter } from 'vue-router'
-import { useHomeModal, useRadix, useWallet } from '@/composables'
+import { useNativeToken, useHomeModal, useRadix, useWallet } from '@/composables'
 import { useI18n } from 'vue-i18n'
 
 interface ConfirmationForm {
@@ -170,13 +170,13 @@ const WalletConfirmTransactionModal = defineComponent({
       cancelTransaction,
       confirmationMode,
       confirmTransaction,
-      nativeToken,
       selectedCurrency,
       stakeInput,
       transactionFee,
       transactionState,
       transferInput
     } = useWallet(radix, router)
+    const { nativeToken, nativeTokenUnsub } = useNativeToken(radix)
 
     const escapeListener = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
@@ -189,6 +189,7 @@ const WalletConfirmTransactionModal = defineComponent({
     })
 
     onUnmounted(() => {
+      nativeTokenUnsub()
       window.removeEventListener('keydown', escapeListener)
     })
 

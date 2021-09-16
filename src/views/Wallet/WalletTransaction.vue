@@ -130,8 +130,8 @@ import FormField from '@/components/FormField.vue'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
 import LoadingIcon from '@/components/LoadingIcon.vue'
 import FormCheckbox from '@/components/FormCheckbox.vue'
-import { useRadix, useWallet } from '@/composables'
-import { useRouter } from 'vue-router'
+import { useNativeToken, useRadix, useTokenBalances, useWallet } from '@/composables'
+import { useRouter, onBeforeRouteLeave } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 
 interface TransactionForm {
@@ -155,8 +155,15 @@ const WalletTransaction = defineComponent({
     const { errors, values, meta, setErrors, resetForm } = useForm<TransactionForm>()
     const router = useRouter()
     const { radix, networkPreamble } = useRadix()
-    const { activeAddress, tokenBalances, nativeToken, transactionErrorMessage, transferTokens } = useWallet(radix, router)
+    const { activeAddress, transactionErrorMessage, transferTokens } = useWallet(radix, router)
     const { t } = useI18n({ useScope: 'global' })
+    const { nativeToken, nativeTokenUnsub } = useNativeToken(radix)
+    const { tokenBalances, tokenBalanceFor, tokenBalancesUnsub } = useTokenBalances(radix)
+
+    onBeforeRouteLeave(() => {
+      nativeTokenUnsub()
+      tokenBalancesUnsub()
+    })
 
     console.log('empty??', activeAddress.value, tokenBalances.value)
 
@@ -183,7 +190,7 @@ const WalletTransaction = defineComponent({
     // Set XRD as default and move to top of list of options. Ensure native token subscription has returned before doing so
     const setXRDByDefault = (nativeToken: Token) => {
       if (!tokenBalances.value || tokenBalances.value.tokenBalances.length === 0) return
-      const nativeTokenBalance: TokenBalance | undefined = tokenBalances.value.tokenBalances.find((tb: TokenBalance) => tb.token.rri.equals(nativeToken.rri))
+      const nativeTokenBalance = tokenBalanceFor(nativeToken)
       currency.value = nativeTokenBalance ? nativeTokenBalance.token.name : balances[0].token.name
 
       tokenOptions.value = balances

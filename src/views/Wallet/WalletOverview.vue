@@ -92,9 +92,8 @@ import ClickToCopy from '@/components/ClickToCopy.vue'
 import { createRRIUrl } from '@/helpers/explorerLinks'
 import { truncateRRIStringForDisplay } from '@/helpers/formatter'
 import { sumAmounts, add } from '@/helpers/arithmetic'
-import { useRouter } from 'vue-router'
-import useRadix from '@/composables/useRadix'
-import useWallet from '@/composables/useWallet'
+import { useRouter, onBeforeRouteLeave } from 'vue-router'
+import { useNativeToken, useRadix, useWallet, useTokenBalances } from '@/composables'
 
 const WalletOverview = defineComponent({
   components: {
@@ -110,24 +109,28 @@ const WalletOverview = defineComponent({
       activeAddress,
       activeStakes,
       activeUnstakes,
-      nativeToken,
-      nativeTokenBalance,
-      tokenBalances,
       verifyHardwareWalletAddress,
-      hasWallet,
-      reloadSubscriptions
+      hasWallet
     } = useWallet(radix, router)
+
+    const { tokenBalances, tokenBalancesUnsub, tokenBalanceFor } = useTokenBalances(radix)
+    const { nativeToken, nativeTokenUnsub } = useNativeToken(radix)
+
+    onBeforeRouteLeave(() => {
+      tokenBalancesUnsub()
+      nativeTokenUnsub()
+    })
 
     if (!hasWallet) {
       router.push('/')
       return {}
     }
-    if (!tokenBalances.value) {
-      reloadSubscriptions()
-    }
+
     const totalXRD: ComputedRef<AmountT> = computed(() => {
-      if (!nativeTokenBalance.value) return Amount.fromUnsafe(0)._unsafeUnwrap()
-      const xrdAmount = Amount.fromUnsafe(nativeTokenBalance.value.amount)
+      if (!tokenBalances.value || !nativeToken.value) return Amount.fromUnsafe(0)._unsafeUnwrap()
+      const nativeTokenBalance = tokenBalanceFor(nativeToken.value)
+      if (!nativeTokenBalance) return Amount.fromUnsafe(0)._unsafeUnwrap()
+      const xrdAmount = Amount.fromUnsafe(nativeTokenBalance.amount)
       return xrdAmount.isErr() ? Amount.fromUnsafe(0)._unsafeUnwrap() : xrdAmount.value
     })
 
@@ -139,10 +142,12 @@ const WalletOverview = defineComponent({
     })
 
     const availablePlusStakedAndUnstakedXRD: ComputedRef<AmountT> = computed(() => {
-      if (!nativeTokenBalance.value) return Amount.fromUnsafe(0)._unsafeUnwrap()
+      if (!tokenBalances.value || !nativeToken.value) return Amount.fromUnsafe(0)._unsafeUnwrap()
+      const nativeTokenBalance = tokenBalanceFor(nativeToken.value)
+      if (!nativeTokenBalance) return Amount.fromUnsafe(0)._unsafeUnwrap()
       if (!activeStakes.value || !activeUnstakes.value) return Amount.fromUnsafe(0)._unsafeUnwrap()
 
-      const xrdAmount = Amount.fromUnsafe(nativeTokenBalance.value.amount)
+      const xrdAmount = Amount.fromUnsafe(nativeTokenBalance.amount)
       const totalXRD = xrdAmount.isErr() ? Amount.fromUnsafe(0)._unsafeUnwrap() : xrdAmount.value
 
       const totalStakedAndUnstaked = sumAmounts(activeStakes.value.flatMap((item: StakePosition) => item.amount)) || Amount.fromUnsafe(0)._unsafeUnwrap()
@@ -153,11 +158,7 @@ const WalletOverview = defineComponent({
     })
 
     const otherTokenBalances: ComputedRef<TokenBalance[]> = computed(() => {
-      // console.log('nativeToken', nativeToken.value)
-      if (!tokenBalances.value) {
-        console.log('no token balances')
-      }
-      if (!nativeToken.value || !tokenBalances.value) return []
+      if (!tokenBalances.value || !nativeToken.value) return []
       return tokenBalances.value.tokenBalances.filter((tb: TokenBalance) => {
         return nativeToken.value && !tb.token.rri.equals(nativeToken.value.rri)
       })
@@ -168,7 +169,6 @@ const WalletOverview = defineComponent({
       activeStakes,
       activeUnstakes,
       nativeToken,
-      nativeTokenBalance,
       tokenBalances,
       totalXRD,
       totalStakedAndUnstaked,

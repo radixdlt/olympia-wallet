@@ -90,9 +90,8 @@ import { computed, defineComponent, onMounted, watch } from 'vue'
 import TransactionListItem from '@/components/TransactionListItem.vue'
 import LoadingIcon from '@/components/LoadingIcon.vue'
 import ClickToCopy from '@/components/ClickToCopy.vue'
-import useWallet from '@/composables/useWallet'
-import { useRouter } from 'vue-router'
-import { useRadix } from '@/composables'
+import { useNativeToken, useRadix, useWallet } from '@/composables'
+import { useRouter, onBeforeRouteLeave } from 'vue-router'
 
 const WalletHistory = defineComponent({
   components: {
@@ -112,7 +111,6 @@ const WalletHistory = defineComponent({
       canGoBack,
       canGoNext,
       loadingHistory,
-      nativeToken,
       previousPage,
       nextPage,
       decryptMessage,
@@ -120,6 +118,8 @@ const WalletHistory = defineComponent({
       refreshHistory,
       activeAccount
     } = useWallet(radix, router)
+
+    const { nativeToken, nativeTokenUnsub } = useNativeToken(radix)
 
     const transactionsWithMessages = computed(() => {
       return transactionHistory.value.transactions.map((tx) => {
@@ -137,6 +137,10 @@ const WalletHistory = defineComponent({
     // Fetch initial history on route load
     onMounted(() => {
       refreshHistory()
+    })
+
+    onBeforeRouteLeave(() => {
+      nativeTokenUnsub()
     })
 
     return {

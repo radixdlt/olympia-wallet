@@ -1,13 +1,17 @@
+import useConnectableRadix from './useConnectableRadix'
 import useHomeModal from './useHomeModal'
+import useNativeToken from './useNativeToken'
 import useRadix from './useRadix'
 import useSidebar from './useSidebar'
+import useTokenBalances from './useTokenBalances'
 import useWallet from './useWallet'
-import useConnectableRadix from './useConnectableRadix'
 
 export {
+  useConnectableRadix,
   useHomeModal,
+  useNativeToken,
   useRadix,
   useSidebar,
-  useWallet,
-  useConnectableRadix
+  useTokenBalances,
+  useWallet
 }
