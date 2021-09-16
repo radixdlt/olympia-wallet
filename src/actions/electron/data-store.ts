@@ -1,12 +1,14 @@
 import { IpcMainInvokeEvent } from 'electron/main'
 import Store from 'electron-store'
+import migrations from '@/electron-store/migrations'
 
 type MaybeString = string | null;
 export type AccountName = { address: string; name: string; }
 export type SelectedNode = { selectedNode: MaybeString; selectedNodeHash: MaybeString; }
 
 export const store = new Store({
-  name: 'wallet'
+  name: 'wallet',
+  migrations
 })
 
 export const saveAccountName = (event: IpcMainInvokeEvent, data: string) => {
