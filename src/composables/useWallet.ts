@@ -123,12 +123,15 @@ interface useWalletInterface {
   createWallet: (mnemonic: MnemomicT, pass: string, network: Network) => Promise<WalletT>;
   deleteLocalHardwareAddress: () => void;
   hardwareAccountFailedToSign: () => void;
+  hideLedgerVerify: () => void;
+  hideLedgerInteraction: () => void;
   initWallet: () => void;
   loginWithWallet: (password: string) => Promise<RadixT>;
   persistNodeUrl: (url: string) => Promise<void>;
   reloadSubscriptions: () => void;
   reset: () => void;
   resetWallet: (nextRoute: 'create-wallet' | 'restore-wallet') => void;
+  setDeleteHWWalletPrompt: (val: boolean) => void;
   setNetwork: (network: Network) => void;
   setPin: (pin: string) => Promise<string>;
   setSwitching: (value: boolean) => void;
@@ -277,6 +280,8 @@ const verifyHardwareWalletAddress = () => {
   showLedgerVerify.value = true
 }
 
+const setDeleteHWWalletPrompt = (val: boolean) => { showDeleteHWWalletPrompt.value = val }
+
 const deleteLocalHardwareAddress = () => {
   if (activeNetwork.value) {
     deleteHardwareWalletAddress(activeNetwork.value)
@@ -318,6 +323,14 @@ const hardwareAccountFailedToSign = () => {
   hardwareAccount.value = null
   hardwareInteractionState.value = 'FAILED_TO_SIGN'
   hardwareError.value = new Error('validations.failedToSign')
+}
+
+const hideLedgerInteraction = () => {
+  hardwareInteractionState.value = ''
+}
+
+const hideLedgerVerify = () => {
+  showLedgerVerify.value = false
 }
 
 export default function useWallet (router: Router): useWalletInterface {
@@ -401,8 +414,11 @@ export default function useWallet (router: Router): useWalletInterface {
     createWallet,
     deleteLocalHardwareAddress,
     hardwareAccountFailedToSign,
+    hideLedgerInteraction,
+    hideLedgerVerify,
     initWallet,
     persistNodeUrl,
+    setDeleteHWWalletPrompt,
     setPin,
     setWallet,
     switchAccount,

@@ -20,7 +20,7 @@
         </div>
       </div>
       <div class="text-center pt-4">
-        <ButtonSubmit @click="$emit('dismissVerify')" class="w-72 mx-auto mt-2" :disabled=false>
+        <ButtonSubmit @click="hideLedgerVerify()" class="w-72 mx-auto mt-2" :disabled=false>
           Done
         </ButtonSubmit>
       </div>
@@ -46,8 +46,8 @@ const WalletLedgerVerifyAddressModal = defineComponent({
   setup () {
     const toast = useToast()
     const router = useRouter()
-    const { hardwareAddress, hardwareError } = useWallet(router)
-    return { toast, hardwareAddress, hardwareError }
+    const { hardwareAddress, hardwareError, hideLedgerVerify } = useWallet(router)
+    return { toast, hardwareAddress, hardwareError, hideLedgerVerify }
   },
 
   computed: {
@@ -64,9 +64,7 @@ const WalletLedgerVerifyAddressModal = defineComponent({
         this.toast.success('Copied to Clipboard')
       }
     }
-  },
-
-  emits: ['dismissVerify']
+  }
 })
 
 export default WalletLedgerVerifyAddressModal

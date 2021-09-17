@@ -1,7 +1,7 @@
 <template>
   <div class="fixed w-screen h-screen z-20 flex items-center justify-center bg-translucent-black">
     <div class="h-modalSmall bg-white rounded-md py-7 px-7 w-full max-w-lg absolute top-1/2 left-1/2 transform -translate-x-1/3 -translate-y-1/2">
-      <div v-if="hardwareWalletError">
+      <div v-if="hardwareError">
         <div class="text-center">
           <div class="text-center mt-8 text-rRed text-lg">
             Unable to Connect to Ledger
@@ -13,7 +13,7 @@
             Retry
           </ButtonSubmit>
 
-          <button @click="$emit('closeLedgerModal')" class="block m-auto pt-4"> Close this </button>
+          <button @click="hideLedgerInteraction()" class="block m-auto pt-4"> Close this </button>
         </div>
       </div>
       <div v-else>
@@ -36,23 +36,30 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue'
+import { defineComponent } from 'vue'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
+import { useRouter } from 'vue-router'
+import { useWallet } from '@/composables'
 
 const WalletLedgerInteractionModal = defineComponent({
-
   components: {
     ButtonSubmit
   },
 
-  props: {
-    hardwareWalletError: {
-      type: Object as PropType<Error>,
-      required: false
+  setup () {
+    const router = useRouter()
+    const {
+      hardwareError,
+      hideLedgerInteraction
+    } = useWallet(router)
+
+    return {
+      hardwareError,
+      hideLedgerInteraction
     }
   },
 
-  emits: ['closeLedgerModal', 'retryLedgerAccountDerivation']
+  emits: ['retryLedgerAccountDerivation']
 })
 
 export default WalletLedgerInteractionModal

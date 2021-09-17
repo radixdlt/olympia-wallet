@@ -8,11 +8,11 @@
         <div class="text-center mt-4 text-rBlack text-sm px-24">
           This will remove the local reference to your hardware wallet. You can add it back at any time.
         </div>
-        <ButtonSubmit @click="$emit('forgetHardwareWallet')" class="w-72 mx-auto mt-4" :destructive=true :disabled=false>
+        <ButtonSubmit @click="deleteHWA()" class="w-72 mx-auto mt-4" :destructive=true :disabled=false>
           Delete
         </ButtonSubmit>
 
-        <button @click="$emit('closeLedgerDeleteModal')" class="block m-auto pt-4"> Close this </button>
+        <button @click="close()" class="block m-auto pt-4"> Close this </button>
       </div>
     </div>
   </div>
@@ -21,14 +21,29 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
+import { useRouter } from 'vue-router'
+import { useWallet } from '@/composables'
 
 const WalletLedgerDeleteModal = defineComponent({
-
   components: {
     ButtonSubmit
   },
 
-  emits: ['forgetHardwareWallet', 'closeLedgerDeleteModal']
+  setup () {
+    const router = useRouter()
+    const {
+      setDeleteHWWalletPrompt,
+      deleteLocalHardwareAddress
+    } = useWallet(router)
+    return {
+      close: () => {
+        setDeleteHWWalletPrompt(false)
+      },
+      deleteHWA: () => {
+        deleteLocalHardwareAddress()
+      }
+    }
+  }
 })
 
 export default WalletLedgerDeleteModal

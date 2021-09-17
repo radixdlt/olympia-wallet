@@ -47,7 +47,7 @@
 
             <span class="text-white ml-2"> {{ $t('wallet.hardwareWalletHeading') }} </span>
           </a>
-          <div class="text-white hover:text-rGreen transition-colors cursor-pointer flex items-center justify-center w-5 h-5" @click="$emit('deleteHWWalletPrompt')">
+          <div class="text-white hover:text-rGreen transition-colors cursor-pointer flex items-center justify-center w-5 h-5" @click="showDeleteHWPrompt()">
             <svg width="10" height="12" viewBox="0 0 10 12" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M1.65912 5.23001L1.91 11H7.77L8.02275 5.23001" stroke="white" stroke-width="1.5"/>
               <path d="M0 3.21212H2.98M2.98 3.21212V1H6.7V3.21212M2.98 3.21212H6.7M6.7 3.21212H9.68" stroke="white" stroke-width="1.5"/>
@@ -104,6 +104,7 @@ const WalletSidebarAccounts = defineComponent({
       addAccount,
       switchAccount,
       connectHardwareWallet,
+      setDeleteHWWalletPrompt,
       hardwareAccount,
       hardwareAddress,
       derivedAccountIndex,
@@ -148,7 +149,10 @@ const WalletSidebarAccounts = defineComponent({
         switchAccount(account)
       },
       connectHardwareWallet,
-      verifyHardwareWalletAddress
+      verifyHardwareWalletAddress,
+      showDeleteHWPrompt () {
+        setDeleteHWWalletPrompt(true)
+      }
     }
   }
 })
