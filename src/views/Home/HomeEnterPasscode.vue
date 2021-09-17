@@ -46,7 +46,7 @@ import ButtonSubmit from '@/components/ButtonSubmit.vue'
 import { useI18n } from 'vue-i18n'
 import { ref } from '@nopr3d/vue-next-rx'
 import { useRouter } from 'vue-router'
-import { useRadix, useWallet } from '@/composables'
+import { useWallet } from '@/composables'
 import { firstValueFrom } from 'rxjs'
 
 interface PasswordForm {
@@ -65,8 +65,7 @@ const HomeEnterPasscode = defineComponent({
     const { errors, values, meta, setErrors } = useForm<PasswordForm>()
     const { t } = useI18n({ useScope: 'global' })
     const router = useRouter()
-    const { radix, setNetwork } = useRadix()
-    const { loginWithWallet, walletLoaded } = useWallet(radix, router)
+    const { setNetwork, loginWithWallet, walletLoaded } = useWallet(router)
 
     const disableSubmit: ComputedRef<boolean> = computed(() => {
       const metaIsDirty = meta.value.dirty ? !meta.value.valid : true

@@ -39,7 +39,7 @@ import { AccountT } from '@radixdlt/application'
 import ClickToCopy from '@/components/ClickToCopy.vue'
 import { ref } from '@nopr3d/vue-next-rx'
 import { formatWalletAddressForDisplay } from '@/helpers/formatter'
-import { useRadix, useWallet, useSidebar } from '@/composables'
+import { useWallet, useSidebar } from '@/composables'
 import { useRouter } from 'vue-router'
 
 const AccountListItem = defineComponent({
@@ -61,8 +61,7 @@ const AccountListItem = defineComponent({
 
   setup (props) {
     const router = useRouter()
-    const { radix } = useRadix()
-    const { accountNameFor, activeAccount, switchAccount, verifyHardwareWalletAddress } = useWallet(radix, router)
+    const { accountNameFor, activeAccount, switchAccount, verifyHardwareWalletAddress } = useWallet(router)
 
     const { setState } = useSidebar()
     const account = toRef(props, 'account')

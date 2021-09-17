@@ -50,8 +50,7 @@ import HomeLockedModal from './HomeLockedModal.vue'
 import HomeForgotPassword from './HomeForgotPassword.vue'
 import LoadingIcon from '@/components/LoadingIcon.vue'
 import { useRouter } from 'vue-router'
-import { useHomeModal, useRadix } from '@/composables'
-import useWallet from '@/composables/useWallet'
+import { useHomeModal, useWallet } from '@/composables'
 
 const Home = defineComponent({
   components: {
@@ -65,8 +64,7 @@ const Home = defineComponent({
   setup () {
     const { modal, setModal } = useHomeModal()
     const router = useRouter()
-    const { radix } = useRadix()
-    const { hasWallet, resetWallet } = useWallet(radix, router)
+    const { hasWallet, resetWallet } = useWallet(router)
 
     return {
       hasWallet,

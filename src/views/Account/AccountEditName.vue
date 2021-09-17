@@ -25,7 +25,7 @@ import { defineComponent } from 'vue'
 import { saveAccountName } from '@/actions/vue/data-store'
 import { ref } from '@nopr3d/vue-next-rx'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
-import { useRadix, useWallet } from '@/composables'
+import { useWallet } from '@/composables'
 import { useRouter } from 'vue-router'
 
 const AccountEditName = defineComponent({
@@ -36,8 +36,7 @@ const AccountEditName = defineComponent({
   setup () {
     const name = ref('')
     const router = useRouter()
-    const { radix } = useRadix()
-    const { accountNameFor, activeAddress, accountRenamed } = useWallet(radix, router)
+    const { accountNameFor, activeAddress, accountRenamed } = useWallet(router)
     if (!activeAddress.value) {
       router.push('/')
       return

@@ -11,7 +11,7 @@
 import { defineComponent, toRefs } from 'vue'
 import { copyToClipboard } from '@/actions/vue/create-wallet'
 import { useToast } from 'vue-toastification'
-import { useRadix, useWallet } from '@/composables'
+import { useWallet } from '@/composables'
 import { useRouter } from 'vue-router'
 const ClickToCopy = defineComponent({
 
@@ -29,9 +29,8 @@ const ClickToCopy = defineComponent({
 
   setup (props) {
     const toast = useToast()
-    const { radix } = useRadix()
     const router = useRouter()
-    const { hardwareAddress, verifyHardwareWalletAddress } = useWallet(radix, router)
+    const { hardwareAddress, verifyHardwareWalletAddress } = useWallet(router)
     const { address, checkForHardwareAddress } = toRefs(props)
     const copyText = () => {
       if (checkForHardwareAddress) {

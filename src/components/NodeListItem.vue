@@ -23,7 +23,7 @@ import { computed, ComputedRef, defineComponent, onUnmounted, Ref, watch } from 
 import AppRadioIndicator from '@/components/AppRadioIndicator.vue'
 import IconRadixLogo from '@/components/IconRadixLogo.vue'
 import { useToast } from 'vue-toastification'
-import { useConnectableRadix, useRadix, useWallet } from '@/composables'
+import { useConnectableRadix, useWallet } from '@/composables'
 import { useRouter } from 'vue-router'
 import { ref } from '@nopr3d/vue-next-rx'
 import { AccountT } from '@radixdlt/application'
@@ -49,27 +49,21 @@ export default defineComponent({
   setup (props) {
     const toast = useToast()
     const router = useRouter()
-    const { radix, network, updateConnection, setSwitching } = useRadix()
-    const { accounts, persistNodeUrl, switchAccount, reloadSubscriptions } = useWallet(radix, router)
+    const { activeNetwork, updateConnection, accounts, switchAccount } = useWallet(router)
     const { connected, loading, networkId, testConnection, cleanupSubscriptions } = useConnectableRadix()
     const updatedConnection: Ref<boolean> = ref(false)
 
-    const isActive: ComputedRef<boolean> = computed(() => network.value === networkId.value)
+    const isActive: ComputedRef<boolean> = computed(() => activeNetwork.value ? activeNetwork.value === networkId.value : false)
 
     const handleSelectNode = () => {
       if (!connected.value) {
         toast.error('Invalid network, unable to connect')
         return
       }
-      setSwitching(true)
-      updateConnection(props.url)
-        .then(() => {
-          reloadSubscriptions()
-          persistNodeUrl(props.url)
-          toast.success(`Switched to new node: ${networkId.value}`)
-          updatedConnection.value = true
-          setSwitching(false)
-        })
+      updateConnection(props.url).then(() => {
+        updatedConnection.value = true
+        toast.success(`Switched to new node: ${networkId.value}`)
+      })
     }
 
     // watch connection updated and addresses. if updated, switch to [0] account
