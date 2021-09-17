@@ -38,12 +38,13 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, toRefs, computed, ComputedRef } from 'vue'
+import { defineComponent, toRefs, computed, ComputedRef, watch } from 'vue'
 import { useForm } from 'vee-validate'
 import FormField from '@/components/FormField.vue'
 import FormErrorMessage from '@/components/FormErrorMessage.vue'
 
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
+import { useI18n } from 'vue-i18n'
 
 interface PasswordForm {
   password: string;
@@ -60,16 +61,29 @@ const HomeEnterPasscode = defineComponent({
     isAuthenticating: {
       type: Boolean,
       default: false
+    },
+    authenticatingError: {
+      type: Boolean,
+      default: false
     }
   },
 
   setup (props) {
     const { isAuthenticating } = toRefs(props)
     const { errors, values, meta, setErrors } = useForm<PasswordForm>()
+    const { t } = useI18n({ useScope: 'global' })
 
     const disableSubmit: ComputedRef<boolean> = computed(() => {
       const metaIsDirty = meta.value.dirty ? !meta.value.valid : true
       return isAuthenticating.value || metaIsDirty
+    })
+
+    watch(() => props.authenticatingError, (current) => {
+      if (current) {
+        setErrors({
+          password: t('validations.incorrectPassword')
+        })
+      }
     })
 
     return {
