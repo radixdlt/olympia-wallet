@@ -92,7 +92,7 @@ import { computed, ComputedRef, defineComponent, onMounted, watch } from 'vue'
 import TransactionListItem from '@/components/TransactionListItem.vue'
 import LoadingIcon from '@/components/LoadingIcon.vue'
 import ClickToCopy from '@/components/ClickToCopy.vue'
-import { useExplorerUrl, useNativeToken, useTransactions, useWallet } from '@/composables'
+import { useNativeToken, useTransactions, useWallet } from '@/composables'
 import { useRouter, onBeforeRouteLeave } from 'vue-router'
 
 const WalletHistory = defineComponent({
@@ -107,12 +107,12 @@ const WalletHistory = defineComponent({
     const {
       activeAddress,
       activeAccount,
+      explorerUrlBase,
       hardwareAccount,
       hardwareAccountFailedToSign,
       radix,
       verifyHardwareWalletAddress
     } = useWallet(router)
-    const { explorerUrlBase, explorerUrlUnsub } = useExplorerUrl(radix)
 
     const {
       canGoBack,
@@ -155,7 +155,6 @@ const WalletHistory = defineComponent({
     onBeforeRouteLeave(() => {
       nativeTokenUnsub()
       transactionUnsub()
-      explorerUrlUnsub()
     })
 
     const loading: ComputedRef<boolean> = computed(() => {

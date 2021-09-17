@@ -1,4 +1,4 @@
-import { ref, computed, Ref, ComputedRef } from 'vue'
+import { ref, computed, Ref, ComputedRef, watch } from 'vue'
 import {
   AccountAddressT,
   AccountsT,
@@ -50,6 +50,7 @@ export type WalletError = ErrorT<ErrorCategory.WALLET>
 
 const accountNames: Ref<AccountName[]> = ref([])
 const accounts: Ref<AccountsT | null> = ref(null)
+const allAccounts: Ref<AccountT[]> = ref([])
 const activeAccount: Ref<AccountT | null> = ref(null)
 const activeAddress: Ref<AccountAddressT | null> = ref(null)
 const activeNetwork: Ref<Network | null> = ref(null)
@@ -69,12 +70,16 @@ const signingKeychain: Ref<SigningKeychainT | null> = ref(null)
 const switching = ref(false)
 const wallet: Ref<WalletT | null> = ref(null)
 
+watch(accounts, () => {
+  console.log('accounts changed', accounts.value)
+})
+
 const setWallet = (newWallet: WalletT) => {
   wallet.value = newWallet
   return wallet.value
 }
 
-const subs = new Subscription()
+let subs = new Subscription()
 
 const createWallet = (mnemonic: MnemomicT, pass: string, network: Network) => {
   const newWalletPromise = createNewWallet(mnemonic, pass, network)
@@ -91,9 +96,11 @@ const setPin = (pin: string) => storePin(pin)
 
 interface useWalletInterface {
   readonly accounts: Ref<AccountsT | null>;
+  readonly allAccounts: Ref<AccountT[]>;
   readonly activeAccount: Ref<AccountT | null>;
   readonly activeAddress: Ref<AccountAddressT | null>;
   readonly activeNetwork: Ref<Network | null>;
+  readonly explorerUrlBase: ComputedRef<string>;
   readonly hardwareAccount: Ref<AccountT | null>;
   readonly hardwareAddress: Ref<string | null>;
   readonly hardwareError: Ref<Error | null>;
@@ -174,6 +181,7 @@ const fetchAccountsForNetwork = (network: Network) => {
 }
 
 const waitUntilAllLoaded = async () => firstValueFrom(allLoadedObservable)
+const explorerUrlBase: Ref<string> = ref('')
 
 const reloadSubscriptions = () => reloadTrigger.next(Math.random())
 
@@ -184,7 +192,7 @@ const initWallet = (): void => {
 
   subs.add(reloadTrigger.asObservable()
     .pipe(switchMap(() => radix.accounts))
-    .subscribe((accountsRes: AccountsT) => { accounts.value = accountsRes }))
+    .subscribe((accountsRes: AccountsT) => { accounts.value = accountsRes; allAccounts.value = accountsRes.all }))
 
   subs.add(reloadTrigger.asObservable()
     .pipe(switchMap(() => radix.activeAddress))
@@ -195,6 +203,8 @@ const initWallet = (): void => {
     .subscribe((network: Network) => {
       activeNetwork.value = network
       fetchAccountsForNetwork(network)
+      if (network === 'MAINNET') explorerUrlBase.value = 'https://explorer.radixdlt.com/'
+      else explorerUrlBase.value = 'https://stokenet-explorer.radixdlt.com/'
     })
 
   subs.add(networkObserver)
@@ -334,6 +344,8 @@ export default function useWallet (router: Router): useWalletInterface {
     activeAccount,
     activeAddress,
     activeNetwork,
+    allAccounts,
+    explorerUrlBase: computed(() => explorerUrlBase.value),
     derivedAccountIndex,
     hardwareAccount,
     hardwareAddress,
@@ -398,9 +410,16 @@ export default function useWallet (router: Router): useWalletInterface {
     waitUntilAllLoaded,
     walletLoaded,
     async updateConnection (url: string): Promise<void> {
+      switching.value = true
+      subs.unsubscribe()
       await radix.connect(url)
+      subs = new Subscription()
       const network = await firstValueFrom(radix.ledger.networkId())
+      accounts.value = null
       activeNetwork.value = network
+      initWallet()
+      persistNodeUrl(url)
+      switching.value = false
     },
 
     setNetwork (network: Network) {

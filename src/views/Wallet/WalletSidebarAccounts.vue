@@ -100,7 +100,7 @@ const WalletSidebarAccounts = defineComponent({
     const router = useRouter()
     const {
       activeAccount,
-      accounts,
+      allAccounts,
       addAccount,
       switchAccount,
       connectHardwareWallet,
@@ -120,14 +120,14 @@ const WalletSidebarAccounts = defineComponent({
     })
 
     const localAccounts: ComputedRef<AccountT[]> = computed(() => {
-      if (!accounts.value) return []
-      return accounts.value.all.filter((account: AccountT) => {
+      if (!allAccounts.value) return []
+      return allAccounts.value.filter((account: AccountT) => {
         return account.signingKey.isLocalHDSigningKey
       })
     })
 
     return {
-      accounts,
+      allAccounts,
       activeAccount,
       derivedAccountIndex,
       activeNetwork,
@@ -150,9 +150,7 @@ const WalletSidebarAccounts = defineComponent({
       connectHardwareWallet,
       verifyHardwareWalletAddress
     }
-  },
-
-  emits: ['back', 'addAccount', 'switchAccount', 'editName', 'addHardwareWallet', 'connectHardwareWallet', 'switchToHardwareAccount', 'verifyHardwareAddress', 'deleteHWWalletPrompt']
+  }
 })
 
 export default WalletSidebarAccounts

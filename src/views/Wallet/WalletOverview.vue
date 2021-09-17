@@ -65,7 +65,7 @@ import { createRRIUrl } from '@/helpers/explorerLinks'
 import { truncateRRIStringForDisplay } from '@/helpers/formatter'
 import { sumAmounts, add } from '@/helpers/arithmetic'
 import { useRouter, onBeforeRouteLeave } from 'vue-router'
-import { useNativeToken, useStaking, useWallet, useTokenBalances, useExplorerUrl } from '@/composables'
+import { useNativeToken, useStaking, useWallet, useTokenBalances } from '@/composables'
 
 const WalletOverview = defineComponent({
   components: {
@@ -79,6 +79,7 @@ const WalletOverview = defineComponent({
     const router = useRouter()
     const {
       activeAddress,
+      explorerUrlBase,
       radix,
       verifyHardwareWalletAddress,
       hasWallet
@@ -87,13 +88,11 @@ const WalletOverview = defineComponent({
     const { tokenBalances, tokenBalancesUnsub, tokenBalanceFor } = useTokenBalances(radix)
     const { nativeToken, nativeTokenUnsub } = useNativeToken(radix)
     const { activeStakes, activeUnstakes, stakingUnsub } = useStaking(radix)
-    const { explorerUrlBase, explorerUrlUnsub } = useExplorerUrl(radix)
 
     onBeforeRouteLeave(() => {
       tokenBalancesUnsub()
       nativeTokenUnsub()
       stakingUnsub()
-      explorerUrlUnsub()
     })
 
     if (!hasWallet) {

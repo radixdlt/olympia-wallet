@@ -112,7 +112,7 @@ import FormField from '@/components/FormField.vue'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
 import { asBigNumber } from '@/components/BigAmount.vue'
 import { Position } from '@/services/_types'
-import { useNativeToken, useStaking, useTransactions, useTokenBalances, useWallet, useExplorerUrl } from '@/composables'
+import { useNativeToken, useStaking, useTransactions, useTokenBalances, useWallet } from '@/composables'
 import { useRouter, onBeforeRouteLeave } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 
@@ -139,11 +139,11 @@ const WalletStaking = defineComponent({
     const {
       activeAddress,
       activeAccount,
+      explorerUrlBase,
       hardwareAccount,
       hardwareAccountFailedToSign,
       radix
     } = useWallet(router)
-    const { explorerUrlBase, explorerUrlUnsub } = useExplorerUrl(radix)
 
     const { stakeTokens, unstakeTokens, transactionUnsub } = useTransactions(radix, router, activeAccount.value, hardwareAccount.value, {
       ledgerSigningError: () => {
@@ -160,7 +160,6 @@ const WalletStaking = defineComponent({
       tokenBalancesUnsub()
       stakingUnsub()
       transactionUnsub()
-      explorerUrlUnsub()
     })
 
     const setForm = (form: string) => {
