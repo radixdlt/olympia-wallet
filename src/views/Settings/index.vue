@@ -38,8 +38,8 @@ import SettingsRevealMnemonic from './SettingsRevealMnemonic.vue'
 import SettingsResetPassword from './SettingsResetPassword.vue'
 import SettingsSelectNode from './SettingsSelectNode.vue'
 import { Ref, ref } from '@nopr3d/vue-next-rx'
-import { useRadix } from '@/composables'
-
+import { useWallet } from '@/composables'
+import { useRouter } from 'vue-router'
 const SettingsIndex = defineComponent({
   components: {
     SettingsResetPassword,
@@ -55,7 +55,8 @@ const SettingsIndex = defineComponent({
     const mnemonic: Ref<MnemomicT | null> = ref(null)
     const userRequestedMnemonic = new Subject<boolean>()
     const activeForm: Ref<string> = ref('password')
-    const { radix } = useRadix()
+    const router = useRouter()
+    const { radix } = useWallet(router)
 
     // Only fetch mnemonic if user confirms pin
     const watchUserDidRequstMnemonic = combineLatest<[MnemomicT, boolean]>([radix.revealMnemonic(), userRequestedMnemonic])

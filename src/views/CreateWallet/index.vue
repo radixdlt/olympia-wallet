@@ -94,7 +94,6 @@ import CreateWalletCreatePin from './CreateWalletCreatePin.vue'
 import CreateWalletViewMnemonic from './CreateWalletViewMnemonic.vue'
 import CreateWalletEnterMnemonic from './CreateWalletEnterMnemonic.vue'
 import WizardHeading from '@/components/WizardHeading.vue'
-import useRadix from '@/composables/useRadix'
 import useWallet from '@/composables/useWallet'
 import { useRouter } from 'vue-router'
 
@@ -109,15 +108,15 @@ const CreateWallet = defineComponent({
 
   setup () {
     const router = useRouter()
-    const { network, radix } = useRadix()
-    const { createWallet, setPin } = useWallet(radix, router)
+    const { activeNetwork, createWallet, setPin } = useWallet(router)
 
     const mnemonic: MnemomicT = Mnemonic.generateNew()
     const step = ref(0)
     const passcode = ref('')
 
     const handleCreateWallet = (pass: string) => {
-      createWallet(mnemonic, pass, network.value).then(() => {
+      if (!activeNetwork.value) return
+      createWallet(mnemonic, pass, activeNetwork.value).then(() => {
         step.value = 3
         passcode.value = pass
       })

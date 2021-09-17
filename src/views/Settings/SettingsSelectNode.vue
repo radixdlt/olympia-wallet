@@ -72,7 +72,8 @@ import { useForm } from 'vee-validate'
 import { Network, Radix } from '@radixdlt/application'
 import { Subscription } from 'rxjs'
 import { useToast } from 'vue-toastification'
-import { useRadix } from '@/composables'
+import { useWallet } from '@/composables'
+import { useRouter } from 'vue-router'
 
 interface AddNodeForm {
   nodeURL: string;
@@ -87,7 +88,8 @@ export default defineComponent({
     const { values, meta, setErrors } = useForm<AddNodeForm>()
     const subs = new Subscription()
     const toast = useToast()
-    const { switching } = useRadix()
+    const router = useRouter()
+    const { switching } = useWallet(router)
 
     const handleAddNode = () => {
       // First, try to get a vaild networkId from network URL

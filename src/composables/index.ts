@@ -1,8 +1,6 @@
 import useConnectableRadix from './useConnectableRadix'
-import useExplorerUrl from './useExplorerUrl'
 import useHomeModal from './useHomeModal'
 import useNativeToken from './useNativeToken'
-import useRadix from './useRadix'
 import useStaking from './useStaking'
 import useSidebar from './useSidebar'
 import useTransactions from './useTransactions'
@@ -11,10 +9,8 @@ import useWallet from './useWallet'
 
 export {
   useConnectableRadix,
-  useExplorerUrl,
   useHomeModal,
   useNativeToken,
-  useRadix,
   useStaking,
   useSidebar,
   useTransactions,
