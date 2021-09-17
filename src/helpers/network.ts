@@ -28,14 +28,14 @@ export const network = (networkName: Network): ChosenNetworkT => {
 
 export const defaultNetworks: ChosenNetworkT[] = [
   {
-    network: Network.STOKENET,
-    networkURL: 'https://stokenet.radixdlt.com',
-    preamble: HRP.STOKENET.account
-  },
-  {
     network: Network.MAINNET,
     networkURL: 'https://mainnet.radixdlt.com',
     preamble: HRP.MAINNET.account
+  },
+  {
+    network: Network.STOKENET,
+    networkURL: 'https://stokenet.radixdlt.com',
+    preamble: HRP.STOKENET.account
   }
 ]
 
