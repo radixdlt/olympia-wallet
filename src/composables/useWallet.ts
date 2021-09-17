@@ -95,7 +95,6 @@ interface useWalletInterface {
   readonly hardwareInteractionState: Ref<string>;
   readonly hasWallet: Ref<boolean>;
   readonly ledgerVerifyError: Ref<Error | null>;
-  readonly invalidPasswordError: Ref<WalletError | null>;
   readonly showDeleteHWWalletPrompt: Ref<boolean>;
   readonly showLedgerVerify: Ref<boolean>;
   readonly walletHasLoaded: ComputedRef<boolean>;
@@ -127,11 +126,8 @@ const tokenBalanceTrigger = merge(
 )
 
 export default function useWallet (radix: RadixT, router: Router): useWalletInterface {
-  const invalidPasswordError: Ref<WalletError | null> = ref(null)
-
   radix.errors
     .pipe(filter(errorNotification => errorNotification.cause === WalletErrorCause.LOAD_KEYSTORE_FAILED))
-    .subscribe((errorNotification: ErrorT<'wallet'>) => { invalidPasswordError.value = errorNotification })
 
   hasKeystore().then((res: boolean) => { hasWallet.value = res })
 
@@ -329,7 +325,6 @@ export default function useWallet (radix: RadixT, router: Router): useWalletInte
     hardwareError,
     hardwareInteractionState,
     hasWallet,
-    invalidPasswordError,
     ledgerVerifyError,
     showDeleteHWWalletPrompt,
     showLedgerVerify,

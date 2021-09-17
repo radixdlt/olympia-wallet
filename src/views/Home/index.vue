@@ -11,9 +11,6 @@
         class="bg-white pt-8 pb-4 px-11 max-w-lg rounded mx-auto"
       >
         <home-enter-passcode
-          :isAuthenticating="isAuthenticating"
-          :authenticatingError="authenticatingError"
-          @submit="authenticate"
           @forgotPassword="forgotPassword"
           ref="enterPasscodeComponent"
         />
@@ -46,18 +43,15 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, watch, ref, Ref } from 'vue'
+import { defineComponent } from 'vue'
 import HomeCreateAndRestore from './HomeCreateAndRestore.vue'
 import HomeEnterPasscode from './HomeEnterPasscode.vue'
 import HomeLockedModal from './HomeLockedModal.vue'
 import HomeForgotPassword from './HomeForgotPassword.vue'
 import LoadingIcon from '@/components/LoadingIcon.vue'
 import { useRouter } from 'vue-router'
-import { useI18n } from 'vue-i18n'
 import { useHomeModal, useRadix } from '@/composables'
-import useWallet, { WalletError } from '@/composables/useWallet'
-import { ref as rxRef } from '@nopr3d/vue-next-rx'
-import { firstValueFrom } from 'rxjs'
+import useWallet from '@/composables/useWallet'
 
 const Home = defineComponent({
   components: {
@@ -69,50 +63,13 @@ const Home = defineComponent({
   },
 
   setup () {
-    const isAuthenticating : Ref<boolean> = ref(false)
-    const authenticatingError : Ref<boolean> = ref(false)
     const { modal, setModal } = useHomeModal()
     const router = useRouter()
-    const { radix, setNetwork } = useRadix()
-    const { hasWallet, invalidPasswordError, loginWithWallet, resetWallet, walletLoaded } = useWallet(radix, router)
-    const { t } = useI18n({ useScope: 'global' })
-
-    const enterPasscodeComponent = rxRef(null)
-
-    const authenticate = async (password: string) => {
-      isAuthenticating.value = true
-      authenticatingError.value = false
-      loginWithWallet(password).then((client) => {
-        return firstValueFrom(client.ledger.networkId())
-      }).then((network) => {
-        setNetwork(network)
-        isAuthenticating.value = false
-        router.push('/wallet')
-        walletLoaded()
-      }).catch(error => {
-        console.log('error happened!', error)
-        isAuthenticating.value = false
-        authenticatingError.value = true
-      })
-    }
-
-    watch(
-      () => invalidPasswordError.value,
-      (value: WalletError | null) => {
-        if (value) {
-          enterPasscodeComponent.value.setErrors({
-            password: t('validations.incorrectPassword')
-          })
-        }
-      }
-    )
+    const { radix } = useRadix()
+    const { hasWallet, resetWallet } = useWallet(radix, router)
 
     return {
-      authenticate,
-      authenticatingError,
-      enterPasscodeComponent,
       hasWallet,
-      isAuthenticating,
       modal,
 
       closeModal () {

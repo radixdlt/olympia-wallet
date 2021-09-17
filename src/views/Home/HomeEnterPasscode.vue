@@ -1,7 +1,7 @@
 <template>
   <div data-ci="create-wallet-create-passcode-component">
     <p class="text-rBlack text-base text-center mb-10">{{ $t('home.passwordTitle') }}</p>
-    <form @submit.prevent="$emit('submit', values.password)" class="flex flex-col w-96 relative">
+    <form @submit.prevent="handleSubmit" class="flex flex-col w-96 relative">
       <svg width="24" height="31" viewBox="0 0 24 31" fill="none" xmlns="http://www.w3.org/2000/svg" class="absolute inset-0 opacity transition-opacity" :class="{'opacity-40': disableSubmit}">
         <path d="M3.98975 12.1227V8.91388C3.98975 4.54318 7.55907 1 11.962 1C16.3649 1 19.9342 4.54318 19.9342 8.91388V12.1227" stroke="#00C389" stroke-width="1.5" stroke-miterlimit="10"/>
         <path d="M1 30.3952V11.8662H4.23024H19.7567H22.9869V29.4213H5.57166" stroke="#052CC0" stroke-width="1.5" stroke-miterlimit="10"/>
@@ -38,13 +38,16 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, toRefs, computed, ComputedRef, watch } from 'vue'
+import { defineComponent, computed, ComputedRef, Ref } from 'vue'
 import { useForm } from 'vee-validate'
 import FormField from '@/components/FormField.vue'
 import FormErrorMessage from '@/components/FormErrorMessage.vue'
-
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
 import { useI18n } from 'vue-i18n'
+import { ref } from '@nopr3d/vue-next-rx'
+import { useRouter } from 'vue-router'
+import { useRadix, useWallet } from '@/composables'
+import { firstValueFrom } from 'rxjs'
 
 interface PasswordForm {
   password: string;
@@ -57,42 +60,45 @@ const HomeEnterPasscode = defineComponent({
     FormErrorMessage
   },
 
-  props: {
-    isAuthenticating: {
-      type: Boolean,
-      default: false
-    },
-    authenticatingError: {
-      type: Boolean,
-      default: false
-    }
-  },
-
   setup (props) {
-    const { isAuthenticating } = toRefs(props)
+    const isAuthenticating : Ref<boolean> = ref(false)
     const { errors, values, meta, setErrors } = useForm<PasswordForm>()
     const { t } = useI18n({ useScope: 'global' })
+    const router = useRouter()
+    const { radix, setNetwork } = useRadix()
+    const { loginWithWallet, walletLoaded } = useWallet(radix, router)
 
     const disableSubmit: ComputedRef<boolean> = computed(() => {
       const metaIsDirty = meta.value.dirty ? !meta.value.valid : true
       return isAuthenticating.value || metaIsDirty
     })
 
-    watch(() => props.authenticatingError, (current) => {
-      if (current) {
+    const handleSubmit = () => {
+      isAuthenticating.value = true
+      loginWithWallet(values.password).then((client) => {
+        return firstValueFrom(client.ledger.networkId())
+      }).then((network) => {
+        setNetwork(network)
+        isAuthenticating.value = false
+        router.push('/wallet')
+        walletLoaded()
+      }).catch(() => {
+        isAuthenticating.value = false
         setErrors({
           password: t('validations.incorrectPassword')
         })
-      }
-    })
+      })
+    }
 
     return {
+      disableSubmit,
       errors,
-      values,
+      handleSubmit,
+      isAuthenticating,
       meta,
       props,
       setErrors,
-      disableSubmit
+      values
     }
   },
 
@@ -101,7 +107,7 @@ const HomeEnterPasscode = defineComponent({
     if (passEl) passEl.focus()
   },
 
-  emits: ['submit', 'forgotPassword'],
+  emits: ['forgotPassword'],
 
   methods: {
     forgotPassword () {
