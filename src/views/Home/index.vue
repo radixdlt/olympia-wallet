@@ -12,6 +12,7 @@
       >
         <home-enter-passcode
           :isAuthenticating="isAuthenticating"
+          :authenticatingError="authenticatingError"
           @submit="authenticate"
           @forgotPassword="forgotPassword"
           ref="enterPasscodeComponent"
@@ -69,6 +70,7 @@ const Home = defineComponent({
 
   setup () {
     const isAuthenticating : Ref<boolean> = ref(false)
+    const authenticatingError : Ref<boolean> = ref(false)
     const { modal, setModal } = useHomeModal()
     const router = useRouter()
     const { radix, setNetwork } = useRadix()
@@ -79,6 +81,7 @@ const Home = defineComponent({
 
     const authenticate = async (password: string) => {
       isAuthenticating.value = true
+      authenticatingError.value = false
       loginWithWallet(password).then((client) => {
         return firstValueFrom(client.ledger.networkId())
       }).then((network) => {
@@ -89,6 +92,7 @@ const Home = defineComponent({
       }).catch(error => {
         console.log('error happened!', error)
         isAuthenticating.value = false
+        authenticatingError.value = true
       })
     }
 
@@ -104,11 +108,12 @@ const Home = defineComponent({
     )
 
     return {
-      hasWallet,
-      modal,
       authenticate,
+      authenticatingError,
       enterPasscodeComponent,
+      hasWallet,
       isAuthenticating,
+      modal,
 
       closeModal () {
         setModal(null)
