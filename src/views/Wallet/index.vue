@@ -19,7 +19,7 @@
     </div>
 
     <wallet-confirm-transaction-modal v-if="shouldShowConfirmation" />
-    <wallet-ledger-verify-address-modal v-if="showLedgerVerify" @dismissVerify="showLedgerVerify = false" />
+    <wallet-ledger-verify-address-modal v-if="showLedgerVerify" />
     <wallet-ledger-interaction-modal v-if="hardwareInteractionState && hardwareInteractionState.length > 0" />
     <wallet-ledger-delete-modal v-if="showDeleteHWWalletPrompt" />
   </div>
