@@ -190,12 +190,13 @@ const WalletTransaction = defineComponent({
 
     const currency: Ref<string | null> = ref(null)
     const tokenOptions: Ref<Array<TokenBalance>> = ref([])
-    const balances = tokenBalances.value ? tokenBalances.value.tokenBalances : []
 
     // Set XRD as default and move to top of list of options. Ensure native token subscription has returned before doing so
     const setXRDByDefault = (nativeToken: Token) => {
       if (!tokenBalances.value || tokenBalances.value.tokenBalances.length === 0) return
       const nativeTokenBalance = tokenBalanceFor(nativeToken)
+      const balances = tokenBalances.value ? tokenBalances.value.tokenBalances : []
+
       currency.value = nativeTokenBalance ? nativeTokenBalance.token.name : balances[0].token.name
 
       tokenOptions.value = balances
