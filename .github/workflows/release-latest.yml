@@ -23,8 +23,7 @@ jobs:
       - name: Build/release Electron app
         uses: samuelmeuli/action-electron-builder@v1
         env:
-          VUE_APP_NETWORK_NAME: stokenet
-          VUE_APP_EXPLORER: https://stokenet-explorer.radixdlt.com
+          VUE_APP_NETWORK_NAME: STOKENET
           APPLE_ID: ${{ secrets.APPLE_ID }}
           APPLE_ID_PASSWORD: ${{ secrets.APPLE_ID_PASSWORD }}
         with:
@@ -41,7 +40,7 @@ jobs:
 
       - name: Upload Linux Artifacts
         uses: actions/upload-artifact@v1
-        if: matrix.os == 'ubuntu-latest' 
+        if: matrix.os == 'ubuntu-latest'
         with:
           name: olympia-wallet-linux
           path: dist-linux
