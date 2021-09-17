@@ -73,7 +73,7 @@
       </div>
      </div>
     <div class="bg-rGrayLightest flex items-center justify-center px-3">
-      <a :href="explorerURL" target="_blank" class="w-6 h-6 rounded-full border border-rGray flex items-center justify-center cursor-pointer">
+      <a :href="explorerUrl" target="_blank" class="w-6 h-6 rounded-full border border-rGray flex items-center justify-center cursor-pointer">
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M3.66797 3.60449H10.9101V10.8466" stroke="#7A99AC" stroke-miterlimit="10"/>
         <path d="M10.9096 3.60449L3.60449 10.9097" stroke="#7A99AC" stroke-miterlimit="10"/>
@@ -84,7 +84,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue'
+import { computed, ComputedRef, defineComponent, PropType } from 'vue'
 import { ExecutedTransaction, AccountAddressT, Token, ExecutedAction, ActionType, Message } from '@radixdlt/application'
 import { DateTime } from 'luxon'
 import ActionListItemStakeTokens from '@/components/ActionListItemStakeTokens.vue'
@@ -125,16 +125,26 @@ export default defineComponent({
       type: String as PropType<string>,
       required: false,
       default: null
+    },
+    explorerUrlBase: {
+      type: String,
+      required: true
+    }
+  },
+
+  setup (props) {
+    const explorerUrl: ComputedRef<string> = computed(() =>
+      `${props.explorerUrlBase}/#/transactions/${props.transaction.txID}`
+    )
+
+    return {
+      explorerUrl
     }
   },
 
   computed: {
     sentAt (): string {
       return DateTime.fromJSDate(this.transaction.sentAt).toLocaleString(DateTime.DATETIME_SHORT)
-    },
-
-    explorerURL (): string {
-      return `${process.env.VUE_APP_EXPLORER}/#/transactions/${this.transaction.txID}`
     },
 
     relatedActions (): ExecutedAction[] {

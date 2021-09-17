@@ -83,15 +83,18 @@
         </a>
       </div>
 
-      <stake-list-item
-        v-for="(position) in sortedPositions"
-        :key="position.address"
-        :position="position"
-        :nativeToken="nativeToken"
-        @addToValidator="handleAddToValidator"
-        @reduceFromValidator="handleReduceFromValidator"
-      >
-      </stake-list-item>
+      <template v-if="nativeToken">
+        <stake-list-item
+          v-for="(position) in sortedPositions"
+          :key="position.address"
+          :position="position"
+          :nativeToken="nativeToken"
+          :explorerUrlBase="explorerUrlBase"
+          @addToValidator="handleAddToValidator"
+          @reduceFromValidator="handleReduceFromValidator"
+        >
+        </stake-list-item>
+      </template>
     </div>
   </div>
 </template>
@@ -109,7 +112,7 @@ import FormField from '@/components/FormField.vue'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
 import { asBigNumber } from '@/components/BigAmount.vue'
 import { Position } from '@/services/_types'
-import { useNativeToken, useRadix, useStaking, useTransactions, useTokenBalances, useWallet } from '@/composables'
+import { useNativeToken, useRadix, useStaking, useTransactions, useTokenBalances, useWallet, useExplorerUrl } from '@/composables'
 import { useRouter, onBeforeRouteLeave } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 
@@ -133,6 +136,7 @@ const WalletStaking = defineComponent({
     const { t } = useI18n({ useScope: 'global' })
     const { errors, values, meta, setErrors, resetForm } = useForm<StakeForm>()
     const { radix } = useRadix()
+    const { explorerUrlBase, explorerUrlUnsub } = useExplorerUrl(radix)
     const router = useRouter()
     const {
       activeAddress,
@@ -156,6 +160,7 @@ const WalletStaking = defineComponent({
       tokenBalancesUnsub()
       stakingUnsub()
       transactionUnsub()
+      explorerUrlUnsub()
     })
 
     const setForm = (form: string) => {
@@ -218,7 +223,7 @@ const WalletStaking = defineComponent({
         ? `${t('staking.amountPlaceholder')} ${asBigNumber(xrdBalance.value)} `
         : t('staking.availableBalancePlaceholder'))
 
-    const explorerUrl: ComputedRef<string> = computed(() => `${process.env.VUE_APP_EXPLORER}/#/validators`)
+    const explorerUrl: ComputedRef<string> = computed(() => `${explorerUrlBase.value}/#/validators`)
 
     // Methods
     const handleAddToValidator = (validator: AccountAddressT) => {
@@ -264,6 +269,7 @@ const WalletStaking = defineComponent({
       stakeUrl: 'https://learn.radixdlt.com',
       activeForm,
       activeAddress,
+      explorerUrlBase,
       tokenBalances,
       nativeToken,
       errors,

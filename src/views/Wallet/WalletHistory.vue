@@ -30,6 +30,7 @@
             :activeAddress="activeAddress"
             :pending="true"
             :nativeToken="nativeToken"
+            :explorerUrlBase="explorerUrlBase"
           />
 
           <transaction-list-item
@@ -41,6 +42,7 @@
             :activeAddress="activeAddress"
             :pending="false"
             :nativeToken="nativeToken"
+            :explorerUrlBase="explorerUrlBase"
             @decryptMessage = "(data) => decryptMessage(data)"
           />
         </div>
@@ -90,7 +92,7 @@ import { computed, ComputedRef, defineComponent, onMounted, watch } from 'vue'
 import TransactionListItem from '@/components/TransactionListItem.vue'
 import LoadingIcon from '@/components/LoadingIcon.vue'
 import ClickToCopy from '@/components/ClickToCopy.vue'
-import { useNativeToken, useRadix, useTransactions, useWallet } from '@/composables'
+import { useExplorerUrl, useNativeToken, useRadix, useTransactions, useWallet } from '@/composables'
 import { useRouter, onBeforeRouteLeave } from 'vue-router'
 
 const WalletHistory = defineComponent({
@@ -110,6 +112,7 @@ const WalletHistory = defineComponent({
       verifyHardwareWalletAddress,
       activeAccount
     } = useWallet(radix, router)
+    const { explorerUrlBase, explorerUrlUnsub } = useExplorerUrl(radix)
 
     const {
       canGoBack,
@@ -152,6 +155,7 @@ const WalletHistory = defineComponent({
     onBeforeRouteLeave(() => {
       nativeTokenUnsub()
       transactionUnsub()
+      explorerUrlUnsub()
     })
 
     const loading: ComputedRef<boolean> = computed(() => {
@@ -160,20 +164,21 @@ const WalletHistory = defineComponent({
 
     return {
       activeAccount,
-      transactionHistory,
-      decryptedMessages,
       activeAddress,
-      pendingTransactions,
       canGoBack,
       canGoNext,
+      decryptMessage,
+      explorerUrlBase,
+      decryptedMessages,
       loading,
       nativeToken,
-      previousPage,
       nextPage,
-      decryptMessage,
-      verifyHardwareWalletAddress,
+      pendingTransactions,
+      previousPage,
+      refreshHistory,
+      transactionHistory,
       transactionsWithMessages,
-      refreshHistory
+      verifyHardwareWalletAddress
     }
   }
 })

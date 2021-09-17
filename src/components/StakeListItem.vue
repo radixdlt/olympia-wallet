@@ -80,7 +80,7 @@
 
 <script lang="ts">
 import { Token, UnstakePosition, Validator, Amount, AmountT, StakePosition } from '@radixdlt/application'
-import { defineComponent, PropType, Ref, ref } from 'vue'
+import { computed, ComputedRef, defineComponent, PropType, Ref, ref } from 'vue'
 import BigAmount from '@/components/BigAmount.vue'
 import ClickToCopy from '@/components/ClickToCopy.vue'
 import { Subscription } from 'rxjs'
@@ -104,6 +104,10 @@ const StakeListItem = defineComponent({
     nativeToken: {
       type: Object as PropType<Token>,
       required: true
+    },
+    explorerUrlBase: {
+      type: String,
+      required: true
     }
   },
 
@@ -116,8 +120,13 @@ const StakeListItem = defineComponent({
       .add(radix.ledger.lookupValidator(props.position.validator)
         .subscribe((validatorRes: Validator) => { validator.value = validatorRes }))
 
+    const explorerUrl: ComputedRef<string> = computed(() =>
+      validator.value ? `${props.explorerUrlBase}/#/validators/${validator.value.address.toString()}` : `${props.explorerUrlBase}/#/validators/`
+    )
+
     return {
-      validator
+      validator,
+      explorerUrl
     }
   },
 
@@ -127,9 +136,6 @@ const StakeListItem = defineComponent({
     },
     unstakesForValidator (): UnstakePosition[] {
       return this.position.unstakes
-    },
-    explorerUrl (): string {
-      return this.validator ? `${process.env.VUE_APP_EXPLORER}/#/validators/${this.validator.address.toString()}` : `${process.env.VUE_APP_EXPLORER}/#/validators/`
     },
 
     stakeAmount (): AmountT {
