@@ -87,7 +87,7 @@
 import { defineComponent } from 'vue'
 import AccountListItem from '@/components/AccountListItem.vue'
 import WalletNavLink from './WalletNavLink.vue'
-import { useRadix, useWallet, useSidebar } from '@/composables'
+import { useWallet, useSidebar } from '@/composables'
 import { useRouter, useRoute } from 'vue-router'
 import AppLogo from '@/components/AppLogo.vue'
 
@@ -99,9 +99,8 @@ const WalletSidebarDefault = defineComponent({
   },
 
   setup () {
-    const { radix, network } = useRadix()
     const router = useRouter()
-    const { activeAccount } = useWallet(radix, router)
+    const { activeAccount, activeNetwork } = useWallet(router)
     const { open, setState } = useSidebar()
     const route = useRoute()
 
@@ -110,7 +109,7 @@ const WalletSidebarDefault = defineComponent({
       open,
       route,
       setState,
-      network
+      activeNetwork
     }
   },
 

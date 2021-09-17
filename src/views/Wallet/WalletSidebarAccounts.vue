@@ -87,7 +87,7 @@ import { defineComponent, ref, computed, ComputedRef } from 'vue'
 import { AccountT } from '@radixdlt/application'
 import AccountListItem from '@/components/AccountListItem.vue'
 import ClickToCopy from '@/components/ClickToCopy.vue'
-import { useRadix, useWallet, useSidebar } from '@/composables'
+import { useWallet, useSidebar } from '@/composables'
 import { useRouter } from 'vue-router'
 
 const WalletSidebarAccounts = defineComponent({
@@ -97,7 +97,6 @@ const WalletSidebarAccounts = defineComponent({
   },
 
   setup () {
-    const { radix } = useRadix()
     const router = useRouter()
     const {
       activeAccount,
@@ -110,12 +109,11 @@ const WalletSidebarAccounts = defineComponent({
       derivedAccountIndex,
       activeNetwork,
       verifyHardwareWalletAddress
-    } = useWallet(radix, router)
+    } = useWallet(router)
     const { setState } = useSidebar()
     const showHardwareHelper = ref(false)
 
     const displayHardwareAddress: ComputedRef<string> = computed(() => {
-      console.log(hardwareAddress.value)
       if (!hardwareAddress.value) return ''
       const add: string = hardwareAddress.value
       return add.substring(0, 3) + '...' + add.substring(add.length - 9)

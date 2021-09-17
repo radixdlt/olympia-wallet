@@ -139,7 +139,7 @@ import PinInput from '@/components/PinInput.vue'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
 import { validatePin } from '@/actions/vue/create-wallet'
 import { useRouter } from 'vue-router'
-import { useNativeToken, useHomeModal, useRadix, useTransactions, useWallet } from '@/composables'
+import { useNativeToken, useHomeModal, useTransactions, useWallet } from '@/composables'
 import { useI18n } from 'vue-i18n'
 
 interface ConfirmationForm {
@@ -163,13 +163,14 @@ const WalletConfirmTransactionModal = defineComponent({
     const pinAttempts = ref(0)
     const { t } = useI18n({ useScope: 'global' })
 
-    const { radix, reset } = useRadix()
     const {
       activeAddress,
       activeAccount,
       hardwareAccount,
-      hardwareAccountFailedToSign
-    } = useWallet(radix, router)
+      hardwareAccountFailedToSign,
+      radix,
+      reset
+    } = useWallet(router)
     const { nativeToken, nativeTokenUnsub } = useNativeToken(radix)
 
     const {

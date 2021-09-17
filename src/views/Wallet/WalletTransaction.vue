@@ -130,7 +130,7 @@ import FormField from '@/components/FormField.vue'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
 import LoadingIcon from '@/components/LoadingIcon.vue'
 import FormCheckbox from '@/components/FormCheckbox.vue'
-import { useNativeToken, useRadix, useTransactions, useTokenBalances, useWallet } from '@/composables'
+import { useNativeToken, useTransactions, useTokenBalances, useWallet } from '@/composables'
 import { useRouter, onBeforeRouteLeave } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 
@@ -154,8 +154,7 @@ const WalletTransaction = defineComponent({
   setup () {
     const { errors, values, meta, setErrors, resetForm } = useForm<TransactionForm>()
     const router = useRouter()
-    const { radix, networkPreamble } = useRadix()
-    const { activeAddress, activeAccount, hardwareAccount, hardwareAccountFailedToSign } = useWallet(radix, router)
+    const { activeAddress, activeAccount, hardwareAccount, hardwareAccountFailedToSign, networkPreamble, radix } = useWallet(router)
 
     const { transactionErrorMessage, transferTokens, transactionUnsub } = useTransactions(radix, router, activeAccount.value, hardwareAccount.value, {
       ledgerSigningError: () => {

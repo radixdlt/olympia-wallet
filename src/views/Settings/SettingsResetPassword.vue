@@ -66,7 +66,8 @@ import { touchKeystore, initWallet } from '@/actions/vue/create-wallet'
 import FormErrorMessage from '@/components/FormErrorMessage.vue'
 import FormField from '@/components/FormField.vue'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
-import { useRadix } from '@/composables'
+import { useRouter } from 'vue-router'
+import { useWallet } from '@/composables'
 import { useI18n } from 'vue-i18n'
 
 interface PasswordForm {
@@ -86,7 +87,9 @@ const SettingsResetPassword = defineComponent({
     const { errors, values, meta, setErrors, resetForm } = useForm<PasswordForm>()
     const { t } = useI18n({ useScope: 'global' })
     const subs = new Subscription()
-    const { radix } = useRadix()
+    const router = useRouter()
+    const { radix } = useWallet(router)
+
     const isLoading = ref(false)
     const updatedPassword: Ref<boolean> = ref(false)
 
