@@ -191,7 +191,6 @@ export default function useTransactions (radix: RadixT, router: Router, activeAc
     userDidCancel.next(false)
     transactionState.value = 'building'
     shouldShowConfirmation.value = true
-    console.log(shouldShowConfirmation.value)
     // Subscribe to initial userConfirmation and display modal
     const createUserConfirmation = userConfirmation
       .subscribe((txnToConfirm: ManualUserConfirmTX) => {

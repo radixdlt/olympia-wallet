@@ -69,8 +69,6 @@ const setWallet = (newWallet: WalletT) => {
   return wallet.value
 }
 
-getHardwareWalletAddress().then(a => { hardwareAddress.value = a })
-
 const subs = new Subscription()
 
 const createWallet = (mnemonic: MnemomicT, pass: string, network: Network) => {
@@ -162,6 +160,7 @@ export default function useWallet (radix: RadixT, router: Router): useWalletInte
           saveDerivedAccountsIndex(0, network)
         }
       })
+    getHardwareWalletAddress(network).then(a => { hardwareAddress.value = a; console.log(a, network) })
   }
 
   const waitUntilAllLoaded = async () => firstValueFrom(allLoadedObservable)
@@ -257,8 +256,8 @@ export default function useWallet (radix: RadixT, router: Router): useWalletInte
       next: (hwAccount: AccountT) => {
         activeAccount.value = hwAccount
         hardwareAccount.value = hwAccount
-        if (!hardwareAddress.value) {
-          saveHardwareWalletAddress(hwAccount.address.toString())
+        if (!hardwareAddress.value && activeNetwork.value) {
+          saveHardwareWalletAddress(hwAccount.address.toString(), activeNetwork.value)
           saveAccountName(hwAccount.address.toString(), 'Hardware Wallet')
           hardwareAddress.value = hwAccount.address.toString()
         }
@@ -277,7 +276,9 @@ export default function useWallet (radix: RadixT, router: Router): useWalletInte
   }
 
   const deleteLocalHardwareAddress = () => {
-    deleteHardwareWalletAddress()
+    if (activeNetwork.value) {
+      deleteHardwareWalletAddress(activeNetwork.value)
+    }
     hardwareAddress.value = ''
     showDeleteHWWalletPrompt.value = false
     hardwareAccount.value = null

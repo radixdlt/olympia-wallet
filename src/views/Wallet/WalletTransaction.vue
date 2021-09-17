@@ -167,8 +167,6 @@ const WalletTransaction = defineComponent({
     const { nativeToken, nativeTokenUnsub } = useNativeToken(radix)
     const { tokenBalances, tokenBalanceFor, tokenBalancesUnsub } = useTokenBalances(radix)
 
-    console.log(tokenBalances.value?.tokenBalances)
-
     onBeforeRouteLeave(() => {
       nativeTokenUnsub()
       tokenBalancesUnsub()
@@ -212,7 +210,6 @@ const WalletTransaction = defineComponent({
 
     const hasTokenBalances = computed(() => {
       if (!tokenBalances.value?.tokenBalances) return false
-      console.log(tokenBalances.value?.tokenBalances.length > 0)
       return tokenBalances.value?.tokenBalances.length > 0
     })
 

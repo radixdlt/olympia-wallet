@@ -13,20 +13,19 @@ export const saveDerivedAccountsIndex = (num: number, network: Network): Promise
 })
 
 export const getDerivedAccountsIndex = (network: Network): Promise<string> => new Promise((resolve) => {
-  console.log(network)
   resolve(window.ipcRenderer.invoke('get-num-accounts', String(network)))
 })
 
-export const saveHardwareWalletAddress = (address: string): Promise<string> => new Promise((resolve) => {
-  resolve(window.ipcRenderer.invoke('save-hw-address', address))
+export const saveHardwareWalletAddress = (address: string, network: Network): Promise<string> => new Promise((resolve) => {
+  resolve(window.ipcRenderer.invoke('save-hw-address', JSON.stringify({ address, network })))
 })
 
-export const getHardwareWalletAddress = (): Promise<string> => new Promise((resolve) => {
-  resolve(window.ipcRenderer.invoke('get-hw-address'))
+export const getHardwareWalletAddress = (network: Network): Promise<string> => new Promise((resolve) => {
+  resolve(window.ipcRenderer.invoke('get-hw-address', String(network)))
 })
 
-export const deleteHardwareWalletAddress = (): Promise<string> => new Promise((resolve) => {
-  resolve(window.ipcRenderer.invoke('delete-hw-address'))
+export const deleteHardwareWalletAddress = (network: Network): Promise<string> => new Promise((resolve) => {
+  resolve(window.ipcRenderer.invoke('delete-hw-address', String(network)))
 })
 
 export const resetStore = (): Promise<string> => new Promise((resolve) => {

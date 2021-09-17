@@ -16,10 +16,10 @@ const migrations = {
 
     // Nest derivedAccountsIndex and hardwareAddress values under current network
     store.set(`wallets.${currentNetwork}.derivedAccountsIndex`, derivedAccountsIndex)
-    store.set(`wallets.${currentNetwork}.handwareAddress`, hardwareAddress)
+    store.set(`wallets.${currentNetwork}.hardwareAddress`, hardwareAddress)
 
     // Set other network to have an index of 0
-    store.set(`wallets.${otherNetwork}.derivedAccountsIndex`, "0")
+    store.set(`wallets.${otherNetwork}.derivedAccountsIndex`, 0)
 
     // Remove old configuration
     store.delete('derivedAccountsIndex')

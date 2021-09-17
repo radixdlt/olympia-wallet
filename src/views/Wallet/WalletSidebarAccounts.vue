@@ -115,6 +115,7 @@ const WalletSidebarAccounts = defineComponent({
     const showHardwareHelper = ref(false)
 
     const displayHardwareAddress: ComputedRef<string> = computed(() => {
+      console.log(hardwareAddress.value)
       if (!hardwareAddress.value) return ''
       const add: string = hardwareAddress.value
       return add.substring(0, 3) + '...' + add.substring(add.length - 9)
