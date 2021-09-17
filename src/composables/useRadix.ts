@@ -1,7 +1,6 @@
 import { ref, computed, ComputedRef } from 'vue'
 import { Network, Radix, RadixT, HRP, ErrorT } from '@radixdlt/application'
 import { firstValueFrom } from 'rxjs'
-import { filter } from 'rxjs/operators'
 
 const radix: RadixT = Radix.create()
 

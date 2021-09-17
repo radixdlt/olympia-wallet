@@ -154,7 +154,6 @@ const WalletConfirmTransactionModal = defineComponent({
   },
 
   setup () {
-    console.log('load form')
     const { errors, meta, values, setErrors, resetForm } = useForm<ConfirmationForm>()
     const { setModal } = useHomeModal()
     const router = useRouter()

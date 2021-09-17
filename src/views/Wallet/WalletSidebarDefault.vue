@@ -99,7 +99,7 @@ const WalletSidebarDefault = defineComponent({
   },
 
   setup () {
-    const { radix } = useRadix()
+    const { radix, network } = useRadix()
     const router = useRouter()
     const { activeAccount } = useWallet(radix, router)
     const { open, setState } = useSidebar()
@@ -109,7 +109,8 @@ const WalletSidebarDefault = defineComponent({
       activeAccount,
       open,
       route,
-      setState
+      setState,
+      network
     }
   },
 

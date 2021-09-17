@@ -60,15 +60,14 @@ const reloadTrigger = new Subject<number>()
 const showLedgerVerify: Ref<boolean> = ref(false)
 const signingKeychain: Ref<SigningKeychainT | null> = ref(null)
 const wallet: Ref<WalletT | null> = ref(null)
-
+const activeNetwork: Ref<Network | null> = ref(null)
+const derivedAccountIndex: Ref<number> = ref(0)
 const showDeleteHWWalletPrompt: Ref<boolean> = ref(false)
 
 const setWallet = (newWallet: WalletT) => {
   wallet.value = newWallet
   return wallet.value
 }
-
-getHardwareWalletAddress().then(a => { hardwareAddress.value = a })
 
 const subs = new Subscription()
 
@@ -77,7 +76,7 @@ const createWallet = (mnemonic: MnemomicT, pass: string, network: Network) => {
 
   newWalletPromise.then((newWallet: WalletT) => {
     setWallet(newWallet)
-    saveDerivedAccountsIndex(0)
+    saveDerivedAccountsIndex(0, network)
   })
 
   return newWalletPromise
@@ -89,6 +88,7 @@ interface useWalletInterface {
   readonly accounts: Ref<AccountsT | null>;
   readonly activeAccount: Ref<AccountT | null>;
   readonly activeAddress: Ref<AccountAddressT | null>;
+  readonly activeNetwork: Ref<Network | null>;
   readonly hardwareAccount: Ref<AccountT | null>;
   readonly hardwareAddress: Ref<string | null>;
   readonly hardwareError: Ref<Error | null>;
@@ -99,6 +99,7 @@ interface useWalletInterface {
   readonly showDeleteHWWalletPrompt: Ref<boolean>;
   readonly showLedgerVerify: Ref<boolean>;
   readonly walletHasLoaded: ComputedRef<boolean>;
+  readonly derivedAccountIndex: Ref<number>;
 
   accountNameFor: (address: AccountAddressT) => string;
   accountRenamed: (newName: string) => void;
@@ -148,6 +149,20 @@ export default function useWallet (radix: RadixT, router: Router): useWalletInte
     radix.activeAddress
   )
 
+  const fetchAccountsForNetwork = (network: Network) => {
+    getDerivedAccountsIndex(network)
+      .then((accountsIndex: string) => {
+        derivedAccountIndex.value = Number(accountsIndex)
+        if (accountsIndex) {
+          firstValueFrom(radix.restoreLocalHDAccountsToIndex(Number(accountsIndex) + 1))
+            .then((accountsRes: AccountsT) => { accounts.value = accountsRes })
+        } else {
+          saveDerivedAccountsIndex(0, network)
+        }
+      })
+    getHardwareWalletAddress(network).then(a => { hardwareAddress.value = a; console.log(a, network) })
+  }
+
   const waitUntilAllLoaded = async () => firstValueFrom(allLoadedObservable)
 
   const reloadSubscriptions = () => reloadTrigger.next(Math.random())
@@ -165,34 +180,37 @@ export default function useWallet (radix: RadixT, router: Router): useWalletInte
       .pipe(switchMap(() => radix.activeAddress))
       .subscribe((addressRes: AccountAddressT) => { activeAddress.value = addressRes }))
 
-    reloadSubscriptions()
-
-    getDerivedAccountsIndex()
-      .then((accountsIndex: string) => {
-        if ((Number(accountsIndex)) > 0) {
-          radix.restoreLocalHDAccountsToIndex(Number(accountsIndex) + 1)
-            .subscribe(
-              (accountsRes: AccountsT) => { accounts.value = accountsRes })
-        } else {
-          saveDerivedAccountsIndex(0)
-        }
+    const networkObserver = reloadTrigger.asObservable()
+      .pipe(switchMap(() => radix.ledger.networkId()))
+      .subscribe((network: Network) => {
+        activeNetwork.value = network
+        fetchAccountsForNetwork(network)
       })
 
+    subs.add(networkObserver)
+
+    reloadSubscriptions()
     getAccountNames().then((names) => {
       accountNames.value = names
     })
   }
 
   const addAccount = () => {
-    getDerivedAccountsIndex()
+    if (!activeNetwork.value) return
+    getDerivedAccountsIndex(activeNetwork.value)
       .then((index: string) => {
-        saveDerivedAccountsIndex(Number(index) + 1)
+        if (!activeNetwork.value) return
+        saveDerivedAccountsIndex(Number(index) + 1, activeNetwork.value)
         radix.deriveNextAccount({ alsoSwitchTo: true })
       })
   }
 
   const switchAccount = (account: AccountT) => {
     radix.switchAccount({ toAccount: account })
+    if (activeNetwork.value) {
+      fetchAccountsForNetwork(activeNetwork.value)
+    }
+    reloadSubscriptions()
   }
 
   const accountNameFor = (accountAddress: AccountAddressT): string => {
@@ -238,8 +256,8 @@ export default function useWallet (radix: RadixT, router: Router): useWalletInte
       next: (hwAccount: AccountT) => {
         activeAccount.value = hwAccount
         hardwareAccount.value = hwAccount
-        if (!hardwareAddress.value) {
-          saveHardwareWalletAddress(hwAccount.address.toString())
+        if (!hardwareAddress.value && activeNetwork.value) {
+          saveHardwareWalletAddress(hwAccount.address.toString(), activeNetwork.value)
           saveAccountName(hwAccount.address.toString(), 'Hardware Wallet')
           hardwareAddress.value = hwAccount.address.toString()
         }
@@ -258,7 +276,9 @@ export default function useWallet (radix: RadixT, router: Router): useWalletInte
   }
 
   const deleteLocalHardwareAddress = () => {
-    deleteHardwareWalletAddress()
+    if (activeNetwork.value) {
+      deleteHardwareWalletAddress(activeNetwork.value)
+    }
     hardwareAddress.value = ''
     showDeleteHWWalletPrompt.value = false
     hardwareAccount.value = null
@@ -302,6 +322,8 @@ export default function useWallet (radix: RadixT, router: Router): useWalletInte
     accounts,
     activeAccount,
     activeAddress,
+    activeNetwork,
+    derivedAccountIndex,
     hardwareAccount,
     hardwareAddress,
     hardwareError,

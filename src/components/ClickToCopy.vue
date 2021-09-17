@@ -8,11 +8,11 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, toRefs } from 'vue'
 import { copyToClipboard } from '@/actions/vue/create-wallet'
 import { useToast } from 'vue-toastification'
-import { getHardwareWalletAddress } from '@/actions/vue/data-store'
-
+import { useRadix, useWallet } from '@/composables'
+import { useRouter } from 'vue-router'
 const ClickToCopy = defineComponent({
 
   props: {
@@ -27,31 +27,24 @@ const ClickToCopy = defineComponent({
     }
   },
 
-  setup () {
+  setup (props) {
     const toast = useToast()
-    return { toast }
-  },
-
-  methods: {
-    copyText () {
-      if (this.checkForHardwareAddress) {
-        getHardwareWalletAddress().then(a => {
-          const hardwareAddress = a
-          if (hardwareAddress && this.address === hardwareAddress) {
-            this.$emit('verifyHardwareAddress')
-          } else {
-            copyToClipboard(this.address)
-            this.toast.success('Copied to Clipboard')
-          }
-        })
-      } else {
-        copyToClipboard(this.address)
-        this.toast.success('Copied to Clipboard')
+    const { radix } = useRadix()
+    const router = useRouter()
+    const { hardwareAddress, verifyHardwareWalletAddress } = useWallet(radix, router)
+    const { address, checkForHardwareAddress } = toRefs(props)
+    const copyText = () => {
+      if (checkForHardwareAddress) {
+        if (hardwareAddress.value && address.value === hardwareAddress.value) {
+          verifyHardwareWalletAddress()
+        } else {
+          copyToClipboard(address.value)
+          toast.success('Copied to Clipboard')
+        }
       }
     }
-  },
-
-  emits: ['verifyHardwareAddress']
+    return { copyText }
+  }
 })
 
 export default ClickToCopy
