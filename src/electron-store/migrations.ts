@@ -1,25 +1,24 @@
 const migrations = {
   '0.0.1': (store: Record<string, any>) => {
-    store.set('debugPhase', true);
+    store.set('debugPhase', true)
   },
   '1.1.1': (store: Record<string, any>) => {
-    store.delete('debugPhase');
+    store.delete('debugPhase')
 
     // Allow users to switch between STOKENET and MAINNET while using the app. Users should have
     // a derivedAccountsIndex and hardwareAddress unique to each network
-    store.set('phase', '1.1.1');
+    store.set('phase', '1.1.1')
 
-    const currentNetwork = process.env.VUE_APP_NETWORK_NAME
-    const otherNetwork = process.env.VUE_APP_NETWORK_NAME === 'MAINNET' ? 'STOKENET' : 'MAINNET'
     const derivedAccountsIndex = store.get('derivedAccountsIndex')
     const hardwareAddress = store.get('hardwareAddress')
 
-    // Nest derivedAccountsIndex and hardwareAddress values under current network
-    store.set(`wallets.${currentNetwork}.derivedAccountsIndex`, derivedAccountsIndex)
-    store.set(`wallets.${currentNetwork}.hardwareAddress`, hardwareAddress)
+    store.set('wallets.MAINNET.derivedAccountsIndex', derivedAccountsIndex)
+    store.set('wallets.STOKENET.derivedAccountsIndex', '0')
 
-    // Set other network to have an index of 0
-    store.set(`wallets.${otherNetwork}.derivedAccountsIndex`, 0)
+    if (hardwareAddress) {
+      const network = hardwareAddress.startsWith('rdx') ? 'MAINNET' : 'STOKENET'
+      store.set(`wallets.${network}.hardwareAddress`, hardwareAddress)
+    }
 
     // Remove old configuration
     store.delete('derivedAccountsIndex')
