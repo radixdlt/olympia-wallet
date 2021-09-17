@@ -23,7 +23,7 @@ import { computed, ComputedRef, defineComponent, onUnmounted, Ref, watch } from 
 import AppRadioIndicator from '@/components/AppRadioIndicator.vue'
 import IconRadixLogo from '@/components/IconRadixLogo.vue'
 import { useToast } from 'vue-toastification'
-import { useConnectableRadix, useRadix, useWallet } from '@/composables'
+import { useConnectableRadix, useWallet } from '@/composables'
 import { useRouter } from 'vue-router'
 import { ref } from '@nopr3d/vue-next-rx'
 import { AccountT } from '@radixdlt/application'
@@ -49,12 +49,11 @@ export default defineComponent({
   setup (props) {
     const toast = useToast()
     const router = useRouter()
-    const { radix, network, updateConnection, setSwitching } = useRadix()
-    const { accounts, persistNodeUrl, switchAccount, reloadSubscriptions } = useWallet(radix, router)
+    const { activeNetwork, updateConnection, setSwitching, accounts, persistNodeUrl, switchAccount, reloadSubscriptions } = useWallet(router)
     const { connected, loading, networkId, testConnection, cleanupSubscriptions } = useConnectableRadix()
     const updatedConnection: Ref<boolean> = ref(false)
 
-    const isActive: ComputedRef<boolean> = computed(() => network.value === networkId.value)
+    const isActive: ComputedRef<boolean> = computed(() => activeNetwork.value ? activeNetwork.value === networkId.value : false)
 
     const handleSelectNode = () => {
       if (!connected.value) {

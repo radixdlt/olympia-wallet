@@ -80,14 +80,15 @@
 
 <script lang="ts">
 import { Token, UnstakePosition, Validator, Amount, AmountT, StakePosition } from '@radixdlt/application'
-import { computed, ComputedRef, defineComponent, PropType, Ref, ref } from 'vue'
+import { computed, ComputedRef, defineComponent, PropType, Ref, ref, toRef } from 'vue'
 import BigAmount from '@/components/BigAmount.vue'
 import ClickToCopy from '@/components/ClickToCopy.vue'
-import { Subscription } from 'rxjs'
+import { firstValueFrom } from 'rxjs'
 import { formatValidatorAddressForDisplay } from '@/helpers/formatter'
 import { Position } from '@/services/_types'
 import Tooltip from '@/components/Tooltip.vue'
-import { useRadix } from '@/composables'
+import { useWallet } from '@/composables'
+import { useRouter } from 'vue-router'
 
 const StakeListItem = defineComponent({
   components: {
@@ -113,12 +114,12 @@ const StakeListItem = defineComponent({
 
   setup (props) {
     const validator: Ref<Validator | null> = ref(null)
-    const { radix } = useRadix()
-    const subs = new Subscription()
+    const router = useRouter()
+    const { radix } = useWallet(router)
 
-    subs
-      .add(radix.ledger.lookupValidator(props.position.validator)
-        .subscribe((validatorRes: Validator) => { validator.value = validatorRes }))
+    const position = toRef(props, 'position')
+
+    firstValueFrom(radix.ledger.lookupValidator(position.value.validator)).then((validatorRes: Validator) => { validator.value = validatorRes })
 
     const explorerUrl: ComputedRef<string> = computed(() =>
       validator.value ? `${props.explorerUrlBase}/#/validators/${validator.value.address.toString()}` : `${props.explorerUrlBase}/#/validators/`
