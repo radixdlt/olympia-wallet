@@ -75,13 +75,18 @@ const HomeEnterPasscode = defineComponent({
     const handleSubmit = () => {
       isAuthenticating.value = true
       loginWithWallet(values.password).then((client) => {
+        isAuthenticating.value = false
         return firstValueFrom(client.ledger.networkId())
       }).then((network) => {
+        router.push('/wallet')
         setNetwork(network)
         isAuthenticating.value = false
-        router.push('/wallet')
         walletLoaded()
-      }).catch(() => {
+      }).catch((error) => {
+        console.log('caught something', error)
+        if (error.cause === 'NETWORK_ID_FAILED') {
+          router.push('/wallet/settings')
+        }
         isAuthenticating.value = false
         setErrors({
           password: t('validations.incorrectPassword')
