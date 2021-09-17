@@ -13,8 +13,8 @@
     </div>
 
     <account-list-item
-      v-for="(account, i) in localAccounts"
-      :key="i"
+      v-for="account in localAccounts"
+      :key="account.address.toString()"
       :account="account"
       :activeAccount="activeAccount"
       :shouldShowEdit="true"
@@ -107,6 +107,8 @@ const WalletSidebarAccounts = defineComponent({
       connectHardwareWallet,
       hardwareAccount,
       hardwareAddress,
+      derivedAccountIndex,
+      activeNetwork,
       verifyHardwareWalletAddress
     } = useWallet(radix, router)
     const { setState } = useSidebar()
@@ -128,6 +130,8 @@ const WalletSidebarAccounts = defineComponent({
     return {
       accounts,
       activeAccount,
+      derivedAccountIndex,
+      activeNetwork,
       hardwareAccount,
       hardwareAddress,
       showHardwareHelper,
@@ -137,7 +141,6 @@ const WalletSidebarAccounts = defineComponent({
       addAccount,
       switchAccount,
       debugSwitch (account: AccountT) {
-        console.log(account)
         switchAccount(account)
       },
       editName (account: AccountT) {

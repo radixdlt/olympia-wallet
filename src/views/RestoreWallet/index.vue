@@ -103,7 +103,7 @@ const RestoreWallet = defineComponent({
     const createWallet = (pass: string) => {
       initWallet(mnemonic.value, pass, Network.MAINNET)
         .then(() => {
-          saveDerivedAccountsIndex(0)
+          saveDerivedAccountsIndex(0, Network.MAINNET)
           step.value = 2
           passcode.value = pass
         })

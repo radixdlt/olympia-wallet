@@ -25,12 +25,13 @@ export const getAccountNames = (): AccountName[] => {
   return asAccounts
 }
 
-export const saveDerivedAccountsIndex = (event: IpcMainInvokeEvent, num: string) => {
-  return store.set('derivedAccountsIndex', num)
+export const saveDerivedAccountsIndex = (event: IpcMainInvokeEvent, data: string): void => {
+  const { num, network } = JSON.parse(data)
+  store.set(`wallets.${network}.derivedAccountsIndex`, num)
 }
 
-export const getDerivedAccountsIndex = (event: IpcMainInvokeEvent) => {
-  return store.get('derivedAccountsIndex')
+export const getDerivedAccountsIndex = (event: IpcMainInvokeEvent, network: string) => {
+  return store.get(`wallets.${network}.derivedAccountsIndex`)
 }
 
 export const saveHardwareAddress = (event: IpcMainInvokeEvent, address: string) => {
