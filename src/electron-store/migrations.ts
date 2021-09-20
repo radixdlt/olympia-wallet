@@ -1,9 +1,15 @@
 const migrations = {
   '0.0.1': (store: Record<string, any>) => {
     store.set('debugPhase', true)
+    store.set('seed', '')
+    store.set('pin', '')
+    store.set('account', {})
+    store.set('derivedAccountsIndex', '0')
+    store.set('hardwareAddress', '')
   },
   '1.1.1': (store: Record<string, any>) => {
     store.delete('debugPhase')
+    store.set('selectedNode', '')
 
     // Allow users to switch between STOKENET and MAINNET while using the app. Users should have
     // a derivedAccountsIndex and hardwareAddress unique to each network
