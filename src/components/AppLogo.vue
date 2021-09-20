@@ -2,6 +2,8 @@
   <div class="inline-flex flex-row items-end">
     <img alt="Radix DLT Logo" src="../assets/logo.svg" class="w-30 mr-3">
     <div v-if="lowercaseNetwork" class="bg-rGrayMed px-1.5 py-px text-xxs text-rGray rounded font-bold capitalize -mb-px">{{ lowercaseNetwork }}</div>
+    <div v-else class="bg-rRed px-1.5 py-px text-xxs text-white rounded font-bold capitalize -mb-px">Disconnected</div>
+
   </div>
 </template>
 

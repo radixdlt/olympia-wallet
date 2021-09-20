@@ -46,7 +46,7 @@ import ButtonSubmit from '@/components/ButtonSubmit.vue'
 import { useI18n } from 'vue-i18n'
 import { ref } from '@nopr3d/vue-next-rx'
 import { useRouter } from 'vue-router'
-import { useWallet } from '@/composables'
+import { useSettingsTab, useWallet } from '@/composables'
 import { firstValueFrom } from 'rxjs'
 
 interface PasswordForm {
@@ -65,7 +65,8 @@ const HomeEnterPasscode = defineComponent({
     const { errors, values, meta, setErrors } = useForm<PasswordForm>()
     const { t } = useI18n({ useScope: 'global' })
     const router = useRouter()
-    const { setNetwork, loginWithWallet, walletLoaded } = useWallet(router)
+    const { setConnected, setNetwork, loginWithWallet, walletLoaded } = useWallet(router)
+    const { setTab } = useSettingsTab()
 
     const disableSubmit: ComputedRef<boolean> = computed(() => {
       const metaIsDirty = meta.value.dirty ? !meta.value.valid : true
@@ -83,8 +84,9 @@ const HomeEnterPasscode = defineComponent({
         isAuthenticating.value = false
         walletLoaded()
       }).catch((error) => {
-        console.log('caught something', error)
+        setConnected(false)
         if (error.cause === 'NETWORK_ID_FAILED') {
+          setTab('nodes')
           router.push('/wallet/settings')
         }
         isAuthenticating.value = false

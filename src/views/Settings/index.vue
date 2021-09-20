@@ -2,25 +2,25 @@
   <div class="bg-rGrayLightest p-5 flex-1 overflow-y-auto">
     <div class="flex flex-col">
       <div class="flex flex-row">
-        <tabs-tab :isActive="activeForm == 'password'" @click="() => handleClickTab('password')">Change Password</tabs-tab>
-        <tabs-tab :isActive="activeForm == 'pin'" @click="() => handleClickTab('pin')">Change PIN</tabs-tab>
-        <tabs-tab :isActive="activeForm == 'mnemonic'" @click="() => handleClickTab('mnemonic')">Reveal Seed Phrase</tabs-tab>
-        <tabs-tab :isActive="activeForm == 'nodes'" @click="() => handleClickTab('nodes')">Choose Node/Network</tabs-tab>
+        <tabs-tab :isActive="activeTab === 'password'" @click="() => handleClickTab('password')">Change Password</tabs-tab>
+        <tabs-tab :isActive="activeTab === 'pin'" @click="() => handleClickTab('pin')">Change PIN</tabs-tab>
+        <tabs-tab :isActive="activeTab === 'mnemonic'" @click="() => handleClickTab('mnemonic')">Reveal Seed Phrase</tabs-tab>
+        <tabs-tab :isActive="activeTab === 'nodes'" @click="() => handleClickTab('nodes')">Choose Node/Network</tabs-tab>
       </div>
-      <tabs-content :leftTabIsActive="activeForm == 'password'">
+      <tabs-content :leftTabIsActive="activeTab === 'password'">
         <settings-reset-password
-          v-if="activeForm == 'password'"
+          v-if="activeTab === 'password'"
         />
         <settings-reset-pin
-          v-if="activeForm == 'pin'"
+          v-if="activeTab === 'pin'"
         />
         <settings-reveal-mnemonic
-          v-if="activeForm == 'mnemonic'"
+          v-if="activeTab === 'mnemonic'"
           @clickAccessMnemonic="handleAccessMnemonic"
           :mnemonic="mnemonic"
         />
          <settings-select-node
-          v-if="activeForm == 'nodes'"
+          v-if="activeTab === 'nodes'"
         />
       </tabs-content>
     </div>
@@ -38,7 +38,7 @@ import SettingsRevealMnemonic from './SettingsRevealMnemonic.vue'
 import SettingsResetPassword from './SettingsResetPassword.vue'
 import SettingsSelectNode from './SettingsSelectNode.vue'
 import { Ref, ref } from '@nopr3d/vue-next-rx'
-import { useWallet } from '@/composables'
+import { useSettingsTab, useWallet } from '@/composables'
 import { useRouter } from 'vue-router'
 const SettingsIndex = defineComponent({
   components: {
@@ -54,9 +54,9 @@ const SettingsIndex = defineComponent({
     const subs = new Subscription()
     const mnemonic: Ref<MnemomicT | null> = ref(null)
     const userRequestedMnemonic = new Subject<boolean>()
-    const activeForm: Ref<string> = ref('password')
     const router = useRouter()
     const { radix } = useWallet(router)
+    const { activeTab, setTab } = useSettingsTab()
 
     // Only fetch mnemonic if user confirms pin
     const watchUserDidRequstMnemonic = combineLatest<[MnemomicT, boolean]>([radix.revealMnemonic(), userRequestedMnemonic])
@@ -74,7 +74,7 @@ const SettingsIndex = defineComponent({
         mnemonic.value = null
         unsetMnemonic()
       }
-      activeForm.value = tab
+      setTab(tab)
     }
 
     onUnmounted(() => subs.unsubscribe())
@@ -84,7 +84,8 @@ const SettingsIndex = defineComponent({
       handleAccessMnemonic,
       unsetMnemonic,
       handleClickTab,
-      activeForm
+      activeTab,
+      setTab
     }
   }
 })

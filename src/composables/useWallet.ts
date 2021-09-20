@@ -41,11 +41,6 @@ import { HardwareWalletLedger } from '@radixdlt/hardware-ledger'
 
 const radix: RadixT = Radix.create()
 
-radix.errors
-  .subscribe((error: ErrorT<'wallet'>) => {
-    console.log(error)
-  })
-
 export type WalletError = ErrorT<ErrorCategory.WALLET>
 
 const accountNames: Ref<AccountName[]> = ref([])
@@ -70,9 +65,10 @@ const signingKeychain: Ref<SigningKeychainT | null> = ref(null)
 const switching = ref(false)
 const wallet: Ref<WalletT | null> = ref(null)
 
-watch(accounts, () => {
-  console.log('accounts changed', accounts.value)
-})
+radix.errors
+  .subscribe((error: ErrorT<'wallet'>) => {
+    console.log(error)
+  })
 
 const setWallet = (newWallet: WalletT) => {
   wallet.value = newWallet
@@ -132,12 +128,13 @@ interface useWalletInterface {
   reset: () => void;
   resetWallet: (nextRoute: 'create-wallet' | 'restore-wallet') => void;
   setDeleteHWWalletPrompt: (val: boolean) => void;
+  setConnected: (value: boolean) => void;
   setNetwork: (network: Network) => void;
   setPin: (pin: string) => Promise<string>;
   setSwitching: (value: boolean) => void;
   setWallet: (newWallet: WalletT) => WalletT;
   switchAccount: (account: AccountT) => void;
-  updateConnection: (n: string) => Promise<void>;
+  updateConnection: (n: string) => Promise<Network>;
   verifyHardwareWalletAddress: () => void;
   waitUntilAllLoaded: () => Promise<any>;
   walletLoaded: () => void;
@@ -421,11 +418,12 @@ export default function useWallet (router: Router): useWalletInterface {
     setDeleteHWWalletPrompt,
     setPin,
     setWallet,
+    setConnected: (val: boolean) => { connected.value = val },
     switchAccount,
     verifyHardwareWalletAddress,
     waitUntilAllLoaded,
     walletLoaded,
-    async updateConnection (url: string): Promise<void> {
+    async updateConnection (url: string): Promise<Network> {
       switching.value = true
       subs.unsubscribe()
       await radix.connect(url)
@@ -436,6 +434,7 @@ export default function useWallet (router: Router): useWalletInterface {
       initWallet()
       persistNodeUrl(url)
       switching.value = false
+      return network
     },
 
     setNetwork (network: Network) {
