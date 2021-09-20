@@ -9,7 +9,7 @@
             <click-to-copy
               :address="activeAddress.toString()"
               :checkForHardwareAddress=true
-              @verifyHardwareAddress="$emit('verifyHardwareAddress')"
+              @verifyHardwareAddress="verifyHardwareAddress()"
             />
           </div>
         </div>
@@ -154,7 +154,7 @@ const WalletTransaction = defineComponent({
   setup () {
     const { errors, values, meta, setErrors, resetForm } = useForm<TransactionForm>()
     const router = useRouter()
-    const { activeAddress, activeAccount, hardwareAccount, hardwareAccountFailedToSign, networkPreamble, radix } = useWallet(router)
+    const { activeAddress, activeAccount, hardwareAccount, hardwareAccountFailedToSign, networkPreamble, radix, verifyHardwareWalletAddress } = useWallet(router)
 
     const { transactionErrorMessage, transferTokens, transactionUnsub } = useTransactions(radix, router, activeAccount.value, hardwareAccount.value, {
       ledgerSigningError: () => {
@@ -250,6 +250,7 @@ const WalletTransaction = defineComponent({
       activeAddress,
       disableSubmit,
       loadedAllData,
+      verifyHardwareWalletAddress,
       handleSubmit () {
         if (!meta.value.valid || !selectedCurrency.value) return false
         const safeAddress = safelyUnwrapAddress(values.recipient, networkPreamble.value)
@@ -291,9 +292,7 @@ const WalletTransaction = defineComponent({
         }
       }
     }
-  },
-
-  emits: ['verifyHardwareAddress']
+  }
 })
 
 export default WalletTransaction

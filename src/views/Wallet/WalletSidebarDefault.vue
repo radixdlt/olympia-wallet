@@ -117,9 +117,7 @@ const WalletSidebarDefault = defineComponent({
     isOverview: function (): boolean {
       return this.route.path === '/wallet'
     }
-  },
-
-  emits: ['setView', 'openHelp', 'connectHW']
+  }
 })
 
 export default WalletSidebarDefault
