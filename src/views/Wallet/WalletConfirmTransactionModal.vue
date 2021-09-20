@@ -65,7 +65,7 @@
             <div class="w-26 text-right text-rGrayDark mr-6">{{ $t('transaction.amountLabel') }}</div>
             <div class="flex-1 flex flex-row items-center">
               <big-amount :amount="amount" class="mr-1" />
-              <span class="uppercase">{{ selectedCurrency.token.symbol }}</span>
+              <span class="uppercase">{{ nativeToken.symbol }}</span>
             </div>
           </div>
 
@@ -178,7 +178,6 @@ const WalletConfirmTransactionModal = defineComponent({
       cancelTransaction,
       confirmationMode,
       confirmTransaction,
-      selectedCurrency,
       stakeInput,
       transactionFee,
       transactionState,
@@ -284,7 +283,6 @@ const WalletConfirmTransactionModal = defineComponent({
       nativeToken,
       pinAttempts,
       resetForm,
-      selectedCurrency,
       setErrors,
       stakeInput,
       toContent,
