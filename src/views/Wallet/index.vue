@@ -1,6 +1,6 @@
 <template>
   <div data-ci="wallet-view" class="flex flex-row h-screen relative">
-    <wallet-sidebar v-if="activeNetwork" />
+    <wallet-sidebar/>
 
     <div class="flex flex-col w-full">
       <router-view v-if="walletLoaded"/>
