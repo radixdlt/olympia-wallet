@@ -83,6 +83,7 @@ const createWallet = (mnemonic: MnemomicT, pass: string, network: Network) => {
   newWalletPromise.then((newWallet: WalletT) => {
     setWallet(newWallet)
     saveDerivedAccountsIndex(0, network)
+    persistNodeUrl('https://mainnet.radixdlt.com')
   })
 
   return newWalletPromise
