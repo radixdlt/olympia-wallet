@@ -17,6 +17,8 @@ import {
   resetStore,
   persistNodeSelection,
   fetchSelectedNode,
+  persistCustomNodeURL,
+  fetchCustomNodeURLs
 } from './actions/electron/data-store'
 import { sendAPDU } from './actions/electron/hardware-wallet'
 import menu from './menu'
@@ -119,6 +121,9 @@ ipcMain.handle('send-apdu', sendAPDU)
 ipcMain.handle('reset-store', resetStore)
 ipcMain.handle('persist-node-selection', persistNodeSelection)
 ipcMain.handle('fetch-selected-node', fetchSelectedNode)
+ipcMain.handle('persist-custom-node-url', persistCustomNodeURL)
+ipcMain.handle('fetch-custom-node-urls', fetchCustomNodeURLs)
+
 // Exit cleanly on request from parent process in development mode.
 if (isDevelopment) {
   if (process.platform === 'win32') {
