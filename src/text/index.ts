@@ -199,7 +199,8 @@ const messages = {
       nodeAddressLabel: 'Archive Node Address',
       nodeNetworkLabel: 'Network',
       addCustomNodeLabel: 'Add Custom Node Address:',
-      addNodeButton: 'add node'
+      addNodeButton: 'add node',
+      confirm: 'Confirm'
     },
     errors: {
       hardwareMismatchTitle: 'Hardware Wallet Account Mismatch',

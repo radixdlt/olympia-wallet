@@ -49,7 +49,7 @@
     </pin-input>
 
     <ButtonSubmit class="w-72 mx-auto mt-8" :disabled="disableSubmit">
-      {{ $t('transaction.confirmButton') }}
+      {{ $t('settings.confirm') }}
     </ButtonSubmit>
     <div v-if="updatedPin" class="text-rGrayDark text-sm mt-4">
       {{ $t('settings.updatedPIN') }}
