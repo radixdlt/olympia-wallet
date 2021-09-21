@@ -2,9 +2,9 @@
   <div class="bg-rGrayLightest p-5 flex-1 overflow-y-auto">
     <div class="flex flex-col">
       <div class="flex flex-row">
-        <tabs-tab :isActive="activeTab === 'password'" @click="() => handleClickTab('password')">Change Password</tabs-tab>
+        <tabs-tab :isActive="activeTab === 'password'" @click="() => handleClickTab('password')" :isDisabled="!connected">Change Password</tabs-tab>
         <tabs-tab :isActive="activeTab === 'pin'" @click="() => handleClickTab('pin')">Change PIN</tabs-tab>
-        <tabs-tab :isActive="activeTab === 'mnemonic'" @click="() => handleClickTab('mnemonic')">Reveal Seed Phrase</tabs-tab>
+        <tabs-tab :isActive="activeTab === 'mnemonic'" @click="() => handleClickTab('mnemonic')" :isDisabled="!connected">Reveal Seed Phrase</tabs-tab>
         <tabs-tab :isActive="activeTab === 'nodes'" @click="() => handleClickTab('nodes')">Choose Node/Network</tabs-tab>
       </div>
       <tabs-content :leftTabIsActive="activeTab === 'password'">
@@ -55,7 +55,7 @@ const SettingsIndex = defineComponent({
     const mnemonic: Ref<MnemomicT | null> = ref(null)
     const userRequestedMnemonic = new Subject<boolean>()
     const router = useRouter()
-    const { radix } = useWallet(router)
+    const { connected, radix } = useWallet(router)
     const { activeTab, setTab } = useSettingsTab()
 
     // Only fetch mnemonic if user confirms pin
@@ -80,6 +80,7 @@ const SettingsIndex = defineComponent({
     onUnmounted(() => subs.unsubscribe())
 
     return {
+      connected,
       mnemonic,
       handleAccessMnemonic,
       unsetMnemonic,

@@ -385,7 +385,7 @@ export default function useWallet (router: Router): useWalletInterface {
       signingKeychain.value = signingKeychainResult._unsafeUnwrap()
 
       const url = await fetchSavedNodeUrl(signingKeychain.value)
-      radix.connect(url)
+      radix.connect(url).then(() => { connected.value = true })
       const client = await radix.login(password, touchKeystore)
       nodeUrl.value = url
       initWallet()
