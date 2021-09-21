@@ -33,13 +33,11 @@ const ClickToCopy = defineComponent({
     const { hardwareAddress, verifyHardwareWalletAddress } = useWallet(router)
     const { address, checkForHardwareAddress } = toRefs(props)
     const copyText = () => {
-      if (checkForHardwareAddress) {
-        if (hardwareAddress.value && address.value === hardwareAddress.value) {
-          verifyHardwareWalletAddress()
-        } else {
-          copyToClipboard(address.value)
-          toast.success('Copied to Clipboard')
-        }
+      if (checkForHardwareAddress.value && hardwareAddress.value && address.value === hardwareAddress.value) {
+        verifyHardwareWalletAddress()
+      } else {
+        copyToClipboard(address.value)
+        toast.success('Copied to Clipboard')
       }
     }
     return { copyText }
