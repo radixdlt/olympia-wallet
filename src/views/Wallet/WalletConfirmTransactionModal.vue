@@ -13,7 +13,7 @@
           </div>
           <button
             class="text-rGrayDark py-4 px-4 text-sm mx-auto mt-4"
-            @click="canCancel && $emit('cancel')"
+            @click="canCancel && closeModal()"
           >
             {{ $t('transaction.cancelButton') }}
           </button>
@@ -115,7 +115,7 @@
           <div class="flex justify-end items-center">
             <div
               class="text-rGrayDark py-3 px-4 text-base mx-auto mr-4 cursor-pointer"
-              @click="canCancel && $emit('cancel')"
+              @click="canCancel && closeModal()"
             >
               {{ $t('transaction.cancelButton') }}
             </div>
@@ -195,6 +195,10 @@ const WalletConfirmTransactionModal = defineComponent({
       }
     }
 
+    const closeModal = () => {
+      cancelTransaction()
+    }
+
     onMounted(() => {
       window.addEventListener('keydown', escapeListener)
     })
@@ -271,6 +275,7 @@ const WalletConfirmTransactionModal = defineComponent({
       activeMessageInTransaction,
       amount,
       canCancel,
+      closeModal,
       confirmationMode,
       disableSubmit,
       errors,
