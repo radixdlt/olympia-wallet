@@ -76,13 +76,7 @@ export default defineComponent({
         toast.error('Invalid network, unable to connect')
         return
       }
-      updateConnection(props.url).then((network) => {
-        updatedConnection.value = true
-        toast.success(`Switched to new node: ${network}`)
-      }).catch(() => {
-        setSwitching(false)
-        toast.error('Unable to connect to node')
-      })
+      emit('select', props.url)
     }
 
     // watch connection updated and addresses. if updated, switch to [0] account
@@ -120,6 +114,6 @@ export default defineComponent({
       }
     }
   },
-  emits: ['refresh']
+  emits: ['refresh', 'select']
 })
 </script>
