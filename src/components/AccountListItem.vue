@@ -34,10 +34,9 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, watchEffect, toRef, computed, ComputedRef } from 'vue'
+import { defineComponent, PropType, toRef, computed, ComputedRef } from 'vue'
 import { AccountT } from '@radixdlt/application'
 import ClickToCopy from '@/components/ClickToCopy.vue'
-import { ref } from '@nopr3d/vue-next-rx'
 import { formatWalletAddressForDisplay } from '@/helpers/formatter'
 import { useWallet, useSidebar } from '@/composables'
 import { useRouter } from 'vue-router'
@@ -72,7 +71,7 @@ const AccountListItem = defineComponent({
       router.push('/wallet/account-edit-name')
     }
 
-    const address = account.value.address.toString()
+    const address: ComputedRef<string> = computed(() => account.value.address.toString())
     const displayAddress: ComputedRef<string> = computed(() => formatWalletAddressForDisplay(account.value.address))
 
     const isActiveAccount: ComputedRef<boolean> = computed(() => {
