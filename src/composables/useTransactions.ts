@@ -147,7 +147,6 @@ export default function useTransactions (radix: RadixT, router: Router, activeAc
     historyPagination.asObservable(),
     interval(5 * 1_000)
   ])
-
   let tries = 0
   // Fetch history when user navigates to next page
   const historySub = fetchTXHistoryTrigger
@@ -155,12 +154,12 @@ export default function useTransactions (radix: RadixT, router: Router, activeAc
       mergeMap(([params]: [TransactionHistoryOfKnownAddressRequestInput, number]) =>
         radix.transactionHistory(params).pipe(
           retryWhen(error => error.pipe(
-            tap(_ => tries++),
-            delayWhen(_ => timer(100 * 2 ** tries)),
+            tap(() => tries++),
+            delayWhen(() => timer(100 * 2 ** tries)),
             take(1),
             catchError(e => of(e))
           )),
-          tap(_ => tries = 0)
+          tap(() => { tries = 0 })
         )
       )
     )
