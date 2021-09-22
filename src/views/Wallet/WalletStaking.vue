@@ -101,7 +101,7 @@
 
 <script lang="ts">
 import { StakePosition, UnstakePosition, AccountAddressT, Amount, AmountT } from '@radixdlt/application'
-import { computed, defineComponent, Ref, ref, ComputedRef } from 'vue'
+import { computed, defineComponent, Ref, ref, ComputedRef, watch } from 'vue'
 import { useForm } from 'vee-validate'
 import StakeListItem from '@/components/StakeListItem.vue'
 import { safelyUnwrapAmount, safelyUnwrapValidator, validateAmountOfType, validateGreaterThanZero } from '@/helpers/validateRadixTypes'
@@ -145,7 +145,7 @@ const WalletStaking = defineComponent({
       radix
     } = useWallet(router)
 
-    const { stakeTokens, unstakeTokens, transactionUnsub } = useTransactions(radix, router, activeAccount.value, hardwareAccount.value, {
+    const { stakeTokens, unstakeTokens, transactionUnsub, setActiveTransactionForm, transactionErrorMessage } = useTransactions(radix, router, activeAccount.value, hardwareAccount.value, {
       ledgerSigningError: () => {
         hardwareAccountFailedToSign()
       }
@@ -162,10 +162,20 @@ const WalletStaking = defineComponent({
       transactionUnsub()
     })
 
+    // default active form is stake
+    setActiveTransactionForm('stake')
+
     const setForm = (form: string) => {
       activeForm.value = form
+      setActiveTransactionForm(form)
       resetForm()
     }
+
+    watch(transactionErrorMessage, (val) => {
+      if (val) {
+        setErrors({ amount: t(val) })
+      }
+    })
 
     // Computed Values
     const xrdBalance: ComputedRef<AmountT> = computed(() => {
@@ -227,11 +237,13 @@ const WalletStaking = defineComponent({
     // Methods
     const handleAddToValidator = (validator: AccountAddressT) => {
       activeForm.value = 'stake'
+      setActiveTransactionForm('stake')
       values.validator = validator.toString()
     }
 
     const handleReduceFromValidator = (validator: AccountAddressT) => {
       activeForm.value = 'unstake'
+      setActiveTransactionForm('unstake')
       values.validator = validator.toString()
     }
 

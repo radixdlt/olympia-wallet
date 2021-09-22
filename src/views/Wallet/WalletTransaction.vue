@@ -156,11 +156,13 @@ const WalletTransaction = defineComponent({
     const router = useRouter()
     const { activeAddress, activeAccount, hardwareAccount, hardwareAccountFailedToSign, networkPreamble, radix, verifyHardwareWalletAddress } = useWallet(router)
 
-    const { transactionErrorMessage, transferTokens, transactionUnsub } = useTransactions(radix, router, activeAccount.value, hardwareAccount.value, {
+    const { transactionErrorMessage, transferTokens, transactionUnsub, setActiveTransactionForm } = useTransactions(radix, router, activeAccount.value, hardwareAccount.value, {
       ledgerSigningError: () => {
         hardwareAccountFailedToSign()
       }
     })
+
+    setActiveTransactionForm('transaction')
 
     const { t } = useI18n({ useScope: 'global' })
     const { nativeToken, nativeTokenUnsub } = useNativeToken(radix)
