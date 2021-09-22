@@ -40,7 +40,7 @@
           <div class="flex flex-col gap-4">
             <p>
               Sorry, the Radix Desktop Wallet cannot currently connect to the Radix mainnet network.  Please check your
-              internet connection, or check our <a class="text-rBlue">network status page</a> for known connection issues.
+              internet connection, or check our <a class="text-rBlue" href="https://status.radixdlt.com">network status page</a> for known connection issues.
             </p>
             <p>
               If you have further problems, please contact us at <a class="text-rBlue" href="mailto:hello@radixdlt.com">hello@radixdlt.com</a>
