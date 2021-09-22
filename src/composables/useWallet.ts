@@ -103,6 +103,7 @@ interface useWalletInterface {
   readonly hardwareInteractionState: Ref<string>;
   readonly hasWallet: Ref<boolean>;
   readonly ledgerVerifyError: Ref<Error | null>;
+  readonly nodeUrl: ComputedRef<string | null>;
   readonly showDeleteHWWalletPrompt: Ref<boolean>;
   readonly showLedgerVerify: Ref<boolean>;
   readonly walletHasLoaded: ComputedRef<boolean>;
@@ -363,6 +364,7 @@ export default function useWallet (router: Router): useWalletInterface {
     hardwareInteractionState,
     hasWallet,
     ledgerVerifyError,
+    nodeUrl: computed(() => nodeUrl.value),
     showDeleteHWWalletPrompt,
     showLedgerVerify,
     connected: computed(() => connected.value),
@@ -427,6 +429,7 @@ export default function useWallet (router: Router): useWalletInterface {
       switching.value = true
       subs.unsubscribe()
       await radix.connect(url)
+      nodeUrl.value = url
       subs = new Subscription()
       const network = await firstValueFrom(radix.ledger.networkId())
       accounts.value = null

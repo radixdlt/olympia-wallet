@@ -10,7 +10,10 @@
       <span class="mr-4">{{ $t('settings.nodeAddressLabel') }}:</span>
       <a :href="url" target="_blank" class="text-rBlue`">{{ url }}</a>
     </div>
-    <div class="flex-grow-0 w-48">{{ $t('settings.nodeNetworkLabel')}}: <span class="text-rGreen uppercase">{{ networkId }}</span></div>
+    <div class="flex-grow-0 w-48">{{ $t('settings.nodeNetworkLabel')}}:
+      <span v-if="computedNetwork" class="text-rGreen uppercase"> {{ computedNetwork }}</span>
+      <span v-else class="border-t border-solid border-rGreen w-4 inline-block mb-1 ml-4"></span>
+    </div>
     <div class="w-16">
       <IconRadixLogo
         v-if="showRadixLogo"
@@ -52,17 +55,21 @@ export default defineComponent({
       type: Boolean,
       required: false,
       default: false
+    },
+    network: {
+      type: String,
+      required: false
     }
   },
 
   setup (props, { emit }) {
     const toast = useToast()
     const router = useRouter()
-    const { connected: activeConnection, activeNetwork, updateConnection, accounts, setSwitching, switchAccount } = useWallet(router)
+    const { connected: activeConnection, updateConnection, accounts, setSwitching, switchAccount, nodeUrl } = useWallet(router)
     const { connected, loading, networkId, testConnection, cleanupSubscriptions } = useConnectableRadix()
     const updatedConnection: Ref<boolean> = ref(false)
 
-    const isActive: ComputedRef<boolean> = computed(() => activeNetwork.value ? activeNetwork.value === networkId.value : false)
+    const isActive: ComputedRef<boolean> = computed(() => nodeUrl.value ? nodeUrl.value === props.url : false)
 
     const handleSelectNode = () => {
       if (activeConnection.value && !connected.value) {
@@ -87,6 +94,11 @@ export default defineComponent({
       }
     })
 
+    const computedNetwork: ComputedRef<string> = computed(() => {
+      if (props.network) return props.network
+      else return networkId.value || ''
+    })
+
     testConnection(props.url)
 
     onUnmounted(() => cleanupSubscriptions())
@@ -97,7 +109,7 @@ export default defineComponent({
       handleSelectNode,
       loading,
       connected,
-      networkId,
+      computedNetwork,
       forgetUrl: () => {
         forgetCustomNodeURL(props.url)
         emit('refresh')
