@@ -142,7 +142,7 @@ interface useWalletInterface {
 }
 
 const tokenBalanceTrigger = merge(
-  interval(5 * 1_000),
+  interval(15 * 1_000),
   reloadTrigger.asObservable()
 )
 
@@ -151,7 +151,7 @@ const walletLoaded = () => {
 
   radix
     .withTokenBalanceFetchTrigger(tokenBalanceTrigger)
-    .withStakingFetchTrigger(interval(5 * 1_000))
+    .withStakingFetchTrigger(interval(15 * 1_000))
 }
 const invalidPasswordError: Ref<WalletError | null> = ref(null)
 
