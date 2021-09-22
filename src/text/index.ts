@@ -200,7 +200,10 @@ const messages = {
       nodeNetworkLabel: 'Network',
       addCustomNodeLabel: 'Add Custom Node Address:',
       addNodeButton: 'add node',
-      confirm: 'Confirm'
+      confirm: 'Confirm',
+      switchingNetworks: 'Switching Networks...',
+      takesTooLong: 'If this takes more than a few seconds, ',
+      clickToRefresh: 'click here to refresh.'
     },
     errors: {
       hardwareMismatchTitle: 'Hardware Wallet Account Mismatch',
