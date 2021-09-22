@@ -144,7 +144,7 @@ export default function useTransactions (radix: RadixT, router: Router, activeAc
   // Fetch history when user navigates to next page and every 5 seconds
   const fetchTXHistoryTrigger = combineLatest<[TransactionHistoryOfKnownAddressRequestInput, number]>([
     historyPagination.asObservable(),
-    interval(5 * 1_000)
+    interval(15 * 1_000)
   ])
 
   // Fetch history when user navigates to next page
