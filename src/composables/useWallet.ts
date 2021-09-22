@@ -76,7 +76,7 @@ const setWallet = (newWallet: WalletT) => {
   return wallet.value
 }
 
-let subs = new Subscription()
+const subs = new Subscription()
 
 const createWallet = (mnemonic: MnemomicT, pass: string, network: Network) => {
   const newWalletPromise = createNewWallet(mnemonic, pass, network)
