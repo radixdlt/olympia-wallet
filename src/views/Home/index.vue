@@ -35,15 +35,30 @@
           <div class="text-sm mt-3"> {{ $t('home.welcomeFive') }} </div>
         </div>
       </div>
-      <div class="py-8 flex flex-row">
-        <home-create-and-restore/>
+      <div class="py-8 flex flex-row w-full">
+        <div v-if="unableToConnect" class="bg-white rounded py-9 px-11 flex max-w-sm self-start">
+          <div class="flex flex-col gap-4">
+            <p>
+              Sorry, the Radix Desktop Wallet cannot currently connect to the Radix mainnet network.  Please check your
+              internet connection, or check our <a class="text-rBlue">network status page</a> for known connection issues.
+            </p>
+            <p>
+              If you have further problems, please contact us at <a class="text-rBlue" href="mailto:hello@radixdlt.com">hello@radixdlt.com</a>
+            </p>
+          </div>
+        </div>
+        <div v-else-if="!connected" class="bg-white rounded p-11 flex items-center gap-4 justify-center self-start">
+          <wallet-loading />
+          Connecting...
+        </div>
+        <home-create-and-restore v-else />
       </div>
     </template>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, Ref, ref } from 'vue'
 import HomeCreateAndRestore from './HomeCreateAndRestore.vue'
 import HomeEnterPasscode from './HomeEnterPasscode.vue'
 import HomeLockedModal from './HomeLockedModal.vue'
@@ -51,6 +66,9 @@ import HomeForgotPassword from './HomeForgotPassword.vue'
 import LoadingIcon from '@/components/LoadingIcon.vue'
 import { useRouter } from 'vue-router'
 import { useHomeModal, useWallet } from '@/composables'
+import { firstValueFrom } from 'rxjs'
+import { Network } from '@radixdlt/application'
+import WalletLoading from '@/views/Wallet/WalletLoading.vue'
 
 const Home = defineComponent({
   components: {
@@ -58,17 +76,37 @@ const Home = defineComponent({
     HomeEnterPasscode,
     HomeLockedModal,
     HomeForgotPassword,
-    LoadingIcon
+    LoadingIcon,
+    WalletLoading
   },
 
   setup () {
+    const connected: Ref<boolean> = ref(false)
+    const unableToConnect = ref(false)
+
     const { modal, setModal } = useHomeModal()
     const router = useRouter()
-    const { hasWallet, resetWallet } = useWallet(router)
+    const { hasWallet, resetWallet, radix, setNetwork } = useWallet(router)
 
+    if (!hasWallet.value) {
+      Promise.race([
+        radix.connect('https://mainnet.radixdlt.com'),
+        new Promise((resolve, reject) => setTimeout(() => reject(new Error()), 5000))
+      ]).then(() => {
+        connected.value = true
+        return firstValueFrom(radix.ledger.networkId())
+      }).then((network) => {
+        setNetwork(network as Network)
+      }).catch(() => {
+        unableToConnect.value = true
+        connected.value = false
+      })
+    }
     return {
       hasWallet,
       modal,
+      connected,
+      unableToConnect,
 
       closeModal () {
         setModal(null)
