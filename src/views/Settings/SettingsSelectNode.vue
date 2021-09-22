@@ -17,9 +17,10 @@
       </div>
       <div class="flex flex-row flex-wrap relative" >
         <NodeListItem
-          v-for="(url, i) in defaultNetworkURLs"
+          v-for="(network, i) in defaultNetworks"
+          :network="network.network"
           :key="i"
-          :url="url"
+          :url="network.networkURL"
           :isDefault="true"
         />
 
@@ -138,6 +139,7 @@ export default defineComponent({
     })
     loadURLs()
     return {
+      defaultNetworks,
       defaultNetworkURLs,
       meta,
       showRedHighlight,
