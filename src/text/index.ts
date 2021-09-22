@@ -201,9 +201,12 @@ const messages = {
       addCustomNodeLabel: 'Add Custom Node Address:',
       addNodeButton: 'add node',
       confirm: 'Confirm',
+      cancel: 'Cancel',
       switchingNetworks: 'Switching Networks...',
       takesTooLong: 'If this takes more than a few seconds, ',
-      clickToRefresh: 'click here to refresh.'
+      clickToRefresh: 'click here to refresh.',
+      networkChangeTitle: 'Network Change',
+      networkChangeCopy: 'Please note that you will need to re-enter your password in order to switch networks. Do you wish to proceed?'
     },
     errors: {
       hardwareMismatchTitle: 'Hardware Wallet Account Mismatch',
