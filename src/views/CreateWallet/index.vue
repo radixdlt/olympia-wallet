@@ -87,16 +87,17 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
-import { Mnemonic, MnemomicT } from '@radixdlt/application'
+import { defineComponent, ref, Ref } from 'vue'
+import { Mnemonic, MnemomicT, WalletT } from '@radixdlt/application'
 import CreateWalletCreatePasscode from './CreateWalletCreatePasscode.vue'
 import CreateWalletCreatePin from './CreateWalletCreatePin.vue'
 import CreateWalletViewMnemonic from './CreateWalletViewMnemonic.vue'
 import CreateWalletEnterMnemonic from './CreateWalletEnterMnemonic.vue'
 import WizardHeading from '@/components/WizardHeading.vue'
-import useWallet from '@/composables/useWallet'
+import { useSidebar, useWallet } from '@/composables'
 import { useRouter } from 'vue-router'
 import { firstValueFrom } from 'rxjs'
+import { useToast } from 'vue-toastification'
 
 const CreateWallet = defineComponent({
   components: {
@@ -109,7 +110,11 @@ const CreateWallet = defineComponent({
 
   setup () {
     const router = useRouter()
-    const { activeNetwork, createWallet, radix, setPin, setNetwork } = useWallet(router)
+    const { activeNetwork, createWallet, radix, loginWithWallet, setPin, setNetwork, setWallet, walletLoaded, waitUntilAllLoaded } = useWallet(router)
+    const { setState } = useSidebar()
+    const newWallet: Ref<WalletT | null> = ref(null)
+    const toast = useToast()
+
     let network = activeNetwork.value
     if (!network) {
       radix.connect('https://mainnet.radixdlt.com').then(() => {
@@ -117,6 +122,9 @@ const CreateWallet = defineComponent({
       }).then((net) => {
         setNetwork(net)
         network = net
+      }).catch(() => {
+        toast.error('Unable to connect to mainnet')
+        router.push('/')
       })
     }
     const mnemonic: MnemomicT = Mnemonic.generateNew()
@@ -124,7 +132,8 @@ const CreateWallet = defineComponent({
     const passcode = ref('')
     const handleCreateWallet = async (pass: string) => {
       if (!network) return
-      createWallet(mnemonic, pass, network).then(() => {
+      createWallet(mnemonic, pass, network).then((wallet: WalletT) => {
+        newWallet.value = wallet
         step.value = 3
         passcode.value = pass
       })
@@ -133,8 +142,19 @@ const CreateWallet = defineComponent({
     const handleEnterPin = (val: boolean): void => { step.value = val ? 4 : 3 }
 
     const handleCreatePin = (pin: string): void => {
+      if (!newWallet.value) return
+      setWallet(newWallet.value)
       setPin(pin)
-      router.push({ path: '/wallet', query: { initialView: 'editName', initialSidebar: 'accounts' } })
+      loginWithWallet(passcode.value).then((client) => {
+        return firstValueFrom(client.ledger.networkId())
+      }).then((network) => {
+        setNetwork(network)
+        walletLoaded()
+        return waitUntilAllLoaded()
+      }).then(() => {
+        setState(true)
+        router.push('/wallet/account-edit-name')
+      })
     }
 
     return {
