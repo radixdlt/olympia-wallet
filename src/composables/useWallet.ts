@@ -181,7 +181,7 @@ const fetchAccountsForNetwork = (network: Network) => {
         saveDerivedAccountsIndex(0, network)
       }
     })
-  getHardwareWalletAddress(network).then(a => { hardwareAddress.value = a; console.log(a, network) })
+  getHardwareWalletAddress(network).then(a => { hardwareAddress.value = a })
 }
 
 const waitUntilAllLoaded = async () => firstValueFrom(allLoadedObservable)

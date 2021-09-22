@@ -20,21 +20,30 @@
         <div class="flex flex-col my-3 px-5 border-r border-rGray flex-1">
           <span class="text-sm text-rGrayDark">{{ $t('wallet.totalTokens') }}</span>
           <div class="flex flex-row items-end">
-            <big-amount :amount="availablePlusStakedAndUnstakedXRD" class="text-2xl font-light mr-4 text-rGreen" />
+            <div v-if="accountChanging">
+              <span class="text-2xl font-light mr-4 text-rGreen">--</span>
+            </div>
+            <big-amount :amount="availablePlusStakedAndUnstakedXRD" class="text-2xl font-light mr-4 text-rGreen" v-else/>
             <token-symbol>{{ nativeToken && nativeToken.symbol }}</token-symbol>
           </div>
         </div>
         <div class="flex flex-col my-3 px-5 border-r border-rGray flex-1">
           <span class="text-sm text-rGrayDark">{{ $t('wallet.availableTokens') }}</span>
           <div class="flex flex-row items-end">
-            <big-amount :amount="totalXRD" class="text-2xl font-light mr-4 text-rBlack" />
+            <div v-if="accountChanging">
+              <span class="text-2xl font-light mr-4 text-rBlack">--</span>
+            </div>
+            <big-amount :amount="totalXRD" class="text-2xl font-light mr-4 text-rBlack" v-else />
             <token-symbol>{{ nativeToken && nativeToken.symbol }}</token-symbol>
           </div>
         </div>
         <div class="flex flex-col my-3 px-5 flex-1">
           <span class="text-sm text-rGrayDark">{{ $t('wallet.stakedTokens') }}</span>
           <div class="flex flex-row items-end">
-            <big-amount :amount="totalStakedAndUnstaked" class="text-2xl font-light mr-4 text-rBlack" />
+            <div v-if="accountChanging">
+              <span class="text-2xl font-light mr-4 text-rBlack">--</span>
+            </div>
+            <big-amount :amount="totalStakedAndUnstaked" class="text-2xl font-light mr-4 text-rBlack" v-else />
             <token-symbol>{{ nativeToken && nativeToken.symbol }}</token-symbol>
           </div>
         </div>
@@ -55,7 +64,9 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, ComputedRef } from 'vue'
+import { defineComponent, computed, ComputedRef, ref, Ref, watch } from 'vue'
+import { zip, firstValueFrom } from 'rxjs'
+import { delay } from 'rxjs/operators'
 import { StakePosition, TokenBalance, Amount, AmountT } from '@radixdlt/application'
 import BigAmount from '@/components/BigAmount.vue'
 import TokenSymbol from '@/components/TokenSymbol.vue'
@@ -79,6 +90,7 @@ const WalletOverview = defineComponent({
     const router = useRouter()
     const {
       activeAddress,
+      activeAccount,
       explorerUrlBase,
       radix,
       verifyHardwareWalletAddress,
@@ -88,6 +100,19 @@ const WalletOverview = defineComponent({
     const { tokenBalances, tokenBalancesUnsub, tokenBalanceFor } = useTokenBalances(radix)
     const { nativeToken, nativeTokenUnsub } = useNativeToken(radix)
     const { activeStakes, activeUnstakes, stakingUnsub } = useStaking(radix)
+    const accountChanging: Ref<boolean> = ref(false)
+
+    watch(activeAccount, () => {
+      accountChanging.value = true
+      const allData = zip(
+        radix.tokenBalances.pipe(delay(500)),
+        radix.stakingPositions.pipe(delay(250)),
+        radix.unstakingPositions.pipe(delay(250))
+      )
+      firstValueFrom(allData).then(() => {
+        accountChanging.value = false
+      })
+    })
 
     onBeforeRouteLeave(() => {
       tokenBalancesUnsub()
@@ -139,6 +164,7 @@ const WalletOverview = defineComponent({
     })
 
     return {
+      accountChanging,
       activeAddress,
       activeStakes,
       activeUnstakes,
