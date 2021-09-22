@@ -1,5 +1,5 @@
 <template>
-  <div class="pt-6 px-6 pb-4 relative">
+  <div class="pt-6 px-6 pb-4">
     <div class="text-rGrayDark text-sm mb-7 w-full max-w-xl">
       <p>{{ $t('settings.nodeDisclaimer') }}</p>
       <p class="mt-2">{{ $t('settings.nodeDisclaimerWarning') }}</p>
@@ -26,6 +26,7 @@
           :key="network.networkURL"
           :url="network.networkURL"
           :isDefault="true"
+          @select="setConfirm"
         />
 
         <NodeListItem
@@ -33,6 +34,7 @@
           :key="url"
           :url="url"
           @refresh="loadURLs()"
+          @select="setConfirm"
         />
 
         <form class="border border-solid border-rGray px-5 py-7 rounded-md flex flex-row items-start text-rGrayMed w-full mb-2 justify-between" @submit.prevent="handleAddNode">
@@ -68,6 +70,7 @@
         </form>
       </div>
     </div>
+    <confirm-network-change-modal v-if="nodeToConfirm" @cancel="cancelChange" @confirm="confirmChange" />
   </div>
 </template>
 
@@ -77,6 +80,7 @@ import { ChosenNetworkT, defaultNetworks } from '@/helpers/network'
 import NodeListItem from '@/components/NodeListItem.vue'
 import FormErrorMessage from '@/components/FormErrorMessage.vue'
 import FormField from '@/components/FormField.vue'
+import ConfirmNetworkChangeModal from './ConfirmNetworkChangeModal.vue'
 import { useForm } from 'vee-validate'
 import { Radix } from '@radixdlt/application'
 import { firstValueFrom } from 'rxjs'
@@ -95,6 +99,7 @@ interface AddNodeForm {
 
 export default defineComponent({
   components: {
+    ConfirmNetworkChangeModal,
     FormField,
     FormErrorMessage,
     NodeListItem
@@ -102,6 +107,7 @@ export default defineComponent({
 
   setup () {
     const { values, meta, setErrors } = useForm<AddNodeForm>()
+    const nodeToConfirm: Ref<string | null> = ref(null)
     const toast = useToast()
     const router = useRouter()
     const { persistNodeUrl, updateConnection, switching } = useWallet(router)
@@ -131,15 +137,27 @@ export default defineComponent({
         tempRadix.connect(url)
         const networkId = await firstValueFrom(tempRadix.ledger.networkId())
         persistCustomNodeURL(url)
-        toast.success(`Connected to ${networkId}`)
-        await persistNodeUrl(url)
-        await updateConnection(url)
+        await loadURLs()
+        nodeToConfirm.value = url
       } catch (error) {
         setErrors({
           nodeURL: 'Please enter a valid URL address'
         })
         toast.error('Invalid network, unable to connect')
       }
+    }
+
+    const setConfirm = (url: string) => {
+      nodeToConfirm.value = url
+    }
+
+    const cancelChange = () => {
+      nodeToConfirm.value = null
+    }
+
+    const confirmChange = () => {
+      if (!nodeToConfirm.value) return
+      updateConnection(nodeToConfirm.value)
     }
 
     const submitDisabled: ComputedRef<boolean> = computed(() => {
@@ -166,7 +184,11 @@ export default defineComponent({
       setErrors,
       customNodeURLs,
       loadURLs,
-      refreshApp
+      refreshApp,
+      nodeToConfirm,
+      setConfirm,
+      cancelChange,
+      confirmChange
     }
   }
 })
