@@ -17,16 +17,16 @@
       </div>
       <div class="flex flex-row flex-wrap relative" >
         <NodeListItem
-          v-for="(network, i) in defaultNetworks"
+          v-for="(network) in defaultNetworks"
           :network="network.network"
-          :key="i"
+          :key="network.networkURL"
           :url="network.networkURL"
           :isDefault="true"
         />
 
         <NodeListItem
-          v-for="(url, i) in customNodeURLs"
-          :key="i"
+          v-for="(url) in customNodeURLs"
+          :key="url"
           :url="url"
           @refresh="loadURLs()"
         />
@@ -108,16 +108,30 @@ export default defineComponent({
       fetchCustomNodeURLs().then((urls) => { customNodeURLs.value = urls })
     }
 
+    const isUnique = (val: string): boolean => {
+      const defaultOptions = defaultNetworks.map((net) => net.networkURL.toLowerCase())
+      const customOptions = customNodeURLs.value.map((url) => url.toLowerCase())
+      return defaultOptions.concat(customOptions).findIndex((url) => url === val) === -1
+    }
+
     const handleAddNode = async () => {
+      const url = values.nodeURL.toLowerCase()
+      if (!isUnique(url)) {
+        setErrors({
+          nodeURL: 'Node URLs must be unique'
+        })
+        toast.error('Node URLs must be unique')
+        return
+      }
       const tempRadix = Radix.create()
       try {
-        tempRadix.connect(values.nodeURL)
+        tempRadix.connect(url)
         const networkId = await firstValueFrom(tempRadix.ledger.networkId())
-        persistCustomNodeURL(values.nodeURL)
+        persistCustomNodeURL(url)
         toast.success(`Connected to ${networkId}`)
-        await persistNodeUrl(values.nodeURL)
-        await updateConnection(values.nodeURL)
-        customNodeURLs.value.push(values.nodeURL)
+        await persistNodeUrl(url)
+        await updateConnection(url)
+        customNodeURLs.value.push(url)
         values.nodeURL = ''
       } catch (error) {
         setErrors({

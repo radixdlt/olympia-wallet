@@ -111,6 +111,10 @@ export default defineComponent({
       connected,
       computedNetwork,
       forgetUrl: () => {
+        if (isActive.value) {
+          toast.error('Switch networks before removing this node')
+          return
+        }
         forgetCustomNodeURL(props.url)
         emit('refresh')
       }
