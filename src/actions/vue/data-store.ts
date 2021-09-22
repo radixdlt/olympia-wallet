@@ -50,3 +50,7 @@ export const fetchCustomNodeURLs = async (): Promise<string[]> => {
   const data = await window.ipcRenderer.invoke('fetch-custom-node-urls') as string[]
   return data
 }
+
+export const forgetCustomNodeURL = async (nodeURL: string): Promise<void> => {
+  await window.ipcRenderer.invoke('forget-custom-node-url', nodeURL)
+}

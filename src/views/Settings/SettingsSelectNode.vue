@@ -17,7 +17,7 @@
       </div>
       <div class="flex flex-row flex-wrap relative" >
         <NodeListItem
-          v-for="(url, i) in defaultNetworkUrls"
+          v-for="(url, i) in defaultNetworkURLs"
           :key="i"
           :url="url"
           :isDefault="true"
@@ -27,6 +27,7 @@
           v-for="(url, i) in customNodeURLs"
           :key="i"
           :url="url"
+          @refresh="loadURLs()"
         />
 
         {{ '' && 'To Do: Render other saved networks from electron storage here' }}
@@ -78,7 +79,7 @@ import { Radix } from '@radixdlt/application'
 import { firstValueFrom } from 'rxjs'
 import { useToast } from 'vue-toastification'
 import { useWallet } from '@/composables'
-import { useRouter, onBeforeRouteUpdate } from 'vue-router'
+import { useRouter } from 'vue-router'
 import {
   persistCustomNodeURL,
   fetchCustomNodeURLs
@@ -102,9 +103,9 @@ export default defineComponent({
     const { persistNodeUrl, updateConnection, switching } = useWallet(router)
     const customNodeURLs: Ref<string[]> = ref([])
 
-    onBeforeRouteUpdate(async () => {
-      customNodeURLs.value = await fetchCustomNodeURLs()
-    })
+    const loadURLs = () => {
+      fetchCustomNodeURLs().then((urls) => { customNodeURLs.value = urls })
+    }
 
     const handleAddNode = async () => {
       const tempRadix = Radix.create()
@@ -115,6 +116,7 @@ export default defineComponent({
         toast.success(`Connected to ${networkId}`)
         await persistNodeUrl(values.nodeURL)
         await updateConnection(values.nodeURL)
+        customNodeURLs.value.push(values.nodeURL)
       } catch (error) {
         setErrors({
           nodeURL: 'Please enter a valid URL address'
@@ -131,12 +133,12 @@ export default defineComponent({
       return meta.value.dirty && !meta.value.valid
     })
 
-    const defaultNetworkUrls: ComputedRef<string[]> = computed(() => {
+    const defaultNetworkURLs: ComputedRef<string[]> = computed(() => {
       return defaultNetworks.map((net: ChosenNetworkT) => net.networkURL)
     })
-
+    loadURLs()
     return {
-      defaultNetworkUrls,
+      defaultNetworkURLs,
       meta,
       showRedHighlight,
       submitDisabled,
@@ -144,7 +146,8 @@ export default defineComponent({
       values,
       handleAddNode,
       setErrors,
-      customNodeURLs
+      customNodeURLs,
+      loadURLs
     }
   }
 })

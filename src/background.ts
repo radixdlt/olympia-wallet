@@ -18,7 +18,8 @@ import {
   persistNodeSelection,
   fetchSelectedNode,
   persistCustomNodeURL,
-  fetchCustomNodeURLs
+  fetchCustomNodeURLs,
+  forgetCustomNodeURL
 } from './actions/electron/data-store'
 import { sendAPDU } from './actions/electron/hardware-wallet'
 import menu from './menu'
@@ -123,6 +124,7 @@ ipcMain.handle('persist-node-selection', persistNodeSelection)
 ipcMain.handle('fetch-selected-node', fetchSelectedNode)
 ipcMain.handle('persist-custom-node-url', persistCustomNodeURL)
 ipcMain.handle('fetch-custom-node-urls', fetchCustomNodeURLs)
+ipcMain.handle('forget-custom-node-url', forgetCustomNodeURL)
 
 // Exit cleanly on request from parent process in development mode.
 if (isDevelopment) {

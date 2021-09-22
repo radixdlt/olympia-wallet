@@ -72,3 +72,9 @@ export const persistCustomNodeURL = (event: IpcMainInvokeEvent, data: string): v
 export const fetchCustomNodeURLs = (): string[] => {
   return store.get('customNodes', []) as string[]
 }
+
+export const forgetCustomNodeURL = (event: IpcMainInvokeEvent, nodeURL: string): void => {
+  let urls = store.get('customNodes', []) as string[]
+  urls = urls.filter((val) => val !== nodeURL)
+  store.set('customNodes', urls)
+}
