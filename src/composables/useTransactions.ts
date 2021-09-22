@@ -8,9 +8,10 @@ import {
   of,
   ReplaySubject,
   Subject,
-  Subscription
+  Subscription,
+  timer
 } from 'rxjs'
-import { catchError, delay, mergeMap, retryWhen, take, filter } from 'rxjs/operators'
+import { catchError, delay, mergeMap, retryWhen, take, filter, delayWhen, tap } from 'rxjs/operators'
 import {
   AmountT,
   ExecutedTransaction,
@@ -146,17 +147,19 @@ export default function useTransactions (radix: RadixT, router: Router, activeAc
     historyPagination.asObservable(),
     interval(15 * 1_000)
   ])
-
+  let tries = 0
   // Fetch history when user navigates to next page
   const historySub = fetchTXHistoryTrigger
     .pipe(
       mergeMap(([params]: [TransactionHistoryOfKnownAddressRequestInput, number]) =>
         radix.transactionHistory(params).pipe(
           retryWhen(error => error.pipe(
-            delay(5000),
+            tap(() => tries++),
+            delayWhen(() => timer(100 * 2 ** tries)),
             take(1),
             catchError(e => of(e))
-          ))
+          )),
+          tap(() => { tries = 0 })
         )
       )
     )
