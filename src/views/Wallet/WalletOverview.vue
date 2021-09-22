@@ -104,7 +104,6 @@ const WalletOverview = defineComponent({
 
     watch(activeAccount, () => {
       accountChanging.value = true
-      console.log('change')
       const allData = zip(
         radix.tokenBalances.pipe(delay(500)),
         radix.stakingPositions.pipe(delay(250)),
@@ -112,7 +111,6 @@ const WalletOverview = defineComponent({
       )
       firstValueFrom(allData).then(() => {
         accountChanging.value = false
-        console.log('done')
       })
     })
 
