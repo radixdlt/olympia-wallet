@@ -134,8 +134,6 @@ export default defineComponent({
         toast.success(`Connected to ${networkId}`)
         await persistNodeUrl(url)
         await updateConnection(url)
-        customNodeURLs.value.push(url)
-        values.nodeURL = ''
       } catch (error) {
         setErrors({
           nodeURL: 'Please enter a valid URL address'
