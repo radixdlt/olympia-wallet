@@ -81,6 +81,7 @@ const createWallet = (mnemonic: MnemomicT, pass: string, network: Network) => {
   const newWalletPromise = createNewWallet(mnemonic, pass, network)
 
   newWalletPromise.then((newWallet: WalletT) => {
+    hasWallet.value = true
     setWallet(newWallet)
     saveDerivedAccountsIndex(0, network)
     persistNodeUrl('https://mainnet.radixdlt.com')
@@ -147,7 +148,7 @@ const tokenBalanceTrigger = merge(
 )
 
 const walletLoaded = () => {
-  radix.__wallet.subscribe((newWallet: WalletT) => { wallet.value = newWallet })
+  radix.__wallet.subscribe((newWallet: WalletT) => { wallet.value = newWallet; hasWallet.value = true })
 
   radix
     .withTokenBalanceFetchTrigger(tokenBalanceTrigger)
@@ -384,6 +385,7 @@ export default function useWallet (router: Router): useWalletInterface {
       }
 
       signingKeychain.value = signingKeychainResult._unsafeUnwrap()
+      hasWallet.value = true
 
       const url = await fetchSavedNodeUrl(signingKeychain.value)
       radix.connect(url).then(() => { connected.value = true })

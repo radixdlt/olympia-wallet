@@ -1,5 +1,5 @@
 <template>
-  <div data-ci="home-view" class="flex flex-row min-h-screen" :class="{'items-center': hasWallet}">
+  <div data-ci="home-view" class="flex flex-row min-h-screen" :class="{'items-center': hasWallet}" v-if="!loading">
     <template v-if="hasWallet">
       <img alt="Radix DLT Logo" src="../../assets/logo.svg" class="absolute inset-0 mt-6 mx-4">
       <div v-if="hasWallet == null" class="flex w-full justify-center items-center">
@@ -69,7 +69,7 @@ import { useHomeModal, useWallet } from '@/composables'
 import { firstValueFrom } from 'rxjs'
 import { Network } from '@radixdlt/application'
 import WalletLoading from '@/views/Wallet/WalletLoading.vue'
-
+import { hasKeystore } from '@/actions/vue/create-wallet'
 const Home = defineComponent({
   components: {
     HomeCreateAndRestore,
@@ -83,26 +83,30 @@ const Home = defineComponent({
   setup () {
     const connected: Ref<boolean> = ref(false)
     const unableToConnect = ref(false)
-
+    const loading = ref(true)
     const { modal, setModal } = useHomeModal()
     const router = useRouter()
     const { hasWallet, resetWallet, radix, setNetwork } = useWallet(router)
+    hasKeystore().then((val: boolean) => {
+      loading.value = false
+      if (!val) {
+        Promise.race([
+          radix.connect('https://mainnet.radixdlt.com'),
+          new Promise((resolve, reject) => setTimeout(() => reject(new Error()), 5000))
+        ]).then(() => {
+          connected.value = true
+          return firstValueFrom(radix.ledger.networkId())
+        }).then((network) => {
+          setNetwork(network as Network)
+        }).catch(() => {
+          unableToConnect.value = true
+          connected.value = false
+        })
+      }
+    })
 
-    if (!hasWallet.value) {
-      Promise.race([
-        radix.connect('https://mainnet.radixdlt.com'),
-        new Promise((resolve, reject) => setTimeout(() => reject(new Error()), 5000))
-      ]).then(() => {
-        connected.value = true
-        return firstValueFrom(radix.ledger.networkId())
-      }).then((network) => {
-        setNetwork(network as Network)
-      }).catch(() => {
-        unableToConnect.value = true
-        connected.value = false
-      })
-    }
     return {
+      loading,
       hasWallet,
       modal,
       connected,
