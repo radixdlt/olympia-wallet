@@ -148,7 +148,6 @@ export default defineComponent({
     }
 
     const setConfirm = (url: string) => {
-      console.log(url)
       nodeToConfirm.value = url
     }
 
