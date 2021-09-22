@@ -65,11 +65,11 @@ export default defineComponent({
   setup (props, { emit }) {
     const toast = useToast()
     const router = useRouter()
-    const { connected: activeConnection, activeNetwork, updateConnection, accounts, setSwitching, switchAccount } = useWallet(router)
+    const { connected: activeConnection, updateConnection, accounts, setSwitching, switchAccount, nodeUrl } = useWallet(router)
     const { connected, loading, networkId, testConnection, cleanupSubscriptions } = useConnectableRadix()
     const updatedConnection: Ref<boolean> = ref(false)
 
-    const isActive: ComputedRef<boolean> = computed(() => activeNetwork.value ? activeNetwork.value === networkId.value : false)
+    const isActive: ComputedRef<boolean> = computed(() => nodeUrl.value ? nodeUrl.value === props.url : false)
 
     const handleSelectNode = () => {
       if (activeConnection.value && !connected.value) {
