@@ -1,11 +1,11 @@
 const migrations = {
   '0.0.1': (store: Record<string, any>) => {
     store.set('debugPhase', true)
-    store.set('seed', '')
-    store.set('pin', '')
-    store.set('account', {})
-    store.set('derivedAccountsIndex', '0')
-    store.set('hardwareAddress', '')
+    if (!store.get('seed')) store.set('seed', '')
+    if (!store.get('pin')) store.set('pin', '')
+    if (!store.get('account')) store.set('account', {})
+    if (!store.get('derivedAccountsIndex')) store.set('derivedAccountsIndex', '0')
+    if (!store.get('hardwareAddress')) store.set('hardwareAddress', '')
   },
   '1.1.1': (store: Record<string, any>) => {
     store.delete('debugPhase')
