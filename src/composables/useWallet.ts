@@ -32,7 +32,8 @@ import {
   saveHardwareWalletAddress,
   getAccountNames,
   persistNodeSelection,
-  fetchSelectedNodeFromStore
+  fetchSelectedNodeFromStore,
+  refreshApp
 } from '@/actions/vue/data-store'
 import { sha256Twice } from '@radixdlt/crypto'
 
@@ -137,7 +138,7 @@ interface useWalletInterface {
   setSwitching: (value: boolean) => void;
   setWallet: (newWallet: WalletT) => WalletT;
   switchAccount: (account: AccountT) => void;
-  updateConnection: (n: string) => Promise<Network>;
+  updateConnection: (n: string) => Promise<void>;
   verifyHardwareWalletAddress: () => void;
   waitUntilAllLoaded: () => Promise<any>;
   walletLoaded: () => void;
@@ -428,19 +429,22 @@ export default function useWallet (router: Router): useWalletInterface {
     verifyHardwareWalletAddress,
     waitUntilAllLoaded,
     walletLoaded,
-    async updateConnection (url: string): Promise<Network> {
-      switching.value = true
-      subs.unsubscribe()
-      await radix.connect(url)
-      nodeUrl.value = url
-      subs = new Subscription()
-      const network = await firstValueFrom(radix.ledger.networkId())
-      accounts.value = null
-      activeNetwork.value = network
-      initWallet()
-      persistNodeUrl(url)
-      switching.value = false
-      return network
+    async updateConnection (url: string): Promise<void> {
+      // switching.value = true
+      // subs.unsubscribe()
+      // await radix.connect(url)
+      // nodeUrl.value = url
+      // subs = new Subscription()
+      // const network = await firstValueFrom(radix.ledger.networkId())
+      // accounts.value = null
+      // activeNetwork.value = network
+      // initWallet()
+      persistNodeUrl(url).then(() => {
+        refreshApp()
+      })
+
+      // switching.value = false
+      // return network
     },
 
     setNetwork (network: Network) {
