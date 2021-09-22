@@ -62,3 +62,19 @@ export const fetchSelectedNode = (): SelectedNode => {
   const selectedNodeHash = store.get('selectedNodeHash', null) as MaybeString
   return { selectedNode, selectedNodeHash }
 }
+
+export const persistCustomNodeURL = (event: IpcMainInvokeEvent, data: string): void => {
+  const currentURLs = store.get('customNodes', []) as string[]
+  currentURLs.push(data)
+  store.set('customNodes', currentURLs)
+}
+
+export const fetchCustomNodeURLs = (): string[] => {
+  return store.get('customNodes', []) as string[]
+}
+
+export const forgetCustomNodeURL = (event: IpcMainInvokeEvent, nodeURL: string): void => {
+  let urls = store.get('customNodes', []) as string[]
+  urls = urls.filter((val) => val !== nodeURL)
+  store.set('customNodes', urls)
+}

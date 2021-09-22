@@ -40,3 +40,17 @@ export const fetchSelectedNodeFromStore = async (): Promise<SelectedNode> => {
   const data = await window.ipcRenderer.invoke('fetch-selected-node') as SelectedNode
   return data
 }
+
+export const persistCustomNodeURL = async (nodeURL: string): Promise<void> => {
+  const data = await window.ipcRenderer.invoke('persist-custom-node-url', nodeURL)
+  return data
+}
+
+export const fetchCustomNodeURLs = async (): Promise<string[]> => {
+  const data = await window.ipcRenderer.invoke('fetch-custom-node-urls') as string[]
+  return data
+}
+
+export const forgetCustomNodeURL = async (nodeURL: string): Promise<void> => {
+  await window.ipcRenderer.invoke('forget-custom-node-url', nodeURL)
+}

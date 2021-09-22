@@ -1,6 +1,6 @@
 <template>
   <div class="border border-solid border-rGray p-5 rounded-md flex flex-row items-center text-rGrayMed w-full mb-2 justify-between">
-    <div class="flex flex-row items-center">
+    <div class="flex flex-row items-center flex-grow overflow-ellipsis">
       <AppRadioIndicator
         :enabled="isActive"
         :disabled="loading"
@@ -10,11 +10,22 @@
       <span class="mr-4">{{ $t('settings.nodeAddressLabel') }}:</span>
       <a :href="url" target="_blank" class="text-rBlue`">{{ url }}</a>
     </div>
-    <div>{{ $t('settings.nodeNetworkLabel')}}: <span class="text-rGreen uppercase">{{ networkId }}</span></div>
-    <IconRadixLogo
-      v-if="showRadixLogo"
-      class="text-rGrayDark"
-    />
+    <div class="flex-grow-0 w-48">{{ $t('settings.nodeNetworkLabel')}}:
+      <span v-if="computedNetwork" class="text-rGreen uppercase"> {{ computedNetwork }}</span>
+      <span v-else class="border-t border-solid border-rGreen w-4 inline-block mb-1 ml-4"></span>
+    </div>
+    <div class="w-16">
+      <IconRadixLogo
+        v-if="showRadixLogo"
+        class="text-rGrayDark"
+      />
+      <a @click="forgetUrl" class="w-12 justify-end flex" v-else>
+        <svg width="15" height="18" viewBox="0 0 15 18" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-rGrayDark stroke-current hover:text-rRed">
+          <path d="M2.48868 7.845L2.865 16.5H11.655L12.0341 7.845"/>
+          <path d="M0 4.81818H4.47M4.47 4.81818V1.5H10.05V4.81818M4.47 4.81818H10.05M10.05 4.81818H14.52"/>
+        </svg>
+      </a>
+    </div>
   </div>
 </template>
 
@@ -27,6 +38,7 @@ import { useConnectableRadix, useWallet } from '@/composables'
 import { useRouter } from 'vue-router'
 import { ref } from '@nopr3d/vue-next-rx'
 import { AccountT } from '@radixdlt/application'
+import { forgetCustomNodeURL } from '@/actions/vue/data-store'
 
 export default defineComponent({
   components: {
@@ -43,17 +55,21 @@ export default defineComponent({
       type: Boolean,
       required: false,
       default: false
+    },
+    network: {
+      type: String,
+      required: false
     }
   },
 
-  setup (props) {
+  setup (props, { emit }) {
     const toast = useToast()
     const router = useRouter()
-    const { connected: activeConnection, activeNetwork, updateConnection, accounts, setSwitching, switchAccount } = useWallet(router)
+    const { connected: activeConnection, updateConnection, accounts, setSwitching, switchAccount, nodeUrl } = useWallet(router)
     const { connected, loading, networkId, testConnection, cleanupSubscriptions } = useConnectableRadix()
     const updatedConnection: Ref<boolean> = ref(false)
 
-    const isActive: ComputedRef<boolean> = computed(() => activeNetwork.value ? activeNetwork.value === networkId.value : false)
+    const isActive: ComputedRef<boolean> = computed(() => nodeUrl.value ? nodeUrl.value === props.url : false)
 
     const handleSelectNode = () => {
       if (activeConnection.value && !connected.value) {
@@ -78,6 +94,11 @@ export default defineComponent({
       }
     })
 
+    const computedNetwork: ComputedRef<string> = computed(() => {
+      if (props.network) return props.network
+      else return networkId.value || ''
+    })
+
     testConnection(props.url)
 
     onUnmounted(() => cleanupSubscriptions())
@@ -88,9 +109,17 @@ export default defineComponent({
       handleSelectNode,
       loading,
       connected,
-      networkId
+      computedNetwork,
+      forgetUrl: () => {
+        if (isActive.value) {
+          toast.error('Switch networks before removing this node')
+          return
+        }
+        forgetCustomNodeURL(props.url)
+        emit('refresh')
+      }
     }
   },
-  emits: []
+  emits: ['refresh']
 })
 </script>

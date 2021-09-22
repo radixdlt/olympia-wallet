@@ -17,15 +17,23 @@
       </div>
       <div class="flex flex-row flex-wrap relative" >
         <NodeListItem
-          v-for="(url, i) in defaultNetworkUrls"
-          :key="i"
-          :url="url"
+          v-for="(network) in defaultNetworks"
+          :network="network.network"
+          :key="network.networkURL"
+          :url="network.networkURL"
           :isDefault="true"
+        />
+
+        <NodeListItem
+          v-for="(url) in customNodeURLs"
+          :key="url"
+          :url="url"
+          @refresh="loadURLs()"
         />
 
         {{ '' && 'To Do: Render other saved networks from electron storage here' }}
 
-        <!-- <form class="border border-solid border-rGray px-5 py-7 rounded-md flex flex-row items-start text-rGrayMed w-full mb-2 justify-between" @submit.prevent="handleAddNode">
+        <form class="border border-solid border-rGray px-5 py-7 rounded-md flex flex-row items-start text-rGrayMed w-full mb-2 justify-between" @submit.prevent="handleAddNode">
           <div class="mr-4 my-2">{{ $t('settings.addCustomNodeLabel' )}}</div>
           <div class="flex-1 mr-4">
             <FormField
@@ -56,24 +64,27 @@
             {{ $t('settings.addNodeButton') }}
           </button>
         </form>
-        -->
       </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent } from 'vue'
+import { ref, Ref, computed, ComputedRef, defineComponent } from 'vue'
 import { ChosenNetworkT, defaultNetworks } from '@/helpers/network'
 import NodeListItem from '@/components/NodeListItem.vue'
-// import FormErrorMessage from '@/components/FormErrorMessage.vue'
-// import FormField from '@/components/FormField.vue'
+import FormErrorMessage from '@/components/FormErrorMessage.vue'
+import FormField from '@/components/FormField.vue'
 import { useForm } from 'vee-validate'
-import { Network, Radix } from '@radixdlt/application'
-import { Subscription } from 'rxjs'
+import { Radix } from '@radixdlt/application'
+import { firstValueFrom } from 'rxjs'
 import { useToast } from 'vue-toastification'
 import { useWallet } from '@/composables'
 import { useRouter } from 'vue-router'
+import {
+  persistCustomNodeURL,
+  fetchCustomNodeURLs
+} from '@/actions/vue/data-store'
 
 interface AddNodeForm {
   nodeURL: string;
@@ -81,36 +92,53 @@ interface AddNodeForm {
 
 export default defineComponent({
   components: {
+    FormField,
+    FormErrorMessage,
     NodeListItem
   },
 
   setup () {
     const { values, meta, setErrors } = useForm<AddNodeForm>()
-    const subs = new Subscription()
     const toast = useToast()
     const router = useRouter()
-    const { switching } = useWallet(router)
+    const { persistNodeUrl, updateConnection, switching } = useWallet(router)
+    const customNodeURLs: Ref<string[]> = ref([])
 
-    const handleAddNode = () => {
-      // First, try to get a vaild networkId from network URL
+    const loadURLs = () => {
+      fetchCustomNodeURLs().then((urls) => { customNodeURLs.value = urls })
+    }
+
+    const isUnique = (val: string): boolean => {
+      const defaultOptions = defaultNetworks.map((net) => net.networkURL.toLowerCase())
+      const customOptions = customNodeURLs.value.map((url) => url.toLowerCase())
+      return defaultOptions.concat(customOptions).findIndex((url) => url === val) === -1
+    }
+
+    const handleAddNode = async () => {
+      const url = values.nodeURL.toLowerCase()
+      if (!isUnique(url)) {
+        setErrors({
+          nodeURL: 'Node URLs must be unique'
+        })
+        toast.error('Node URLs must be unique')
+        return
+      }
       const tempRadix = Radix.create()
-
-      subs.add(tempRadix.ledger.networkId().subscribe({
-        next: (networkId: Network) => {
-          // Connect true radix instance to new node if successful
-          toast.success(`validated nodeURL has id of: ${networkId}`)
-
-          // To Do: Store valid url in electron storage
-        },
-        error: () => {
-          // Present user with an error if not
-          setErrors({
-            nodeURL: 'Please enter a valid URL address'
-          })
-          toast.error('Invalid network, unable to connect')
-        }
-      }))
-      tempRadix.connect(values.nodeURL)
+      try {
+        tempRadix.connect(url)
+        const networkId = await firstValueFrom(tempRadix.ledger.networkId())
+        persistCustomNodeURL(url)
+        toast.success(`Connected to ${networkId}`)
+        await persistNodeUrl(url)
+        await updateConnection(url)
+        customNodeURLs.value.push(url)
+        values.nodeURL = ''
+      } catch (error) {
+        setErrors({
+          nodeURL: 'Please enter a valid URL address'
+        })
+        toast.error('Invalid network, unable to connect')
+      }
     }
 
     const submitDisabled: ComputedRef<boolean> = computed(() => {
@@ -121,19 +149,22 @@ export default defineComponent({
       return meta.value.dirty && !meta.value.valid
     })
 
-    const defaultNetworkUrls: ComputedRef<string[]> = computed(() => {
+    const defaultNetworkURLs: ComputedRef<string[]> = computed(() => {
       return defaultNetworks.map((net: ChosenNetworkT) => net.networkURL)
     })
-
+    loadURLs()
     return {
-      defaultNetworkUrls,
+      defaultNetworks,
+      defaultNetworkURLs,
       meta,
       showRedHighlight,
       submitDisabled,
       switching,
       values,
       handleAddNode,
-      setErrors
+      setErrors,
+      customNodeURLs,
+      loadURLs
     }
   }
 })
