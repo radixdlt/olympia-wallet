@@ -118,6 +118,7 @@ export default defineComponent({
         await persistNodeUrl(values.nodeURL)
         await updateConnection(values.nodeURL)
         customNodeURLs.value.push(values.nodeURL)
+        values.nodeURL = ''
       } catch (error) {
         setErrors({
           nodeURL: 'Please enter a valid URL address'
