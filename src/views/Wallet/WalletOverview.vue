@@ -45,7 +45,7 @@
     </div>
 
     <div class="bg-white text-rBlack py-4 px-8 flex-1">
-      <div class="grid grid-cols-2 gap-4">
+      <div class="grid grid-cols-2 gap-4" v-if="!loading">
         <other-token-balance-list-item
           v-for="(tokenBalance, i) in otherTokenBalances"
           :key="i"
