@@ -8,7 +8,7 @@
         class="mr-2"
       />
       <span class="mr-4">{{ $t('settings.nodeAddressLabel') }}:</span>
-      <a :href="url" target="_blank" class="text-rBlue`">{{ url }}</a>
+      <span>{{ url }}</span>
     </div>
     <div class="flex-grow-0 w-48">{{ $t('settings.nodeNetworkLabel')}}:
       <span v-if="computedNetwork" class="text-rGreen uppercase"> {{ computedNetwork }}</span>
@@ -26,6 +26,12 @@
         </svg>
       </a>
     </div>
+  </div>
+  <div
+    v-if="computedNetwork === 'MAINNET' && !connected && !loading"
+    class="text-xs text-rRed mb-2"
+  >
+    {{ $t('settings.mainnetUnavailableOne') }}<a href="https://status.radixdlt.com" target="_blank" class="underline">{{ $t('settings.mainnetUnavailableLink') }}</a>{{ $t('settings.mainnetUnavailableTwo') }}
   </div>
 </template>
 
