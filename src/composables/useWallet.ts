@@ -65,6 +65,22 @@ const showLedgerVerify: Ref<boolean> = ref(false)
 const signingKeychain: Ref<SigningKeychainT | null> = ref(null)
 const switching = ref(false)
 const wallet: Ref<WalletT | null> = ref(null)
+const balancesReadyForRender: Ref<boolean> = ref(false)
+
+let balanceSubsState = {
+  balances: false,
+  stakes: false,
+  unstakes: false
+}
+
+const resetBalanceSubsState = () => {
+  balancesReadyForRender.value = false
+  balanceSubsState = {
+    balances: false,
+    stakes: false,
+    unstakes: false
+  }
+}
 
 radix.errors
   .subscribe((error: ErrorT<'wallet'>) => {
@@ -115,6 +131,7 @@ interface useWalletInterface {
   readonly switching: ComputedRef<boolean>;
   readonly radix: RadixT;
   readonly networkPreamble: ComputedRef<string>;
+  readonly balancesReadyForRender: ComputedRef<boolean>;
 
   accountNameFor: (address: AccountAddressT) => string;
   accountRenamed: (newName: string) => void;
@@ -169,6 +186,16 @@ const allLoadedObservable = zip(
   radix.accounts,
   radix.activeAddress
 )
+
+radix.tokenBalances.subscribe({
+  next () { balanceSubsState.balances = true }
+})
+radix.stakingPositions.subscribe({
+  next () { balanceSubsState.stakes = true }
+})
+radix.unstakingPositions.subscribe({
+  next () { balanceSubsState.unstakes = true }
+})
 
 const fetchAccountsForNetwork = (network: Network) => {
   getDerivedAccountsIndex(network)
@@ -234,6 +261,7 @@ const switchAccount = (account: AccountT) => {
   if (activeNetwork.value) {
     fetchAccountsForNetwork(activeNetwork.value)
   }
+  resetBalanceSubsState()
   reloadSubscriptions()
 }
 
@@ -376,6 +404,9 @@ export default function useWallet (router: Router): useWalletInterface {
     walletHasLoaded: computed(() => {
       return activeAddress.value != null
     }),
+    balancesReadyForRender: computed(() => {
+      return balanceSubsState.balances && balanceSubsState.stakes && balanceSubsState.unstakes
+    }),
 
     async loginWithWallet (password: string) {
       const signingKeychainResult = await SigningKeychain.byLoadingAndDecryptingKeystore({
@@ -409,7 +440,6 @@ export default function useWallet (router: Router): useWalletInterface {
       resetStore()
       router.push(`/${nextRoute}`)
     },
-
     accountNameFor,
     accountRenamed,
     addAccount,

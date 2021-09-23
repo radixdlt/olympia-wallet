@@ -94,7 +94,8 @@ const WalletOverview = defineComponent({
       explorerUrlBase,
       radix,
       verifyHardwareWalletAddress,
-      hasWallet
+      hasWallet,
+      balancesReadyForRender
     } = useWallet(router)
 
     const { tokenBalances, tokenBalancesUnsub, tokenBalanceFor } = useTokenBalances(radix)
@@ -104,14 +105,20 @@ const WalletOverview = defineComponent({
 
     watch(activeAccount, () => {
       accountChanging.value = true
-      const allData = zip(
-        radix.tokenBalances.pipe(delay(500)),
-        radix.stakingPositions.pipe(delay(250)),
-        radix.unstakingPositions.pipe(delay(250))
-      )
-      firstValueFrom(allData).then(() => {
+      // const allData = zip(
+      //   radix.tokenBalances.pipe(delay(500)),
+      //   radix.stakingPositions.pipe(delay(250)),
+      //   radix.unstakingPositions.pipe(delay(250))
+      // )
+      // firstValueFrom(allData).then(() => {
+      //   accountChanging.value = false
+      // })
+    })
+
+    watch(balancesReadyForRender, () => {
+      if (balancesReadyForRender && accountChanging.value) {
         accountChanging.value = false
-      })
+      }
     })
 
     onBeforeRouteLeave(() => {
