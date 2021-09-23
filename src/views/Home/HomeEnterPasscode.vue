@@ -16,7 +16,7 @@
           rules="required"
           data-ci="create-wallet-passcode-input"
           id="password"
-          :validateOnInput="false"
+          :validateOnInput="true"
           :validateOnBlur="false"
         />
         <FormErrorMessage name="password" class="text-sm text-red-400" />
