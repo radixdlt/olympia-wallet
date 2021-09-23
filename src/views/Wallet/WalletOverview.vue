@@ -21,7 +21,7 @@
           <span class="text-sm text-rGrayDark">{{ $t('wallet.totalTokens') }}</span>
           <div class="flex flex-row items-end">
             <div v-if="loading" class="text-2xl font-light mr-4 text-rGreen">--</div>
-            <big-amount :amount="availablePlusStakedAndUnstakedXRD" class="text-2xl font-light mr-4 text-rGreen" />
+            <big-amount :amount="availablePlusStakedAndUnstakedXRD" class="text-2xl font-light mr-4 text-rGreen" v-else />
             <token-symbol>{{ nativeToken && nativeToken.symbol }}</token-symbol>
           </div>
         </div>
