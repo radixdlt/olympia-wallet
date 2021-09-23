@@ -96,7 +96,7 @@ const messages = {
       navHelp: 'Help',
       navAddHWWallet: '+ Add Hardware Account',
       hardwareWalletHeading: 'Hardware Wallet',
-      testNetworkDisclaimer: 'You are currently are connected to a TEST NETWORK. To view your legitimate tokens and transactions on the Radix Public Network, you must choose "Mainnet" in Wallet Settings.'
+      testNetworkDisclaimer: 'You are currently connected to a TEST NETWORK. To view your legitimate tokens and transactions on the Radix Public Network, you must choose "Mainnet" in Wallet Settings.'
     },
     history: {
       historyHeading: 'History',
