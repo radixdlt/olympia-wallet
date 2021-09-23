@@ -70,7 +70,7 @@
         </form>
       </div>
     </div>
-    <confirm-network-change-modal v-if="nodeToConfirm" @cancel="cancelChange" @confirm="confirmChange" />
+    <confirm-network-change-modal v-if="nodeToConfirm" :url="nodeToConfirm" @cancel="cancelChange" @confirm="confirmChange" />
   </div>
 </template>
 
@@ -110,7 +110,7 @@ export default defineComponent({
     const nodeToConfirm: Ref<string | null> = ref(null)
     const toast = useToast()
     const router = useRouter()
-    const { persistNodeUrl, updateConnection, switching } = useWallet(router)
+    const { updateConnection, switching } = useWallet(router)
     const customNodeURLs: Ref<string[]> = ref([])
 
     const loadURLs = () => {
@@ -145,6 +145,7 @@ export default defineComponent({
         persistCustomNodeURL(url)
         await loadURLs()
         nodeToConfirm.value = url
+        values.nodeURL = ''
       } catch (error) {
         // Report errors for urls that don't resolve to a radix network
         setErrors({
