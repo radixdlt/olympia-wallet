@@ -1,5 +1,69 @@
 # Changelog
 
+## [1.2.0](https://www.github.com/radixdlt/olympia-wallet/compare/v1.1.1...v1.2.0) (2021-09-23)
+
+
+### Features
+
+* add exponential backoff to tx history retries ([#314](https://www.github.com/radixdlt/olympia-wallet/issues/314)) ([dc42296](https://www.github.com/radixdlt/olympia-wallet/commit/dc422965a1cd4c38f620798ad3032bed45f36a91))
+* After changing networks, hard reset the wallet ([#325](https://www.github.com/radixdlt/olympia-wallet/issues/325)) ([29d3e77](https://www.github.com/radixdlt/olympia-wallet/commit/29d3e7778711106c35a8c1ec0af7741a5d0fc257))
+* also disable change pin when no connection ([#330](https://www.github.com/radixdlt/olympia-wallet/issues/330)) ([2bdb09b](https://www.github.com/radixdlt/olympia-wallet/commit/2bdb09ba64a1432d3df6fe168288827097b1651c))
+* Changing nodes should be confirmed ([#328](https://www.github.com/radixdlt/olympia-wallet/issues/328)) ([4a42f5c](https://www.github.com/radixdlt/olympia-wallet/commit/4a42f5c87dcc5269a566c34de786a4be009f4dd5))
+* Expand network switch confirmation modal ([#332](https://www.github.com/radixdlt/olympia-wallet/issues/332)) ([dcd5886](https://www.github.com/radixdlt/olympia-wallet/commit/dcd5886313783d5dfa4948322226ccf1bd9898d2))
+* hardware wallet -> hardware account ([#329](https://www.github.com/radixdlt/olympia-wallet/issues/329)) ([76a3b7b](https://www.github.com/radixdlt/olympia-wallet/commit/76a3b7b59b91bb4bde6fe9bf4dcdccb0e152f6b2))
+* If a user logs in and cannot connect to their node, redirect them to settings ([#301](https://www.github.com/radixdlt/olympia-wallet/issues/301)) ([18d3f24](https://www.github.com/radixdlt/olympia-wallet/commit/18d3f244c8565465b3bd45b05027c6714a323f56))
+* show non xrd tokens in wallet ([332273e](https://www.github.com/radixdlt/olympia-wallet/commit/332273efbc3f3d91db6e74848b890840169e60f6))
+
+
+### Bug Fixes
+
+* add tooltip text upon hovering over Validator Name ([#273](https://www.github.com/radixdlt/olympia-wallet/issues/273)) ([c9f9705](https://www.github.com/radixdlt/olympia-wallet/commit/c9f970586ccaa478b9f59e54048367a9abb0a8d9))
+* Change Password and Reveal Seed settings tabs should be disabled without an active network connection ([#315](https://www.github.com/radixdlt/olympia-wallet/issues/315)) ([0cdb72f](https://www.github.com/radixdlt/olympia-wallet/commit/0cdb72fa31a1f9d4a0aed789b21c6620ec8ca498))
+* correct pin change button title ([1c191ed](https://www.github.com/radixdlt/olympia-wallet/commit/1c191ed0af002da54811870ce52687b6c19600fb))
+* correctly highlight active account ([#333](https://www.github.com/radixdlt/olympia-wallet/issues/333)) ([9885856](https://www.github.com/radixdlt/olympia-wallet/commit/9885856850e7eecb3ade00c6398b5a87dceec37d))
+* correctly present build errors on Transaction and Stake/Unstake screens ([#317](https://www.github.com/radixdlt/olympia-wallet/issues/317)) ([b163a32](https://www.github.com/radixdlt/olympia-wallet/commit/b163a323e6475130a6b296edd6379b41f7542a6d))
+* Don’t override existing values in wallet.json in initial migration ([#318](https://www.github.com/radixdlt/olympia-wallet/issues/318)) ([1403aa6](https://www.github.com/radixdlt/olympia-wallet/commit/1403aa6aab2d614bd5eb7e2298e77eb3a1a3b39b))
+* Handle case where user wants to copy hardware wallet from verify modal ([37f8c47](https://www.github.com/radixdlt/olympia-wallet/commit/37f8c47a5c100b5f961cd3693172203c3b070ad1))
+* Hide token balances after the active account has changed ([#327](https://www.github.com/radixdlt/olympia-wallet/issues/327)) ([0bc12f4](https://www.github.com/radixdlt/olympia-wallet/commit/0bc12f4cd22f7f76c39f286ecf7f4091b6b58a12))
+* Include href to status page ([#322](https://www.github.com/radixdlt/olympia-wallet/issues/322)) ([c76d6e5](https://www.github.com/radixdlt/olympia-wallet/commit/c76d6e56beaaa2ccabbf69a92553254926a3c5d0))
+* make subs a const, fix linting ([#326](https://www.github.com/radixdlt/olympia-wallet/issues/326)) ([0677757](https://www.github.com/radixdlt/olympia-wallet/commit/067775742d59b66583750e6aafb8ea35f2af1ce8))
+* migration should represent full shape of wallet store before manipulating values ([3d9ffdb](https://www.github.com/radixdlt/olympia-wallet/commit/3d9ffdbcd367a32e240e7b3524c8604a9afbd8b2))
+* Network connection is required for creating or restoring ([#316](https://www.github.com/radixdlt/olympia-wallet/issues/316)) ([ace1b17](https://www.github.com/radixdlt/olympia-wallet/commit/ace1b17321198016ad92f26e2ef51bbab6a753f1))
+* Network specific account indexes and hardware addresses ([#297](https://www.github.com/radixdlt/olympia-wallet/issues/297)) ([36a2a48](https://www.github.com/radixdlt/olympia-wallet/commit/36a2a4818ae01311d275e75e456a1fe00042c739))
+* overflow-x was overriding y axis and cropping tooltip ([5030a21](https://www.github.com/radixdlt/olympia-wallet/commit/5030a2145eede37bca06b04c05d3f087a8f1ef5a))
+* re-enable button after invalid password ([#336](https://www.github.com/radixdlt/olympia-wallet/issues/336)) ([49d9eaa](https://www.github.com/radixdlt/olympia-wallet/commit/49d9eaa2eae99c725819873f92e2dfadf6911dca))
+* Refactor old  from the wallet views linked to ledger integrations ([#305](https://www.github.com/radixdlt/olympia-wallet/issues/305)) ([7551d62](https://www.github.com/radixdlt/olympia-wallet/commit/7551d62ffcba1c284073372955e220840bb422f0))
+* Regressions in password error messages and forgot password submission ([#284](https://www.github.com/radixdlt/olympia-wallet/issues/284)) ([b5e374f](https://www.github.com/radixdlt/olympia-wallet/commit/b5e374f55de2008873b7320ea7d227999796db2d))
+* Release should use uppercased network ids ([#302](https://www.github.com/radixdlt/olympia-wallet/issues/302)) ([c8056d9](https://www.github.com/radixdlt/olympia-wallet/commit/c8056d92c163bf1c4b61be3375402e0040182710))
+* render confirmation modal without errors ([#335](https://www.github.com/radixdlt/olympia-wallet/issues/335)) ([5597efd](https://www.github.com/radixdlt/olympia-wallet/commit/5597efd588506ba732529b7863dbd8a647a92635))
+* rewire ledger interactions ([#303](https://www.github.com/radixdlt/olympia-wallet/issues/303)) ([7caa2a4](https://www.github.com/radixdlt/olympia-wallet/commit/7caa2a439f79db6ff31ba2c164ac3003a689ab49))
+* Show Word Numbers when revealing the seed phrase in settings ([#286](https://www.github.com/radixdlt/olympia-wallet/issues/286)) ([d79b591](https://www.github.com/radixdlt/olympia-wallet/commit/d79b59146b3eb5ce0cfd870d8363357aa9c1df96))
+* Staking transactions should reference nativeToken not selectedCurrency ([#304](https://www.github.com/radixdlt/olympia-wallet/issues/304)) ([db8bf24](https://www.github.com/radixdlt/olympia-wallet/commit/db8bf244c6632e1072a0b766507b1298accefc1b))
+* the cancel button should close tx conf modal ([#312](https://www.github.com/radixdlt/olympia-wallet/issues/312)) ([8b96e49](https://www.github.com/radixdlt/olympia-wallet/commit/8b96e49e50e7e098c59bbd7c56eb6cb1705289b4))
+* Transaction Currency Selector wasn't working ([#298](https://www.github.com/radixdlt/olympia-wallet/issues/298)) ([4858023](https://www.github.com/radixdlt/olympia-wallet/commit/485802352d392fb16bf1dea29301da0988704756))
+* Use RXJS to directly query the API for token balances ([#337](https://www.github.com/radixdlt/olympia-wallet/issues/337)) ([3bc74ff](https://www.github.com/radixdlt/olympia-wallet/commit/3bc74ffc453d9a50da90f1a7802b7654949565c6))
+
+
+### Dependencies
+
+* Add message when Mainnet is unavailable ([#334](https://www.github.com/radixdlt/olympia-wallet/issues/334)) ([e5dd874](https://www.github.com/radixdlt/olympia-wallet/commit/e5dd87487548d20a1dd23d2e44b8d4176a9c1868))
+* Add refresh option when switching networks takes a long time ([#323](https://www.github.com/radixdlt/olympia-wallet/issues/323)) ([958a79e](https://www.github.com/radixdlt/olympia-wallet/commit/958a79e598aecf8220073a2dae186387c5daf61d))
+* Combine Radix and Wallet composables ([#300](https://www.github.com/radixdlt/olympia-wallet/issues/300)) ([9112ea9](https://www.github.com/radixdlt/olympia-wallet/commit/9112ea9fc88b3096dc25a51cb5fa90be639a43d6))
+* Composable Refactor / Network Selection ([#290](https://www.github.com/radixdlt/olympia-wallet/issues/290)) ([aa6734d](https://www.github.com/radixdlt/olympia-wallet/commit/aa6734d565f42a1181f4cd82371017afbfc2a826))
+* correct unstaking label size ([e8e4d14](https://www.github.com/radixdlt/olympia-wallet/commit/e8e4d14138a737babc3acdd780cd21ffdcf5d8f0))
+* Explorer urls should be reactive to the active network ([52a0889](https://www.github.com/radixdlt/olympia-wallet/commit/52a0889fa0c73c6ab22746bb975a98cd069a93f2))
+* Expose invalid password error on login ([ba2d688](https://www.github.com/radixdlt/olympia-wallet/commit/ba2d68839f799ae8e095001ef88355f1b5f98228))
+* final 1.2.0 release tweaks ([#338](https://www.github.com/radixdlt/olympia-wallet/issues/338)) ([3dee6e1](https://www.github.com/radixdlt/olympia-wallet/commit/3dee6e11b4950cf6a1cd9c857dc30a9f30fe1515))
+* increase all polling from 5s to 15s ([a0b1e2a](https://www.github.com/radixdlt/olympia-wallet/commit/a0b1e2a3bc41550b8f3f4ed4b8c1155f3289344e))
+* Mainnet should appear before Stokenet ([fe86a7a](https://www.github.com/radixdlt/olympia-wallet/commit/fe86a7a96c054b282c0870468a35a06f5e72daa6))
+* More neatly handle invalid password now that users login without network connection ([c486d2f](https://www.github.com/radixdlt/olympia-wallet/commit/c486d2f1b665a14b7ecc6c164318a087d0f91a09))
+* Report invalid url validation for non url strings ([#331](https://www.github.com/radixdlt/olympia-wallet/issues/331)) ([387f722](https://www.github.com/radixdlt/olympia-wallet/commit/387f722488ba737ae6e1f6632f275e32170d58da))
+* Show disclaimer if not on Mainnet network ([77ce653](https://www.github.com/radixdlt/olympia-wallet/commit/77ce6531fd2bd40f73804892f105259236f83a2b))
+* temporarily, latest builds target stokent ([#294](https://www.github.com/radixdlt/olympia-wallet/issues/294)) ([061bb6a](https://www.github.com/radixdlt/olympia-wallet/commit/061bb6a95692e9aa8417ca504dd3334b9c8dbe83))
+* update styling of non-xrd balances ([#313](https://www.github.com/radixdlt/olympia-wallet/issues/313)) ([cee4404](https://www.github.com/radixdlt/olympia-wallet/commit/cee4404951127a2076cb09e80dc8b124f70b186e))
+* update styling of the non-mainnet warning ([914dbe0](https://www.github.com/radixdlt/olympia-wallet/commit/914dbe0a4925192d55ebf4d864aabd1e60028284))
+* update styling of Wallet Overview page ([160c874](https://www.github.com/radixdlt/olympia-wallet/commit/160c87455c140c33e4ea2e2b7da4894284ac6165))
+
 ### [1.1.1](https://www.github.com/radixdlt/olympia-wallet/compare/v1.1.0...v1.1.1) (2021-08-12)
 
 
