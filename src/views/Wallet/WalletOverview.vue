@@ -20,6 +20,7 @@
         <div class="flex flex-col my-3 px-5 border-r border-rGray flex-1">
           <span class="text-sm text-rGrayDark">{{ $t('wallet.totalTokens') }}</span>
           <div class="flex flex-row items-end">
+            <div v-if="loading" class="text-2xl font-light mr-4 text-rGreen">--</div>
             <big-amount :amount="availablePlusStakedAndUnstakedXRD" class="text-2xl font-light mr-4 text-rGreen" />
             <token-symbol>{{ nativeToken && nativeToken.symbol }}</token-symbol>
           </div>
@@ -27,14 +28,16 @@
         <div class="flex flex-col my-3 px-5 border-r border-rGray flex-1">
           <span class="text-sm text-rGrayDark">{{ $t('wallet.availableTokens') }}</span>
           <div class="flex flex-row items-end">
-            <big-amount :amount="totalXRD" class="text-2xl font-light mr-4 text-rBlack" />
+            <div v-if="loading" class="text-2xl font-light mr-4 text-rBlack">--</div>
+            <big-amount :amount="totalXRD" class="text-2xl font-light mr-4 text-rBlack" v-else />
             <token-symbol>{{ nativeToken && nativeToken.symbol }}</token-symbol>
           </div>
         </div>
         <div class="flex flex-col my-3 px-5 flex-1">
           <span class="text-sm text-rGrayDark">{{ $t('wallet.stakedTokens') }}</span>
           <div class="flex flex-row items-end">
-            <big-amount :amount="totalStakedAndUnstaked" class="text-2xl font-light mr-4 text-rBlack" />
+            <div v-if="loading" class="text-2xl font-light mr-4 text-rBlack">--</div>
+            <big-amount :amount="totalStakedAndUnstaked" class="text-2xl font-light mr-4 text-rBlack" v-else />
             <token-symbol>{{ nativeToken && nativeToken.symbol }}</token-symbol>
           </div>
         </div>
@@ -56,7 +59,7 @@
 
 <script lang="ts">
 import { defineComponent, computed, ComputedRef, ref, Ref, onMounted } from 'vue'
-import { merge, forkJoin, interval, Subject } from 'rxjs'
+import { merge, forkJoin, interval, Subject, Subscription } from 'rxjs'
 import { switchMap, mergeMap } from 'rxjs/operators'
 import { StakePosition, Amount, AmountT, Token, SimpleTokenBalance, StakePositions, UnstakePositions, SimpleTokenBalances } from '@radixdlt/application'
 import BigAmount from '@/components/BigAmount.vue'
@@ -87,7 +90,10 @@ const WalletOverview = defineComponent({
       hasWallet
     } = useWallet(router)
 
+    const subs = new Subscription()
+
     const pageTrigger = new Subject<number>()
+    const loading = ref(true)
 
     onMounted(() => {
       pageTrigger.next(Math.random())
@@ -102,6 +108,10 @@ const WalletOverview = defineComponent({
       interval(15000)
     )
 
+    subs.add(radix.activeAddress.subscribe(() => {
+      loading.value = true
+    }))
+
     const balanceSub = updateObservable.pipe(
       switchMap(() => radix.activeAccount),
       mergeMap((account) => forkJoin([
@@ -113,10 +123,12 @@ const WalletOverview = defineComponent({
       tokenBalances.value = balances
       activeStakes.value = stakes
       activeUnstakes.value = unstakes
+      loading.value = false
     })
+    subs.add(balanceSub)
 
     onBeforeRouteLeave(() => {
-      balanceSub.unsubscribe()
+      subs.unsubscribe()
     })
 
     if (!hasWallet) {
@@ -173,6 +185,7 @@ const WalletOverview = defineComponent({
       activeStakes,
       activeUnstakes,
       explorerUrlBase,
+      loading,
       nativeToken,
       tokenBalances,
       totalXRD,
