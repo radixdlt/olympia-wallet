@@ -69,7 +69,6 @@ const HomeEnterPasscode = defineComponent({
     const { setTab } = useSettingsTab()
 
     const disableSubmit: ComputedRef<boolean> = computed(() => {
-      console.log('meta', meta.value)
       const metaIsDirty = meta.value.dirty ? !meta.value.valid : true
       return isAuthenticating.value || metaIsDirty
     })
