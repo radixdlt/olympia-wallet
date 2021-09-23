@@ -135,11 +135,18 @@ export default defineComponent({
       const tempRadix = Radix.create()
       try {
         tempRadix.connect(url)
+          .catch(() => {
+            // Report errors for non url strings
+            setErrors({
+              nodeURL: 'Please enter a valid URL address'
+            })
+          })
         const networkId = await firstValueFrom(tempRadix.ledger.networkId())
         persistCustomNodeURL(url)
         await loadURLs()
         nodeToConfirm.value = url
       } catch (error) {
+        // Report errors for urls that don't resolve to a radix network
         setErrors({
           nodeURL: 'Please enter a valid URL address'
         })
