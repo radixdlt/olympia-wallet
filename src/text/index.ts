@@ -206,7 +206,10 @@ const messages = {
       takesTooLong: 'If this takes more than a few seconds, ',
       clickToRefresh: 'click here to refresh.',
       networkChangeTitle: 'Network Change',
-      networkChangeCopy: 'Please note that you will need to re-enter your password in order to switch networks. Do you wish to proceed?'
+      networkChangeCopy: 'Please note that you will need to re-enter your password in order to switch networks. Do you wish to proceed?',
+      mainnetUnavailableOne: 'Cannot currently connect to mainnet. Please check the ',
+      mainnetUnavailableLink: 'status page',
+      mainnetUnavailableTwo: ' for more information.'
     },
     errors: {
       hardwareMismatchTitle: 'Hardware Wallet Account Mismatch',
