@@ -94,7 +94,7 @@ const messages = {
       navStake: 'Stake & Unstake',
       navSettings: 'Wallet Settings',
       navHelp: 'Help',
-      navAddHWWallet: '+ Add Hardware Wallet',
+      navAddHWWallet: '+ Add Hardware Account',
       hardwareWalletHeading: 'Hardware Wallet',
       testNetworkDisclaimer: 'You are currently are connected to a TEST NETWORK. To view your legitimate tokens and transactions on the Radix Public Network, you must choose "Mainnet" in Wallet Settings.'
     },
