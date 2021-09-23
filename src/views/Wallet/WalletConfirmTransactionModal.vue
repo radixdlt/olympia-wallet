@@ -91,7 +91,7 @@
             <div class="w-26 text-right text-rGrayDark mr-8">{{ $t('transaction.feeLabel') }}</div>
             <div class="flex-1 flex flex-row items-center" v-if="transactionFee">
               <big-amount :amount="transactionFee"  class="mr-1" />
-              <span class="uppercase">{{ nativeToken.symbol }}</span>
+              <span class="uppercase" v-if="nativeToken">{{ nativeToken.symbol }}</span>
             </div>
           </div>
         </div>
