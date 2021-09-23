@@ -3,7 +3,7 @@
     <div class="flex flex-col">
       <div class="flex flex-row">
         <tabs-tab :isActive="activeTab === 'password'" @click="() => handleClickTab('password')" :isDisabled="!connected">Change Password</tabs-tab>
-        <tabs-tab :isActive="activeTab === 'pin'" @click="() => handleClickTab('pin')">Change PIN</tabs-tab>
+        <tabs-tab :isActive="activeTab === 'pin'" @click="() => handleClickTab('pin')" :isDisabled="!connected">Change PIN</tabs-tab>
         <tabs-tab :isActive="activeTab === 'mnemonic'" @click="() => handleClickTab('mnemonic')" :isDisabled="!connected">Reveal Seed Phrase</tabs-tab>
         <tabs-tab :isActive="activeTab === 'nodes'" @click="() => handleClickTab('nodes')">Choose Node/Network</tabs-tab>
       </div>
