@@ -30,14 +30,14 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, onUnmounted, Ref, watch } from 'vue'
+import { computed, ComputedRef, defineComponent, onUnmounted } from 'vue'
 import AppRadioIndicator from '@/components/AppRadioIndicator.vue'
 import IconRadixLogo from '@/components/IconRadixLogo.vue'
 import { useToast } from 'vue-toastification'
 import { useConnectableRadix, useWallet } from '@/composables'
 import { useRouter } from 'vue-router'
-import { ref } from '@nopr3d/vue-next-rx'
-import { AccountT } from '@radixdlt/application'
+// import { ref } from '@nopr3d/vue-next-rx'
+// import { AccountT } from '@radixdlt/application'
 import { forgetCustomNodeURL } from '@/actions/vue/data-store'
 
 export default defineComponent({
@@ -65,9 +65,9 @@ export default defineComponent({
   setup (props, { emit }) {
     const toast = useToast()
     const router = useRouter()
-    const { connected: activeConnection, updateConnection, accounts, setSwitching, switchAccount, nodeUrl } = useWallet(router)
+    const { connected: activeConnection, nodeUrl } = useWallet(router)
     const { connected, loading, networkId, testConnection, cleanupSubscriptions } = useConnectableRadix()
-    const updatedConnection: Ref<boolean> = ref(false)
+    // const updatedConnection: Ref<boolean> = ref(false)
 
     const isActive: ComputedRef<boolean> = computed(() => nodeUrl.value ? nodeUrl.value === props.url : false)
 
@@ -79,14 +79,14 @@ export default defineComponent({
       emit('select', props.url)
     }
 
-    // watch connection updated and addresses. if updated, switch to [0] account
-    watch([accounts, updatedConnection], ([a, uc], [oldA, oldUc]) => {
-      if (uc && a && oldA && a.all.length > 0 && [...a.all] !== [...oldA.all]) {
-        // Force a switch to the 0 index account when we update to a new node connection
-        switchAccount(a.all[0] as AccountT)
-        updatedConnection.value = false
-      }
-    })
+    // // watch connection updated and addresses. if updated, switch to [0] account
+    // watch([accounts, updatedConnection], ([a, uc], [oldA, oldUc]) => {
+    //   if (uc && a && oldA && a.all.length > 0 && [...a.all] !== [...oldA.all]) {
+    //     // Force a switch to the 0 index account when we update to a new node connection
+    //     switchAccount(a.all[0] as AccountT)
+    //     updatedConnection.value = false
+    //   }
+    // })
 
     const computedNetwork: ComputedRef<string> = computed(() => {
       if (props.network) return props.network

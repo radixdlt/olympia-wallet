@@ -1,5 +1,6 @@
 import { Network, Radix, RadixT } from '@radixdlt/application'
 import { Subscription } from 'rxjs'
+import { timeout } from 'rxjs/operators'
 import { computed, ComputedRef, ref, Ref } from 'vue'
 
 interface useConnectableRadixInterface {
@@ -26,17 +27,19 @@ export default function useConnectableRadix (): useConnectableRadixInterface {
       isLoading.value = true
       isConnected.value = false
 
-      subs.add(tempRadix.ledger.networkId().subscribe({
-        next: (n: Network) => {
-          isConnected.value = true
-          isLoading.value = false
-          network.value = n
-        },
-        error: () => {
-          isConnected.value = false
-          isLoading.value = false
-        }
-      }))
+      subs.add(
+        tempRadix.ledger.networkId().pipe(timeout(5000)).subscribe({
+          next: (n: Network) => {
+            isConnected.value = true
+            isLoading.value = false
+            network.value = n
+          },
+          error: () => {
+            isConnected.value = false
+            isLoading.value = false
+          }
+        })
+      )
 
       tempRadix.connect(networkURL)
     },
