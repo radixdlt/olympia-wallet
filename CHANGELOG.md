@@ -1,5 +1,12 @@
 # Changelog
 
+### [1.2.1](https://www.github.com/radixdlt/olympia-wallet/compare/v1.2.0...v1.2.1) (2021-09-24)
+
+
+### Bug Fixes
+
+* show the selected currency in the conf modal ([#339](https://www.github.com/radixdlt/olympia-wallet/issues/339)) ([72f29db](https://www.github.com/radixdlt/olympia-wallet/commit/72f29db4debda044e2c62b3afe6eb4a80a224a4b))
+
 ## [1.2.0](https://www.github.com/radixdlt/olympia-wallet/compare/v1.1.1...v1.2.0) (2021-09-23)
 
 
