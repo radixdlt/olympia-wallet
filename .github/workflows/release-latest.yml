@@ -1,7 +1,7 @@
 on:
   push:
     branches:
-      - main
+      - never
 
 name: release-latest
 jobs:
