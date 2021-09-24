@@ -65,7 +65,8 @@
             <div class="w-26 text-right text-rGrayDark mr-6">{{ $t('transaction.amountLabel') }}</div>
             <div class="flex-1 flex flex-row items-center">
               <big-amount :amount="amount" class="mr-1" />
-              <span class="uppercase" v-if="nativeToken">{{ nativeToken.symbol }}</span>
+              <span class="uppercase" v-if="stakeInput && nativeToken">{{ nativeToken.symbol }}</span>
+              <span class="uppercase" v-else-if="selectedCurrency">{{ selectedCurrency.token.symbol }}</span>
             </div>
           </div>
 
@@ -182,7 +183,8 @@ const WalletConfirmTransactionModal = defineComponent({
       transactionFee,
       transactionState,
       transferInput,
-      transactionUnsub
+      transactionUnsub,
+      selectedCurrency
     } = useTransactions(radix, router, activeAccount.value, hardwareAccount.value, {
       ledgerSigningError: () => {
         hardwareAccountFailedToSign()
@@ -295,7 +297,8 @@ const WalletConfirmTransactionModal = defineComponent({
       transactionFee,
       transactionState,
       transferInput,
-      values
+      values,
+      selectedCurrency
     }
   }
 })

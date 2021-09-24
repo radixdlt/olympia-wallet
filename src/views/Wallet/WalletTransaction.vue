@@ -167,6 +167,7 @@ const WalletTransaction = defineComponent({
     const { t } = useI18n({ useScope: 'global' })
     const { nativeToken, nativeTokenUnsub } = useNativeToken(radix)
     const { tokenBalances, tokenBalanceFor, tokenBalancesUnsub } = useTokenBalances(radix)
+    const nativeTokenLoaded: Ref<boolean> = ref(false)
 
     onBeforeRouteLeave(() => {
       nativeTokenUnsub()
@@ -181,7 +182,10 @@ const WalletTransaction = defineComponent({
 
     // reset currency when required state has loaded. Especially necessary when switching account
     watch([nativeToken, tokenBalances], ([nt, tb]) => {
-      if (tb && nt) setXRDByDefault(nt)
+      if (tb && nt && !nativeTokenLoaded.value) {
+        setXRDByDefault(nt)
+        nativeTokenLoaded.value = true
+      }
     })
 
     watch(transactionErrorMessage, (val) => {
