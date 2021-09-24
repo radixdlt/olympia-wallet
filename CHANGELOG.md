@@ -1,5 +1,12 @@
 # Changelog
 
+### [1.2.2](https://www.github.com/radixdlt/olympia-wallet/compare/v1.2.1...v1.2.2) (2021-09-24)
+
+
+### Bug Fixes
+
+* disable release-latest ([#341](https://www.github.com/radixdlt/olympia-wallet/issues/341)) ([041a80b](https://www.github.com/radixdlt/olympia-wallet/commit/041a80b2b6e78ae59978690f1c55466d4e4030b0))
+
 ### [1.2.1](https://www.github.com/radixdlt/olympia-wallet/compare/v1.2.0...v1.2.1) (2021-09-24)
 
 
