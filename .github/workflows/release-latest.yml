@@ -1,7 +1,7 @@
 on:
   push:
     branches:
-      - st/latest-builds
+      - main
 
 name: release-latest
 jobs:
