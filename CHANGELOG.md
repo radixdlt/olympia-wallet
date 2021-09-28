@@ -1,5 +1,18 @@
 # Changelog
 
+### [1.2.3](https://www.github.com/radixdlt/olympia-wallet/compare/v1.2.2...v1.2.3) (2021-09-28)
+
+
+### Bug Fixes
+
+* make rri address scroll with token balance ([#345](https://www.github.com/radixdlt/olympia-wallet/issues/345)) ([abe88c0](https://www.github.com/radixdlt/olympia-wallet/commit/abe88c0d630e591706166bf4052bbc66d8759687))
+
+
+### Dependencies
+
+* Enable Latest Builds ([#344](https://www.github.com/radixdlt/olympia-wallet/issues/344)) ([1e24dcd](https://www.github.com/radixdlt/olympia-wallet/commit/1e24dcd01ea9ed85503a32c73a383bb7c0718b82))
+* update switching node modal copy ([#346](https://www.github.com/radixdlt/olympia-wallet/issues/346)) ([740a3af](https://www.github.com/radixdlt/olympia-wallet/commit/740a3af7bf1559a70583c6639b08bfc2aafa8d10))
+
 ### [1.2.2](https://www.github.com/radixdlt/olympia-wallet/compare/v1.2.1...v1.2.2) (2021-09-24)
 
 
