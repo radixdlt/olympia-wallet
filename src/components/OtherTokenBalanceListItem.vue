@@ -15,7 +15,7 @@
         </div>
       </div>
     </div>
-    <div class="overflow-x-scroll">
+    <div class="overflow-x-scroll relative">
       <div class="flex flex-row absolute">
         <div class="flex-1 flex flex-row items-center px-6 overflow-x-auto">
           <span class="text-sm font-mono text-rGrayDark">{{ truncateRRIStringForDisplay(tokenBalance.tokenIdentifier.toString()) }}</span>
