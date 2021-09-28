@@ -1,0 +1,6 @@
+name: "mark-latest"
+description: "Mark the release as latest in package.json"
+
+runs:
+  using: "node12"
+  main: "index.js"

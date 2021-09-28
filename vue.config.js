@@ -1,5 +1,12 @@
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const NormalModuleReplacementPlugin = require('webpack').NormalModuleReplacementPlugin
+const package = require('./package.json')
+
+const builderReleaseOptions = package.latest ? null : {
+  provider: 'github',
+  private: false,
+  releaseType: 'release'
+}
 
 module.exports = {
   pluginOptions: {
@@ -35,11 +42,7 @@ module.exports = {
       },
 
       builderOptions: {
-        publish: {
-          provider: 'github',
-          private: true,
-          releaseType: 'release'
-        },
+        publish: builderReleaseOptions,
         snap: {
           publish: 'github'
         },
@@ -61,8 +64,7 @@ module.exports = {
   },
   chainWebpack: config => {
     config.plugin('html').tap(args => {
-      const package = require('./package.json')
-      args[0].title = `${package.description} (v${package.version})`
+      args[0].title = `${package.description} ${package.latest ? ' LATEST' : ''} (v${package.version})`
       return args
     })
   }
