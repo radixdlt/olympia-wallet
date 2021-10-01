@@ -1,4 +1,4 @@
-import { ref, computed, Ref, ComputedRef, watch } from 'vue'
+import { ref, computed, Ref, ComputedRef } from 'vue'
 import {
   AccountAddressT,
   AccountsT,
@@ -15,8 +15,7 @@ import {
   SigningKeychainT,
   WalletErrorCause,
   WalletT,
-  walletError,
-  APIError
+  walletError
 } from '@radixdlt/application'
 import { AccountName } from '@/actions/electron/data-store'
 import { Router } from 'vue-router'
@@ -45,6 +44,11 @@ const radix: RadixT = Radix.create()
 
 export type WalletError = ErrorT<ErrorCategory.WALLET>
 
+export type ClientAppErrorT = {
+  type: 'GENERIC',
+  error: ErrorT<'wallet'>
+}
+
 const accountNames: Ref<AccountName[]> = ref([])
 const accounts: Ref<AccountsT | null> = ref(null)
 const allAccounts: Ref<AccountT[]> = ref([])
@@ -66,12 +70,15 @@ const showLedgerVerify: Ref<boolean> = ref(false)
 const signingKeychain: Ref<SigningKeychainT | null> = ref(null)
 const switching = ref(false)
 const wallet: Ref<WalletT | null> = ref(null)
-const appErrors: Ref<ErrorT<'wallet'>[]> = ref([])
+const appErrors: Ref<ClientAppErrorT[]> = ref([])
 
 radix.errors
   .subscribe((error: ErrorT<'wallet'>) => {
     console.log('error sink:', error)
-    appErrors.value = [...appErrors.value, error]
+    appErrors.value = [...appErrors.value, {
+      type: 'GENERIC',
+      error
+    }]
   })
 
 const clearLatestError = () => {
@@ -108,7 +115,7 @@ interface useWalletInterface {
   readonly activeAccount: Ref<AccountT | null>;
   readonly activeAddress: Ref<AccountAddressT | null>;
   readonly activeNetwork: Ref<Network | null>;
-  readonly appErrors: ComputedRef<ErrorT<'wallet'>[]>;
+  readonly appErrors: ComputedRef<ClientAppErrorT[]>;
   readonly explorerUrlBase: ComputedRef<string>;
   readonly hardwareAccount: Ref<AccountT | null>;
   readonly hardwareAddress: Ref<string | null>;
