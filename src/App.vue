@@ -3,8 +3,18 @@
     <div class="bg-rBlue w-1/2 h-tallest origin-center transform rotate-45 absolute z-0 top-0 left-0 -translate-x-1/2 -translate-y-1/2"></div>
     <div class="relative z-10 min-h-screen">
       <template v-if="latestError">
+        <ErrorModalTransactionBuilding
+          v-if="latestError.type === 'TRANSACTION-BUILDING'"
+          :error="latestError.error"
+          :errorsCount="errorsCount"
+        />
+        <ErrorModalTransactionConfirming
+          v-else-if="latestError.type === 'TRANSACTION-CONFIRM'"
+          :error="latestError.error"
+          :errorsCount="errorsCount"
+        />
         <ErrorModalGeneric
-          v-if="latestError.type === 'GENERIC'"
+          v-else
           :error="latestError.error"
           :errorsCount="errorsCount"
         />
@@ -17,18 +27,23 @@
 <script lang="ts">
 import { computed, ComputedRef, defineComponent } from 'vue'
 import { useRouter } from 'vue-router'
-import { useWallet } from './composables'
+import { useWallet, useErrors } from './composables'
 import ErrorModalGeneric from '@/components/ErrorModalGeneric.vue'
-import { ClientAppErrorT } from './composables/useWallet'
+import ErrorModalTransactionBuilding from '@/components/ErrorModalTransactionBuilding.vue'
+import ErrorModalTransactionConfirming from '@/components/ErrorModalTransactionConfirming.vue'
+import { ClientAppErrorT } from './composables/useErrors'
 
 const App = defineComponent({
   components: {
-    ErrorModalGeneric
+    ErrorModalGeneric,
+    ErrorModalTransactionBuilding,
+    ErrorModalTransactionConfirming
   },
 
   setup () {
     const router = useRouter()
-    const { appErrors } = useWallet(router)
+    const { radix } = useWallet(router)
+    const { appErrors } = useErrors(radix)
 
     const latestError: ComputedRef<ClientAppErrorT | null> = computed(() => {
       return appErrors.value[appErrors.value.length - 1]

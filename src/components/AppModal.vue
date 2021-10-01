@@ -18,7 +18,7 @@
         >
           <slot name="icon"></slot>
         </div>
-        <div class="text-rBlue text-2xl font-light">{{ title }}</div>
+        <div class="text-rBlue text-2xl font-light px-8">{{ title }}</div>
       </div>
       <div
         v-if="slots.content != undefined"

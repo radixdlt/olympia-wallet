@@ -1,7 +1,7 @@
 <template>
   <AppModal
     :visible="isVisible"
-    :title="$t('errors.genericErrorTitle')"
+    :title="$t('errors.transactionBuildingErrorTitle')"
   >
     <template v-slot:icon>
       <svg width="50" height="50" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg" class="transform rotate-45">
@@ -17,7 +17,6 @@
       <p class="mb-5">{{ error }}</p>
       <div class="flex flex-row space-x-5 justify-center">
         <AppButtonCancel @click="handleClose" class="w-44">{{ $t('errors.closeModal') }}</AppButtonCancel>
-        <AppButtonCancel @click="refreshApp" class="w-44">{{ $t('errors.refreshApp') }}</AppButtonCancel>
       </div>
     </template>
   </AppModal>
@@ -30,7 +29,6 @@ import AppModal from '@/components/AppModal.vue'
 import { ErrorT } from '@radixdlt/application'
 import { useRouter } from 'vue-router'
 import { useWallet, useErrors } from '@/composables'
-import { refreshApp } from '@/actions/vue/data-store'
 
 export default defineComponent({
   components: {
@@ -71,7 +69,6 @@ export default defineComponent({
     return {
       handleClose,
       isVisible,
-      refreshApp,
       updateVisible
     }
   }

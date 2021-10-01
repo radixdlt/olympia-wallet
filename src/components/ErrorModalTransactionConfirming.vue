@@ -1,7 +1,7 @@
 <template>
   <AppModal
     :visible="isVisible"
-    :title="$t('errors.genericErrorTitle')"
+    :title="$t('errors.transactionConfirmingErrorTitle')"
   >
     <template v-slot:icon>
       <svg width="50" height="50" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg" class="transform rotate-45">
@@ -14,6 +14,7 @@
       <div v-if="errorsCount > 1" class="absolute top-0 right-0">
         <div class="bg-rRed rounded-full inline-block px-2 py-0.5 m-2 text-white text-sm">{{ errorsCount }}</div>
       </div>
+      <p class="mb-5">{{ $t('errors.transactionConfirmingErrorMsg') }}</p>
       <p class="mb-5">{{ error }}</p>
       <div class="flex flex-row space-x-5 justify-center">
         <AppButtonCancel @click="handleClose" class="w-44">{{ $t('errors.closeModal') }}</AppButtonCancel>

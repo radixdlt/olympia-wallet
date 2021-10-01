@@ -44,11 +44,6 @@ const radix: RadixT = Radix.create()
 
 export type WalletError = ErrorT<ErrorCategory.WALLET>
 
-export type ClientAppErrorT = {
-  type: 'GENERIC',
-  error: ErrorT<'wallet'>
-}
-
 const accountNames: Ref<AccountName[]> = ref([])
 const accounts: Ref<AccountsT | null> = ref(null)
 const allAccounts: Ref<AccountT[]> = ref([])
@@ -70,22 +65,6 @@ const showLedgerVerify: Ref<boolean> = ref(false)
 const signingKeychain: Ref<SigningKeychainT | null> = ref(null)
 const switching = ref(false)
 const wallet: Ref<WalletT | null> = ref(null)
-const appErrors: Ref<ClientAppErrorT[]> = ref([])
-
-radix.errors
-  .subscribe((error: ErrorT<'wallet'>) => {
-    console.log('error sink:', error)
-    appErrors.value = [...appErrors.value, {
-      type: 'GENERIC',
-      error
-    }]
-  })
-
-const clearLatestError = () => {
-  const latestErrors = appErrors.value
-  latestErrors.pop()
-  appErrors.value = latestErrors
-}
 
 const setWallet = (newWallet: WalletT) => {
   wallet.value = newWallet
@@ -115,7 +94,6 @@ interface useWalletInterface {
   readonly activeAccount: Ref<AccountT | null>;
   readonly activeAddress: Ref<AccountAddressT | null>;
   readonly activeNetwork: Ref<Network | null>;
-  readonly appErrors: ComputedRef<ClientAppErrorT[]>;
   readonly explorerUrlBase: ComputedRef<string>;
   readonly hardwareAccount: Ref<AccountT | null>;
   readonly hardwareAddress: Ref<string | null>;
@@ -136,7 +114,6 @@ interface useWalletInterface {
   accountNameFor: (address: AccountAddressT) => string;
   accountRenamed: (newName: string) => void;
   addAccount: () => void;
-  clearLatestError: () => void;
   connectHardwareWallet: () => void;
   createWallet: (mnemonic: MnemomicT, pass: string, network: Network) => Promise<WalletT>;
   deleteLocalHardwareAddress: () => void;
@@ -377,7 +354,6 @@ export default function useWallet (router: Router): useWalletInterface {
     activeAddress,
     activeNetwork,
     allAccounts,
-    appErrors: computed(() => appErrors.value),
     explorerUrlBase: computed(() => explorerUrlBase.value),
     derivedAccountIndex,
     hardwareAccount,
@@ -432,7 +408,6 @@ export default function useWallet (router: Router): useWalletInterface {
     accountNameFor,
     accountRenamed,
     addAccount,
-    clearLatestError,
     connectHardwareWallet,
     createWallet,
     deleteLocalHardwareAddress,
