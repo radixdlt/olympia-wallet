@@ -9,7 +9,7 @@
   >
     <div
       v-if="visible"
-      class="rounded overflow-hidden max-w-lg w-full fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50"
+      class="shadow rounded overflow-hidden max-w-lg w-full fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50"
     >
       <div class="bg-rGrayLight text-center pt-8 pb-7">
         <div
@@ -22,7 +22,7 @@
       </div>
       <div
         v-if="slots.content != undefined"
-        class="bg-white pt-6 pb-5 text-rGrayDark text-base text-center space-y-5"
+        class="bg-white pt-6 pb-5 text-rGrayDark text-base text-center px-4"
       >
         <slot name="content"></slot>
       </div>

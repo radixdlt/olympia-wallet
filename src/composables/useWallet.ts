@@ -15,7 +15,8 @@ import {
   SigningKeychainT,
   WalletErrorCause,
   WalletT,
-  walletError
+  walletError,
+  APIError
 } from '@radixdlt/application'
 import { AccountName } from '@/actions/electron/data-store'
 import { Router } from 'vue-router'
@@ -65,11 +66,19 @@ const showLedgerVerify: Ref<boolean> = ref(false)
 const signingKeychain: Ref<SigningKeychainT | null> = ref(null)
 const switching = ref(false)
 const wallet: Ref<WalletT | null> = ref(null)
+const appErrors: Ref<ErrorT<'wallet'>[]> = ref([])
 
 radix.errors
   .subscribe((error: ErrorT<'wallet'>) => {
-    console.log(error)
+    console.log('error sink:', error)
+    appErrors.value = [...appErrors.value, error]
   })
+
+const clearLatestError = () => {
+  const latestErrors = appErrors.value
+  latestErrors.pop()
+  appErrors.value = latestErrors
+}
 
 const setWallet = (newWallet: WalletT) => {
   wallet.value = newWallet
@@ -99,6 +108,7 @@ interface useWalletInterface {
   readonly activeAccount: Ref<AccountT | null>;
   readonly activeAddress: Ref<AccountAddressT | null>;
   readonly activeNetwork: Ref<Network | null>;
+  readonly appErrors: ComputedRef<ErrorT<'wallet'>[]>;
   readonly explorerUrlBase: ComputedRef<string>;
   readonly hardwareAccount: Ref<AccountT | null>;
   readonly hardwareAddress: Ref<string | null>;
@@ -119,6 +129,7 @@ interface useWalletInterface {
   accountNameFor: (address: AccountAddressT) => string;
   accountRenamed: (newName: string) => void;
   addAccount: () => void;
+  clearLatestError: () => void;
   connectHardwareWallet: () => void;
   createWallet: (mnemonic: MnemomicT, pass: string, network: Network) => Promise<WalletT>;
   deleteLocalHardwareAddress: () => void;
@@ -359,6 +370,7 @@ export default function useWallet (router: Router): useWalletInterface {
     activeAddress,
     activeNetwork,
     allAccounts,
+    appErrors: computed(() => appErrors.value),
     explorerUrlBase: computed(() => explorerUrlBase.value),
     derivedAccountIndex,
     hardwareAccount,
@@ -413,6 +425,7 @@ export default function useWallet (router: Router): useWalletInterface {
     accountNameFor,
     accountRenamed,
     addAccount,
+    clearLatestError,
     connectHardwareWallet,
     createWallet,
     deleteLocalHardwareAddress,
