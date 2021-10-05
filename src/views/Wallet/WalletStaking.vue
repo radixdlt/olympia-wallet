@@ -82,8 +82,10 @@
           </svg>
         </a>
       </div>
-
-      <template v-if="nativeToken">
+      <div v-if="loadingAllStaking || !nativeToken" class="p-4 flex items-center justify-center">
+        <loading-icon class="text-rGrayDark" />
+      </div>
+      <template v-else>
         <stake-list-item
           v-for="(position) in sortedPositions"
           :key="position.address"
@@ -111,6 +113,7 @@ import FormErrorMessage from '@/components/FormErrorMessage.vue'
 import FormField from '@/components/FormField.vue'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
 import { asBigNumber } from '@/components/BigAmount.vue'
+import LoadingIcon from '@/components/LoadingIcon.vue'
 import { Position } from '@/services/_types'
 import { useNativeToken, useStaking, useTransactions, useTokenBalances, useWallet } from '@/composables'
 import { useRouter, onBeforeRouteLeave } from 'vue-router'
@@ -126,6 +129,7 @@ const WalletStaking = defineComponent({
     ButtonSubmit,
     FormField,
     FormErrorMessage,
+    LoadingIcon,
     StakeListItem,
     TabsContent,
     TabsTab
@@ -153,7 +157,7 @@ const WalletStaking = defineComponent({
 
     const { nativeToken, nativeTokenUnsub } = useNativeToken(radix)
     const { tokenBalances, tokenBalanceFor, tokenBalancesUnsub } = useTokenBalances(radix)
-    const { activeStakes, activeUnstakes, stakingUnsub } = useStaking(radix)
+    const { activeStakes, activeUnstakes, loadingAllStaking, stakingUnsub } = useStaking(radix)
 
     onBeforeRouteLeave(() => {
       nativeTokenUnsub()
@@ -185,6 +189,7 @@ const WalletStaking = defineComponent({
     })
 
     const sortedPositions: ComputedRef<Array<Position>> = computed(() => {
+      console.log('computed sorted', activeStakes.value, activeUnstakes.value)
       if (!activeStakes.value || !activeUnstakes.value) return []
       // If more than 1 stake exists for the same validator, only display the validator once and sum their amounts
       let positions: Position[] = []
@@ -280,25 +285,27 @@ const WalletStaking = defineComponent({
       stakeUrl: 'https://learn.radixdlt.com',
       activeForm,
       activeAddress,
-      explorerUrlBase,
-      tokenBalances,
-      nativeToken,
-      errors,
-      values,
-      meta,
-      setErrors,
-      resetForm,
-      sortedPositions,
-      xrdBalance,
-      stakingDisclaimer,
-      stakeButtonCopy,
-      disableSubmit,
       amountPlaceholder,
+      errors,
       explorerUrl,
-      setForm,
+      explorerUrlBase,
+      loadingAllStaking,
+      meta,
+      nativeToken,
+      sortedPositions,
+      stakeButtonCopy,
+      stakingDisclaimer,
+      tokenBalances,
+      values,
+      xrdBalance,
+
+      disableSubmit,
       handleAddToValidator,
       handleReduceFromValidator,
-      handleSubmitStake
+      handleSubmitStake,
+      resetForm,
+      setErrors,
+      setForm
     }
   }
 })
