@@ -15,12 +15,15 @@
         </div>
       </div>
 
-      <div v-if="!hasTokenBalances" class="p-4 flex items-center justify-center">
+      <div v-if="!loadedAllData" class="p-4 flex items-center justify-center">
+        <loading-icon class="text-rGrayDark" />
+      </div>
+      <div v-else-if="!hasTokenBalances" class="p-4 flex items-center justify-center">
         {{ $t('transaction.insufficientFunds') }}
       </div>
       <form
         @submit.prevent="handleSubmit"
-        v-else-if="hasTokenBalances && nativeToken && selectedCurrency"
+        v-else
         class="flex flex-col items-end"
       >
         <div class="bg-white rounded-md border border-rGray text-rBlack mb-8 w-full">
@@ -104,9 +107,6 @@
               </div>
             </div>
           </template>
-          <div v-else class="p-4 flex items-center justify-center">
-            <loading-icon class="text-rGrayDark" />
-          </div>
         </div>
 
         <ButtonSubmit :disabled="disableSubmit" class="w-52 ml-full">
