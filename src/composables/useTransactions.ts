@@ -281,7 +281,6 @@ export default function useTransactions (radix: RadixT, router: Router, activeAc
           transactionDidComplete.next(true)
           // If we receive a completion event but never received a confirmation event and cleared
           // pending transaction, we should warn the user that something went wrong
-          console.log(transactionState.value)
           if (transactionState.value !== 'submitting') {
             setError({
               type: 'TRANSACTION-CONFIRM'
