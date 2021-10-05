@@ -2,7 +2,7 @@
   <div class="border border-rGray rounded-md divide-rGray">
     <div class="flex flex-row py-1">
       <div class="flex-1 flex flex-row items-center px-6 pt-3 overflow-x-auto justify-between">
-        <span class="text-md text-rGrayDark">{{ tokenBalance.tokenIdentifier.name }}</span>
+        <span class="text-md text-rGrayDark">{{ token.name }}</span>
         <div>
           <a :href="rriUrl" target="_blank" class="hover:text-rGreen transition-colors text-rGrayMed">
             <div class="rounded-full border border-solid border-rGray w-6 h-6 flex items-center justify-center ">
