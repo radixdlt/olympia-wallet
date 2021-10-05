@@ -38,6 +38,8 @@ import {
   AccountT
 } from '@radixdlt/application'
 import { Router } from 'vue-router'
+import { useErrors } from '.'
+import { TransactionStateT, ClientAppErrorTypeT } from './useErrors'
 
 export interface PendingTransaction extends TransactionStateSuccess {
   actions: IntendedAction[]
@@ -111,6 +113,7 @@ let userConfirmation = new ReplaySubject<ManualUserConfirmTX>()
 const historyPagination = new Subject<TransactionHistoryOfKnownAddressRequestInput>()
 
 export default function useTransactions (radix: RadixT, router: Router, activeAccount: AccountT | null, hardwareAccount: AccountT | null, callbacks: { ledgerSigningError: () => void;}): useTransactionsInterface {
+  const { setError } = useErrors(radix)
   const refreshHistory = () => {
     loadingHistory.value = true
     historyPagination.next({ size: PAGE_SIZE })
@@ -221,6 +224,13 @@ export default function useTransactions (radix: RadixT, router: Router, activeAc
       }))
       .subscribe((event: TransactionStateUpdate) => {
         const errorEvent: TransactionStateError = event as TransactionStateError
+        const transactionStateConstant: TransactionStateT = transactionState.value.toUpperCase() as TransactionStateT
+        setError({
+          type: 'TRANSACTION-' + transactionStateConstant as ClientAppErrorTypeT,
+          error: errorEvent.error
+        })
+
+        // const errorEvent: TransactionStateError = event as TransactionStateError
         userDidCancel.next(true)
         shouldShowConfirmation.value = false
         const isLedgerConnectedError = errorEvent.error.message && errorEvent.error.message.includes('Failed to sign tx with Ledger')
@@ -269,6 +279,13 @@ export default function useTransactions (radix: RadixT, router: Router, activeAc
           router.push('/wallet/history')
           hasCalculatedFee.value = false
           transactionDidComplete.next(true)
+          // If we receive a completion event but never received a confirmation event and cleared
+          // pending transaction, we should warn the user that something went wrong
+          if (transactionState.value !== 'submitting') {
+            setError({
+              type: 'TRANSACTION-CONFIRM'
+            })
+          }
         }
       }))
 

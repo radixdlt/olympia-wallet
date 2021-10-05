@@ -1,4 +1,4 @@
-import { ref, computed, Ref, ComputedRef, watch } from 'vue'
+import { ref, computed, Ref, ComputedRef } from 'vue'
 import {
   AccountAddressT,
   AccountsT,
@@ -65,11 +65,6 @@ const showLedgerVerify: Ref<boolean> = ref(false)
 const signingKeychain: Ref<SigningKeychainT | null> = ref(null)
 const switching = ref(false)
 const wallet: Ref<WalletT | null> = ref(null)
-
-radix.errors
-  .subscribe((error: ErrorT<'wallet'>) => {
-    console.log(error)
-  })
 
 const setWallet = (newWallet: WalletT) => {
   wallet.value = newWallet

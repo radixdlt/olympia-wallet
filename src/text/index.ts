@@ -214,7 +214,13 @@ const messages = {
     errors: {
       hardwareMismatchTitle: 'Hardware Wallet Account Mismatch',
       hardwareMismatchCopyOne: 'The account provided by the connected hardware wallet device does not match your current hardware wallet account address. Ensure you are using the same hardware wallet device.',
-      hardwareMismatchCopyTwo: 'If you would like to use a different hardware wallet device, please remove the existing hardware wallet account and add a new one with the desired device connected. You can always re-add a previous hardware wallet device account later.'
+      hardwareMismatchCopyTwo: 'If you would like to use a different hardware wallet device, please remove the existing hardware wallet account and add a new one with the desired device connected. You can always re-add a previous hardware wallet device account later.',
+      genericErrorTitle: 'Oops, something unexpected happened',
+      transactionBuildingErrorTitle: 'Something went wrong while building your transaction',
+      transactionConfirmingErrorTitle: 'Something went wrong while confirming your transaction',
+      transactionConfirmingErrorMsg: 'We suggest you reload your app and confirm that your transaction went through before trying again.',
+      closeModal: 'Close',
+      refreshApp: 'Refresh App'
     }
   }
 }

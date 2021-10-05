@@ -156,7 +156,7 @@ const WalletTransaction = defineComponent({
     const router = useRouter()
     const { activeAddress, activeAccount, hardwareAccount, hardwareAccountFailedToSign, networkPreamble, radix, verifyHardwareWalletAddress } = useWallet(router)
 
-    const { transactionErrorMessage, transferTokens, transactionUnsub, setActiveTransactionForm } = useTransactions(radix, router, activeAccount.value, hardwareAccount.value, {
+    const { transferTokens, transactionUnsub, setActiveTransactionForm } = useTransactions(radix, router, activeAccount.value, hardwareAccount.value, {
       ledgerSigningError: () => {
         hardwareAccountFailedToSign()
       }
@@ -185,12 +185,6 @@ const WalletTransaction = defineComponent({
       if (tb && nt && !nativeTokenLoaded.value) {
         setXRDByDefault(nt)
         nativeTokenLoaded.value = true
-      }
-    })
-
-    watch(transactionErrorMessage, (val) => {
-      if (val) {
-        setErrors({ amount: t(val) })
       }
     })
 
