@@ -1,5 +1,13 @@
 # Changelog
 
+### [1.2.4](https://www.github.com/radixdlt/olympia-wallet/compare/v1.2.3...v1.2.4) (2021-10-05)
+
+
+### Dependencies
+
+* Differentiate in the UI between loading data and the user having no data ([#350](https://www.github.com/radixdlt/olympia-wallet/issues/350)) ([6949867](https://www.github.com/radixdlt/olympia-wallet/commit/6949867a95f2a446c072a3e2e5b86e45c3a896ef))
+* Other Token Balances should display Token Name ([#352](https://www.github.com/radixdlt/olympia-wallet/issues/352)) ([68bec28](https://www.github.com/radixdlt/olympia-wallet/commit/68bec28040785310d1a12d01e794e748b8588edc))
+
 ### [1.2.3](https://www.github.com/radixdlt/olympia-wallet/compare/v1.2.2...v1.2.3) (2021-09-28)
 
 
