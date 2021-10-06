@@ -220,7 +220,18 @@ const messages = {
       transactionConfirmingErrorTitle: 'Something went wrong while confirming your transaction',
       transactionConfirmingErrorMsg: 'We suggest you reload your app and confirm that your transaction went through before trying again.',
       closeModal: 'Close',
-      refreshApp: 'Refresh App'
+      refreshApp: 'Refresh App',
+      unableToPrepareTransferTransactionTitle: 'The transaction you’ve specified cannot be created. Possible reasons for this error include:',
+      unableToPrepareTransferTransactionPointOne: 'Insufficient tokens in your account to send',
+      unableToPrepareTransferTransactionPointTwo: 'Insufficient XRD to pay the required transaction fee',
+      unableToPrepareStakingTransactionTitle: 'The transaction you’ve specified cannot be created. Possible reasons for this error include:',
+      unableToPrepareStakingTransactionPointOne: 'Attempting to stake less than the 90 XRD stake minimum',
+      unableToPrepareStakingTransactionPointTwo: 'Insufficient XRD to stake your desired amount',
+      unableToPrepareStakingTransactionPointThree: 'Insufficient XRD to pay the required transaction fee',
+      unableToPrepareUnstakingTransactionTitle: 'The transaction you’ve specified cannot be created. Possible reasons for this error include:',
+      unableToPrepareUnstakingTransactionPointOne: 'Attempting to request an unstake in the same “epoch” (~30 min period) that you staked',
+      unableToPrepareUnstakingTransactionPointTwo: 'Attempting to unstake more than you currently have staked to the validator',
+      unableToPrepareUnstakingTransactionPointThree: 'Insufficient XRD to pay the required transaction fee'
     }
   }
 }

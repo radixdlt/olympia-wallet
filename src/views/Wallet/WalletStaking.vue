@@ -2,8 +2,8 @@
   <div class="bg-rGrayLightest flex flex-row w-full p-5 flex-1 h-screen overflow-y-auto">
     <div class="flex-flex-col flex-1">
       <div class="flex flex-row">
-        <tabs-tab :isActive="activeForm == 'stake'" @click="() => setForm('stake')">{{ $t('staking.stakeTab') }}</tabs-tab>
-        <tabs-tab :isActive="activeForm == 'unstake'" @click="() => setForm('unstake')">{{ $t('staking.unstakeTab') }}</tabs-tab>
+        <tabs-tab :isActive="activeForm == 'STAKING'" @click="() => setForm('STAKING')">{{ $t('staking.stakeTab') }}</tabs-tab>
+        <tabs-tab :isActive="activeForm == 'UNSTAKING'" @click="() => setForm('UNSTAKING')">{{ $t('staking.unstakeTab') }}</tabs-tab>
       </div>
       <form
         @submit.prevent="handleSubmitStake"
@@ -136,7 +136,6 @@ const WalletStaking = defineComponent({
   },
 
   setup () {
-    const activeForm: Ref<string> = ref('stake')
     const { t } = useI18n({ useScope: 'global' })
     const { errors, values, meta, setErrors, resetForm } = useForm<StakeForm>()
     const router = useRouter()
@@ -148,6 +147,7 @@ const WalletStaking = defineComponent({
       hardwareAccountFailedToSign,
       radix
     } = useWallet(router)
+    const { activeForm, setActiveForm } = useStaking(radix)
 
     const { stakeTokens, unstakeTokens, transactionUnsub, setActiveTransactionForm, transactionErrorMessage } = useTransactions(radix, router, activeAccount.value, hardwareAccount.value, {
       ledgerSigningError: () => {
@@ -169,17 +169,11 @@ const WalletStaking = defineComponent({
     // default active form is stake
     setActiveTransactionForm('stake')
 
-    const setForm = (form: string) => {
-      activeForm.value = form
+    const setForm = (form: 'STAKING'|'UNSTAKING') => {
+      setActiveForm(form)
       setActiveTransactionForm(form)
       resetForm()
     }
-
-    watch(transactionErrorMessage, (val) => {
-      if (val) {
-        setErrors({ amount: t(val) })
-      }
-    })
 
     // Computed Values
     const xrdBalance: ComputedRef<AmountT> = computed(() => {
@@ -225,15 +219,15 @@ const WalletStaking = defineComponent({
     })
 
     const stakingDisclaimer: ComputedRef<string> = computed(() =>
-      activeForm.value === 'stake' ? t('staking.stakeDisclaimer') : t('staking.unstakeDisclaimer'))
+      activeForm.value === 'STAKING' ? t('staking.stakeDisclaimer') : t('staking.unstakeDisclaimer'))
 
     const stakeButtonCopy: ComputedRef<string> = computed(() =>
-      activeForm.value === 'stake' ? t('staking.stakeButton') : t('staking.unstakeButton'))
+      activeForm.value === 'STAKING' ? t('staking.stakeButton') : t('staking.unstakeButton'))
 
     const disableSubmit: ComputedRef<boolean> = computed(() => meta.value.dirty ? !meta.value.valid : true)
 
     const amountPlaceholder: ComputedRef<string> = computed(() =>
-      (xrdBalance.value && activeForm.value === 'stake')
+      (xrdBalance.value && activeForm.value === 'STAKING')
         ? `${t('staking.amountPlaceholder')} ${asBigNumber(xrdBalance.value)} `
         : t('staking.availableBalancePlaceholder'))
 
@@ -241,13 +235,13 @@ const WalletStaking = defineComponent({
 
     // Methods
     const handleAddToValidator = (validator: AccountAddressT) => {
-      activeForm.value = 'stake'
+      setActiveForm('STAKING')
       setActiveTransactionForm('stake')
       values.validator = validator.toString()
     }
 
     const handleReduceFromValidator = (validator: AccountAddressT) => {
-      activeForm.value = 'unstake'
+      setActiveForm('UNSTAKING')
       setActiveTransactionForm('unstake')
       values.validator = validator.toString()
     }
@@ -270,7 +264,7 @@ const WalletStaking = defineComponent({
         return
       }
       if (!safeAddress || !safeAmount) return
-      activeForm.value === 'stake'
+      activeForm.value === 'STAKING'
         ? stakeTokens({
           validator: safeAddress,
           amount: safeAmount
@@ -304,6 +298,7 @@ const WalletStaking = defineComponent({
       handleReduceFromValidator,
       handleSubmitStake,
       resetForm,
+      setActiveForm,
       setErrors,
       setForm
     }

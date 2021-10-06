@@ -14,7 +14,30 @@
       <div v-if="errorsCount > 1" class="absolute top-0 right-0">
         <div class="bg-rRed rounded-full inline-block px-2 py-0.5 m-2 text-white text-sm">{{ errorsCount }}</div>
       </div>
-      <p class="mb-5">{{ error }}</p>
+      <div v-if="error.type === 'UNABLE_TO_PREPARE_TX' && transactionType === 'TRANSFER'" class="text-left px-5 mb-5 text-sm">
+        <p class="mb-2 font-medium">{{ $t('errors.unableToPrepareTransferTransactionTitle') }}</p>
+        <ul class="list-disc text-sm pl-4">
+          <li>{{ $t('errors.unableToPrepareTransferTransactionPointOne') }}</li>
+          <li>{{ $t('errors.unableToPrepareTransferTransactionPointTwo') }}</li>
+        </ul>
+      </div>
+      <div v-else-if="error.type === 'UNABLE_TO_PREPARE_TX' && transactionType === 'STAKING' && activeForm === 'STAKING'" class="text-left px-5 mb-5 text-sm">
+        <p class="mb-2 font-medium">{{ $t('errors.unableToPrepareStakingTransactionTitle') }}</p>
+        <ul class="list-disc text-sm pl-4">
+          <li>{{ $t('errors.unableToPrepareStakingTransactionPointOne') }}</li>
+          <li>{{ $t('errors.unableToPrepareStakingTransactionPointTwo') }}</li>
+          <li>{{ $t('errors.unableToPrepareStakingTransactionPointThree') }}</li>
+        </ul>
+      </div>
+      <div v-else-if="error.type === 'UNABLE_TO_PREPARE_TX' && transactionType === 'STAKING' && activeForm === 'UNSTAKING'" class="text-left px-5 mb-5 text-sm">
+        <p class="mb-2 font-medium">{{ $t('errors.unableToPrepareUnstakingTransactionTitle') }}</p>
+        <ul class="list-disc text-sm pl-4">
+          <li>{{ $t('errors.unableToPrepareUnstakingTransactionPointOne') }}</li>
+          <li>{{ $t('errors.unableToPrepareUnstakingTransactionPointTwo') }}</li>
+          <li>{{ $t('errors.unableToPrepareUnstakingTransactionPointThree') }}</li>
+        </ul>
+      </div>
+      <p v-else class="mb-5">{{ error }}</p>
       <div class="flex flex-row space-x-5 justify-center">
         <AppButtonCancel @click="handleClose" class="w-44">{{ $t('errors.closeModal') }}</AppButtonCancel>
       </div>
@@ -23,12 +46,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, Ref, ref, toRef, watch } from 'vue'
+import { computed, ComputedRef, defineComponent, PropType, Ref, ref, toRef, watch } from 'vue'
 import AppButtonCancel from '@/components/AppButtonCancel.vue'
 import AppModal from '@/components/AppModal.vue'
 import { ErrorT } from '@radixdlt/application'
 import { useRouter } from 'vue-router'
-import { useWallet, useErrors } from '@/composables'
+import { useWallet, useErrors, useStaking } from '@/composables'
 
 export default defineComponent({
   components: {
@@ -54,6 +77,12 @@ export default defineComponent({
     const router = useRouter()
     const { radix } = useWallet(router)
     const { clearLatestError } = useErrors(radix)
+    const { activeForm } = useStaking(radix)
+
+    const transactionType: ComputedRef<'TRANSFER' | 'STAKING'> = computed(() => {
+      if (router.currentRoute.value.fullPath.indexOf('staking') >= 0) return 'STAKING'
+      else return 'TRANSFER'
+    })
 
     watch((error), (newErrorVal) => {
       if (newErrorVal) isVisible.value = true
@@ -67,8 +96,10 @@ export default defineComponent({
     }
 
     return {
-      handleClose,
+      activeForm,
       isVisible,
+      transactionType,
+      handleClose,
       updateVisible
     }
   }
