@@ -1,6 +1,12 @@
 <template>
   <div class="bg-rGrayLightest flex flex-row w-full p-5 flex-1 h-screen overflow-y-auto">
-    <div class="flex-flex-col flex-1">
+    <div v-if="!loadedAllData" class="p-4 flex items-center justify-center flex-1 h-32">
+      <loading-icon class="text-rGrayDark" />
+    </div>
+    <div v-else-if="!hasTokenBalances" class="p-4 flex-1">
+      {{ $t('transaction.insufficientFunds') }}
+    </div>
+    <div v-else class="flex-flex-col flex-1">
       <div class="flex flex-row">
         <tabs-tab :isActive="activeForm == 'stake'" @click="() => setForm('stake')">{{ $t('staking.stakeTab') }}</tabs-tab>
         <tabs-tab :isActive="activeForm == 'unstake'" @click="() => setForm('unstake')">{{ $t('staking.unstakeTab') }}</tabs-tab>
@@ -239,6 +245,16 @@ const WalletStaking = defineComponent({
 
     const explorerUrl: ComputedRef<string> = computed(() => `${explorerUrlBase.value}/#/validators`)
 
+    const hasTokenBalances = computed(() => {
+      if (!tokenBalances.value?.tokenBalances) return false
+      return tokenBalances.value?.tokenBalances.length > 0
+    })
+
+    const loadedAllData: ComputedRef<boolean> = computed(() => {
+      if (activeAddress && activeAddress.value && nativeToken.value && tokenBalances.value) return true
+      return false
+    })
+
     // Methods
     const handleAddToValidator = (validator: AccountAddressT) => {
       activeForm.value = 'stake'
@@ -289,6 +305,8 @@ const WalletStaking = defineComponent({
       errors,
       explorerUrl,
       explorerUrlBase,
+      hasTokenBalances,
+      loadedAllData,
       loadingAllStaking,
       meta,
       nativeToken,
