@@ -3,12 +3,12 @@
     <div class="h-modalSmall bg-white rounded-md py-7 px-7 w-full max-w-3xl absolute top-1/2 left-1/2 transform -translate-x-1/3 -translate-y-1/2">
       <h3 class="font-medium text-rBlack mb-2 w-full">Verify Hardware Wallet Address</h3>
       <div v-if="hardwareAddress !== activeAddress.toString()">
-        <div class="py-2">
+        <div class="py-2 mb-9">
           Whenever copying a hardware wallet address, it is strongly recommended to verify it on the hardware device. To copy and verify this address, please switch to the hardware address first by selecting it in the account picker.
         </div>
         <div class="flex items-center">
           <div
-            class="text-rGrayDark py-3 text-base py-12 mx-auto cursor-pointer"
+            class="text-rGrayDark text-base p-3 mx-auto cursor-pointer"
             @click="hideLedgerVerify()"
           >
             Dismiss
@@ -24,7 +24,7 @@
         </div>
         <div class="mt-4">
           <div class="bg-translucent-gray rounded-md border border-rGray text-rBlack mb-4 w-full">
-            <div class="border-b border-rGray py-5 flex items-center">
+            <div class="py-5 flex items-center">
               <div class="w-20 text-right text-rGrayDark mr-4">Address</div>
               <div class="flex-1 flex">
                 {{ hardwareAddress }}
