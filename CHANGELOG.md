@@ -1,25 +1,5 @@
 # Changelog
 
-## [1.3.0](https://www.github.com/radixdlt/olympia-wallet/compare/v1.2.3...v1.3.0) (2021-10-06)
-
-
-### Features
-
-* Add error modals for generic and txn errors ([#349](https://www.github.com/radixdlt/olympia-wallet/issues/349)) ([59cbb7a](https://www.github.com/radixdlt/olympia-wallet/commit/59cbb7a9658f5ff6241f57291d1c53c95ac2ac1b))
-* Display custom error messages for building txn errors ([#356](https://www.github.com/radixdlt/olympia-wallet/issues/356)) ([dedcdc4](https://www.github.com/radixdlt/olympia-wallet/commit/dedcdc481158efd276b437ce9c683f003102f41a))
-* show copy when verifying non-active hw acct ([#357](https://www.github.com/radixdlt/olympia-wallet/issues/357)) ([0f6814b](https://www.github.com/radixdlt/olympia-wallet/commit/0f6814b99ca53843df8a4887403698853235e65e))
-
-
-### Bug Fixes
-
-* don't error on null/empty tokens ([#354](https://www.github.com/radixdlt/olympia-wallet/issues/354)) ([e998f18](https://www.github.com/radixdlt/olympia-wallet/commit/e998f18d7b8684516b356cf73d2167e91c3181b5))
-
-
-### Dependencies
-
-* Differentiate in the UI between loading data and the user having no data ([#350](https://www.github.com/radixdlt/olympia-wallet/issues/350)) ([6949867](https://www.github.com/radixdlt/olympia-wallet/commit/6949867a95f2a446c072a3e2e5b86e45c3a896ef))
-* Other Token Balances should display Token Name ([#352](https://www.github.com/radixdlt/olympia-wallet/issues/352)) ([68bec28](https://www.github.com/radixdlt/olympia-wallet/commit/68bec28040785310d1a12d01e794e748b8588edc))
-
 ### [1.2.3](https://www.github.com/radixdlt/olympia-wallet/compare/v1.2.2...v1.2.3) (2021-09-28)
 
 
