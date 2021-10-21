@@ -244,7 +244,8 @@ const connectHardwareWallet = () => {
   }
   hardwareError.value = null
   hardwareInteractionState.value = 'DERIVING'
-  radix.deriveHWAccount({
+
+  const data = {
     keyDerivation: HDPathRadix.create({
       address: { index: 0, isHardened: true }
     }),
@@ -253,18 +254,21 @@ const connectHardwareWallet = () => {
     }),
     alsoSwitchTo: true,
     verificationPrompt: !hardwareAddress.value
-  }).subscribe({
-    next: (hwAccount: AccountT) => {
-      activeAccount.value = hwAccount
-      hardwareAccount.value = hwAccount
-      if (!hardwareAddress.value && activeNetwork.value) {
-        saveHardwareWalletAddress(hwAccount.address.toString(), activeNetwork.value)
-        saveAccountName(hwAccount.address.toString(), 'Hardware Account')
-        hardwareAddress.value = hwAccount.address.toString()
-      }
-      hardwareInteractionState.value = ''
-    },
-    error: (err) => { hardwareError.value = err }
+  }
+
+  firstValueFrom(radix.__wallet).then((wallet: WalletT) => {
+    return firstValueFrom(wallet.deriveHWAccount(data))
+  }).then((hwAccount: AccountT) => {
+    activeAccount.value = hwAccount
+    hardwareAccount.value = hwAccount
+    if (!hardwareAddress.value && activeNetwork.value) {
+      saveHardwareWalletAddress(hwAccount.address.toString(), activeNetwork.value)
+      saveAccountName(hwAccount.address.toString(), 'Hardware Account')
+      hardwareAddress.value = hwAccount.address.toString()
+    }
+    hardwareInteractionState.value = ''
+  }).catch((err) => {
+    hardwareError.value = err
   })
 }
 
