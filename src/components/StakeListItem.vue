@@ -17,12 +17,6 @@
                   {{$t('staking.validatorWarning')}} {{validator.infoURL.toString()}}
                 </tooltip>
               </a>
-              <span v-else-if="validator.infoURL && validatedValidatorUrl === false" class="relative text-rBlack group">
-                <tooltip>
-                  {{$t('staking.validatorWarning')}} {{validator.infoURL.toString()}}
-                </tooltip>
-                {{validator.name}}
-              </span>
               <span v-else>{{validator.name}}</span>
             </div>
           </div>
@@ -149,12 +143,7 @@ const StakeListItem = defineComponent({
       if (!this.validator) {
         return false
       }
-      // return checkValidatorUrlExploitable(this.validator.infoURL.toString())
-      // Spoofs
-      return checkValidatorUrlExploitable('htxp://www.radixstake.com')
-      // return checkValidatorUrlExploitable('www.radixstake.com')
-      // return checkValidatorUrlExploitable('radixstake.com')
-      // return checkValidatorUrlExploitable('httpss://www.radixstake.com')
+      return checkValidatorUrlExploitable(this.validator.infoURL.toString())
     },
 
     stakeAmount (): AmountT {
