@@ -12,11 +12,17 @@
                 <span class="bg-rRed w-2 h-2 rounded-full"></span>
                 <span class="text-rRed ml-2">unregistered</span>
               </div>
-              <a class="relative text-rBlack hover:text-rBlue group" v-if="validator.infoURL" :href="validator.infoURL" target="__blank"> {{ validator.name }}
+              <a class="relative text-rBlack hover:text-rBlue group" v-if="validator.infoURL && validatedValidatorUrl" :href="validator.infoURL" target="__blank"> {{ validator.name }}
                 <tooltip>
                   {{$t('staking.validatorWarning')}} {{validator.infoURL.toString()}}
                 </tooltip>
               </a>
+              <span v-else-if="validator.infoURL && validatedValidatorUrl === false" class="relative text-rBlack group">
+                <tooltip>
+                  {{$t('staking.validatorWarning')}} {{validator.infoURL.toString()}}
+                </tooltip>
+                {{validator.name}}
+              </span>
               <span v-else>{{validator.name}}</span>
             </div>
           </div>
@@ -83,6 +89,7 @@ import { Token, UnstakePosition, Validator, Amount, AmountT, StakePosition } fro
 import { computed, ComputedRef, defineComponent, PropType, Ref, ref, toRef } from 'vue'
 import BigAmount from '@/components/BigAmount.vue'
 import ClickToCopy from '@/components/ClickToCopy.vue'
+import { checkValidatorUrlExploitable } from '@/helpers/explorerLinks'
 import { firstValueFrom } from 'rxjs'
 import { formatValidatorAddressForDisplay } from '@/helpers/formatter'
 import { Position } from '@/services/_types'
@@ -137,6 +144,17 @@ const StakeListItem = defineComponent({
     },
     unstakesForValidator (): UnstakePosition[] {
       return this.position.unstakes
+    },
+    validatedValidatorUrl (): boolean {
+      if (!this.validator) {
+        return false
+      }
+      // return checkValidatorUrlExploitable(this.validator.infoURL.toString())
+      // Spoofs
+      return checkValidatorUrlExploitable('htxp://www.radixstake.com')
+      // return checkValidatorUrlExploitable('www.radixstake.com')
+      // return checkValidatorUrlExploitable('radixstake.com')
+      // return checkValidatorUrlExploitable('httpss://www.radixstake.com')
     },
 
     stakeAmount (): AmountT {
