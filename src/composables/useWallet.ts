@@ -259,14 +259,18 @@ const connectHardwareWallet = () => {
   firstValueFrom(radix.__wallet).then((wallet: WalletT) => {
     return firstValueFrom(wallet.deriveHWAccount(data))
   }).then((hwAccount: AccountT) => {
-    activeAccount.value = hwAccount
-    hardwareAccount.value = hwAccount
     if (!hardwareAddress.value && activeNetwork.value) {
       saveHardwareWalletAddress(hwAccount.address.toString(), activeNetwork.value)
       saveAccountName(hwAccount.address.toString(), 'Hardware Account')
       hardwareAddress.value = hwAccount.address.toString()
     }
+    activeAccount.value = hwAccount
+    hardwareAccount.value = hwAccount
     hardwareInteractionState.value = ''
+
+    getAccountNames().then((names) => {
+      accountNames.value = names
+    })
   }).catch((err) => {
     hardwareError.value = err
   })
