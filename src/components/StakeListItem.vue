@@ -12,7 +12,7 @@
                 <span class="bg-rRed w-2 h-2 rounded-full"></span>
                 <span class="text-rRed ml-2">unregistered</span>
               </div>
-              <a class="relative text-rBlack hover:text-rBlue group" v-if="validator.infoURL && validatedValidatorUrl" :href="validator.infoURL" target="__blank"> {{ validator.name }}
+              <a class="relative text-rBlack hover:text-rBlue group underline" v-if="validator.infoURL && validatedValidatorUrl" :href="validator.infoURL" target="__blank"> {{ validator.name }}
                 <tooltip>
                   {{$t('staking.validatorWarning')}} {{validator.infoURL.toString()}}
                 </tooltip>
