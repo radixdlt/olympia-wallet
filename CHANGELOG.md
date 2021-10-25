@@ -1,5 +1,13 @@
 # Changelog
 
+### [1.2.5](https://www.github.com/radixdlt/olympia-wallet/compare/v1.2.4...v1.2.5) (2021-10-22)
+
+
+### Bug Fixes
+
+* clean up adding hardware account ([#367](https://www.github.com/radixdlt/olympia-wallet/issues/367)) ([9d43bc6](https://www.github.com/radixdlt/olympia-wallet/commit/9d43bc63c00188603bb5e66775c9db9fa44125d5))
+* Ledger Immediately Unavailalble after creating a new Wallet ([#364](https://www.github.com/radixdlt/olympia-wallet/issues/364)) ([86c1990](https://www.github.com/radixdlt/olympia-wallet/commit/86c1990950f8457b93c7f9dc8d5a75781c48f12c))
+
 ### [1.2.4](https://www.github.com/radixdlt/olympia-wallet/compare/v1.2.3...v1.2.4) (2021-10-07)
 
 ### Bug Fixes
