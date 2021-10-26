@@ -19,5 +19,5 @@ export const checkValidatorUrlExploitable = function (url: string | null): boole
     return false
   }
 
-  return urlFormattedToCheck.search('https://') === 0 || urlFormattedToCheck.search('http://') === 0
+  return urlFormattedToCheck.indexOf('https://') === 0 || urlFormattedToCheck.indexOf('http://') === 0
 }
