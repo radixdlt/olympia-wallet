@@ -228,7 +228,7 @@ const WalletStaking = defineComponent({
 
     const amountPlaceholder: ComputedRef<string> = computed(() =>
       (xrdBalance.value && activeForm.value === 'STAKING')
-        ? `${t('staking.amountPlaceholder')} ${asBigNumber(xrdBalance.value)} `
+        ? `${t('staking.amountPlaceholder')} ${asBigNumber(xrdBalance.value, true)} `
         : t('staking.availableBalancePlaceholder'))
 
     const explorerUrl: ComputedRef<string> = computed(() => `${explorerUrlBase.value}/#/validators`)

@@ -222,7 +222,7 @@ const WalletTransaction = defineComponent({
 
     const amountPlaceholder: ComputedRef<string> = computed(() => {
       if (!selectedCurrency.value || !selectedCurrency.value.amount) return ''
-      return `${t('transaction.amountPlaceholder')} ${asBigNumber(selectedCurrency.value.amount)} `
+      return `${t('transaction.amountPlaceholder')} ${asBigNumber(selectedCurrency.value.amount, true)} `
     })
 
     const disableSubmit: ComputedRef<boolean> = computed(() => {
