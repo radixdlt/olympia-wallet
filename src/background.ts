@@ -44,6 +44,7 @@ async function createWindow () {
     maxHeight: 800,
     minWidth: 1200,
     minHeight: 650,
+    maximizable: false,
     webPreferences: {
       // Use pluginOptions.nodeIntegration, leave this alone
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
@@ -90,7 +91,9 @@ app.on('activate', () => {
 app.on('ready', async () => {
 
   electron.powerMonitor.on('suspend', () => {
-    win.webContents.send('resetToHome')
+    if (BrowserWindow.getAllWindows().length > 0) {
+      win.webContents.send('resetToHome')
+    }
   })
 
   if (isDevelopment && !process.env.IS_TEST) {
