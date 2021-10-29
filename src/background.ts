@@ -92,7 +92,7 @@ app.on('ready', async () => {
 
   electron.powerMonitor.on('suspend', () => {
     if (BrowserWindow.getAllWindows().length > 0) {
-      win.webContents.send('resetToHome')
+      win.reload()
     }
   })
 
