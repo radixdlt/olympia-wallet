@@ -44,7 +44,12 @@
           </div>
           <div class="flex items-center flex-wrap">
             <div class="mb-1 w-26 flex-grow-0 text-rGrayMed text-xs">{{ $t('staking.recentUptimeLabel') }}:</div>
-            <div class="mb-1 flex-1 text-rBlack">{{validator.uptimePercentage}}%</div>
+            <div
+              class="mb-1 flex-1 text-rBlack"
+              :class="{'text-rRed': Number(validator.uptimePercentage) <= 98}"
+            >
+              {{validator.uptimePercentage}}%
+            </div>
           </div>
         </dl>
         <dl class="mt-1">
