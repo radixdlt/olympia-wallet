@@ -32,9 +32,9 @@ import {
   saveHardwareWalletAddress,
   getAccountNames,
   persistNodeSelection,
-  fetchSelectedNodeFromStore,
-  refreshApp
+  fetchSelectedNodeFromStore
 } from '@/actions/vue/data-store'
+import { refreshApp } from '@/actions/vue/general'
 import { sha256Twice } from '@radixdlt/crypto'
 
 import { sendAPDU } from '@/actions/vue/hardware-wallet'

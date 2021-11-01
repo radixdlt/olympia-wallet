@@ -89,9 +89,9 @@ import { useWallet } from '@/composables'
 import { useRouter } from 'vue-router'
 import {
   persistCustomNodeURL,
-  fetchCustomNodeURLs,
-  refreshApp
+  fetchCustomNodeURLs
 } from '@/actions/vue/data-store'
+import { refreshApp } from '@/actions/vue/general'
 
 interface AddNodeForm {
   nodeURL: string;

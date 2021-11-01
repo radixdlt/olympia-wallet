@@ -30,7 +30,7 @@ import AppModal from '@/components/AppModal.vue'
 import { ErrorT } from '@radixdlt/application'
 import { useRouter } from 'vue-router'
 import { useWallet, useErrors } from '@/composables'
-import { refreshApp } from '@/actions/vue/data-store'
+import { refreshApp } from '@/actions/vue/general'
 
 export default defineComponent({
   components: {
