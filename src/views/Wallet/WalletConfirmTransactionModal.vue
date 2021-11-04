@@ -98,7 +98,7 @@
         </div>
 
         <div class="pr-6" v-if="remainderBalanceAboveTen">
-          <span class="text-rRed text-md"><b>Warning:</b> This transaction will leave you with less than 10 XRD. Remember that you must have XRD to pay fees to unstake and perform other transactions.</span>
+          <span class="text-rRed text-md"><b>{{ $t('transaction.warningTitle') }}:</b> {{ $t('transaction.lessThanTenXRDBalanceWarning') }}</span>
         </div>
 
         <div class="flex items-start justify-between w-full mt-1">

@@ -125,6 +125,8 @@ const messages = {
       confirmButton: 'Confirm Transaction',
       sendButton: 'Send',
       insufficientFunds: 'Sorry, but you don\'t have any tokens to send!',
+      warningTitle: 'Warning',
+      lessThanTenXRDBalanceWarning: 'This transaction will leave you with less than 10 XRD. Remember that you must have XRD to pay fees to unstake and perform other transactions.',
       recipientPlaceholder: 'Enter address',
       amountPlaceholder: 'Available balance ...',
       messagePlaceholder: 'Add an optional message',
