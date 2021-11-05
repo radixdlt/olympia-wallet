@@ -1,7 +1,7 @@
 <template>
   <a
     :href="href"
-    class="flex flex-row items-center my-5 cursor-pointer transition-opacity"
+    class="flex flex-row items-center my-4 cursor-pointer transition-opacity"
     :class="{ 'opacity-70': !isActive }"
     @click="navigate"
   >

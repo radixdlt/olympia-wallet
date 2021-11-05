@@ -1,8 +1,11 @@
 <template>
-  <div class="w-60 px-5 pt-8 pb-3 flex flex-col h-full">
-    <AppLogo class="mb-10" />
+  <div class="w-60  pt-8 flex flex-col h-full">
+    <div class="mb-10 px-5">
+      <img alt="Radix DLT Logo" src="../../assets/logo.svg" class="w-30 mr-3">
+    </div>
 
-    <div class="flex flex-col text-white hover:text-rGreen transition-colors cursor-pointer mb-4" @click="setState(true)">
+    <div class="flex flex-col text-white hover:text-rGreen transition-colors
+    cursor-pointer mb-2 px-5" @click="setState(true)">
       <div class="relative py-3">
         <account-list-item :account="activeAccount" v-if="activeAccount"/>
         <div class="absolute bg-gradient-to-r from-blueEnd to-transparent inset-0 w-full h-full z-10 -mx-8 opacity-40">
@@ -10,7 +13,7 @@
       </div>
     </div>
 
-    <div class="flex flex-col flex-1" v-if="activeAccount">
+    <div class="flex flex-col flex-1 px-5" v-if="activeAccount">
       <router-link to="/wallet" custom v-slot="{ href, navigate, isExactActive }">
         <wallet-nav-link :href="href" :navigate="navigate" :isActive="isExactActive" :title="$t('wallet.navBalances')">
           <svg width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr-3">
@@ -55,7 +58,7 @@
       </router-link>
     </div>
 
-    <div class="flex flex-col">
+    <div class="flex flex-col px-5">
       <a
         href="https://learn.radixdlt.com/article/start-here-desktop-wallet-introduction"
         target="__blank"
@@ -70,7 +73,7 @@
       </a>
     </div>
 
-    <div class="flex flex-col">
+    <div class="flex flex-col px-5">
       <router-link to="/wallet/settings" custom v-slot="{ href, navigate, isActive }">
         <wallet-nav-link :href="href" :navigate="navigate" :isActive="isActive" :title="$t('wallet.navSettings')">
           <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr-3">
@@ -80,6 +83,7 @@
         </wallet-nav-link>
       </router-link>
     </div>
+    <NetworkDisplay />
   </div>
 </template>
 
@@ -89,18 +93,18 @@ import AccountListItem from '@/components/AccountListItem.vue'
 import WalletNavLink from './WalletNavLink.vue'
 import { useWallet, useSidebar } from '@/composables'
 import { useRouter, useRoute } from 'vue-router'
-import AppLogo from '@/components/AppLogo.vue'
+import NetworkDisplay from '@/components/NetworkDisplay.vue'
 
 const WalletSidebarDefault = defineComponent({
   components: {
-    AppLogo,
+    NetworkDisplay,
     AccountListItem,
     WalletNavLink
   },
 
   setup () {
     const router = useRouter()
-    const { activeAccount, activeNetwork } = useWallet(router)
+    const { activeAccount } = useWallet(router)
     const { open, setState } = useSidebar()
     const route = useRoute()
 
@@ -108,8 +112,7 @@ const WalletSidebarDefault = defineComponent({
       activeAccount,
       open,
       route,
-      setState,
-      activeNetwork
+      setState
     }
   },
 

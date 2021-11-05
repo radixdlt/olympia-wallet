@@ -23,6 +23,7 @@ import {
 } from './actions/electron/data-store'
 import { sendAPDU } from './actions/electron/hardware-wallet'
 import electron from 'electron'
+const pkg = require('../package.json')
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
 let win: BrowserWindow
@@ -127,6 +128,7 @@ ipcMain.handle('persist-custom-node-url', persistCustomNodeURL)
 ipcMain.handle('fetch-custom-node-urls', fetchCustomNodeURLs)
 ipcMain.handle('forget-custom-node-url', forgetCustomNodeURL)
 ipcMain.handle('refresh-app', () => { win.reload() })
+ipcMain.handle('get-version-number', () => pkg.version)
 // Exit cleanly on request from parent process in development mode.
 if (isDevelopment) {
   if (process.platform === 'win32') {
