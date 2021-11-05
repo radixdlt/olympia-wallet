@@ -97,7 +97,10 @@
           </div>
         </div>
 
-        <div class="pr-6" v-if="xrdRemainderBalanceBelowTen">
+        <div
+          v-if="xrdRemainderBalanceBelowTen"
+          class="pr-6"
+        >
           <span class="text-rRed text-md"><b>{{ $t('transaction.warningTitle') }}:</b> {{ $t('transaction.lessThanTenXRDBalanceWarning') }}</span>
         </div>
 
@@ -193,10 +196,10 @@ const WalletConfirmTransactionModal = defineComponent({
 
     const balanceSub = updateObservable.pipe(
       switchMap(() => radix.activeAccount),
-      mergeMap((account) => forkJoin([
+      mergeMap((account) =>
         radix.ledger.tokenBalancesForAddress(account.address)
-      ]))
-    ).subscribe(([balances]) => {
+      )
+    ).subscribe((balances) => {
       tokenBalances.value = balances
       loading.value = false
     })
