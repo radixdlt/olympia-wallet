@@ -97,7 +97,7 @@
           </div>
         </div>
 
-        <div class="pr-6" v-if="remainderBalanceAboveTen">
+        <div class="pr-6" v-if="xrdRemainderBalanceAboveTen">
           <span class="text-rRed text-md"><b>{{ $t('transaction.warningTitle') }}:</b> {{ $t('transaction.lessThanTenXRDBalanceWarning') }}</span>
         </div>
 
@@ -353,12 +353,16 @@ const WalletConfirmTransactionModal = defineComponent({
     }
   },
   computed: {
-    // Do not check for balance above 10XRD if unstaking. Only run validation if staking/sending.
-    remainderBalanceAboveTen (): boolean {
-      if (this.totalXRD && this.amount && this.transactionFee && this.toLabel !== 'Unstake from') {
+    // Do not check for balance above 10XRD if unstaking. Only run validation if staking/sending. Two possible calculations
+    // can occur. Either (Total XRD - Transaction Fee) OR (Total XRD - XRD Amount Input - Transaction Fee). Calculation is
+    // based on whether or not User chose to send/stake XRD or another token.
+    xrdRemainderBalanceAboveTen (): boolean {
+      if (this.selectedCurrency && this.selectedCurrency.token.symbol !== 'xrd' && this.toLabel !== 'Unstake from') {
+        return Number(this.totalXRD) - Number(this.transactionFee) < Math.pow(10, 19)
+      } else if (this.totalXRD && this.amount && this.transactionFee && this.toLabel !== 'Unstake from') {
         return Number(this.totalXRD) - Number(this.amount) - Number(this.transactionFee) < Math.pow(10, 19)
       } else {
-        return false
+        return true
       }
     }
   }
