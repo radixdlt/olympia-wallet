@@ -1,11 +1,19 @@
 <template>
   <form data-ci="create-wallet-enter-mnemonic-component" @submit.prevent="$emit('confirm')">
-    <div class="flex flex-wrap mb-4">
-      <div v-for="(word, i) in mnemonic" :key="i" class="w-1/4 mb-14">
+    <div
+      class="grid mb-12"
+      :class="{
+        'grid-cols-4 gap-y-14': mnemonicStrength === StrengthT.WORD_COUNT_12,
+        'grid-cols-6 gap-y-14': mnemonicStrength === StrengthT.WORD_COUNT_18,
+        'grid-cols-6 gap-y-6': mnemonicStrength === StrengthT.WORD_COUNT_24
+      }"
+    >
+      <div v-for="(word, i) in mnemonic" :key="i">
         <mnemonic-input
           :require-input="requiredWords.indexOf(word) > 0"
           :modelValue="inputWords[i]"
-          :index=i
+          :index="i"
+          :isSmall="mnemonicStrength != StrengthT.WORD_COUNT_12"
           @update:modelValue="handleChange(i, $event)"
         ></mnemonic-input>
       </div>
@@ -21,6 +29,7 @@
 import { defineComponent, PropType } from 'vue'
 import MnemonicInput from '@/components/MnemonicInput.vue'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
+import { StrengthT } from '@radixdlt/application'
 
 const CreateWalletViewMnemonic = defineComponent({
   components: {
@@ -32,7 +41,15 @@ const CreateWalletViewMnemonic = defineComponent({
     mnemonic: {
       type: Array as PropType<Array<string>>,
       required: true
+    },
+    mnemonicStrength: {
+      type: Number as PropType<StrengthT>,
+      required: true
     }
+  },
+
+  setup () {
+    return { StrengthT }
   },
 
   data () {
@@ -44,8 +61,8 @@ const CreateWalletViewMnemonic = defineComponent({
       }
     }
     return {
-      requiredWords: [],
-      inputWords: this.mnemonic as string[]
+      inputWords: this.mnemonic as string[],
+      requiredWords: []
     }
   },
 

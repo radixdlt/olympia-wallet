@@ -12,10 +12,10 @@
       >
       </wizard-heading>
       <div v-if="step === 0">
-        <div class="border border-white rounded p-3 mb-8">{{ $t('createWallet.recoveryHelpOne') }}</div>
+        <div class="border border-white rounded p-3 mb-8">{{ $t('createWallet.recoveryHelpOne', {numWords: mnemonicWordLength}) }}</div>
       </div>
       <div v-if="step === 1">
-        <div class="border border-white rounded p-3 mb-8">{{ $t('createWallet.recoveryHelpTwo') }}</div>
+        <div class="border border-white rounded p-3 mb-8">{{ $t('createWallet.recoveryHelpTwo', {numWords: mnemonicWordLength}) }}</div>
       </div>
 
       <wizard-heading
@@ -59,13 +59,16 @@
       <create-wallet-view-mnemonic
         v-if="step == 0"
         :mnemonic="mnemonic.words"
+        :mnemonicStrength="mnemonicStrength"
         @confirm="step = 1"
+        @setSeedStrength="handleSetSeedStrength"
       >
       </create-wallet-view-mnemonic>
 
       <create-wallet-enter-mnemonic
         v-if="step == 1"
         :mnemonic="mnemonic.words"
+        :mnemonicStrength="mnemonicStrength"
         @confirm="step = 2"
       >
       </create-wallet-enter-mnemonic>
@@ -87,8 +90,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, Ref } from 'vue'
-import { Mnemonic, MnemomicT, WalletT } from '@radixdlt/application'
+import { computed, ComputedRef, defineComponent, ref, Ref } from 'vue'
+import { Mnemonic, MnemomicT, WalletT, StrengthT } from '@radixdlt/application'
 import CreateWalletCreatePasscode from './CreateWalletCreatePasscode.vue'
 import CreateWalletCreatePin from './CreateWalletCreatePin.vue'
 import CreateWalletViewMnemonic from './CreateWalletViewMnemonic.vue'
@@ -113,7 +116,18 @@ const CreateWallet = defineComponent({
     const { activeNetwork, createWallet, radix, loginWithWallet, setPin, setNetwork, setWallet, walletLoaded, waitUntilAllLoaded } = useWallet(router)
     const { setState } = useSidebar()
     const newWallet: Ref<WalletT | null> = ref(null)
+    const mnemonicStrength: Ref<StrengthT> = ref(StrengthT.WORD_COUNT_12)
     const toast = useToast()
+
+    const mnemonic: ComputedRef<MnemomicT> = computed(() => Mnemonic.generateNew({ strength: mnemonicStrength.value }))
+
+    const mnemonicWordLength: ComputedRef<string> = computed(() => {
+      if (mnemonicStrength.value === StrengthT.WORD_COUNT_18) return '18'
+      else if (mnemonicStrength.value === StrengthT.WORD_COUNT_24) return '24'
+      else return '12'
+    })
+
+    const handleSetSeedStrength = (strength: StrengthT) => { mnemonicStrength.value = strength }
 
     let network = activeNetwork.value
     if (!network) {
@@ -127,12 +141,11 @@ const CreateWallet = defineComponent({
         router.push('/')
       })
     }
-    const mnemonic: MnemomicT = Mnemonic.generateNew()
     const step = ref(0)
     const passcode = ref('')
     const handleCreateWallet = async (pass: string) => {
       if (!network) return
-      createWallet(mnemonic, pass, network).then((wallet: WalletT) => {
+      createWallet(mnemonic.value, pass, network).then((wallet: WalletT) => {
         newWallet.value = wallet
         step.value = 3
         passcode.value = pass
@@ -159,6 +172,8 @@ const CreateWallet = defineComponent({
 
     return {
       mnemonic,
+      mnemonicStrength,
+      mnemonicWordLength,
       step,
       passcode,
       network,
@@ -166,7 +181,8 @@ const CreateWallet = defineComponent({
       // methods
       handleCreateWallet,
       handleEnterPin,
-      handleCreatePin
+      handleCreatePin,
+      handleSetSeedStrength
     }
   }
 })

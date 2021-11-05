@@ -48,9 +48,9 @@ const messages = {
     },
     createWallet: {
       recoveryTitle: 'Seed Phrase',
-      recoveryHelpOne: 'The following 12 words are the seed of your new account. As long as you have them, you will always be able to recover your account, but remember not to store them digitally.',
+      recoveryHelpOne: 'The following %{numWords} words are the seed of your new account. As long as you have them, you will always be able to recover your account, but remember not to store them digitally.',
       recoveryButtonOne: 'I\'ve written down my seed phrase',
-      recoveryHelpTwo: 'Please enter your 12-word seed phrase. The words must be in the correct order.',
+      recoveryHelpTwo: 'Please enter your %{numWords}-word seed phrase. The words must be in the correct order.',
       recoveryButtonTwoDisabled: 'Fill these out first',
       recoveryButtonTwoEnabled: 'I\'ve done it!',
       passwordTitle: 'Password',
@@ -64,11 +64,12 @@ const messages = {
       pinButton: 'Confirm PIN',
       startOver: 'Start Over',
       newPinLabel: 'Create your PIN',
-      confirmPinLabel: 'Confirm your PIN'
+      confirmPinLabel: 'Confirm your PIN',
+      changeSeedPhraseLength: 'Change seed phrase length'
     },
     restoreWallet: {
       recoveryTitle: 'Seed Phrase',
-      recoveryHelp: 'Enter your 12 word seed phrase to restore your wallet.',
+      recoveryHelp: 'Enter your 12, 18 or 24 word seed phrase to restore your wallet.',
       recoveryButtonDisabled: 'Fill these out first',
       recoveryButtonEnabled: 'I\'ve done it!',
       passwordTitle: 'Password',
@@ -174,7 +175,7 @@ const messages = {
       currentPinLabel: 'Enter current PIN',
       pinLabel: 'Enter new PIN',
       confirmationPinLabel: 'Confirm new PIN',
-      mnemonicDisclaimer: 'Your seed phrase is a secret list of 12 words that uniquely provide access to your wallet. As long as you have them, you will always be able to recover access to your accounts within this wallet. You may view it here if you need to back it up for future recovery.',
+      mnemonicDisclaimer: 'Your seed phrase is a secret list of 12, 18 or 24 words that uniquely provide access to your wallet. As long as you have them, you will always be able to recover access to your accounts within this wallet. You may view it here if you need to back it up for future recovery.',
       mnemonicDisclaimerTwo: 'This seed phrase grants full access to all accounts in your wallet!',
       mnemonicDisclaimerThree: 'Please do not view it in a public place, and remember to not store it digitally.',
       mnemonicModalHeading: 'Enter your password to access your seed phrase',

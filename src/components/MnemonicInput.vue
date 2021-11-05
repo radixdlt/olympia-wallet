@@ -1,9 +1,10 @@
 <template>
   <div
-    class="w-40"
     :class="{
       'border rounded-full border-rGray leading-tight h-16 justify-center inline-flex': !requireInput,
-      'h-full': requireInput
+      'h-full': requireInput,
+      'w-40': !isSmall,
+      'w-26': isSmall
     }"
   >
     <input
@@ -37,6 +38,11 @@ const MnemonicInput = defineComponent({
     index: {
       type: Number,
       required: true
+    },
+    isSmall: {
+      type: Boolean,
+      required: false,
+      default: false
     }
   },
 

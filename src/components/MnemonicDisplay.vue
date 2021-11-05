@@ -1,6 +1,10 @@
 <template>
   <div
-    class="w-40 border rounded-full border-rGray leading-tight h-16 justify-center inline-flex items-center"
+    class="border rounded-full border-rGray leading-tight h-16 justify-center inline-flex items-center"
+    :class="{
+      'w-40': isWide,
+      'w-32': !isWide
+    }"
   >
     <div :class="{ 'filter-blur': obfuscate }">
       {{index + 1}}. {{ word }}
@@ -24,6 +28,11 @@ const MnemonicDisplay = defineComponent({
     index: {
       type: Number,
       required: true
+    },
+    isWide: {
+      type: Boolean,
+      required: false,
+      default: false
     }
   }
 })
