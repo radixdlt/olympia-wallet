@@ -3,6 +3,8 @@
     <div class="flex items-center px-5 pb-1 pt-3 text-white text-sm">
       <p> <span class="opacity-80">
       Version: </span> {{ versionNumber }} </p>
+      <p v-if="updateAvailable" class="ml-2 text-white text-xxs rounded b-solid
+      border border-rGreen px-1 cursor-pointer" @click="downloadLatestVersion">Update Available</p>
     </div>
 
     <p v-if="lowercaseNetwork" class="text-white text-sm pb-3 pt-1 px-5"> <span
@@ -18,7 +20,7 @@
 import { computed, ComputedRef, defineComponent, Ref, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useWallet } from '@/composables'
-import { getVersionNumber } from '@/actions/vue/general'
+import { getVersionNumber, downloadLatestVersion, getIsUpdateAvailable } from '@/actions/vue/general'
 
 export default defineComponent({
   setup () {
@@ -31,9 +33,14 @@ export default defineComponent({
     const versionNumber: Ref<string> = ref('')
     getVersionNumber().then((res) => { versionNumber.value = res })
 
+    const updateAvailable: Ref<boolean> = ref(false)
+    getIsUpdateAvailable().then((res) => { updateAvailable.value = res })
+
     return {
       lowercaseNetwork,
-      versionNumber
+      versionNumber,
+      updateAvailable,
+      downloadLatestVersion
     }
   }
 })

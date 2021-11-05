@@ -1,7 +1,7 @@
-import { dialog, MessageBoxReturnValue, MenuItem } from 'electron'
+import { dialog, MessageBoxReturnValue } from 'electron'
 import { autoUpdater } from 'electron-updater'
+import { setUpdateIsAvailable } from '@/actions/electron/general'
 
-let updater: MenuItem | null
 autoUpdater.autoDownload = false
 
 autoUpdater.on('error', (error) => {
@@ -9,28 +9,11 @@ autoUpdater.on('error', (error) => {
 })
 
 autoUpdater.on('update-available', () => {
-  dialog.showMessageBox({
-    type: 'info',
-    title: 'Found Updates',
-    message: 'Found updates, do you want update now?',
-    buttons: ['Sure', 'No']
-  }).then((buttonIndex: MessageBoxReturnValue) => {
-    if (buttonIndex.response === 0) {
-      autoUpdater.downloadUpdate()
-    } else {
-      if (updater) updater.enabled = true
-      updater = null
-    }
-  })
+  setUpdateIsAvailable(true)
 })
 
 autoUpdater.on('update-not-available', () => {
-  dialog.showMessageBox({
-    title: 'No Updates',
-    message: 'Current version is up-to-date.'
-  })
-  if (updater) updater.enabled = true
-  updater = null
+  setUpdateIsAvailable(false)
 })
 
 autoUpdater.on('update-downloaded', () => {
@@ -42,10 +25,10 @@ autoUpdater.on('update-downloaded', () => {
   })
 })
 
-// export this to MenuItem click callback
-function checkForUpdates (menuItem: MenuItem): void {
-  updater = menuItem
-  updater.enabled = false
+export const downloadUpdate = (): void => {
+  autoUpdater.downloadUpdate()
+}
+
+export const checkForUpdates = (): void => {
   autoUpdater.checkForUpdates()
 }
-export default checkForUpdates

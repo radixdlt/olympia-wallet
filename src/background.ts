@@ -21,7 +21,9 @@ import {
   fetchCustomNodeURLs,
   forgetCustomNodeURL,
 } from './actions/electron/data-store'
+import { getIsUpdateAvailable } from './actions/electron/general'
 import { sendAPDU } from './actions/electron/hardware-wallet'
+import { checkForUpdates, downloadUpdate } from './updater'
 import electron from 'electron'
 const pkg = require('../package.json')
 
@@ -105,6 +107,7 @@ app.on('ready', async () => {
     }
   }
   createWindow()
+  checkForUpdates()
 })
 
 // Define channels for ipc to listen to and which actions to fires
@@ -129,6 +132,8 @@ ipcMain.handle('fetch-custom-node-urls', fetchCustomNodeURLs)
 ipcMain.handle('forget-custom-node-url', forgetCustomNodeURL)
 ipcMain.handle('refresh-app', () => { win.reload() })
 ipcMain.handle('get-version-number', () => pkg.version)
+ipcMain.handle('download-latest-version', downloadUpdate)
+ipcMain.handle('get-is-update-available', getIsUpdateAvailable)
 // Exit cleanly on request from parent process in development mode.
 if (isDevelopment) {
   if (process.platform === 'win32') {
