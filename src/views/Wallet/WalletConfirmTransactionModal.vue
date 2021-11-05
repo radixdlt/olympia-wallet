@@ -97,7 +97,7 @@
           </div>
         </div>
 
-        <div class="pr-6" v-if="xrdRemainderBalanceAboveTen">
+        <div class="pr-6" v-if="xrdRemainderBalanceBelowTen">
           <span class="text-rRed text-md"><b>{{ $t('transaction.warningTitle') }}:</b> {{ $t('transaction.lessThanTenXRDBalanceWarning') }}</span>
         </div>
 
@@ -145,7 +145,7 @@ import BigAmount from '@/components/BigAmount.vue'
 import PinInput from '@/components/PinInput.vue'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
 import { validatePin } from '@/actions/vue/create-wallet'
-import { useRouter, onBeforeRouteLeave } from 'vue-router'
+import { useRouter } from 'vue-router'
 import { useNativeToken, useHomeModal, useTransactions, useWallet } from '@/composables'
 import { useI18n } from 'vue-i18n'
 
@@ -194,17 +194,15 @@ const WalletConfirmTransactionModal = defineComponent({
     const balanceSub = updateObservable.pipe(
       switchMap(() => radix.activeAccount),
       mergeMap((account) => forkJoin([
-        radix.ledger.tokenBalancesForAddress(account.address),
-        radix.ledger.stakesForAddress(account.address),
-        radix.ledger.unstakesForAddress(account.address)
+        radix.ledger.tokenBalancesForAddress(account.address)
       ]))
-    ).subscribe(([balances, stakes, unstakes]) => {
+    ).subscribe(([balances]) => {
       tokenBalances.value = balances
       loading.value = false
     })
     subs.add(balanceSub)
 
-    onBeforeRouteLeave(() => {
+    onUnmounted(() => {
       subs.unsubscribe()
     })
 
@@ -322,6 +320,20 @@ const WalletConfirmTransactionModal = defineComponent({
       return xrdAmount.isErr() ? zero : xrdAmount.value
     })
 
+    // Do not check for balance above 10XRD if unstaking. Only run validation if staking/sending. Two possible calculations
+    // can occur. Either (Total XRD - Transaction Fee) OR (Total XRD - XRD Amount Input - Transaction Fee). Calculation is
+    // based on whether or not User chose to send/stake XRD or another token.
+    // Default value is false because we don't want to blindly throw this warning outside of said cases.
+    const xrdRemainderBalanceBelowTen: ComputedRef<boolean> = computed(() => {
+      if (selectedCurrency.value && selectedCurrency.value.token.symbol !== 'xrd' && toLabel.value !== 'Unstake from') {
+        return Number(totalXRD.value) - Number(transactionFee.value) < Math.pow(10, 19)
+      } else if (totalXRD.value && amount.value && transactionFee && toLabel.value !== 'Unstake from') {
+        return Number(totalXRD.value) - Number(amount.value) - Number(transactionFee.value) < Math.pow(10, 19)
+      } else {
+        return false
+      }
+    })
+
     return {
       activeAddress,
       activeMessageInTransaction,
@@ -349,21 +361,8 @@ const WalletConfirmTransactionModal = defineComponent({
       transferInput,
       totalXRD,
       values,
-      selectedCurrency
-    }
-  },
-  computed: {
-    // Do not check for balance above 10XRD if unstaking. Only run validation if staking/sending. Two possible calculations
-    // can occur. Either (Total XRD - Transaction Fee) OR (Total XRD - XRD Amount Input - Transaction Fee). Calculation is
-    // based on whether or not User chose to send/stake XRD or another token.
-    xrdRemainderBalanceAboveTen (): boolean {
-      if (this.selectedCurrency && this.selectedCurrency.token.symbol !== 'xrd' && this.toLabel !== 'Unstake from') {
-        return Number(this.totalXRD) - Number(this.transactionFee) < Math.pow(10, 19)
-      } else if (this.totalXRD && this.amount && this.transactionFee && this.toLabel !== 'Unstake from') {
-        return Number(this.totalXRD) - Number(this.amount) - Number(this.transactionFee) < Math.pow(10, 19)
-      } else {
-        return true
-      }
+      selectedCurrency,
+      xrdRemainderBalanceBelowTen
     }
   }
 })
