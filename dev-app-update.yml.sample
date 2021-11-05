@@ -1,0 +1,5 @@
+provider: github
+private: false
+owner: radixdlt
+repo: olympia-wallet
+token: my-github-token
