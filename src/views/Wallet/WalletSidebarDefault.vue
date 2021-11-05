@@ -83,7 +83,7 @@
         </wallet-nav-link>
       </router-link>
     </div>
-    <NetworkDisplay />
+    <SidebarNetworkDisplay />
   </div>
 </template>
 
@@ -93,11 +93,11 @@ import AccountListItem from '@/components/AccountListItem.vue'
 import WalletNavLink from './WalletNavLink.vue'
 import { useWallet, useSidebar } from '@/composables'
 import { useRouter, useRoute } from 'vue-router'
-import NetworkDisplay from '@/components/NetworkDisplay.vue'
+import SidebarNetworkDisplay from '@/components/SidebarNetworkDisplay.vue'
 
 const WalletSidebarDefault = defineComponent({
   components: {
-    NetworkDisplay,
+    SidebarNetworkDisplay,
     AccountListItem,
     WalletNavLink
   },

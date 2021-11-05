@@ -1,6 +1,6 @@
 'use strict'
 
-import { app, ipcMain, protocol, BrowserWindow } from 'electron'
+import electron, { app, ipcMain, protocol, BrowserWindow } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 import path from 'path'
@@ -19,12 +19,12 @@ import {
   fetchSelectedNode,
   persistCustomNodeURL,
   fetchCustomNodeURLs,
-  forgetCustomNodeURL,
+  forgetCustomNodeURL
 } from './actions/electron/data-store'
 import { getIsUpdateAvailable } from './actions/electron/general'
 import { sendAPDU } from './actions/electron/hardware-wallet'
 import { checkForUpdates, downloadUpdate } from './updater'
-import electron from 'electron'
+
 const pkg = require('../package.json')
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
@@ -91,7 +91,6 @@ app.on('activate', () => {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', async () => {
-
   electron.powerMonitor.on('suspend', () => {
     if (BrowserWindow.getAllWindows().length > 0) {
       win.reload()

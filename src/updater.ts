@@ -1,5 +1,5 @@
 import path from 'path'
-import { dialog, MessageBoxReturnValue } from 'electron'
+import { dialog } from 'electron'
 import { autoUpdater } from 'electron-updater'
 import { setUpdateIsAvailable } from '@/actions/electron/general'
 

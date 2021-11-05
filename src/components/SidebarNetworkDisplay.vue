@@ -1,18 +1,25 @@
 <template>
   <div class="bg-gradient-to-r from-rBlue to-rBlueDark w-60 mt-3">
     <div class="flex items-center px-5 pb-1 pt-3 text-white text-sm">
-      <p> <span class="opacity-80">
-      Version: </span> {{ versionNumber }} </p>
-      <p v-if="updateAvailable" class="ml-2 text-white text-xxs rounded b-solid
-      border border-rGreen px-1 cursor-pointer" @click="downloadLatestVersion">Update Available</p>
+      <p>
+        <span class="opacity-80">{{ $t('wallet.version') }}: </span> {{ versionNumber }}
+      </p>
+      <p
+        v-if="updateAvailable"
+        class="ml-2 text-white text-xxs rounded b-solid border border-rGreen px-1 cursor-pointer"
+        @click="downloadLatestVersion"
+      >
+        {{ $t('wallet.update') }}
+      </p>
     </div>
 
-    <p v-if="lowercaseNetwork" class="text-white text-sm pb-3 pt-1 px-5"> <span
-    class="opacity-80"> Network: </span> {{ lowercaseNetwork }} </p>
+    <p v-if="lowercaseNetwork" class="text-white text-sm pb-3 pt-1 px-5">
+      <span class="opacity-80"> {{ $t('wallet.network') }}: </span> {{ lowercaseNetwork }}
+    </p>
 
-    <p v-else class="text-white text-sm pb-3 pt-1 px-5"> <span
-    class="opacity-80"> Network: </span> Disconnected </p>
-
+    <p v-else class="text-white text-sm pb-3 pt-1 px-5">
+      <span class="opacity-80"> {{ $t('wallet.network') }}: </span> {{$t('wallet.disconnected') }}
+    </p>
   </div>
 </template>
 
@@ -28,7 +35,8 @@ export default defineComponent({
     const { activeNetwork } = useWallet(router)
 
     const lowercaseNetwork: ComputedRef<string | undefined> = computed(() =>
-    activeNetwork.value?.toUpperCase())
+      activeNetwork.value?.toUpperCase()
+    )
 
     const versionNumber: Ref<string> = ref('')
     getVersionNumber().then((res) => { versionNumber.value = res })
@@ -38,8 +46,8 @@ export default defineComponent({
 
     return {
       lowercaseNetwork,
-      versionNumber,
       updateAvailable,
+      versionNumber,
       downloadLatestVersion
     }
   }
