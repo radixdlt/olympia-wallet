@@ -1,5 +1,5 @@
 import { AccountName, SelectedNode } from '../electron/data-store'
-import { Network } from '@radixdlt/application'
+import { Network, ResourceIdentifierT } from '@radixdlt/application'
 export const saveAccountName = (accountAddress: string, prettyName: string): Promise<string> => new Promise((resolve) => {
   resolve(window.ipcRenderer.invoke('save-account-name', JSON.stringify({ accountAddress, prettyName })))
 })
@@ -53,4 +53,19 @@ export const fetchCustomNodeURLs = async (): Promise<string[]> => {
 
 export const forgetCustomNodeURL = async (nodeURL: string): Promise<void> => {
   await window.ipcRenderer.invoke('forget-custom-node-url', nodeURL)
+}
+
+export const hideTokenType = async (tokenRRI: ResourceIdentifierT): Promise<string[]> => {
+  const newHiddenTokens = await window.ipcRenderer.invoke('hide-token-type', tokenRRI.toString())
+  return newHiddenTokens
+}
+
+export const unhideTokenType = async (tokenRRI: string): Promise<string[]> => {
+  const newHiddenTokens = await window.ipcRenderer.invoke('unhide-token-type', tokenRRI.toString())
+  return newHiddenTokens
+}
+
+export const getHiddenTokens = async (): Promise<string[]> => {
+  const data = await window.ipcRenderer.invoke('get-hidden-tokens')
+  return data
 }
