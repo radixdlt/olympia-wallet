@@ -4,7 +4,12 @@ Welcome to the Radix Wallet README.
 ## Project setup
 ```
 yarn
+cp .envrc{.sample,}
+cp dev-app-update.yml{.sample,}
 ```
+
+After copying the contents of `dev-app-update.yml.sample` to
+`dev-app-update.yml`, make sure to update the github token to a valid token.
 
 ### Compiles and hot-reloads for development
 ```
@@ -29,7 +34,3 @@ yarn run lint
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
 
-### Testing auto update
-
-Copy the contents of `dev-app-update.yml.sample` into `dev-app-update.yml` and
-set your github token to test the UI portion of the auto update flow in development.

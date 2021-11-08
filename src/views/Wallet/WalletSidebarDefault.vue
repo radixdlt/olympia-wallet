@@ -4,8 +4,10 @@
       <img alt="Radix DLT Logo" src="../../assets/logo.svg" class="w-30 mr-3">
     </div>
 
-    <div class="flex flex-col text-white hover:text-rGreen transition-colors
-    cursor-pointer mb-2 px-5" @click="setState(true)">
+    <div
+      class="flex flex-col text-white hover:text-rGreen transition-colors cursor-pointer mb-2 px-5"
+      @click="setState(true)"
+    >
       <div class="relative py-3">
         <account-list-item :account="activeAccount" v-if="activeAccount"/>
         <div class="absolute bg-gradient-to-r from-blueEnd to-transparent inset-0 w-full h-full z-10 -mx-8 opacity-40">

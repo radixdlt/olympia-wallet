@@ -24,25 +24,19 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, Ref, ref } from 'vue'
+import { computed, ComputedRef, defineComponent } from 'vue'
 import { useRouter } from 'vue-router'
 import { useWallet } from '@/composables'
-import { getVersionNumber, downloadLatestVersion, getIsUpdateAvailable } from '@/actions/vue/general'
+import { downloadLatestVersion } from '@/actions/vue/general'
 
 export default defineComponent({
   setup () {
     const router = useRouter()
-    const { activeNetwork } = useWallet(router)
+    const { activeNetwork, updateAvailable, versionNumber } = useWallet(router)
 
     const lowercaseNetwork: ComputedRef<string | undefined> = computed(() =>
       activeNetwork.value?.toUpperCase()
     )
-
-    const versionNumber: Ref<string> = ref('')
-    getVersionNumber().then((res) => { versionNumber.value = res })
-
-    const updateAvailable: Ref<boolean> = ref(false)
-    getIsUpdateAvailable().then((res) => { updateAvailable.value = res })
 
     return {
       lowercaseNetwork,

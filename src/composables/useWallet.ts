@@ -34,7 +34,11 @@ import {
   persistNodeSelection,
   fetchSelectedNodeFromStore
 } from '@/actions/vue/data-store'
-import { refreshApp } from '@/actions/vue/general'
+import {
+  getVersionNumber,
+  getIsUpdateAvailable,
+  refreshApp
+} from '@/actions/vue/general'
 import { sha256Twice } from '@radixdlt/crypto'
 
 import { sendAPDU } from '@/actions/vue/hardware-wallet'
@@ -64,6 +68,8 @@ const showDeleteHWWalletPrompt: Ref<boolean> = ref(false)
 const showLedgerVerify: Ref<boolean> = ref(false)
 const signingKeychain: Ref<SigningKeychainT | null> = ref(null)
 const switching = ref(false)
+const updateAvailable: Ref<boolean> = ref(false)
+const versionNumber: Ref<string> = ref('')
 const wallet: Ref<WalletT | null> = ref(null)
 
 const setWallet = (newWallet: WalletT) => {
@@ -94,6 +100,8 @@ interface useWalletInterface {
   readonly activeAccount: Ref<AccountT | null>;
   readonly activeAddress: Ref<AccountAddressT | null>;
   readonly activeNetwork: Ref<Network | null>;
+  readonly connected: ComputedRef<boolean>;
+  readonly derivedAccountIndex: Ref<number>;
   readonly explorerUrlBase: ComputedRef<string>;
   readonly hardwareAccount: Ref<AccountT | null>;
   readonly hardwareAddress: Ref<string | null>;
@@ -101,15 +109,15 @@ interface useWalletInterface {
   readonly hardwareInteractionState: Ref<string>;
   readonly hasWallet: Ref<boolean>;
   readonly ledgerVerifyError: Ref<Error | null>;
+  readonly networkPreamble: ComputedRef<string>;
   readonly nodeUrl: ComputedRef<string | null>;
+  readonly radix: RadixT;
   readonly showDeleteHWWalletPrompt: Ref<boolean>;
   readonly showLedgerVerify: Ref<boolean>;
-  readonly walletHasLoaded: ComputedRef<boolean>;
-  readonly derivedAccountIndex: Ref<number>;
-  readonly connected: ComputedRef<boolean>;
   readonly switching: ComputedRef<boolean>;
-  readonly radix: RadixT;
-  readonly networkPreamble: ComputedRef<string>;
+  readonly updateAvailable: Ref<boolean>;
+  readonly versionNumber: Ref<string>;
+  readonly walletHasLoaded: ComputedRef<boolean>;
 
   accountNameFor: (address: AccountAddressT) => string;
   accountRenamed: (newName: string) => void;
@@ -212,6 +220,8 @@ const initWallet = (): void => {
   getAccountNames().then((names) => {
     accountNames.value = names
   })
+  getVersionNumber().then((res) => { versionNumber.value = res })
+  getIsUpdateAvailable().then((res) => { updateAvailable.value = res })
 }
 
 const addAccount = () => {
@@ -429,7 +439,9 @@ export default function useWallet (router: Router): useWalletInterface {
     setWallet,
     setConnected: (val: boolean) => { connected.value = val },
     switchAccount,
+    updateAvailable,
     verifyHardwareWalletAddress,
+    versionNumber,
     waitUntilAllLoaded,
     walletLoaded,
     async updateConnection (url: string): Promise<void> {
