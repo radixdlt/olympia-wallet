@@ -54,7 +54,3 @@ export const fetchCustomNodeURLs = async (): Promise<string[]> => {
 export const forgetCustomNodeURL = async (nodeURL: string): Promise<void> => {
   await window.ipcRenderer.invoke('forget-custom-node-url', nodeURL)
 }
-
-export const refreshApp = (): Promise<string> => new Promise((resolve) => {
-  resolve(window.ipcRenderer.invoke('refresh-app'))
-})

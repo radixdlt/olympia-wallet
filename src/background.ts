@@ -1,6 +1,6 @@
 'use strict'
 
-import { app, ipcMain, protocol, BrowserWindow, Menu } from 'electron'
+import electron, { app, ipcMain, protocol, BrowserWindow } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 import path from 'path'
@@ -19,11 +19,13 @@ import {
   fetchSelectedNode,
   persistCustomNodeURL,
   fetchCustomNodeURLs,
-  forgetCustomNodeURL,
+  forgetCustomNodeURL
 } from './actions/electron/data-store'
+import { getIsUpdateAvailable } from './actions/electron/general'
 import { sendAPDU } from './actions/electron/hardware-wallet'
-import menu from './menu'
-import electron from 'electron'
+import { checkForUpdates, downloadUpdate } from './updater'
+
+const pkg = require('../package.json')
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
 let win: BrowserWindow
@@ -89,7 +91,6 @@ app.on('activate', () => {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', async () => {
-
   electron.powerMonitor.on('suspend', () => {
     if (BrowserWindow.getAllWindows().length > 0) {
       win.reload()
@@ -104,8 +105,8 @@ app.on('ready', async () => {
       console.error('Vue Devtools failed to install:', e.toString())
     }
   }
-  Menu.setApplicationMenu(menu)
   createWindow()
+  checkForUpdates()
 })
 
 // Define channels for ipc to listen to and which actions to fires
@@ -129,6 +130,9 @@ ipcMain.handle('persist-custom-node-url', persistCustomNodeURL)
 ipcMain.handle('fetch-custom-node-urls', fetchCustomNodeURLs)
 ipcMain.handle('forget-custom-node-url', forgetCustomNodeURL)
 ipcMain.handle('refresh-app', () => { win.reload() })
+ipcMain.handle('get-version-number', () => pkg.version)
+ipcMain.handle('download-latest-version', downloadUpdate)
+ipcMain.handle('get-is-update-available', getIsUpdateAvailable)
 // Exit cleanly on request from parent process in development mode.
 if (isDevelopment) {
   if (process.platform === 'win32') {
