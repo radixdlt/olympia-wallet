@@ -159,7 +159,8 @@ const messages = {
       availableBalancePlaceholder: 'Enter amount',
       validatorPlaceholder: 'Enter validator address',
       validatorFeeLabel: 'Validator Fee',
-      recentUptimeLabel: 'Recent Uptime'
+      recentUptimeLabel: 'Recent Uptime',
+      noEmissions: 'no emissions'
     },
     confirmation: {
       transferFromLabel: 'Your address',
