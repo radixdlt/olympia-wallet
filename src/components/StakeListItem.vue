@@ -8,9 +8,15 @@
             class="text-sm flex items-center"
           >
             <div class="flex flex-col">
-              <div v-if="!validator.registered" class="inline-flex justify-start items-center">
-                <span class="bg-rRed w-2 h-2 rounded-full"></span>
-                <span class="text-rRed ml-2">unregistered</span>
+              <div>
+                <div v-if="!validator.registered" class="inline-flex justify-start items-center">
+                  <span class="bg-rRed w-2 h-2 rounded-full"></span>
+                  <span class="text-rRed ml-2 mr-3">unregistered</span>
+                </div>
+                <div v-if="notTopOneHundred" class="inline-flex items-center">
+                  <span class="bg-rOrange w-2 h-2 rounded-full"></span>
+                  <span class="text-rOrange ml-2">{{$t('staking.noEmissions')}}</span>
+                </div>
               </div>
               <a class="relative text-rBlack hover:text-rBlue group underline" v-if="validator.infoURL && validatedValidatorUrl" :href="validator.infoURL" target="__blank"> {{ validator.name }}
                 <tooltip>
@@ -114,6 +120,10 @@ const StakeListItem = defineComponent({
     },
     explorerUrlBase: {
       type: String,
+      required: true
+    },
+    notTopOneHundred: {
+      type: Boolean,
       required: true
     }
   },

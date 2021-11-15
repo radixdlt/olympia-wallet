@@ -98,6 +98,7 @@
           :position="position"
           :nativeToken="nativeToken"
           :explorerUrlBase="explorerUrlBase"
+          :notTopOneHundred="!validatorsTopOneHundred.includes(position)"
           @addToValidator="handleAddToValidator"
           @reduceFromValidator="handleReduceFromValidator"
         >
@@ -108,8 +109,8 @@
 </template>
 
 <script lang="ts">
-import { StakePosition, UnstakePosition, AccountAddressT, Amount, AmountT } from '@radixdlt/application'
-import { computed, defineComponent, Ref, ref, ComputedRef, watch } from 'vue'
+import { StakePosition, UnstakePosition, AccountAddressT, Amount, AmountT, Validator, Validators } from '@radixdlt/application'
+import { computed, defineComponent, Ref, ref, ComputedRef, watch, onUnmounted } from 'vue'
 import { useForm } from 'vee-validate'
 import StakeListItem from '@/components/StakeListItem.vue'
 import { safelyUnwrapAmount, safelyUnwrapValidator, validateAmountOfType, validateGreaterThanZero } from '@/helpers/validateRadixTypes'
@@ -124,6 +125,7 @@ import { Position } from '@/services/_types'
 import { useNativeToken, useStaking, useTransactions, useTokenBalances, useWallet } from '@/composables'
 import { useRouter, onBeforeRouteLeave } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import { Subscription } from 'rxjs'
 
 interface StakeForm {
   validator: string;
@@ -161,6 +163,21 @@ const WalletStaking = defineComponent({
       }
     })
 
+    // Get list of top 100 Validators
+    const subs = new Subscription()
+    const validators: Ref<Validators> = ref({ validators: [], cursor: '' })
+
+    radix.ledger
+      .validators({ size: 100 })
+      .subscribe((validatorsRes: Validators) => {
+        validators.value = validatorsRes
+      })
+      .add(subs)
+
+    onUnmounted(() => {
+      subs.unsubscribe()
+    })
+
     const { nativeToken, nativeTokenUnsub } = useNativeToken(radix)
     const { tokenBalances, tokenBalanceFor, tokenBalancesUnsub } = useTokenBalances(radix)
     const { activeStakes, activeUnstakes, loadingAllStaking, stakingUnsub } = useStaking(radix)
@@ -189,7 +206,6 @@ const WalletStaking = defineComponent({
     })
 
     const sortedPositions: ComputedRef<Array<Position>> = computed(() => {
-      console.log('computed sorted', activeStakes.value, activeUnstakes.value)
       if (!activeStakes.value || !activeUnstakes.value) return []
       // If more than 1 stake exists for the same validator, only display the validator once and sum their amounts
       let positions: Position[] = []
@@ -223,6 +239,13 @@ const WalletStaking = defineComponent({
         return 0
       })
     })
+
+    const validatorsTopOneHundred: ComputedRef<Array<Position>> = computed(() =>
+      sortedPositions.value.filter((pos: Position) => {
+        const withinTopOneHundredIndex = validators.value.validators.findIndex((validator: Validator) => pos.address.toString() === validator.address.toString())
+        return withinTopOneHundredIndex !== -1
+      })
+    )
 
     const stakingDisclaimer: ComputedRef<string> = computed(() =>
       activeForm.value === 'STAKING' ? t('staking.stakeDisclaimer') : t('staking.unstakeDisclaimer'))
@@ -308,9 +331,9 @@ const WalletStaking = defineComponent({
       stakeButtonCopy,
       stakingDisclaimer,
       tokenBalances,
+      validatorsTopOneHundred,
       values,
       xrdBalance,
-
       disableSubmit,
       handleAddToValidator,
       handleReduceFromValidator,
