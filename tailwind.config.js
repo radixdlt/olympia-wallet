@@ -12,6 +12,7 @@ module.exports = {
         rGreenDark: '#00AB84',
         rRed: '#EF4136',
         rOffwhite: '#F8F8FD',
+        rOrange: '#EA8C00',
         rGrayLightest: '#F7F7FD',
         rGrayLight: '#F2F2FC',
         rGray: '#DDE5ED',
