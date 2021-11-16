@@ -190,8 +190,10 @@ export default function useTransactions (radix: RadixT, router: Router, activeAc
   const setActiveTransactionForm = (val: string) => {
     activeTransactionForm.value = val
   }
-
+  let activeTransactionSubs = new Subscription()
   const confirmAndExecuteTransaction = (transactionTracking: TransactionTracking) => {
+    activeTransactionSubs.unsubscribe()
+    activeTransactionSubs = new Subscription()
     activeTransaction.value = transactionTracking
     const transactionDidComplete = new BehaviorSubject<boolean>(false)
     userDidCancel.next(false)
@@ -208,6 +210,7 @@ export default function useTransactions (radix: RadixT, router: Router, activeAc
         hasCalculatedFee.value = true
       })
     subs.add(createUserConfirmation)
+    activeTransactionSubs.add(createUserConfirmation)
 
     // Confirm transaction and move user to history view after they press confirm
     const watchUserDidConfirm = combineLatest<[ManualUserConfirmTX, boolean]>([userConfirmation, userDidConfirm])
@@ -215,6 +218,7 @@ export default function useTransactions (radix: RadixT, router: Router, activeAc
         if (didConfirm) { txnToConfirm.confirm() }
       })
     subs.add(watchUserDidConfirm)
+    activeTransactionSubs.add(watchUserDidConfirm)
 
     // Catch errors that were silently failing
     const trackingSubmittedEventErrors = transactionTracking.events
@@ -245,13 +249,16 @@ export default function useTransactions (radix: RadixT, router: Router, activeAc
       })
 
     subs.add(trackingSubmittedEventErrors)
+    activeTransactionSubs.add(trackingSubmittedEventErrors)
 
     // Store draft transaction actions
-    subs.add(transactionTracking.events
+    const draftTransactionSub = transactionTracking.events
       .pipe(filter((trackingEvent: TransactionStateUpdate) => trackingEvent.eventUpdateType === 'INITIATED'))
       .subscribe((res: TransactionStateUpdate) => {
         draftTransaction.value = (res as TransactionStateSuccess).transactionState as TransactionIntent
-      }))
+      })
+    subs.add(draftTransactionSub)
+    activeTransactionSubs.add(draftTransactionSub)
 
     // Track pending transactions augmented with actions array
     const trackingSubmittedEvents = transactionTracking.events
@@ -266,9 +273,10 @@ export default function useTransactions (radix: RadixT, router: Router, activeAc
         transactionState.value = 'submitting'
       })
     subs.add(trackingSubmittedEvents)
+    activeTransactionSubs.add(trackingSubmittedEvents)
 
     // When a transaction has been completed, remove it from pending transactions
-    subs.add(transactionTracking.completion
+    const transactionCompleteSub = transactionTracking.completion
       .subscribe({
         next: (txnID: TransactionIdentifierT) => {
           pendingTransactions.value = pendingTransactions.value.filter((pendingTxn: TransactionStateSuccess) => {
@@ -287,7 +295,9 @@ export default function useTransactions (radix: RadixT, router: Router, activeAc
             })
           }
         }
-      }))
+      })
+    subs.add(transactionCompleteSub)
+    activeTransactionSubs.add(transactionCompleteSub)
 
     // Cleanup subscriptions on cancel and complete
     const cleanupTransactionSubs = () => {
@@ -302,6 +312,7 @@ export default function useTransactions (radix: RadixT, router: Router, activeAc
     userDidCancel.subscribe((didCancel: boolean) => {
       if (didCancel) {
         cleanupTransactionSubs()
+        activeTransactionSubs.unsubscribe()
         shouldShowConfirmation.value = false
         activeMessage.value = ''
         hasCalculatedFee.value = false
