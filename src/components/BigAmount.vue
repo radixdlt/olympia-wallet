@@ -1,10 +1,8 @@
 <template>
   <span class="relative inline-flex flex-col items-center group cursor-pointer" @click.stop="copyText">
     <span>{{numberForDisplay}}</span>
-    <div v-if="numberLessThanFourDigits" class="absolute invisible group-hover:visible -mt-full bg-rGrayLightest text-rBlack bottom-full text-xs p-1 ml-32 rounded-sm shadow border border-solid border-rGrayLight">
-      {{fullNumber}}
-    </div>
-    <div v-else class="absolute invisible group-hover:visible -mt-full bg-rGrayLightest text-rBlack bottom-full text-xs p-1 rounded-sm shadow border border-solid border-rGrayLight">
+    <div class="absolute invisible group-hover:visible -mt-full bg-rGrayLightest text-rBlack bottom-full text-xs p-1 rounded-sm shadow border border-solid border-rGrayLight"
+    :class="numberLessThanFourDigits && 'ml-32'">
       {{fullNumber}}
     </div>
   </span>
@@ -126,11 +124,7 @@ const BigAmount = defineComponent({
     },
 
     numberLessThanFourDigits (): boolean {
-      if (asBigNumber(this.amount, false).toString().length < 4) {
-        return true
-      } else {
-        return false
-      }
+      return asBigNumber(this.amount, false).toString().length < 4
     }
   },
 
