@@ -124,7 +124,7 @@ export default defineComponent({
     }
 
     const handleAddNode = async () => {
-      const url = values.nodeURL.toLowerCase()
+      const url = values.nodeURL.toLowerCase().trim()
       if (!isUnique(url)) {
         setErrors({
           nodeURL: 'Node URLs must be unique'
