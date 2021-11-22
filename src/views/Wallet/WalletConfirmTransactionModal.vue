@@ -121,7 +121,7 @@
               {{ $t('transaction.cancelButton') }}
             </div>
 
-            <ButtonSubmit class="w-44 py-3" :disabled="disableSubmit" :small="true" >
+            <ButtonSubmit class="w-44 py-3" :disabled="disableSubmit" :small="true" v-on:click="disableEscape" >
               {{ $t('transaction.confirmButton') }}
             </ButtonSubmit>
           </div>
@@ -211,6 +211,10 @@ const WalletConfirmTransactionModal = defineComponent({
       window.removeEventListener('keydown', escapeListener)
     })
 
+    const disableEscape = () => {
+      window.removeEventListener('keydown', escapeListener)
+    }
+
     const toContent: ComputedRef<string> = computed(() => {
       if (stakeInput.value) {
         return stakeInput.value.validator.toString()
@@ -279,6 +283,7 @@ const WalletConfirmTransactionModal = defineComponent({
       canCancel,
       closeModal,
       confirmationMode,
+      disableEscape,
       disableSubmit,
       errors,
       fromLabel,
