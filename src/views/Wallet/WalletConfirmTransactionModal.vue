@@ -168,7 +168,6 @@ const WalletConfirmTransactionModal = defineComponent({
       activeAddress,
       activeAccount,
       hardwareAccount,
-      hardwareAccountFailedToSign,
       radix,
       reset
     } = useWallet(router)
@@ -185,11 +184,7 @@ const WalletConfirmTransactionModal = defineComponent({
       transferInput,
       transactionUnsub,
       selectedCurrency
-    } = useTransactions(radix, router, activeAccount.value, hardwareAccount.value, {
-      ledgerSigningError: () => {
-        hardwareAccountFailedToSign()
-      }
-    })
+    } = useTransactions(radix, router, activeAccount.value, hardwareAccount.value)
 
     const escapeListener = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {

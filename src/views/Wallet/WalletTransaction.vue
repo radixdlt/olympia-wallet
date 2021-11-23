@@ -154,13 +154,9 @@ const WalletTransaction = defineComponent({
   setup () {
     const { errors, values, meta, setErrors, resetForm } = useForm<TransactionForm>()
     const router = useRouter()
-    const { activeAddress, activeAccount, hardwareAccount, hardwareAccountFailedToSign, networkPreamble, radix, verifyHardwareWalletAddress } = useWallet(router)
+    const { activeAddress, activeAccount, hardwareAccount, networkPreamble, radix, verifyHardwareWalletAddress } = useWallet(router)
 
-    const { transferTokens, transactionUnsub, setActiveTransactionForm } = useTransactions(radix, router, activeAccount.value, hardwareAccount.value, {
-      ledgerSigningError: () => {
-        hardwareAccountFailedToSign()
-      }
-    })
+    const { transferTokens, transactionUnsub, setActiveTransactionForm } = useTransactions(radix, router, activeAccount.value, hardwareAccount.value)
 
     setActiveTransactionForm('transaction')
 

@@ -125,7 +125,6 @@ interface useWalletInterface {
   connectHardwareWallet: () => void;
   createWallet: (mnemonic: MnemomicT, pass: string, network: Network) => Promise<WalletT>;
   deleteLocalHardwareAddress: () => void;
-  hardwareAccountFailedToSign: () => void;
   hideLedgerVerify: () => void;
   hideLedgerInteraction: () => void;
   initWallet: () => void;
@@ -333,12 +332,6 @@ const fetchSavedNodeUrl = async (signingKeychain: SigningKeychainT): Promise<str
   return selectedNode
 }
 
-const hardwareAccountFailedToSign = () => {
-  hardwareAccount.value = null
-  hardwareInteractionState.value = 'FAILED_TO_SIGN'
-  hardwareError.value = new Error('validations.failedToSign')
-}
-
 const hideLedgerInteraction = () => {
   hardwareInteractionState.value = ''
 }
@@ -429,7 +422,6 @@ export default function useWallet (router: Router): useWalletInterface {
     connectHardwareWallet,
     createWallet,
     deleteLocalHardwareAddress,
-    hardwareAccountFailedToSign,
     hideLedgerInteraction,
     hideLedgerVerify,
     initWallet,

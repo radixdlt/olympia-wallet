@@ -150,16 +150,11 @@ const WalletStaking = defineComponent({
       activeAccount,
       explorerUrlBase,
       hardwareAccount,
-      hardwareAccountFailedToSign,
       radix
     } = useWallet(router)
     const { activeForm, setActiveForm } = useStaking(radix)
 
-    const { stakeTokens, unstakeTokens, transactionUnsub, setActiveTransactionForm, transactionErrorMessage } = useTransactions(radix, router, activeAccount.value, hardwareAccount.value, {
-      ledgerSigningError: () => {
-        hardwareAccountFailedToSign()
-      }
-    })
+    const { stakeTokens, unstakeTokens, transactionUnsub, setActiveTransactionForm, transactionErrorMessage } = useTransactions(radix, router, activeAccount.value, hardwareAccount.value)
 
     const { nativeToken, nativeTokenUnsub } = useNativeToken(radix)
     const { tokenBalances, tokenBalanceFor, tokenBalancesUnsub } = useTokenBalances(radix)

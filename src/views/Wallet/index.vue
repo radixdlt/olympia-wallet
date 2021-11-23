@@ -60,15 +60,10 @@ const WalletIndex = defineComponent({
       showDeleteHWWalletPrompt,
       showLedgerVerify,
       walletLoaded,
-      hardwareAccountFailedToSign,
       waitUntilAllLoaded
     } = useWallet(router)
 
-    const { shouldShowConfirmation, transactionUnsub } = useTransactions(radix, router, activeAccount.value, hardwareAccount.value, {
-      ledgerSigningError: () => {
-        hardwareAccountFailedToSign()
-      }
-    })
+    const { shouldShowConfirmation, transactionUnsub } = useTransactions(radix, router, activeAccount.value, hardwareAccount.value)
 
     onBeforeRouteUpdate(async () => {
       await waitUntilAllLoaded()
