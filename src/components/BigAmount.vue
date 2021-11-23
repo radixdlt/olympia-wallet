@@ -120,10 +120,6 @@ const BigAmount = defineComponent({
 
     fullNumber (): string {
       return asBigNumber(this.amount, true)
-    },
-
-    numberLessThanSevenDigits (): boolean {
-      return asBigNumber(this.amount, false).toString().length < 7
     }
   },
 
