@@ -2,7 +2,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin')
 const NormalModuleReplacementPlugin = require('webpack').NormalModuleReplacementPlugin
 const package = require('./package.json')
 
-const builderReleaseOptions = package.latest ? null : {
+const builderReleaseOptions = package.latest ? ['github'] : {
   provider: 'github',
   private: false,
   releaseType: 'release'
