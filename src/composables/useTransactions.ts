@@ -112,7 +112,7 @@ const userDidCancel = new Subject<boolean>()
 let userConfirmation = new ReplaySubject<ManualUserConfirmTX>()
 const historyPagination = new Subject<TransactionHistoryOfKnownAddressRequestInput>()
 
-export default function useTransactions (radix: RadixT, router: Router, activeAccount: AccountT | null, hardwareAccount: AccountT | null, callbacks: { ledgerSigningError: () => void;}): useTransactionsInterface {
+export default function useTransactions (radix: RadixT, router: Router, activeAccount: AccountT | null, hardwareAccount: AccountT | null): useTransactionsInterface {
   const { setError } = useErrors(radix)
   const refreshHistory = () => {
     loadingHistory.value = true
@@ -240,7 +240,6 @@ export default function useTransactions (radix: RadixT, router: Router, activeAc
         const isLedgerConnectedError = errorEvent.error.message && errorEvent.error.message.includes('Failed to sign tx with Ledger')
         if (isLedgerConnectedError) {
           ledgerTxError.value = errorEvent.error
-          callbacks.ledgerSigningError()
           transactionErrorMessage.value = null
           return
         }

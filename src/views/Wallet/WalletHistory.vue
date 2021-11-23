@@ -109,7 +109,6 @@ const WalletHistory = defineComponent({
       activeAccount,
       explorerUrlBase,
       hardwareAccount,
-      hardwareAccountFailedToSign,
       radix,
       verifyHardwareWalletAddress
     } = useWallet(router)
@@ -126,11 +125,7 @@ const WalletHistory = defineComponent({
       decryptMessage,
       refreshHistory,
       transactionUnsub
-    } = useTransactions(radix, router, activeAccount.value, hardwareAccount.value, {
-      ledgerSigningError: () => {
-        hardwareAccountFailedToSign()
-      }
-    })
+    } = useTransactions(radix, router, activeAccount.value, hardwareAccount.value)
 
     const { nativeToken, nativeTokenUnsub } = useNativeToken(radix)
 
