@@ -1,5 +1,32 @@
 # Changelog
 
+### [1.2.6](https://www.github.com/radixdlt/olympia-wallet/compare/v1.2.5...v1.2.6) (2021-11-23)
+
+
+### Bug Fixes
+
+* add conditional margin to avoid tooltip from being clipped by parent divs ([#381](https://www.github.com/radixdlt/olympia-wallet/issues/381)) ([56f6498](https://www.github.com/radixdlt/olympia-wallet/commit/56f649823592ebdb637c898e5a361ff597e5d69d))
+* AutoUpdate needs configuration for releasing latest versions ([53e3078](https://www.github.com/radixdlt/olympia-wallet/commit/53e30780e038f5291933ad6f609f8dde11a2dfac))
+* Cleanup Transaction Subscriptions when a transaction is cancelled ([aade90a](https://www.github.com/radixdlt/olympia-wallet/commit/aade90a8ef04e29ad07f356f2f54aabfd46bd1a8))
+* correct confirmation copy ([#388](https://www.github.com/radixdlt/olympia-wallet/issues/388)) ([053dbb5](https://www.github.com/radixdlt/olympia-wallet/commit/053dbb52a7c9acbe2bc0adf5479423e827de949d))
+* custom node URL inputs should be trimmed ([#380](https://www.github.com/radixdlt/olympia-wallet/issues/380)) ([fb412d4](https://www.github.com/radixdlt/olympia-wallet/commit/fb412d4408f407e0fba52b8a1fd407b93c6be3f7))
+* do not reset hardware account on sign reject ([#384](https://www.github.com/radixdlt/olympia-wallet/issues/384)) ([ee90951](https://www.github.com/radixdlt/olympia-wallet/commit/ee909517fbdccca23866aa1637670efb05d5450b))
+* prevent crash on sleep and hide max button ([#371](https://www.github.com/radixdlt/olympia-wallet/issues/371)) ([1a2df9e](https://www.github.com/radixdlt/olympia-wallet/commit/1a2df9e3ac931aed5f067c861b8ae38ce86f0c25))
+* remove references to dev-app-update.yml ([#383](https://www.github.com/radixdlt/olympia-wallet/issues/383)) ([1e9778f](https://www.github.com/radixdlt/olympia-wallet/commit/1e9778f89ea76437fc451cd874923023a1986aca))
+
+
+### Dependencies
+
+* adjust tooltip balance styling ([#389](https://www.github.com/radixdlt/olympia-wallet/issues/389)) ([9e7166e](https://www.github.com/radixdlt/olympia-wallet/commit/9e7166e300c9b029091c60bca8ef21fc91bafb5a))
+* Better loading states for Staking ([#355](https://www.github.com/radixdlt/olympia-wallet/issues/355)) ([a8aa5fd](https://www.github.com/radixdlt/olympia-wallet/commit/a8aa5fd430f3c783e414797d4f10d4ceaa65c75b))
+* bump radix sdk version to 3.0.6 ([#369](https://www.github.com/radixdlt/olympia-wallet/issues/369)) ([6435fb4](https://www.github.com/radixdlt/olympia-wallet/commit/6435fb44e0bb77d40a8157e1ede2996e4b797845))
+* disable Escape event listener earlier in lifecycle ([#382](https://www.github.com/radixdlt/olympia-wallet/issues/382)) ([dc1a7db](https://www.github.com/radixdlt/olympia-wallet/commit/dc1a7dbc6ff4822cc6cc00129d5824de4dcf2e29))
+* Enable copying and pasting of txn messages ([#291](https://www.github.com/radixdlt/olympia-wallet/issues/291)) ([97127e6](https://www.github.com/radixdlt/olympia-wallet/commit/97127e64029b84078460226f934cd92f2dba546f))
+* Expose version and latest flag in client app ([#373](https://www.github.com/radixdlt/olympia-wallet/issues/373)) ([8f7e633](https://www.github.com/radixdlt/olympia-wallet/commit/8f7e633581e8b9f5066a6b59a6af51a0e7762e6a))
+* Highlight validator’s bad uptime ([#363](https://www.github.com/radixdlt/olympia-wallet/issues/363)) ([259a91f](https://www.github.com/radixdlt/olympia-wallet/commit/259a91fe525496932ed4a3467f438b3bdefa0aea))
+* only validated Validator URLs are links, otherwise displayed as plain text. ([d0c8254](https://www.github.com/radixdlt/olympia-wallet/commit/d0c8254dbf87e84fe8ba97c41d472b6a4d606ddd))
+* show full balance in staking, txn forms ([#368](https://www.github.com/radixdlt/olympia-wallet/issues/368)) ([c1e202e](https://www.github.com/radixdlt/olympia-wallet/commit/c1e202e02546f0f79f2de4491889c47923afe963))
+
 ### [1.2.5](https://www.github.com/radixdlt/olympia-wallet/compare/v1.2.4...v1.2.5) (2021-10-22)
 
 
