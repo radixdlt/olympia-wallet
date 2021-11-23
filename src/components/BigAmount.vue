@@ -1,8 +1,7 @@
 <template>
   <span class="relative inline-flex flex-col items-center group cursor-pointer" @click.stop="copyText">
     <span>{{numberForDisplay}}</span>
-    <div class="absolute invisible group-hover:visible -mt-full bg-rGrayLightest text-rBlack bottom-full text-xs p-1 rounded-sm shadow border border-solid border-rGrayLight"
-    :class="numberLessThanSevenDigits && 'ml-32'">
+    <div class="absolute invisible group-hover:visible -mt-full bg-rGrayLightest text-rBlack bottom-full text-xs p-1 left-0 rounded-sm shadow border border-solid border-rGrayLight">
       {{fullNumber}}
     </div>
   </span>
