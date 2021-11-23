@@ -21,7 +21,7 @@
         </div>
 
         <ButtonSubmit @click="$emit('confirm')" class="w-72 mx-auto mt-4" :destructive=true :disabled="!connected">
-          {{ $t('settings.confirm') }} {{networkId}}
+          {{ $t('settings.confirmConnection') }} {{networkId}}
         </ButtonSubmit>
 
         <button @click="$emit('cancel')" class="block m-auto pt-4">{{ $t('settings.cancel') }}</button>
