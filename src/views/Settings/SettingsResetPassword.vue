@@ -7,10 +7,8 @@
     </div>
 
     <div class="mb-14">
-      <FormField
-        type="password"
+      <PasswordField
         name="currentPassword"
-        class="w-full"
         :placeholder="$t('settings.currentPasswordPlaceholder')"
         rules="required"
         :label="$t('settings.currentPasswordLabel')"
@@ -21,10 +19,8 @@
     </div>
 
     <div class="mb-14">
-      <FormField
-        type="password"
+      <PasswordField
         name="password"
-        class="w-full"
         :placeholder="$t('settings.newPasswordLabel')"
         rules="required"
         data-ci="create-wallet-passcode-input"
@@ -34,10 +30,8 @@
     </div>
 
     <div class="mb-8">
-      <FormField
-        type="password"
+      <PasswordField
         name="confirmation"
-        class="w-full"
         :placeholder="$t('settings.confirmPasswordLabel')"
         rules="required|confirmed:@password"
         data-ci="create-wallet-confirm-input"
@@ -64,7 +58,7 @@ import { Subscription } from 'rxjs'
 import { ref } from '@nopr3d/vue-next-rx'
 import { touchKeystore, initWallet } from '@/actions/vue/create-wallet'
 import FormErrorMessage from '@/components/FormErrorMessage.vue'
-import FormField from '@/components/FormField.vue'
+import PasswordField from '@/components/PasswordField.vue'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
 import { useRouter } from 'vue-router'
 import { useWallet } from '@/composables'
@@ -79,8 +73,8 @@ interface PasswordForm {
 const SettingsResetPassword = defineComponent({
   components: {
     ButtonSubmit,
-    FormField,
-    FormErrorMessage
+    FormErrorMessage,
+    PasswordField
   },
 
   setup () {

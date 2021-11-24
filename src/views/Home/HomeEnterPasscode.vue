@@ -6,10 +6,8 @@
         <path d="M3.98975 12.1227V8.91388C3.98975 4.54318 7.55907 1 11.962 1C16.3649 1 19.9342 4.54318 19.9342 8.91388V12.1227" stroke="#00C389" stroke-width="1.5" stroke-miterlimit="10"/>
         <path d="M1 30.3952V11.8662H4.23024H19.7567H22.9869V29.4213H5.57166" stroke="#052CC0" stroke-width="1.5" stroke-miterlimit="10"/>
       </svg>
-
       <div class="mb-6 flex flex-col">
-        <FormField
-          type="password"
+        <PasswordField
           name="password"
           class="pl-8"
           :placeholder="$t('home.passwordPlaceholder')"
@@ -40,7 +38,7 @@
 <script lang="ts">
 import { defineComponent, computed, ComputedRef, Ref } from 'vue'
 import { useForm } from 'vee-validate'
-import FormField from '@/components/FormField.vue'
+import PasswordField from '@/components/PasswordField.vue'
 import FormErrorMessage from '@/components/FormErrorMessage.vue'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
 import { useI18n } from 'vue-i18n'
@@ -56,7 +54,7 @@ interface PasswordForm {
 const HomeEnterPasscode = defineComponent({
   components: {
     ButtonSubmit,
-    FormField,
+    PasswordField,
     FormErrorMessage
   },
 
