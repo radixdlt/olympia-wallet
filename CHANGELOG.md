@@ -1,5 +1,12 @@
 # Changelog
 
+### [1.2.7](https://www.github.com/radixdlt/olympia-wallet/compare/v1.2.6...v1.2.7) (2021-11-24)
+
+
+### Dependencies
+
+* empty commit to cause v1.2.7 release ([#392](https://www.github.com/radixdlt/olympia-wallet/issues/392)) ([c1b2b82](https://www.github.com/radixdlt/olympia-wallet/commit/c1b2b82849dfce9753f72988afd7896ccdf6ee05))
+
 ### [1.2.6](https://www.github.com/radixdlt/olympia-wallet/compare/v1.2.5...v1.2.6) (2021-11-23)
 
 
