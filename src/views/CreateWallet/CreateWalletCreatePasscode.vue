@@ -2,10 +2,8 @@
   <div data-ci="create-wallet-create-passcode-component">
     <form class="flex flex-col w-96" @submit.prevent="$emit('confirm', values.password)">
       <div class="mb-14">
-        <FormField
-          type="password"
+        <PasswordField
           name="password"
-          class="w-full"
           :placeholder="$t('createWallet.passwordPlaceholder')"
           rules="required"
           data-ci="create-wallet-passcode-input"
@@ -14,10 +12,8 @@
       </div>
 
       <div class="mb-56">
-        <FormField
-          type="password"
+        <PasswordField
           name="confirmation"
-          class="w-full"
           :placeholder="$t('createWallet.passwordConfirmationPlaceholder')"
           rules="required|confirmed:@password"
           data-ci="create-wallet-confirm-input"
@@ -36,7 +32,7 @@
 import { defineComponent } from 'vue'
 import { useForm } from 'vee-validate'
 import FormErrorMessage from '@/components/FormErrorMessage.vue'
-import FormField from '@/components/FormField.vue'
+import PasswordField from '@/components/PasswordField.vue'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
 
 interface PasswordForm {
@@ -47,8 +43,8 @@ interface PasswordForm {
 const CreateWalletCreatePasscode = defineComponent({
   components: {
     ButtonSubmit,
-    FormField,
-    FormErrorMessage
+    FormErrorMessage,
+    PasswordField
   },
 
   setup () {
