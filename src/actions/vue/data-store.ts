@@ -8,6 +8,10 @@ export const getLatestAccountAddress = (): Promise<string> => new Promise((resol
   resolve(window.ipcRenderer.invoke('get-latest-account-address'))
 })
 
+export const saveLatestAccountAddress = (address: string): Promise<string> => new Promise((resolve) => {
+  resolve(window.ipcRenderer.invoke('save-latest-account-address', String(address)))
+})
+
 export const getAccountNames = (): Promise<AccountName[]> => new Promise((resolve) => {
   resolve(window.ipcRenderer.invoke('get-account-names'))
 })

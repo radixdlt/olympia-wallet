@@ -30,6 +30,7 @@ import {
   saveAccountName,
   saveDerivedAccountsIndex,
   saveHardwareWalletAddress,
+  saveLatestAccountAddress,
   getAccountNames,
   getLatestAccountAddress,
   persistNodeSelection,
@@ -258,6 +259,7 @@ const switchAccount = (account: AccountT) => {
     if (activeNetwork.value) {
       fetchAccountsForNetwork(activeNetwork.value)
     }
+    saveLatestAccountAddress(newAddress)
     latestAddress.value = newAddress
     reloadSubscriptions()
   }
