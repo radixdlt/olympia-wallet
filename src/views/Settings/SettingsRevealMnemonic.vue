@@ -36,14 +36,12 @@
           @submit.prevent="handleSubmit"
         >
           <div class="text-rGrayDark mb-9">{{ $t('settings.mnemonicModalHeading') }}</div>
-          <FormField
-          type="password"
-          name="password"
-          class="w-full"
-          :placeholder="$t('settings.passwordPlaceholder')"
-          rules="required"
-          data-ci="create-wallet-passcode-input"
-          :validateOnInput="true"
+          <PasswordField
+            name="password"
+            :placeholder="$t('settings.passwordPlaceholder')"
+            rules="required"
+            data-ci="create-wallet-passcode-input"
+            :validateOnInput="true"
           />
           <FormErrorMessage name="password" />
           <ButtonSubmit
@@ -71,7 +69,7 @@ import { defineComponent, PropType } from 'vue'
 import { useForm } from 'vee-validate'
 import MnemonicDisplay from '@/components/MnemonicDisplay.vue'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
-import FormField from '@/components/FormField.vue'
+import PasswordField from '@/components/PasswordField.vue'
 import { touchKeystore } from '@/actions/vue/create-wallet'
 import { Result } from 'neverthrow'
 import FormErrorMessage from '@/components/FormErrorMessage.vue'
@@ -84,7 +82,7 @@ const SettingsRevealMnemonic = defineComponent({
   components: {
     ButtonSubmit,
     MnemonicDisplay,
-    FormField,
+    PasswordField,
     FormErrorMessage
   },
 
