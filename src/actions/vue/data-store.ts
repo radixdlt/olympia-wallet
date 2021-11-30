@@ -4,12 +4,12 @@ export const saveAccountName = (accountAddress: string, prettyName: string): Pro
   resolve(window.ipcRenderer.invoke('save-account-name', JSON.stringify({ accountAddress, prettyName })))
 })
 
-export const getLatestAccountAddress = (): Promise<string> => new Promise((resolve) => {
-  resolve(window.ipcRenderer.invoke('get-latest-account-address'))
+export const getLatestAccountAddress = (network: Network): Promise<string> => new Promise((resolve) => {
+  resolve(window.ipcRenderer.invoke('get-latest-account-address', String(network)))
 })
 
-export const saveLatestAccountAddress = (address: string): Promise<string> => new Promise((resolve) => {
-  resolve(window.ipcRenderer.invoke('save-latest-account-address', String(address)))
+export const saveLatestAccountAddress = (address: string, network: Network): Promise<string> => new Promise((resolve) => {
+  resolve(window.ipcRenderer.invoke('save-latest-account-address', JSON.stringify({ address, network })))
 })
 
 export const getAccountNames = (): Promise<AccountName[]> => new Promise((resolve) => {

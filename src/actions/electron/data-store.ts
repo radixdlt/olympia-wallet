@@ -16,12 +16,13 @@ export const saveAccountName = (event: IpcMainInvokeEvent, data: string) => {
   return store.set(`account.${accountAddress}`, prettyName)
 }
 
-export const getLatestAccountAddress = (): string => {
-  return store.get('latestAddress', '') as string
+export const getLatestAccountAddress = (event: IpcMainInvokeEvent, network: string): string => {
+  return store.get(`latestAddress.${network}`, '') as string
 }
 
-export const saveLatestAccountAddress = (event: IpcMainInvokeEvent, address: string) => {
-  return store.set('latestAddress', address)
+export const saveLatestAccountAddress = (event: IpcMainInvokeEvent, data: string) => {
+  const { address, network } = JSON.parse(data)
+  return store.set(`latestAddress.${network}`, address)
 }
 
 export const getAccountNames = (): AccountName[] => {

@@ -195,10 +195,6 @@ const explorerUrlBase: Ref<string> = ref('')
 const reloadSubscriptions = () => reloadTrigger.next(Math.random())
 
 const initWallet = (): void => {
-  getLatestAccountAddress().then((acctAddress) => {
-    latestAddress.value = acctAddress
-  })
-
   subs.add(reloadTrigger.asObservable()
     .pipe(switchMap(() => radix.activeAccount))
     .subscribe((account: AccountT) => { activeAccount.value = account }))
@@ -230,6 +226,10 @@ const initWallet = (): void => {
       fetchAccountsForNetwork(network)
       if (network === 'MAINNET') explorerUrlBase.value = 'https://explorer.radixdlt.com/'
       else explorerUrlBase.value = 'https://stokenet-explorer.radixdlt.com/'
+
+      getLatestAccountAddress(network).then((acctAddress) => {
+        latestAddress.value = acctAddress
+      })
     })
 
   subs.add(networkObserver)
@@ -258,8 +258,8 @@ const switchAccount = (account: AccountT) => {
     radix.switchAccount({ toAccount: account })
     if (activeNetwork.value) {
       fetchAccountsForNetwork(activeNetwork.value)
+      saveLatestAccountAddress(newAddress, activeNetwork.value)
     }
-    saveLatestAccountAddress(newAddress)
     latestAddress.value = newAddress
     reloadSubscriptions()
   }
