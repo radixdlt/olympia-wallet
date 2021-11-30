@@ -328,8 +328,13 @@ const WalletConfirmTransactionModal = defineComponent({
     // based on whether or not User chose to send/stake XRD or another token.
     // Default value is false because we don't want to blindly throw this warning outside of said cases.
     const xrdRemainderBalanceBelowTen: ComputedRef<boolean> = computed(() => {
-      if (selectedCurrency.value && selectedCurrency.value.token.symbol !== 'xrd' && toLabel.value !== 'Unstake from') {
-        return Number(totalXRD.value) - Number(transactionFee.value) < Math.pow(10, 19)
+      // Don't show error if starting total is < 10 xrd
+      if (totalXRD.value && Number(totalXRD.value) < Math.pow(10, 19)) {
+        return false
+      // Check transaction fee doesn't bring total < 10 xrd for non-exd transactioins
+      } else if (selectedCurrency.value && selectedCurrency.value.token.symbol !== 'xrd' && toLabel.value !== 'Unstake from') {
+        return Number(totalXRD.value) - Number(transactionFee.value) < Math.pow(10, 19)s
+      // Check amount and transaction feed don't bring total < 10 xrd
       } else if (totalXRD.value && amount.value && transactionFee && toLabel.value !== 'Unstake from') {
         return Number(totalXRD.value) - Number(amount.value) - Number(transactionFee.value) < Math.pow(10, 19)
       } else {
