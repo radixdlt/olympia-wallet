@@ -11,11 +11,11 @@
               <div>
                 <div v-if="!validator.registered" class="inline-flex justify-start items-center">
                   <span class="bg-rRed w-2 h-2 rounded-full"></span>
-                  <span class="text-rRed ml-2 mr-3">unregistered</span>
+                  <span class="text-rRed ml-2 mr-3">{{ $t('staking.unregistered') }}</span>
                 </div>
                 <div v-if="notTopOneHundred" class="inline-flex items-center">
                   <span class="bg-rOrange w-2 h-2 rounded-full"></span>
-                  <span class="text-rOrange ml-2">{{$t('staking.noEmissions')}}</span>
+                  <span class="text-rOrange ml-2">{{ $t('staking.noEmissions') }}</span>
                 </div>
               </div>
               <a class="relative text-rBlack hover:text-rBlue group underline" v-if="validator.infoURL && validatedValidatorUrl" :href="validator.infoURL" target="__blank"> {{ validator.name }}
@@ -125,6 +125,10 @@ const StakeListItem = defineComponent({
     notTopOneHundred: {
       type: Boolean,
       required: true
+    },
+    preloadedValidator: {
+      type: Object as PropType<Validator>,
+      required: false
     }
   },
 
@@ -134,15 +138,17 @@ const StakeListItem = defineComponent({
     const { radix } = useWallet(router)
 
     const position = toRef(props, 'position')
+    const preloadedValidator = toRef(props, 'preloadedValidator')
 
-    firstValueFrom(radix.ledger.lookupValidator(position.value.validator)).then((validatorRes: Validator) => { validator.value = validatorRes })
+    // If validator was included in top 100, use the preloaded value instead of re-fetching
+    if (!preloadedValidator.value) firstValueFrom(radix.ledger.lookupValidator(position.value.validator)).then((validatorRes: Validator) => { validator.value = validatorRes })
 
     const explorerUrl: ComputedRef<string> = computed(() =>
       validator.value ? `${props.explorerUrlBase}/#/validators/${validator.value.address.toString()}` : `${props.explorerUrlBase}/#/validators/`
     )
 
     return {
-      validator,
+      validator: computed(() => preloadedValidator.value || validator.value),
       explorerUrl
     }
   },

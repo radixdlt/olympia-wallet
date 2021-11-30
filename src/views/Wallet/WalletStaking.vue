@@ -88,7 +88,7 @@
           </svg>
         </a>
       </div>
-      <div v-if="loadingAllStaking || !nativeToken" class="p-4 flex items-center justify-center">
+      <div v-if="loadingAnyStaking || !nativeToken" class="p-4 flex items-center justify-center">
         <loading-icon class="text-rGrayDark" />
       </div>
       <template v-else>
@@ -99,6 +99,7 @@
           :nativeToken="nativeToken"
           :explorerUrlBase="explorerUrlBase"
           :notTopOneHundred="!validatorsTopOneHundred.includes(position)"
+          :preloadedValidator="maybeGetPreloadedValidator(position)"
           @addToValidator="handleAddToValidator"
           @reduceFromValidator="handleReduceFromValidator"
         >
@@ -109,8 +110,8 @@
 </template>
 
 <script lang="ts">
-import { StakePosition, UnstakePosition, AccountAddressT, Amount, AmountT, Validator, Validators } from '@radixdlt/application'
-import { computed, defineComponent, Ref, ref, ComputedRef, watch, onUnmounted } from 'vue'
+import { StakePosition, UnstakePosition, AccountAddressT, Amount, AmountT, Validator } from '@radixdlt/application'
+import { computed, defineComponent, ComputedRef } from 'vue'
 import { useForm } from 'vee-validate'
 import StakeListItem from '@/components/StakeListItem.vue'
 import { safelyUnwrapAmount, safelyUnwrapValidator, validateAmountOfType, validateGreaterThanZero } from '@/helpers/validateRadixTypes'
@@ -125,7 +126,6 @@ import { Position } from '@/services/_types'
 import { useNativeToken, useStaking, useTransactions, useTokenBalances, useWallet } from '@/composables'
 import { useRouter, onBeforeRouteLeave } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { Subscription } from 'rxjs'
 
 interface StakeForm {
   validator: string;
@@ -155,7 +155,7 @@ const WalletStaking = defineComponent({
       hardwareAccountFailedToSign,
       radix
     } = useWallet(router)
-    const { activeForm, setActiveForm } = useStaking(radix)
+    const { activeForm, setActiveForm, activeStakes, activeUnstakes, loadingAnyStaking, stakingUnsub, validators } = useStaking(radix)
 
     const { stakeTokens, unstakeTokens, transactionUnsub, setActiveTransactionForm, transactionErrorMessage } = useTransactions(radix, router, activeAccount.value, hardwareAccount.value, {
       ledgerSigningError: () => {
@@ -163,24 +163,8 @@ const WalletStaking = defineComponent({
       }
     })
 
-    // Get list of top 100 Validators
-    const subs = new Subscription()
-    const validators: Ref<Validators> = ref({ validators: [], cursor: '' })
-
-    radix.ledger
-      .validators({ size: 100 })
-      .subscribe((validatorsRes: Validators) => {
-        validators.value = validatorsRes
-      })
-      .add(subs)
-
-    onUnmounted(() => {
-      subs.unsubscribe()
-    })
-
     const { nativeToken, nativeTokenUnsub } = useNativeToken(radix)
     const { tokenBalances, tokenBalanceFor, tokenBalancesUnsub } = useTokenBalances(radix)
-    const { activeStakes, activeUnstakes, loadingAllStaking, stakingUnsub } = useStaking(radix)
 
     onBeforeRouteLeave(() => {
       nativeTokenUnsub()
@@ -240,12 +224,21 @@ const WalletStaking = defineComponent({
       })
     })
 
-    const validatorsTopOneHundred: ComputedRef<Array<Position>> = computed(() =>
-      sortedPositions.value.filter((pos: Position) => {
-        const withinTopOneHundredIndex = validators.value.validators.findIndex((validator: Validator) => pos.address.toString() === validator.address.toString())
-        return withinTopOneHundredIndex !== -1
-      })
-    )
+    const validatorsTopOneHundred: ComputedRef<Array<Position>> = computed(() => {
+      if (validators.value && validators.value.validators) {
+        const vals: Validator[] = validators.value.validators
+        return sortedPositions.value.filter((pos: Position) => {
+          const withinTopOneHundredIndex = vals.findIndex((validator: Validator) => pos.address.toString() === validator.address.toString())
+          return withinTopOneHundredIndex !== -1
+        })
+      }
+      return []
+    })
+
+    const maybeGetPreloadedValidator = (position: Position) => {
+      if (!validators.value) return null
+      return validators.value.validators.find((v: Validator) => position.validator.equals(v.address))
+    }
 
     const stakingDisclaimer: ComputedRef<string> = computed(() =>
       activeForm.value === 'STAKING' ? t('staking.stakeDisclaimer') : t('staking.unstakeDisclaimer'))
@@ -324,7 +317,7 @@ const WalletStaking = defineComponent({
       explorerUrlBase,
       hasTokenBalances,
       loadedAllData,
-      loadingAllStaking,
+      loadingAnyStaking,
       meta,
       nativeToken,
       sortedPositions,
@@ -332,6 +325,7 @@ const WalletStaking = defineComponent({
       stakingDisclaimer,
       tokenBalances,
       validatorsTopOneHundred,
+      maybeGetPreloadedValidator,
       values,
       xrdBalance,
       disableSubmit,

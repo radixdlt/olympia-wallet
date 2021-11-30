@@ -1,16 +1,19 @@
 import { ref, computed, ComputedRef, Ref } from 'vue'
-import { RadixT, StakePositions, UnstakePositions } from '@radixdlt/application'
+import { RadixT, StakePositions, UnstakePositions, Validators } from '@radixdlt/application'
 
 interface useStakingInterface {
   readonly activeForm: ComputedRef<'STAKING'|'UNSTAKING'>;
   readonly activeStakes: Ref<StakePositions | null>;
   readonly activeUnstakes: Ref<UnstakePositions | null>;
-  readonly loadingAllStaking: ComputedRef<boolean>;
+  readonly loadingAnyStaking: ComputedRef<boolean>;
+  readonly validators: ComputedRef<Validators | null>;
   setActiveForm: (form: 'STAKING'|'UNSTAKING') => void;
   stakingUnsub: () => void;
 }
 
 const activeForm: Ref<'STAKING'|'UNSTAKING'> = ref('STAKING')
+const validators: Ref<Validators | null> = ref(null)
+const loadingValidators: Ref<boolean> = ref(true)
 
 export default function useStaking (radix: RadixT): useStakingInterface {
   const activeStakes: Ref<StakePositions | null> = ref(null)
@@ -26,19 +29,25 @@ export default function useStaking (radix: RadixT): useStakingInterface {
     activeUnstakes.value = unstakes
     loadingUnstakes.value = false
   })
+  const validatorSub = radix.ledger.validators({ size: 100 }).subscribe((validatorsRes: Validators) => {
+    validators.value = validatorsRes
+    loadingValidators.value = false
+  })
 
   return {
     activeForm: computed(() => activeForm.value),
     activeStakes,
     activeUnstakes,
-    loadingAllStaking: computed(() => loadingStakes.value && loadingUnstakes.value),
+    loadingAnyStaking: computed(() => loadingStakes.value || loadingUnstakes.value || loadingValidators.value),
+    validators: computed(() => validators.value),
 
     setActiveForm: (form: 'STAKING'|'UNSTAKING') => { activeForm.value = form },
     stakingUnsub: () => {
-      loadingStakes.value = false
-      loadingUnstakes.value = false
+      loadingStakes.value = true
+      loadingUnstakes.value = true
       activeStakesSub.unsubscribe()
       activeUnstakesSub.unsubscribe()
+      validatorSub.unsubscribe()
     }
   }
 }

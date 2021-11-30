@@ -160,6 +160,7 @@ const messages = {
       validatorPlaceholder: 'Enter validator address',
       validatorFeeLabel: 'Validator Fee',
       recentUptimeLabel: 'Recent Uptime',
+      unregistered: 'unregistered',
       noEmissions: 'no emissions'
     },
     confirmation: {
