@@ -10,8 +10,8 @@
       :label="label"
       :validateOnInput="validateOnInput"
       :validateOnBlur="validateOnBlur"
-      v-on:keyup="checkCapsLock"
-      v-on:keydown.caps-lock="checkCapsLock"
+      @keyup="checkCapsLock"
+      @keydown.caps-lock="checkCapsLock"
     >
     </FormField>
     <div v-if="isCapsEnabled" class="absolute top-2 right-0 flex flex-row
