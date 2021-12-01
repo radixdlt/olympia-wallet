@@ -97,6 +97,13 @@
           </div>
         </div>
 
+        <div
+          v-if="xrdRemainderBalanceBelowTen"
+          class="pr-6"
+        >
+          <span class="text-rRed text-md"><b>{{ $t('transaction.warningTitle') }}:</b> {{ $t('transaction.lessThanTenXRDBalanceWarning') }}</span>
+        </div>
+
         <div class="flex items-start justify-between w-full mt-1">
           <div class="flex items-start justify-start mt-1 flex-1">
             <div class="font-light text-rGrayDark bg-rGrayLight border border-rGray py-2 pl-4 pr-5 rounded text-base w-30">
@@ -132,9 +139,11 @@
 </template>
 
 <script lang="ts">
-import { AmountOrUnsafeInput } from '@radixdlt/application'
-import { defineComponent, ref, onMounted, onUnmounted, computed, ComputedRef } from 'vue'
+import { Amount, AmountT, AmountOrUnsafeInput, SimpleTokenBalance, SimpleTokenBalances, Token, StakePositions } from '@radixdlt/application'
+import { defineComponent, ref, Ref, onMounted, onUnmounted, computed, ComputedRef } from 'vue'
 import { useForm } from 'vee-validate'
+import { merge, interval, Subscription, forkJoin } from 'rxjs'
+import { switchMap, mergeMap } from 'rxjs/operators'
 import BigAmount from '@/components/BigAmount.vue'
 import PinInput from '@/components/PinInput.vue'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
@@ -163,7 +172,6 @@ const WalletConfirmTransactionModal = defineComponent({
     const isValidPin = ref(false)
     const pinAttempts = ref(0)
     const { t } = useI18n({ useScope: 'global' })
-
     const {
       activeAddress,
       activeAccount,
@@ -172,6 +180,33 @@ const WalletConfirmTransactionModal = defineComponent({
       reset
     } = useWallet(router)
     const { nativeToken, nativeTokenUnsub } = useNativeToken(radix)
+
+    const updateObservable = merge(
+      radix.activeAccount,
+      interval(15000)
+    )
+
+    const subs = new Subscription()
+    const loading = ref(true)
+
+    subs.add(radix.activeAddress.subscribe(() => {
+      loading.value = true
+    }))
+
+    const balanceSub = updateObservable.pipe(
+      switchMap(() => radix.activeAccount),
+      mergeMap((account) =>
+        radix.ledger.tokenBalancesForAddress(account.address)
+      )
+    ).subscribe((balances) => {
+      tokenBalances.value = balances
+      loading.value = false
+    })
+    subs.add(balanceSub)
+
+    onUnmounted(() => {
+      subs.unsubscribe()
+    })
 
     const {
       activeMessageInTransaction,
@@ -271,6 +306,41 @@ const WalletConfirmTransactionModal = defineComponent({
       isValidPin.value = false
     }
 
+    const tokenBalances: Ref<SimpleTokenBalances | null> = ref(null)
+    const tokenBalanceFor = (token: Token) => {
+      if (!tokenBalances.value) return null
+      return tokenBalances.value.tokenBalances.find((tb: SimpleTokenBalance) => tb.tokenIdentifier.equals(token.rri)) || null
+    }
+
+    const zero = Amount.fromUnsafe(0)._unsafeUnwrap()
+
+    const totalXRD: ComputedRef<AmountT> = computed(() => {
+      if (!tokenBalances.value || !nativeToken.value) return zero
+      const nativeTokenBalance = tokenBalanceFor(nativeToken.value)
+      if (!nativeTokenBalance) return zero
+      const xrdAmount = Amount.fromUnsafe(nativeTokenBalance.amount)
+      return xrdAmount.isErr() ? zero : xrdAmount.value
+    })
+
+    // Do not check for balance above 10XRD if unstaking. Only run validation if staking/sending. Two possible calculations
+    // can occur. Either (Total XRD - Transaction Fee) OR (Total XRD - XRD Amount Input - Transaction Fee). Calculation is
+    // based on whether or not User chose to send/stake XRD or another token.
+    // Default value is false because we don't want to blindly throw this warning outside of said cases.
+    const xrdRemainderBalanceBelowTen: ComputedRef<boolean> = computed(() => {
+      // Don't show error if starting total is < 10 xrd
+      if (totalXRD.value && Number(totalXRD.value) < Math.pow(10, 19)) {
+        return false
+      // Check transaction fee doesn't bring total < 10 xrd for non-exd transactioins
+      } else if (selectedCurrency.value && selectedCurrency.value.token.symbol !== 'xrd' && toLabel.value !== 'Unstake from') {
+        return Number(totalXRD.value) - Number(transactionFee.value) < Math.pow(10, 19)s
+      // Check amount and transaction feed don't bring total < 10 xrd
+      } else if (totalXRD.value && amount.value && transactionFee && toLabel.value !== 'Unstake from') {
+        return Number(totalXRD.value) - Number(amount.value) - Number(transactionFee.value) < Math.pow(10, 19)
+      } else {
+        return false
+      }
+    })
+
     return {
       activeAddress,
       activeMessageInTransaction,
@@ -297,8 +367,10 @@ const WalletConfirmTransactionModal = defineComponent({
       transactionFee,
       transactionState,
       transferInput,
+      totalXRD,
       values,
-      selectedCurrency
+      selectedCurrency,
+      xrdRemainderBalanceBelowTen
     }
   }
 })

@@ -184,7 +184,6 @@ const WalletStaking = defineComponent({
     })
 
     const sortedPositions: ComputedRef<Array<Position>> = computed(() => {
-      console.log('computed sorted', activeStakes.value, activeUnstakes.value)
       if (!activeStakes.value || !activeUnstakes.value) return []
       // If more than 1 stake exists for the same validator, only display the validator once and sum their amounts
       let positions: Position[] = []
