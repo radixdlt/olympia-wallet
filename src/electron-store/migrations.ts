@@ -31,11 +31,10 @@ const migrations = {
     store.delete('hardwareAddress')
   },
   '1.3.0': (store: Record<string, any>) => {
-    // Save a list of custom tokens that the user has hidden
     if (!store.get('hiddenTokens')) store.set('hiddenTokens', [])
 
-    if (!store.get('latestAddress.MAINNET')) store.set('latestAddress.MAINNET', '')
-    if (!store.get('latestAddress.STOKENET')) store.set('latestAddress.STOKENET', '')
+    if (!store.get('wallets.MAINNET.latestAddress')) store.set('wallets.MAINNET.latestAddress', '')
+    if (!store.get('wallets.STOKENET.latestAddress')) store.set('wallets.STOKENET.latestAddress', '')
   }
 }
 
