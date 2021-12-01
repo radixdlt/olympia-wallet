@@ -1,5 +1,15 @@
 # Changelog
 
+### [1.2.8](https://www.github.com/radixdlt/olympia-wallet/compare/v1.2.7...v1.2.8) (2021-12-01)
+
+
+### Dependencies
+
+* add "no emissions" indication to current stakes list ([#377](https://www.github.com/radixdlt/olympia-wallet/issues/377)) ([56f3a4f](https://www.github.com/radixdlt/olympia-wallet/commit/56f3a4fcdf0a5a407b9cbb9f778c83f5613c42be))
+* fix errant keystroke ([#396](https://www.github.com/radixdlt/olympia-wallet/issues/396)) ([b7fac7b](https://www.github.com/radixdlt/olympia-wallet/commit/b7fac7bed3258df2cbd8f6bef99a96d17ce11209))
+* show warning when txn brings total XRD < 10 ([#374](https://www.github.com/radixdlt/olympia-wallet/issues/374)) ([53f1310](https://www.github.com/radixdlt/olympia-wallet/commit/53f13100a33c086828d68336294ab756c61ed5f9))
+* warn of caps lock in password inputs ([#391](https://www.github.com/radixdlt/olympia-wallet/issues/391)) ([777262c](https://www.github.com/radixdlt/olympia-wallet/commit/777262c8602420abc5ab1e3cf1d23b25a272e9bc))
+
 ### [1.2.7](https://www.github.com/radixdlt/olympia-wallet/compare/v1.2.6...v1.2.7) (2021-11-24)
 
 
