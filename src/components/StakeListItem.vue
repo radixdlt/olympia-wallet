@@ -141,7 +141,7 @@ const StakeListItem = defineComponent({
     const preloadedValidator = toRef(props, 'preloadedValidator')
 
     // If validator was included in top 100, use the preloaded value instead of re-fetching
-    if (!preloadedValidator.value) firstValueFrom(radix.ledger.lookupValidator(position.value.validator)).then((validatorRes: Validator) => { validator.value = validatorRes })
+    if (!preloadedValidator.value) firstValueFrom(radix.ledger.lookupValidator(position.value.validator)).then((validatorRes: any) => { validator.value = validatorRes })
 
     const explorerUrl: ComputedRef<string> = computed(() =>
       validator.value ? `${props.explorerUrlBase}/#/validators/${validator.value.address.toString()}` : `${props.explorerUrlBase}/#/validators/`

@@ -61,7 +61,7 @@
 import { defineComponent, computed, ComputedRef, ref, Ref, onMounted } from 'vue'
 import { merge, forkJoin, interval, Subject, Subscription } from 'rxjs'
 import { switchMap, mergeMap } from 'rxjs/operators'
-import { StakePosition, Amount, AmountT, Token, SimpleTokenBalance, StakePositions, UnstakePositions, SimpleTokenBalances } from '@radixdlt/application'
+import { StakePosition, Amount, AmountT, Token, SimpleTokenBalance, StakePositions, StakePositionsEndpoint, UnstakePositionsEndpoint, SimpleTokenBalances } from '@radixdlt/application'
 import BigAmount from '@/components/BigAmount.vue'
 import TokenSymbol from '@/components/TokenSymbol.vue'
 import ClickToCopy from '@/components/ClickToCopy.vue'
@@ -102,7 +102,7 @@ const WalletOverview = defineComponent({
     const { nativeToken } = useNativeToken(radix)
     const tokenBalances: Ref<SimpleTokenBalances | null> = ref(null)
     const activeStakes: Ref<StakePositions> = ref([])
-    const activeUnstakes: Ref<UnstakePositions> = ref([])
+    const activeUnstakes: Ref<UnstakePositionsEndpoint.DecodedResponse> = ref([])
     const updateObservable = merge(
       radix.activeAccount,
       interval(15000)
@@ -119,7 +119,7 @@ const WalletOverview = defineComponent({
         radix.ledger.stakesForAddress(account.address),
         radix.ledger.unstakesForAddress(account.address)
       ]))
-    ).subscribe(([balances, stakes, unstakes]) => {
+    ).subscribe(([balances, stakes, unstakes]: [any, any, any]) => {
       tokenBalances.value = balances
       activeStakes.value = stakes
       activeUnstakes.value = unstakes

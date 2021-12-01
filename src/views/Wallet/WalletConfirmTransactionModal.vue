@@ -198,7 +198,7 @@ const WalletConfirmTransactionModal = defineComponent({
       mergeMap((account) =>
         radix.ledger.tokenBalancesForAddress(account.address)
       )
-    ).subscribe((balances) => {
+    ).subscribe((balances: any) => {
       tokenBalances.value = balances
       loading.value = false
     })

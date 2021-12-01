@@ -1,5 +1,5 @@
 import { ref, computed, ComputedRef, Ref } from 'vue'
-import { RadixT, StakePositions, UnstakePositions, Validators } from '@radixdlt/application'
+import { RadixT, StakePositions, UnstakePositions, Validators, ValidatorsEndpoint } from '@radixdlt/application'
 
 interface useStakingInterface {
   readonly activeForm: ComputedRef<'STAKING'|'UNSTAKING'>;
@@ -29,7 +29,7 @@ export default function useStaking (radix: RadixT): useStakingInterface {
     activeUnstakes.value = unstakes
     loadingUnstakes.value = false
   })
-  const validatorSub = radix.ledger.validators({ size: 100 }).subscribe((validatorsRes: Validators) => {
+  const validatorSub = radix.ledger.validators({ size: 100 }).subscribe((validatorsRes: any) => {
     validators.value = validatorsRes
     loadingValidators.value = false
   })
