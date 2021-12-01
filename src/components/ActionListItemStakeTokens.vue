@@ -46,7 +46,7 @@ const ActionListItemStakeTokens = defineComponent({
 
   computed: {
     displayAddress (): string {
-      return formatValidatorAddressForDisplay(this.action.validator)
+      return formatValidatorAddressForDisplay(this.action.to_validator)
     }
   }
 })

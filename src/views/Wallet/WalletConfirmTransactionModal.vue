@@ -247,10 +247,10 @@ const WalletConfirmTransactionModal = defineComponent({
 
     const toContent: ComputedRef<string> = computed(() => {
       if (stakeInput.value) {
-        return stakeInput.value.validator.toString()
+        return stakeInput.value.to_validator.toString()
       }
       if (transferInput.value) {
-        return transferInput.value.to.toString()
+        return transferInput.value.to_account.toString()
       }
       return ''
     })
@@ -332,7 +332,7 @@ const WalletConfirmTransactionModal = defineComponent({
         return false
       // Check transaction fee doesn't bring total < 10 xrd for non-exd transactioins
       } else if (selectedCurrency.value && selectedCurrency.value.token.symbol !== 'xrd' && toLabel.value !== 'Unstake from') {
-        return Number(totalXRD.value) - Number(transactionFee.value) < Math.pow(10, 19)s
+        return Number(totalXRD.value) - Number(transactionFee.value) < Math.pow(10, 19)
       // Check amount and transaction feed don't bring total < 10 xrd
       } else if (totalXRD.value && amount.value && transactionFee && toLabel.value !== 'Unstake from') {
         return Number(totalXRD.value) - Number(amount.value) - Number(transactionFee.value) < Math.pow(10, 19)

@@ -45,7 +45,7 @@ const ActionListItemUnstakeTokens = defineComponent({
   },
   computed: {
     displayAddress (): string {
-      return formatValidatorAddressForDisplay(this.action.validator)
+      return formatValidatorAddressForDisplay(this.action.from_validator)
     }
   }
 })

@@ -293,12 +293,14 @@ const WalletStaking = defineComponent({
       if (!safeAddress || !safeAmount) return
       activeForm.value === 'STAKING'
         ? stakeTokens({
-          validator: safeAddress,
-          amount: safeAmount
+          to_validator: safeAddress,
+          amount: safeAmount,
+          tokenIdentifier: nativeToken.value.rri
         })
         : unstakeTokens({
-          validator: safeAddress,
-          amount: safeAmount
+          from_validator: safeAddress,
+          amount: safeAmount,
+          tokenIdentifier: nativeToken.value.rri
         })
     }
 

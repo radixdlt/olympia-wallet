@@ -1267,14 +1267,6 @@
     "@json-schema-spec/json-pointer" "^0.1.2"
     isomorphic-fetch "^3.0.0"
 
-"@json-schema-tools/reference-resolver@^1.2.1":
-  version "1.2.2"
-  resolved "https://registry.yarnpkg.com/@json-schema-tools/reference-resolver/-/reference-resolver-1.2.2.tgz#641c8735d95d6b6f13f28a7d11e2d671d0c46400"
-  integrity sha512-AmTn9spLiiUrPmz6qHGPYfLTeJcCRmkk7oFmSiigDaIhHiz+WbT3gCMgYbzD1QUDmFi55SXXimDyF1cGbVcgZA==
-  dependencies:
-    "@json-schema-spec/json-pointer" "^0.1.2"
-    isomorphic-fetch "^3.0.0"
-
 "@json-schema-tools/traverse@^1.7.5":
   version "1.7.7"
   resolved "https://registry.yarnpkg.com/@json-schema-tools/traverse/-/traverse-1.7.7.tgz#1b5ec2854fec23a5ac3ff04d459c2ac11bcf2df2"
@@ -1452,16 +1444,6 @@
     mkdirp "^1.0.4"
     rimraf "^3.0.2"
 
-"@open-rpc/client-js@1.6.2":
-  version "1.6.2"
-  resolved "https://registry.yarnpkg.com/@open-rpc/client-js/-/client-js-1.6.2.tgz#6f63053af16f577c574279702bbee8152296d11f"
-  integrity sha512-GT6mFF7tH/ANaKuRz6tULakZpW0lgaogwl4VZoLm1yHOZnHKUCwe+I6QRRebwUyAYH4rD6weoihoIH2j4U+HLg==
-  dependencies:
-    isomorphic-fetch "^3.0.0"
-    isomorphic-ws "^4.0.1"
-    strict-event-emitter-types "^2.0.0"
-    ws "^7.0.0"
-
 "@open-rpc/examples@^1.6.1":
   version "1.6.1"
   resolved "https://registry.yarnpkg.com/@open-rpc/examples/-/examples-1.6.1.tgz#c48b8976be21c839711f1f0ef49ab1aa2dd9bc44"
@@ -1531,39 +1513,13 @@
     prelude-ts "^1.0.2"
     rxjs "7.0.0"
 
-"@radixdlt/account@^3.0.1":
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/@radixdlt/account/-/account-3.0.1.tgz#ddb3103f7e463f9c27729619ab29efb9db866dd9"
-  integrity sha512-2kWjeX3BfifNNP1JQHGtB1Jf4VLsJFNTVhJhXLgUstZwDA12PNBIveJQ4SNgbygPuJziSEiYwZadFQITM3cFfw==
-  dependencies:
-    "@radixdlt/crypto" "^2.1.5"
-    "@radixdlt/data-formats" "1.0.30"
-    "@radixdlt/hardware-wallet" "^2.1.8"
-    "@radixdlt/primitives" "^3.0.1"
-    "@radixdlt/uint256" "1.1.0"
-    "@radixdlt/util" "1.0.29"
-    bech32 "^2.0.0"
-    bip39 "^3.0.3"
-    hdkey "^2.0.1"
-    long "^4.0.0"
-    neverthrow "^4.0.1"
-    prelude-ts "^1.0.2"
-    rxjs "7.0.0"
-
-"@radixdlt/application@^3.0.6":
-  version "3.0.6"
-  resolved "https://registry.yarnpkg.com/@radixdlt/application/-/application-3.0.6.tgz#8b64bf53c0bf16c5cd5ca9d9ab20284d55068fbf"
-  integrity sha512-c6O93tJTD/LICtR4Nfh0TN/8uQGWgP2rroM7M0s1VgP0+oE3wz1yC2rmaAqKy+GTsQ/KQUal2vn3Jtt44m1B+A==
+"@radixdlt/application@^4.0.1":
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/@radixdlt/application/-/application-4.0.1.tgz#2bbba43dc4b6aae4823232ce9513e213e5fa62c9"
+  integrity sha512-uKVBUh71pkYkftcmXabG6rDJGu1JhSLOCaxWalR7vwXjslcBawRjapwOqHoSJKXcpvt2UBJWQ4Ka92p8NtSIVA==
   dependencies:
     "@open-rpc/mock-server" "1.7.2"
     "@open-rpc/schema-utils-js" "1.14.3"
-    "@radixdlt/account" "^3.0.1"
-    "@radixdlt/crypto" "^2.1.5"
-    "@radixdlt/data-formats" "1.0.30"
-    "@radixdlt/networking" "^2.1.5"
-    "@radixdlt/open-rpc-spec" "^1.0.19"
-    "@radixdlt/primitives" "^3.0.1"
-    "@radixdlt/util" "1.0.29"
     jest "^26.6.3"
     json-schema-faker "^0.5.0-rcv.34"
     neverthrow "^4.0.1"
@@ -1578,22 +1534,6 @@
   dependencies:
     "@radixdlt/data-formats" "1.0.30"
     "@radixdlt/primitives" "^2.1.3"
-    "@radixdlt/uint256" "1.1.0"
-    "@radixdlt/util" "1.0.29"
-    base-x "^3.0.8"
-    elliptic "^6.5.3"
-    neverthrow "^4.0.1"
-    node-forge "^0.10.0"
-    scrypt-js "^3.0.1"
-    uuid "^8.3.2"
-
-"@radixdlt/crypto@^2.1.5":
-  version "2.1.5"
-  resolved "https://registry.yarnpkg.com/@radixdlt/crypto/-/crypto-2.1.5.tgz#87245f1ff2839f25955331b4ecb373fbdc5b285d"
-  integrity sha512-OvQdhtZ1gNBoXhfgXQDwCq4akUAjeQ06GdSO0sJC3Jl6NCbJjDl1r35FXIEKrqiwW0L1rMGLX/YAFyFb8SY/gw==
-  dependencies:
-    "@radixdlt/data-formats" "1.0.30"
-    "@radixdlt/primitives" "^3.0.1"
     "@radixdlt/uint256" "1.1.0"
     "@radixdlt/util" "1.0.29"
     base-x "^3.0.8"
@@ -1641,54 +1581,10 @@
     rxjs "7.0.0"
     uuid "^8.3.2"
 
-"@radixdlt/hardware-wallet@^2.1.8":
-  version "2.1.8"
-  resolved "https://registry.yarnpkg.com/@radixdlt/hardware-wallet/-/hardware-wallet-2.1.8.tgz#107833aa27ecc0c7c676a5e726660a5b4ef0583b"
-  integrity sha512-o19anwAngR9cSS1GHhXIzlTjswb6lUfAv18DJGaRKvjA0/5j9kciWobduQDHqX/EGUkyeJC4LF/zvDhtx41wzQ==
-  dependencies:
-    "@radixdlt/crypto" "^2.1.5"
-    "@radixdlt/primitives" "^3.0.1"
-    "@radixdlt/util" "1.0.29"
-    neverthrow "4.0.1"
-    prelude-ts "^1.0.2"
-    rxjs "7.0.0"
-    uuid "^8.3.2"
-
-"@radixdlt/networking@^2.1.5":
-  version "2.1.5"
-  resolved "https://registry.yarnpkg.com/@radixdlt/networking/-/networking-2.1.5.tgz#3548970bb69299aff140201bd5a5bb11e97db739"
-  integrity sha512-f9lllU4vjemNIIJb5UZBJ6M5NM5xUb6AtC/t2Ba/RwBDO3EefjH7C5U1m56xL8xYJfkf8AfDewtZ3JrDMqujbg==
-  dependencies:
-    "@open-rpc/client-js" "1.6.2"
-    "@open-rpc/schema-utils-js" "1.14.3"
-    "@radixdlt/open-rpc-spec" "^1.0.19"
-    "@radixdlt/util" "1.0.29"
-    "@types/uuid" "^8.3.0"
-    neverthrow "^4.0.1"
-    open-rpc-utils "^1.1.1"
-    uuid "^8.3.2"
-
-"@radixdlt/open-rpc-spec@^1.0.19":
-  version "1.0.19"
-  resolved "https://registry.yarnpkg.com/@radixdlt/open-rpc-spec/-/open-rpc-spec-1.0.19.tgz#7392359e28a11f652c2501c25b3d4048cb68a0f9"
-  integrity sha512-pcrUTk66h6jDXpq5Ly6uHpktO/lW5lCzdC7YqwsGfXzdFOLcRC8eCC9Teh9k6zH1gvMRyqid9gLRTE7nP2/L8A==
-
 "@radixdlt/primitives@^2.1.3":
   version "2.1.3"
   resolved "https://registry.yarnpkg.com/@radixdlt/primitives/-/primitives-2.1.3.tgz#bc80d974cd0a363b03291f36bef1369bd8c291b8"
   integrity sha512-132/NJQMaHK0JtAPki2vjYCvPEFcVc9+oOsrU/7ydag63oYmWWe7HRAEwAoYQeTvY4eFmWGdU+mw9QtGWn7cvQ==
-  dependencies:
-    "@radixdlt/data-formats" "1.0.30"
-    "@radixdlt/uint256" "1.1.0"
-    "@radixdlt/util" "1.0.29"
-    bn.js "^5.1.3"
-    long "^4.0.0"
-    neverthrow "^4.0.1"
-
-"@radixdlt/primitives@^3.0.1":
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/@radixdlt/primitives/-/primitives-3.0.1.tgz#e312475730ef0afefe1c646fc1e6805ce4c52e2c"
-  integrity sha512-cTjT6h4cy5vWvgDdtRkNqR5X1MTkOw+6eeq6zs9mVql2YBBtYoTDIB27gkYyRNPW5123ANsaPLauXeTrIYr7UQ==
   dependencies:
     "@radixdlt/data-formats" "1.0.30"
     "@radixdlt/uint256" "1.1.0"
@@ -2142,11 +2038,6 @@
   integrity sha512-EGkrJD5Uy+Pg0NUR8uA4bJ5WMfljyad0G+784vLCNUkD+QwOJXUbBYExXfVGf7YtyzdQp3L/XMYcliB987kL5Q==
   dependencies:
     source-map "^0.6.1"
-
-"@types/uuid@^8.3.0":
-  version "8.3.0"
-  resolved "https://registry.yarnpkg.com/@types/uuid/-/uuid-8.3.0.tgz#215c231dff736d5ba92410e6d602050cce7e273f"
-  integrity sha512-eQ9qFW/fhfGJF8WKHGEHZEyVWfZxrT+6CLIJGBcZPfxUh/+BnEj+UCGYMlr9qZuX/2AltsvwrGqp0LhEW8D0zQ==
 
 "@types/verror@^1.10.3":
   version "1.10.4"
@@ -8580,11 +8471,6 @@ isomorphic-fetch@^3.0.0:
     node-fetch "^2.6.1"
     whatwg-fetch "^3.4.1"
 
-isomorphic-ws@^4.0.1:
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/isomorphic-ws/-/isomorphic-ws-4.0.1.tgz#55fd4cd6c5e6491e76dc125938dd863f5cd4f2dc"
-  integrity sha512-BhBvN2MBpWTaSHdWRb/bwdZJ1WaehQ2L1KngkCkfLUGF0mAWAT1sQUQacEmQ0jXkFw/czDXPNQSL5u2/Krsz1w==
-
 isstream@~0.1.2:
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/isstream/-/isstream-0.1.2.tgz#47e63f7af55afa6f92e1500e690eb8b8529c099a"
@@ -10214,7 +10100,7 @@ neverthrow@4.0.1:
   resolved "https://registry.yarnpkg.com/neverthrow/-/neverthrow-4.0.1.tgz#74a264db31ef771dc3288b8a03d0cff7d7131345"
   integrity sha512-qQfNyQWZx6cJsJu4pndtF4S1frUCqxBNVEdFEcdwlGgh09ToSTgOI6du+rb0Veh8TwalW1mIKqk4rg/9yzzr7A==
 
-neverthrow@^4.0.1, neverthrow@^4.2.1:
+neverthrow@^4.0.1:
   version "4.2.1"
   resolved "https://registry.yarnpkg.com/neverthrow/-/neverthrow-4.2.1.tgz#c582dee4772528d15c9a170599c5382d366fd419"
   integrity sha512-faWQGNqVQrXOuG8K7E0PRzsfBHzfVqeDX9nwawKDseuH/qEGIH02Nrq03OJOs5eTFML03xeol3otzagPoHyEPA==
@@ -10632,23 +10518,6 @@ ono@^4.0.11:
   integrity sha512-jQ31cORBFE6td25deYeD80wxKBMj+zBmHTrVxnc6CKhx8gho6ipmWM5zj/oeoqioZ99yqBls9Z/9Nss7J26G2g==
   dependencies:
     format-util "^1.0.3"
-
-open-rpc-utils@^1.1.1:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/open-rpc-utils/-/open-rpc-utils-1.1.1.tgz#3ee32d3d45ac984db5ce3c3693556170e0c0b0ad"
-  integrity sha512-HyzUwv4gYwxtv6XVHctOKhQjCylRVk+9LLyQG1CgmRcjyUF/yoF/exawbNOEiHnvTG+pY8YxnR4C7LnKoISJmw==
-  dependencies:
-    "@json-schema-tools/dereferencer" "^1.4.0"
-    "@json-schema-tools/meta-schema" "^1.5.10"
-    "@json-schema-tools/reference-resolver" "^1.2.1"
-    "@open-rpc/meta-schema" "^1.14.0"
-    ajv "^6.10.0"
-    detect-node "^2.0.4"
-    fast-safe-stringify "^2.0.7"
-    fs-extra "^9.0.0"
-    is-url "^1.2.4"
-    isomorphic-fetch "^3.0.0"
-    neverthrow "^4.2.1"
 
 open@^6.3.0:
   version "6.4.0"
@@ -13135,11 +13004,6 @@ stream-shift@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/stream-shift/-/stream-shift-1.0.1.tgz#d7088281559ab2778424279b0877da3c392d5a3d"
   integrity sha512-AiisoFqQ0vbGcZgQPY1cdP2I76glaVA/RauYR4G4thNFgkTqr90yXTo4LYX60Jl+sIlPNHHdGSwo01AvbKUSVQ==
-
-strict-event-emitter-types@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/strict-event-emitter-types/-/strict-event-emitter-types-2.0.0.tgz#05e15549cb4da1694478a53543e4e2f4abcf277f"
-  integrity sha512-Nk/brWYpD85WlOgzw5h173aci0Teyv8YdIAEtV+N88nDB0dLlazZyJMIsN6eo1/AR61l+p6CJTG1JIyFaoNEEA==
 
 strict-uri-encode@^1.0.0:
   version "1.1.0"

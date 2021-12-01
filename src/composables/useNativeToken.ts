@@ -8,7 +8,7 @@ interface useNativeTokenInterface {
 
 export default function useNativeToken (radix: RadixT): useNativeTokenInterface {
   const nativeToken: Ref<Token | null> = ref(null)
-  const nativeTokenSub = radix.ledger.nativeToken().subscribe((nativeTokenRes: Token) => {
+  const nativeTokenSub = radix.ledger.nativeToken(radix).subscribe((nativeTokenRes: Token) => {
     nativeToken.value = nativeTokenRes
   })
 

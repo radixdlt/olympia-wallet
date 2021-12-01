@@ -275,7 +275,7 @@ const WalletTransaction = defineComponent({
         if (safeAddress && safeAmount) {
           transferTokens(
             {
-              to: safeAddress,
+              to_account: safeAddress,
               amount: safeAmount,
               tokenIdentifier: token.rri.toString()
             },
