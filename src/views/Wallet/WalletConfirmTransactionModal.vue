@@ -332,7 +332,7 @@ const WalletConfirmTransactionModal = defineComponent({
         return false
       // Check transaction fee doesn't bring total < 10 xrd for non-exd transactioins
       } else if (selectedCurrency.value && selectedCurrency.value.token.symbol !== 'xrd' && toLabel.value !== 'Unstake from') {
-        return Number(totalXRD.value) - Number(transactionFee.value) < Math.pow(10, 19)s
+        return Number(totalXRD.value) - Number(transactionFee.value) < Math.pow(10, 19)
       // Check amount and transaction feed don't bring total < 10 xrd
       } else if (totalXRD.value && amount.value && transactionFee && toLabel.value !== 'Unstake from') {
         return Number(totalXRD.value) - Number(amount.value) - Number(transactionFee.value) < Math.pow(10, 19)
