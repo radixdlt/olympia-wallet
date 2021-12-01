@@ -10,7 +10,6 @@ import {
   MnemomicT,
   Network,
   Radix,
-  RadixT,
   SigningKeychain,
   SigningKeychainT,
   WalletErrorCause,
@@ -45,8 +44,9 @@ import { sha256Twice } from '@radixdlt/crypto'
 
 import { sendAPDU } from '@/actions/vue/hardware-wallet'
 import { HardwareWalletLedger } from '@radixdlt/hardware-ledger'
+import { defaultNetwork } from '@/helpers/network'
 
-const radix: RadixT = Radix.create()
+const radix = Radix.create()
 
 export type WalletError = ErrorT<ErrorCategory.WALLET>
 
@@ -89,7 +89,7 @@ const createWallet = (mnemonic: MnemomicT, pass: string, network: Network) => {
     hasWallet.value = true
     setWallet(newWallet)
     saveDerivedAccountsIndex(0, network)
-    persistNodeUrl('https://mainnet.radixdlt.com')
+    persistNodeUrl(defaultNetwork)
   })
 
   return newWalletPromise
@@ -114,7 +114,7 @@ interface useWalletInterface {
   readonly ledgerVerifyError: Ref<Error | null>;
   readonly networkPreamble: ComputedRef<string>;
   readonly nodeUrl: ComputedRef<string | null>;
-  readonly radix: RadixT;
+  readonly radix: ReturnType<typeof Radix.create>;
   readonly showDeleteHWWalletPrompt: Ref<boolean>;
   readonly showLedgerVerify: Ref<boolean>;
   readonly switching: ComputedRef<boolean>;
@@ -131,7 +131,7 @@ interface useWalletInterface {
   hideLedgerVerify: () => void;
   hideLedgerInteraction: () => void;
   initWallet: () => void;
-  loginWithWallet: (password: string) => Promise<RadixT>;
+  loginWithWallet: (password: string) => Promise<ReturnType<typeof Radix.create>>;
   persistNodeUrl: (url: string) => Promise<void>;
   reloadSubscriptions: () => void;
   reset: () => void;
@@ -163,9 +163,9 @@ const walletLoaded = () => {
 }
 const invalidPasswordError: Ref<WalletError | null> = ref(null)
 
-radix.errors
-  .pipe(filter(errorNotification => errorNotification.cause === WalletErrorCause.LOAD_KEYSTORE_FAILED))
-  .subscribe((errorNotification: ErrorT<'wallet'>) => { invalidPasswordError.value = errorNotification })
+// radix.errors
+//   .pipe(filter(errorNotification => errorNotification.cause === WalletErrorCause.LOAD_KEYSTORE_FAILED))
+//   .subscribe((errorNotification: ErrorT<'wallet'>) => { invalidPasswordError.value = errorNotification })
 
 hasKeystore().then((res: boolean) => { hasWallet.value = res })
 
@@ -224,7 +224,7 @@ const initWallet = (): void => {
     .subscribe((network: Network) => {
       activeNetwork.value = network
       fetchAccountsForNetwork(network)
-      if (network === 'MAINNET') explorerUrlBase.value = 'https://explorer.radixdlt.com/'
+      if (network === Network.MAINNET) explorerUrlBase.value = 'https://explorer.radixdlt.com/'
       else explorerUrlBase.value = 'https://stokenet-explorer.radixdlt.com/'
 
       getLatestAccountAddress(network).then((acctAddress) => {
@@ -345,7 +345,7 @@ const fetchSavedNodeUrl = async (signingKeychain: SigningKeychainT): Promise<str
   const { selectedNode, selectedNodeHash } = await fetchSelectedNodeFromStore()
   if (!selectedNode) {
     // set a default node, one did not exist.
-    const defaultToMainnet = 'https://mainnet.radixdlt.com'
+    const defaultToMainnet = 'https://stokenet-gateway.radixdlt.com'
     const hash = await hashNodeUrl(defaultToMainnet, signingKeychain)
     const saveToStore = await persistNodeSelection(defaultToMainnet, hash)
     return defaultToMainnet
@@ -489,9 +489,9 @@ export default function useWallet (router: Router): useWalletInterface {
     networkPreamble: computed(() => {
       switch (activeNetwork.value) {
         case Network.STOKENET:
-          return HRP.STOKENET.account
-        case HRP.MAINNET.account:
-          return HRP.MAINNET.account
+          return HRP[Network.STOKENET].account
+        case Network.MAINNET:
+          return HRP[Network.MAINNET].account
         default:
           return ''
       }

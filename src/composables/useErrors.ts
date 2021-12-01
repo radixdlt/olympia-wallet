@@ -1,23 +1,28 @@
-import { ErrorT, RadixT } from '@radixdlt/application'
+import { Radix } from '@radixdlt/application'
 import { Ref, ref, computed, ComputedRef } from 'vue'
 
-export type TransactionStateT = 'HW-SIGNING' | 'BUILDING' | 'CONFIRM' | 'SUBMITTING'
+const appErrors: Ref<Error[]> = ref([])
 
-export type ClientAppErrorTypeT = 'GENERIC' | 'TRANSACTION-HW-SIGNING' | 'TRANSACTION-BUILDING' | 'TRANSACTION-CONFIRM' | 'TRANSACTION-SUBMITTING'
-export type ClientAppErrorT = {
-  type: ClientAppErrorTypeT,
-  error?: ErrorT<'wallet'> | Error
-}
-
-const appErrors: Ref<ClientAppErrorT[]> = ref([])
+export const apiErrors = [
+  'InvalidAccountAddressError',
+  'InvalidValidatorAddressError',
+  'NotEnoughNativeTokensForFeesError',
+  'NotEnoughTokensForTransferError',
+  'NotEnoughTokensForStakeError',
+  'NotEnoughTokensForUnstakeError',
+  'BelowMinimumStakeError',
+  'CannotStakeError',
+  'MessageTooLongError'
+]
 
 interface useErrorsInterface {
-  readonly appErrors: ComputedRef<ClientAppErrorT[]>;
+  readonly appErrors: ComputedRef<Error[]>;
   clearLatestError: () => void;
-  setError: (error: ClientAppErrorT) => void;
+  setError: (error: Error) => void;
+  isKnownApiError: (type: string) => boolean;
 }
 
-const setError = (error: ClientAppErrorT) => {
+const setError = (error: Error) => {
   appErrors.value = [...appErrors.value, error]
 }
 
@@ -27,15 +32,20 @@ const clearLatestError = () => {
   appErrors.value = latestErrors
 }
 
-export default function useErrors (radix: RadixT): useErrorsInterface {
-  radix.errors
-    .subscribe((error: ErrorT<'wallet'>) => {
-      console.log('error sink:', error)
-    })
+const isKnownApiError = (type: string) => {
+  return apiErrors.includes(type)
+}
+
+export default function useErrors (radix: ReturnType<typeof Radix.create>): useErrorsInterface {
+  // radix.errors
+  //   .subscribe((error: ErrorT<'wallet'>) => {
+  //     console.log('error sink:', error)
+  //   })
 
   return {
     appErrors: computed(() => appErrors.value),
     clearLatestError,
-    setError
+    setError,
+    isKnownApiError
   }
 }

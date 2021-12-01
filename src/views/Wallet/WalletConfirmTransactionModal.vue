@@ -1,7 +1,7 @@
 <template>
   <div class="fixed w-screen h-screen z-20 flex items-center justify-center bg-translucent-black">
     <div class="h-modalMedium bg-white rounded-md py-7 px-7 w-full max-w-3xl absolute top-1/2 left-1/2 transform -translate-x-1/3 -translate-y-1/2">
-      <div v-if="transactionState === 'building'">
+      <div v-if="transactionState === 'INITIATED' || transactionState === 'BUILT_FROM_INTENT'">
         <div class="bg-white h-full flex flex-col flex-1 w-full justify-around box-border mt-52">
           <svg width="40" height="40" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" class="container animate-spin">
             <path fill-rule="evenodd" clip-rule="evenodd" d="M77.8789 52.8857C72.5168 68.6526 57.5862 80.0002 40.0001 80.0002C29.2115 80.0002 19.417 75.7265 12.2241 68.7838L14.9924 65.9158C21.4721 72.1701 30.2851 76.0141 40.0001 76.0141C55.8278 76.0141 69.2758 65.8025 74.1051 51.6023L77.8789 52.8857Z" fill="#052CC0"/>
@@ -11,24 +11,13 @@
           <div class="text-center mt-8 text-rGrayDark text-lg">
             Building Transaction...
           </div>
+          <div class="text-center mt-4 text-rGrayDark text-sm">{{ transactionState }}</div>
           <button
             class="text-rGrayDark py-4 px-4 text-sm mx-auto mt-4"
             @click="canCancel && closeModal()"
           >
             {{ $t('transaction.cancelButton') }}
           </button>
-        </div>
-      </div>
-      <div v-if="transactionState === 'submitting'">
-        <div class="bg-white h-full flex flex-col flex-1 w-full justify-around box-border mt-52">
-          <svg width="40" height="40" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" class="container animate-spin">
-            <path fill-rule="evenodd" clip-rule="evenodd" d="M77.8789 52.8857C72.5168 68.6526 57.5862 80.0002 40.0001 80.0002C29.2115 80.0002 19.417 75.7265 12.2241 68.7838L14.9924 65.9158C21.4721 72.1701 30.2851 76.0141 40.0001 76.0141C55.8278 76.0141 69.2758 65.8025 74.1051 51.6023L77.8789 52.8857Z" fill="#052CC0"/>
-            <path fill-rule="evenodd" clip-rule="evenodd" d="M0 40C0 22.4565 11.2928 7.55578 26.9998 2.16064L28.2947 5.9305C14.1483 10.7896 3.98605 24.2106 3.98605 40C3.98605 46.5378 5.72622 52.663 8.76754 57.9442L5.31331 59.9334C1.93284 54.0632 0 47.2544 0 40Z" fill="#052CC0"/>
-            <path fill-rule="evenodd" clip-rule="evenodd" d="M38.0078 0H40.0008C62.0924 0 80.0008 17.9088 80.0008 40V41.993H38.0078V0ZM41.9939 4.04026V38.007H75.9606C74.9622 19.7039 60.2972 5.03859 41.9939 4.04026Z" fill="#00C389"/>
-          </svg>
-          <div class="text-center mt-8 text-rGrayDark text-lg">
-            Submitting Transaction...
-          </div>
         </div>
       </div>
       <div v-if="transactionState === 'hw-signing'">
@@ -44,7 +33,7 @@
         </div>
       </div>
       <form
-        v-if="transactionState === 'confirm'"
+        v-if="transactionState === 'ASKED_FOR_CONFIRMATION'"
         class="flex flex-col items-end"
         @submit.prevent="handleConfirm"
       >
@@ -65,12 +54,12 @@
             <div class="w-26 text-right text-rGrayDark mr-6">{{ $t('transaction.amountLabel') }}</div>
             <div class="flex-1 flex flex-row items-center">
               <big-amount :amount="amount" class="mr-1" />
-              <span class="uppercase" v-if="stakeInput && nativeToken">{{ nativeToken.symbol }}</span>
-              <span class="uppercase" v-else-if="selectedCurrency">{{ selectedCurrency.token.symbol }}</span>
+              <span class="uppercase" v-if="(stakeInput || unstakeInput) && nativeToken">{{ nativeToken.symbol }}</span>
+              <span class="uppercase" v-else-if="selectedCurrencyToken">{{ selectedCurrencyToken.symbol }}</span>
             </div>
           </div>
 
-          <div class="border-b border-rGray py-3.5 flex items-center" v-if="activeMessageInTransaction && !this.stakeInput">
+          <div class="border-b border-rGray py-3.5 flex items-center" v-if="activeMessageInTransaction && !this.stakeInput && !this.unstakeInput">
             <div class="w-26 text-right text-rGrayDark mr-6">{{ $t('transaction.messageLabel') }}</div>
             <div class="flex-1">
               <div class="flex">
@@ -134,6 +123,19 @@
           </div>
         </div>
       </form>
+       <div v-else>
+        <div class="bg-white h-full flex flex-col flex-1 w-full justify-around box-border mt-52">
+          <svg width="40" height="40" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" class="container animate-spin">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M77.8789 52.8857C72.5168 68.6526 57.5862 80.0002 40.0001 80.0002C29.2115 80.0002 19.417 75.7265 12.2241 68.7838L14.9924 65.9158C21.4721 72.1701 30.2851 76.0141 40.0001 76.0141C55.8278 76.0141 69.2758 65.8025 74.1051 51.6023L77.8789 52.8857Z" fill="#052CC0"/>
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M0 40C0 22.4565 11.2928 7.55578 26.9998 2.16064L28.2947 5.9305C14.1483 10.7896 3.98605 24.2106 3.98605 40C3.98605 46.5378 5.72622 52.663 8.76754 57.9442L5.31331 59.9334C1.93284 54.0632 0 47.2544 0 40Z" fill="#052CC0"/>
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M38.0078 0H40.0008C62.0924 0 80.0008 17.9088 80.0008 40V41.993H38.0078V0ZM41.9939 4.04026V38.007H75.9606C74.9622 19.7039 60.2972 5.03859 41.9939 4.04026Z" fill="#00C389"/>
+          </svg>
+          <div class="text-center mt-8 text-rGrayDark text-lg">
+            Submitting Transaction...
+          </div>
+          <div class="text-center mt-4 text-rGrayDark text-sm">{{ transactionState }}</div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -149,7 +151,7 @@ import PinInput from '@/components/PinInput.vue'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
 import { validatePin } from '@/actions/vue/create-wallet'
 import { useRouter } from 'vue-router'
-import { useNativeToken, useHomeModal, useTransactions, useWallet } from '@/composables'
+import { useNativeToken, useHomeModal, useTransactions, useWallet, useTokenBalances } from '@/composables'
 import { useI18n } from 'vue-i18n'
 
 interface ConfirmationForm {
@@ -180,6 +182,7 @@ const WalletConfirmTransactionModal = defineComponent({
       reset
     } = useWallet(router)
     const { nativeToken, nativeTokenUnsub } = useNativeToken(radix)
+    const { tokenBalances, tokenBalanceFor, tokenInfoFor, tokenBalancesUnsub } = useTokenBalances(radix)
 
     const updateObservable = merge(
       radix.activeAccount,
@@ -193,19 +196,20 @@ const WalletConfirmTransactionModal = defineComponent({
       loading.value = true
     }))
 
-    const balanceSub = updateObservable.pipe(
-      switchMap(() => radix.activeAccount),
-      mergeMap((account) =>
-        radix.ledger.tokenBalancesForAddress(account.address)
-      )
-    ).subscribe((balances) => {
-      tokenBalances.value = balances
-      loading.value = false
-    })
-    subs.add(balanceSub)
+    // const balanceSub = updateObservable.pipe(
+    //   switchMap(() => radix.activeAccount),
+    //   mergeMap((account: any) =>
+    //     radix.ledger.tokenBalancesForAddress(account.address)
+    //   )
+    // ).subscribe((balances: any) => {
+    //   tokenBalances.value = balances
+    //   loading.value = false
+    // })
+    // subs.add(balanceSub)
 
     onUnmounted(() => {
       subs.unsubscribe()
+      tokenBalancesUnsub()
     })
 
     const {
@@ -214,12 +218,17 @@ const WalletConfirmTransactionModal = defineComponent({
       confirmationMode,
       confirmTransaction,
       stakeInput,
+      unstakeInput,
       transactionFee,
       transactionState,
       transferInput,
       transactionUnsub,
       selectedCurrency
     } = useTransactions(radix, router, activeAccount.value, hardwareAccount.value)
+
+    const selectedCurrencyToken: ComputedRef<Token | null> = computed(() => {
+      return selectedCurrency.value ? tokenInfoFor(selectedCurrency.value.token_identifier.rri) : null
+    })
 
     const escapeListener = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
@@ -247,10 +256,11 @@ const WalletConfirmTransactionModal = defineComponent({
 
     const toContent: ComputedRef<string> = computed(() => {
       if (stakeInput.value) {
-        return stakeInput.value.validator.toString()
-      }
-      if (transferInput.value) {
-        return transferInput.value.to.toString()
+        return stakeInput.value.to_validator.toString()
+      } else if (unstakeInput.value) {
+        return unstakeInput.value.from_validator.toString()
+      } else if (transferInput.value) {
+        return transferInput.value.to_account.toString()
       }
       return ''
     })
@@ -258,8 +268,9 @@ const WalletConfirmTransactionModal = defineComponent({
     const amount: ComputedRef<AmountOrUnsafeInput> = computed(() => {
       if (stakeInput.value) {
         return stakeInput.value.amount
-      }
-      if (transferInput.value) {
+      } else if (unstakeInput.value) {
+        return unstakeInput.value.amount
+      } else if (transferInput.value) {
         return transferInput.value.amount
       }
       return 0
@@ -306,11 +317,11 @@ const WalletConfirmTransactionModal = defineComponent({
       isValidPin.value = false
     }
 
-    const tokenBalances: Ref<SimpleTokenBalances | null> = ref(null)
-    const tokenBalanceFor = (token: Token) => {
-      if (!tokenBalances.value) return null
-      return tokenBalances.value.tokenBalances.find((tb: SimpleTokenBalance) => tb.tokenIdentifier.equals(token.rri)) || null
-    }
+    // const tokenBalances: Ref<SimpleTokenBalances | null> = ref(null)
+    // const tokenBalanceFor = (token: Token) => {
+    //   if (!tokenBalances.value) return null
+    //   return tokenBalances.value.tokenBalances.find((tb: SimpleTokenBalance) => tb.tokenIdentifier.equals(token.rri)) || null
+    // }
 
     const zero = Amount.fromUnsafe(0)._unsafeUnwrap()
 
@@ -318,8 +329,7 @@ const WalletConfirmTransactionModal = defineComponent({
       if (!tokenBalances.value || !nativeToken.value) return zero
       const nativeTokenBalance = tokenBalanceFor(nativeToken.value)
       if (!nativeTokenBalance) return zero
-      const xrdAmount = Amount.fromUnsafe(nativeTokenBalance.amount)
-      return xrdAmount.isErr() ? zero : xrdAmount.value
+      return nativeTokenBalance.value
     })
 
     // Do not check for balance above 10XRD if unstaking. Only run validation if staking/sending. Two possible calculations
@@ -331,7 +341,7 @@ const WalletConfirmTransactionModal = defineComponent({
       if (totalXRD.value && Number(totalXRD.value) < Math.pow(10, 19)) {
         return false
       // Check transaction fee doesn't bring total < 10 xrd for non-exd transactioins
-      } else if (selectedCurrency.value && selectedCurrency.value.token.symbol !== 'xrd' && toLabel.value !== 'Unstake from') {
+      } else if (selectedCurrencyToken.value && selectedCurrencyToken.value.symbol !== 'xrd' && toLabel.value !== 'Unstake from') {
         return Number(totalXRD.value) - Number(transactionFee.value) < Math.pow(10, 19)
       // Check amount and transaction feed don't bring total < 10 xrd
       } else if (totalXRD.value && amount.value && transactionFee && toLabel.value !== 'Unstake from') {
@@ -360,8 +370,11 @@ const WalletConfirmTransactionModal = defineComponent({
       nativeToken,
       pinAttempts,
       resetForm,
+      selectedCurrency,
+      selectedCurrencyToken,
       setErrors,
       stakeInput,
+      unstakeInput,
       toContent,
       toLabel,
       transactionFee,
@@ -369,7 +382,6 @@ const WalletConfirmTransactionModal = defineComponent({
       transferInput,
       totalXRD,
       values,
-      selectedCurrency,
       xrdRemainderBalanceBelowTen
     }
   }

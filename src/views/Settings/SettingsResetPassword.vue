@@ -103,31 +103,25 @@ const SettingsResetPassword = defineComponent({
       subs.add(getMnemonicForPassword)
     }
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
       isLoading.value = true
-      touchKeystore()
-        .then((keystore: KeystoreT) =>
-          Keystore.decrypt({
-            keystore,
-            password: values.currentPassword
-          })
-        )
-        .then((res: Result<Buffer, Error>) => {
-          if (res.isOk()) {
-            handleResetPassword(values.password)
-          } else {
-            isLoading.value = false
-            setErrors({
-              currentPassword: t('validations.incorrectPassword')
-            })
-          }
-        })
-        .catch(() => {
+      try {
+        const keystore = await touchKeystore()
+        const decryptedResult = await Keystore.decrypt({ keystore, password: values.password })
+        if (decryptedResult.isOk()) {
+          handleResetPassword(values.password)
+        } else {
           isLoading.value = false
           setErrors({
             currentPassword: t('validations.incorrectPassword')
           })
+        }
+      } catch {
+        isLoading.value = false
+        setErrors({
+          currentPassword: t('validations.incorrectPassword')
         })
+      }
     }
 
     onUnmounted(() => subs.unsubscribe())

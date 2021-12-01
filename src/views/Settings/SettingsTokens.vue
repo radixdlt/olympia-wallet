@@ -3,14 +3,14 @@
     <div v-if="loading" class="p-4 flex items-center justify-center">
       <LoadingIcon class="text-rGrayDark" />
     </div>
-    <template v-else-if="tokenBalances.length > 0 && hiddenTokens.length > 0">
+    <template v-else-if="tokenBalances && tokenBalances.account_balances.liquid_balances.length > 0 && hiddenTokens.length > 0">
       <div class="text-rGrayDark text-sm max-w-lg mb-8">{{ $t('settings.tokensDescription') }}</div>
 
       <HiddenTokenBalanceListItem
         v-for="token in hiddenTokens"
         :key="token"
         :tokenRRI="token"
-        :tokenBalance="findTokenBalanceForRRI(token)"
+        :tokenBalance="tokenBalanceForByString(token)"
         @select="handleRequestUnhideToken"
       />
     </template>
@@ -51,7 +51,7 @@ import LoadingIcon from '@/components/LoadingIcon.vue'
 import HiddenTokenBalanceListItem from '@/components/HiddenTokenBalanceListItem.vue'
 import { Subscription } from 'rxjs'
 import { useRouter } from 'vue-router'
-import { useWallet } from '@/composables'
+import { useTokenBalances, useWallet } from '@/composables'
 import { AccountT, SimpleTokenBalance, Token } from '@radixdlt/application'
 
 export default defineComponent({
@@ -70,31 +70,22 @@ export default defineComponent({
     }
   },
 
-  setup (props) {
+  setup () {
     const hiddenTokens: Ref<string[]> = ref([])
     const tokenToUnhide: Ref<Token | null> = ref(null)
-    const tokenBalances: Ref<SimpleTokenBalance[]> = ref([])
     const loading: Ref<boolean> = ref(true)
-    const subs = new Subscription()
     const router = useRouter()
+    const { radix } = useWallet(router)
+    const { tokenBalances, tokenBalancesUnsub, tokenBalanceForByString } = useTokenBalances(radix)
 
     onMounted(() => {
       getHiddenTokens().then((res) => {
         hiddenTokens.value = res
+        loading.value = false
       })
     })
 
-    onUnmounted(() => { subs.unsubscribe() })
-
-    const { radix } = useWallet(router)
-
-    // Fetch token balances for active account
-    const tbSub = radix.ledger.tokenBalancesForAddress(props.activeAccount.address)
-      .subscribe((balances) => {
-        tokenBalances.value = balances.tokenBalances
-        loading.value = false
-      })
-    subs.add(tbSub)
+    onUnmounted(() => { tokenBalancesUnsub() })
 
     const handleRequestUnhideToken = (token: Token) => {
       tokenToUnhide.value = token
@@ -107,9 +98,6 @@ export default defineComponent({
       }
     }
 
-    const findTokenBalanceForRRI = (tokenRRI: string) =>
-      tokenBalances.value.find((tb) => tb.tokenIdentifier.toString() === tokenRRI)
-
     return {
       hiddenTokens,
       loading,
@@ -117,9 +105,9 @@ export default defineComponent({
       tokenToUnhide,
 
       // methods
-      findTokenBalanceForRRI,
       handleRequestUnhideToken,
-      handleUnhideToken
+      handleUnhideToken,
+      tokenBalanceForByString
     }
   }
 })

@@ -45,10 +45,10 @@
     </div>
 
     <div class="bg-white text-rBlack py-4 px-8 flex-1">
-      <div class="grid grid-cols-2 gap-4" v-if="!loading">
+      <div class="grid grid-cols-2 gap-4" v-if="!loading && !loadingRelatedTokens">
         <other-token-balance-list-item
           v-for="tokenBalance in otherTokenBalances"
-          :key="tokenBalance.tokenIdentifier.toString()"
+          :key="tokenBalance"
           :tokenBalance="tokenBalance"
           :explorerUrlBase="explorerUrlBase"
           @hideToken="handleRequestHideToken"
@@ -80,10 +80,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, ComputedRef, ref, Ref, onMounted } from 'vue'
+import { defineComponent, computed, ComputedRef, ref, Ref, onMounted, onUnmounted } from 'vue'
 import { merge, forkJoin, interval, Subject, Subscription } from 'rxjs'
 import { switchMap, mergeMap } from 'rxjs/operators'
-import { StakePosition, Amount, AmountT, Token, SimpleTokenBalance, StakePositions, UnstakePositions, SimpleTokenBalances } from '@radixdlt/application'
+import { Amount, AmountT, Token } from '@radixdlt/application'
 import BigAmount from '@/components/BigAmount.vue'
 import TokenSymbol from '@/components/TokenSymbol.vue'
 import ClickToCopy from '@/components/ClickToCopy.vue'
@@ -93,10 +93,12 @@ import AppButtonSubmit from '@/components/AppButtonSubmit.vue'
 import OtherTokenBalanceListItem from '@/components/OtherTokenBalanceListItem.vue'
 import { createRRIUrl } from '@/helpers/explorerLinks'
 import { truncateRRIStringForDisplay } from '@/helpers/formatter'
-import { sumAmounts, add } from '@/helpers/arithmetic'
+import { add } from '@/helpers/arithmetic'
 import { useRouter, onBeforeRouteLeave } from 'vue-router'
-import { useNativeToken, useWallet } from '@/composables'
 import { hideTokenType, getHiddenTokens } from '@/actions/vue/data-store'
+import { useNativeToken, useTokenBalances, useWallet } from '@/composables'
+import { Observed } from '@/helpers/typeHelpers'
+import { Decoded } from '@radixdlt/application/dist/api/open-api/_types'
 
 const WalletOverview = defineComponent({
   components: {
@@ -118,6 +120,7 @@ const WalletOverview = defineComponent({
       verifyHardwareWalletAddress,
       hasWallet
     } = useWallet(router)
+    const { tokenBalances, tokenBalanceFor, tokenBalancesUnsub, loadingRelatedTokens } = useTokenBalances(radix)
 
     const subs = new Subscription()
 
@@ -130,10 +133,13 @@ const WalletOverview = defineComponent({
       getHiddenTokens().then((res: string[]) => { hiddenTokens.value = res })
     })
 
+    onUnmounted(() => {
+      tokenBalancesUnsub()
+    })
+
     const { nativeToken } = useNativeToken(radix)
-    const tokenBalances: Ref<SimpleTokenBalances | null> = ref(null)
-    const activeStakes: Ref<StakePositions> = ref([])
-    const activeUnstakes: Ref<UnstakePositions> = ref([])
+    const activeStakes: Ref<Observed<ReturnType<typeof radix.ledger.stakesForAddress>> | null> = ref(null)
+    const activeUnstakes: Ref<Observed<ReturnType<typeof radix.ledger.unstakesForAddress>> | null> = ref(null)
     const tokenToHide: Ref<Token | null> = ref(null)
     const updateObservable = merge(
       radix.activeAccount,
@@ -146,13 +152,11 @@ const WalletOverview = defineComponent({
 
     const balanceSub = updateObservable.pipe(
       switchMap(() => radix.activeAccount),
-      mergeMap((account) => forkJoin([
-        radix.ledger.tokenBalancesForAddress(account.address),
+      mergeMap((account: any) => forkJoin([
         radix.ledger.stakesForAddress(account.address),
         radix.ledger.unstakesForAddress(account.address)
       ]))
-    ).subscribe(([balances, stakes, unstakes]) => {
-      tokenBalances.value = balances
+    ).subscribe(([stakes, unstakes]) => {
       activeStakes.value = stakes
       activeUnstakes.value = unstakes
       loading.value = false
@@ -168,53 +172,27 @@ const WalletOverview = defineComponent({
       return {}
     }
 
-    const tokenBalanceFor = (token: Token) => {
-      if (!tokenBalances.value) return null
-      return tokenBalances.value.tokenBalances.find((tb: SimpleTokenBalance) => tb.tokenIdentifier.equals(token.rri)) || null
-    }
-
     const zero = Amount.fromUnsafe(0)._unsafeUnwrap()
 
     const totalXRD: ComputedRef<AmountT> = computed(() => {
       if (!tokenBalances.value || !nativeToken.value) return zero
       const nativeTokenBalance = tokenBalanceFor(nativeToken.value)
       if (!nativeTokenBalance) return zero
-      const xrdAmount = Amount.fromUnsafe(nativeTokenBalance.amount)
-      return xrdAmount.isErr() ? zero : xrdAmount.value
+      return nativeTokenBalance.value
     })
 
     const totalStakedAndUnstaked: ComputedRef<AmountT> = computed(() => {
-      if (!activeStakes.value || !activeUnstakes.value) return zero
-      const totalStakedAndUnstaked = sumAmounts(activeStakes.value.flatMap((item: StakePosition) => item.amount)) || zero
-      const totalUnstaked = sumAmounts(activeUnstakes.value.flatMap((item: StakePosition) => item.amount)) || zero
-      return sumAmounts([totalStakedAndUnstaked, totalUnstaked]) || zero
+      if (!tokenBalances.value) return zero
+      return tokenBalances.value.account_balances.staked_and_unstaking_balance.value || zero
     })
 
     const availablePlusStakedAndUnstakedXRD: ComputedRef<AmountT> = computed(() => {
-      if (!tokenBalances.value || !nativeToken.value) return zero
-      const nativeTokenBalance = tokenBalanceFor(nativeToken.value)
-      if (!nativeTokenBalance) return zero
-      if (!activeStakes.value || !activeUnstakes.value) return zero
-
-      const xrdAmount = Amount.fromUnsafe(nativeTokenBalance.amount)
-      const totalXRD = xrdAmount.isErr() ? zero : xrdAmount.value
-
-      const totalStakedAndUnstaked = sumAmounts(activeStakes.value.flatMap((item: StakePosition) => item.amount)) || zero
-      const totalUnstaked = sumAmounts(activeUnstakes.value.flatMap((item: StakePosition) => item.amount)) || zero
-      const totalStakedAndUnstakedSum = sumAmounts([totalStakedAndUnstaked, totalUnstaked]) || zero
-      return add(totalXRD, totalStakedAndUnstakedSum)
+      return add(totalXRD.value, totalStakedAndUnstaked.value)
     })
 
     // Check if token RRI is present in list of hidden tokens
-    const isTokenHidden = (ht: string[], tb: SimpleTokenBalance): boolean =>
-      ht.find((hiddenT: string) => { return tb.tokenIdentifier.toString() === hiddenT }) !== undefined
-
-    const otherTokenBalances: ComputedRef<SimpleTokenBalance[]> = computed(() => {
-      if (!tokenBalances.value || !nativeToken.value) return []
-      return tokenBalances.value.tokenBalances.filter((tb: SimpleTokenBalance) =>
-        nativeToken.value && !tb.tokenIdentifier.equals(nativeToken.value.rri) && !isTokenHidden(hiddenTokens.value, tb)
-      )
-    })
+    const isTokenHidden = (ht: string[], tb: Decoded.TokenAmount): boolean =>
+      ht.find((hiddenT: string) => { return tb.token_identifier.rri.toString() === hiddenT }) !== undefined
 
     const handleRequestHideToken = (token: Token) => {
       tokenToHide.value = token
@@ -223,10 +201,19 @@ const WalletOverview = defineComponent({
     const handleHideToken = () => {
       if (tokenToHide.value) {
         hideTokenType(tokenToHide.value.rri)
-          .then((res: string[]) => { hiddenTokens.value = res })
+          .then((res: string[]) => {
+            hiddenTokens.value = res
+          })
       }
       tokenToHide.value = null
     }
+
+    const otherTokenBalances: ComputedRef<Decoded.TokenAmount[]> = computed(() => {
+      if (!tokenBalances.value || !nativeToken.value) return []
+      return tokenBalances.value.account_balances.liquid_balances.filter((tb) => {
+        return !tb.token_identifier.rri.equals(nativeToken.value!.rri) && !isTokenHidden(hiddenTokens.value, tb)
+      })
+    })
 
     return {
       activeAddress,
@@ -235,6 +222,7 @@ const WalletOverview = defineComponent({
       explorerUrlBase,
       hiddenTokens,
       loading,
+      loadingRelatedTokens,
       nativeToken,
       tokenBalances,
       tokenToHide,

@@ -1,7 +1,7 @@
 <template>
   <div v-if="tokenBalance" class="border border-rGray rounded-md p-6 mb-5 flex flex-row items-center justify-between">
     <div class="flex flex-row items-center flex-1">
-      <BigAmount :amount="tokenBalance.amount" class="text-4xl font-light mr-4 text-rBlack" />
+      <BigAmount :amount="tokenBalance.value" class="text-4xl font-light mr-4 text-rBlack" />
       <TokenSymbol v-if="token">{{ token.symbol.toUpperCase() }}</TokenSymbol>
     </div>
 
@@ -19,14 +19,14 @@
 </template>
 
 <script lang="ts">
-import { SimpleTokenBalance, Token } from '@radixdlt/application'
+import { Token } from '@radixdlt/application'
 import { defineComponent, PropType, Ref, ref, toRef } from 'vue'
 import BigAmount from '@/components/BigAmount.vue'
 import TokenSymbol from '@/components/TokenSymbol.vue'
 import AppButtonIcon from '@/components/AppButtonIcon.vue'
-import { firstValueFrom } from 'rxjs'
 import { useRouter } from 'vue-router'
-import { useWallet } from '@/composables'
+import { useTokenBalances, useWallet } from '@/composables'
+import { Decoded } from '@radixdlt/application/dist/api/open-api/_types'
 
 export default defineComponent({
   components: {
@@ -41,7 +41,7 @@ export default defineComponent({
       required: true
     },
     tokenBalance: {
-      type: Object as PropType<SimpleTokenBalance>,
+      type: Object as PropType<Decoded.TokenAmount>,
       required: true
     }
   },
@@ -51,9 +51,9 @@ export default defineComponent({
     const { radix } = useWallet(router)
     const tokenBalance = toRef(props, 'tokenBalance')
     const token: Ref<Token | null> = ref(null)
+    const { tokenInfoFor } = useTokenBalances(radix)
 
-    firstValueFrom(radix.ledger.tokenInfo(tokenBalance.value.tokenIdentifier))
-      .then((t: Token) => { token.value = t })
+    token.value = tokenInfoFor(tokenBalance.value.token_identifier.rri)
 
     return {
       token

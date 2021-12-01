@@ -1268,9 +1268,9 @@
     isomorphic-fetch "^3.0.0"
 
 "@json-schema-tools/reference-resolver@^1.2.1":
-  version "1.2.2"
-  resolved "https://registry.yarnpkg.com/@json-schema-tools/reference-resolver/-/reference-resolver-1.2.2.tgz#641c8735d95d6b6f13f28a7d11e2d671d0c46400"
-  integrity sha512-AmTn9spLiiUrPmz6qHGPYfLTeJcCRmkk7oFmSiigDaIhHiz+WbT3gCMgYbzD1QUDmFi55SXXimDyF1cGbVcgZA==
+  version "1.2.3"
+  resolved "https://registry.yarnpkg.com/@json-schema-tools/reference-resolver/-/reference-resolver-1.2.3.tgz#01feb01833cf94deba87923c0c3980a8e2d449a3"
+  integrity sha512-Bc7TjkuSy9PnQDeIenA3aU1cgh2/Wh042sxTfEaav38+Jf+2+U2kMBmMKS4nZLCR+L0fh71V3IwE2FMJleQCGw==
   dependencies:
     "@json-schema-spec/json-pointer" "^0.1.2"
     isomorphic-fetch "^3.0.0"
@@ -1512,58 +1512,32 @@
     node-ipc "^9.1.1"
     ws "^7.3.1"
 
-"@radixdlt/account@^2.1.6":
-  version "2.1.6"
-  resolved "https://registry.yarnpkg.com/@radixdlt/account/-/account-2.1.6.tgz#36d600edc84969ef1fc531d6e370a7fddd098a57"
-  integrity sha512-veXhZWWYxRNQNYKmgXp/8SE+uANXh4YdOnZwkVmpwrrGFgKe68zb6FCKtAFm10WEP9bA85U0t1CH9KcSHHav7A==
-  dependencies:
-    "@radixdlt/crypto" "^2.1.3"
-    "@radixdlt/data-formats" "1.0.30"
-    "@radixdlt/hardware-wallet" "^2.1.6"
-    "@radixdlt/primitives" "^2.1.3"
-    "@radixdlt/uint256" "1.1.0"
-    "@radixdlt/util" "1.0.29"
-    bech32 "^2.0.0"
-    bip39 "^3.0.3"
-    hdkey "^2.0.1"
-    long "^4.0.0"
-    neverthrow "^4.0.1"
-    prelude-ts "^1.0.2"
-    rxjs "7.0.0"
-
-"@radixdlt/account@^3.0.1":
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/@radixdlt/account/-/account-3.0.1.tgz#ddb3103f7e463f9c27729619ab29efb9db866dd9"
-  integrity sha512-2kWjeX3BfifNNP1JQHGtB1Jf4VLsJFNTVhJhXLgUstZwDA12PNBIveJQ4SNgbygPuJziSEiYwZadFQITM3cFfw==
-  dependencies:
-    "@radixdlt/crypto" "^2.1.5"
-    "@radixdlt/data-formats" "1.0.30"
-    "@radixdlt/hardware-wallet" "^2.1.8"
-    "@radixdlt/primitives" "^3.0.1"
-    "@radixdlt/uint256" "1.1.0"
-    "@radixdlt/util" "1.0.29"
-    bech32 "^2.0.0"
-    bip39 "^3.0.3"
-    hdkey "^2.0.1"
-    long "^4.0.0"
-    neverthrow "^4.0.1"
-    prelude-ts "^1.0.2"
-    rxjs "7.0.0"
-
-"@radixdlt/application@^3.0.6":
+"@radixdlt/account@^3.0.6":
   version "3.0.6"
-  resolved "https://registry.yarnpkg.com/@radixdlt/application/-/application-3.0.6.tgz#8b64bf53c0bf16c5cd5ca9d9ab20284d55068fbf"
-  integrity sha512-c6O93tJTD/LICtR4Nfh0TN/8uQGWgP2rroM7M0s1VgP0+oE3wz1yC2rmaAqKy+GTsQ/KQUal2vn3Jtt44m1B+A==
+  resolved "https://registry.yarnpkg.com/@radixdlt/account/-/account-3.0.6.tgz#a34d841f5a96efe44b763c427ef6868a6c5d5030"
+  integrity sha512-32GELGrtyujuK4A6vX8TRAOz+TJr0qILd6O66gUTcz8LRrQTDxwuTzIseXFM/La9cJeVYCWzmmZ/FEimN2eM6g==
+  dependencies:
+    "@radixdlt/crypto" "^2.1.10"
+    "@radixdlt/data-formats" "1.0.30"
+    "@radixdlt/hardware-wallet" "^2.1.13"
+    "@radixdlt/primitives" "^3.0.6"
+    "@radixdlt/uint256" "1.1.0"
+    "@radixdlt/util" "1.0.29"
+    bech32 "^2.0.0"
+    bip39 "^3.0.3"
+    hdkey "^2.0.1"
+    long "^4.0.0"
+    neverthrow "^4.0.1"
+    prelude-ts "^1.0.2"
+    rxjs "7.0.0"
+
+"@radixdlt/application@4.0.11":
+  version "4.0.11"
+  resolved "https://registry.yarnpkg.com/@radixdlt/application/-/application-4.0.11.tgz#398eed62df07b71caa866933dc3ad97669297e37"
+  integrity sha512-nI/xs+wuctRhiiEhyJuaqRayo1gZRoEs8kUR5bffWKFNSlidHdloLL27tPoF8Qf05b2FYrC8fQ+K9y6xXe2VEA==
   dependencies:
     "@open-rpc/mock-server" "1.7.2"
     "@open-rpc/schema-utils-js" "1.14.3"
-    "@radixdlt/account" "^3.0.1"
-    "@radixdlt/crypto" "^2.1.5"
-    "@radixdlt/data-formats" "1.0.30"
-    "@radixdlt/networking" "^2.1.5"
-    "@radixdlt/open-rpc-spec" "^1.0.19"
-    "@radixdlt/primitives" "^3.0.1"
-    "@radixdlt/util" "1.0.29"
     jest "^26.6.3"
     json-schema-faker "^0.5.0-rcv.34"
     neverthrow "^4.0.1"
@@ -1571,13 +1545,13 @@
     ramda "^0.27.1"
     rxjs "7.0.0"
 
-"@radixdlt/crypto@^2.1.3":
-  version "2.1.3"
-  resolved "https://registry.yarnpkg.com/@radixdlt/crypto/-/crypto-2.1.3.tgz#93412cc495326d96fceca0bba12601b0db5cd256"
-  integrity sha512-K9P+W6OWnobxhl2SQa6ns8ncdblIeOUbm2z51qXovqJOm3wlJcN7wA8bXEcDtQh+UJUUwEagsk99t1w5CFX8Pg==
+"@radixdlt/crypto@^2.1.10":
+  version "2.1.10"
+  resolved "https://registry.yarnpkg.com/@radixdlt/crypto/-/crypto-2.1.10.tgz#130f129724199fcde5253da697c3688db9169b92"
+  integrity sha512-T4jhxqsuRS0xk0F+rwolN9l5l1jYApanMxKG91Je9QPEf3tqCgYo5vrbJ1GYvwvKriZl0/+czfmuzXJd20CUuw==
   dependencies:
     "@radixdlt/data-formats" "1.0.30"
-    "@radixdlt/primitives" "^2.1.3"
+    "@radixdlt/primitives" "^3.0.6"
     "@radixdlt/uint256" "1.1.0"
     "@radixdlt/util" "1.0.29"
     base-x "^3.0.8"
@@ -1587,13 +1561,13 @@
     scrypt-js "^3.0.1"
     uuid "^8.3.2"
 
-"@radixdlt/crypto@^2.1.5":
-  version "2.1.5"
-  resolved "https://registry.yarnpkg.com/@radixdlt/crypto/-/crypto-2.1.5.tgz#87245f1ff2839f25955331b4ecb373fbdc5b285d"
-  integrity sha512-OvQdhtZ1gNBoXhfgXQDwCq4akUAjeQ06GdSO0sJC3Jl6NCbJjDl1r35FXIEKrqiwW0L1rMGLX/YAFyFb8SY/gw==
+"@radixdlt/crypto@^2.1.11":
+  version "2.1.11"
+  resolved "https://registry.yarnpkg.com/@radixdlt/crypto/-/crypto-2.1.11.tgz#faa6b49e01d5613af14eb1262213c995f33f8fe3"
+  integrity sha512-jVfCByaJT3Jo4+cV5BPBtJNX8+pTc50BOABQX5a7Y7+tlEGlFK7DEhHtECc8x5slLkY89z1NH42fMx8zZRJe8w==
   dependencies:
     "@radixdlt/data-formats" "1.0.30"
-    "@radixdlt/primitives" "^3.0.1"
+    "@radixdlt/primitives" "^3.0.6"
     "@radixdlt/uint256" "1.1.0"
     "@radixdlt/util" "1.0.29"
     base-x "^3.0.8"
@@ -1612,58 +1586,47 @@
     neverthrow "^4.0.1"
     ramda "^0.27.1"
 
-"@radixdlt/hardware-ledger@^2.1.15":
-  version "2.1.15"
-  resolved "https://registry.yarnpkg.com/@radixdlt/hardware-ledger/-/hardware-ledger-2.1.15.tgz#615598256452ae2dbd7c00fdd5532c6efc13dbd3"
-  integrity sha512-y6lc3uxDkGo22Q/jUt0QX3z9n26gWIKd/cnzrrras62SVmSxYBzRQpJ9ZKeu6tqe31dSBHjgleaCxOaE4GLsaw==
+"@radixdlt/hardware-ledger@^2.1.29":
+  version "2.1.29"
+  resolved "https://registry.yarnpkg.com/@radixdlt/hardware-ledger/-/hardware-ledger-2.1.29.tgz#879eaedc8e0589eb3c35eaf9485dd01bb50b754e"
+  integrity sha512-MlJ58jFyq+ZDPa43lkWRTyOmPPhLNQ65drmb64M0EAJqAuqobRhn7pvkQ41/hMNvX42MUorZT8JpB99P3VBesQ==
   dependencies:
     "@ledgerhq/hw-transport-node-hid" "^6.2.0"
-    "@radixdlt/crypto" "^2.1.3"
-    "@radixdlt/hardware-wallet" "^2.1.6"
-    "@radixdlt/primitives" "^2.1.3"
-    "@radixdlt/tx-parser" "^2.1.7"
+    "@radixdlt/crypto" "^2.1.10"
+    "@radixdlt/hardware-wallet" "^2.1.13"
+    "@radixdlt/primitives" "^3.0.6"
+    "@radixdlt/tx-parser" "^2.1.15"
     "@radixdlt/util" "1.0.29"
     neverthrow "4.0.1"
     prelude-ts "^1.0.2"
     rxjs "7.0.0"
     uuid "^8.3.2"
 
-"@radixdlt/hardware-wallet@^2.1.6":
-  version "2.1.6"
-  resolved "https://registry.yarnpkg.com/@radixdlt/hardware-wallet/-/hardware-wallet-2.1.6.tgz#f2bf7e8f2614196a2487770d965313d44111b6f0"
-  integrity sha512-2CXvX3VYaJpFWuE4jZrjAQEOUY0DVqCqoezANeWpiAVKvLGdUtAOaeMiUbtORbvaG+OrswWI/Owg5QYustF52g==
+"@radixdlt/hardware-wallet@^2.1.13":
+  version "2.1.13"
+  resolved "https://registry.yarnpkg.com/@radixdlt/hardware-wallet/-/hardware-wallet-2.1.13.tgz#f99aa2a956cc2b4775b53e4738bc252c4d1db1fb"
+  integrity sha512-z0oXur7jWNuVHjW0c7vj55R1FJPCV70csQS2MCjmM9D1q6bDAtZrloWQZr07LAwzHtoHZ3jj0bAGf425uo99vw==
   dependencies:
-    "@radixdlt/crypto" "^2.1.3"
-    "@radixdlt/primitives" "^2.1.3"
+    "@radixdlt/crypto" "^2.1.10"
+    "@radixdlt/primitives" "^3.0.6"
     "@radixdlt/util" "1.0.29"
     neverthrow "4.0.1"
     prelude-ts "^1.0.2"
     rxjs "7.0.0"
     uuid "^8.3.2"
 
-"@radixdlt/hardware-wallet@^2.1.8":
-  version "2.1.8"
-  resolved "https://registry.yarnpkg.com/@radixdlt/hardware-wallet/-/hardware-wallet-2.1.8.tgz#107833aa27ecc0c7c676a5e726660a5b4ef0583b"
-  integrity sha512-o19anwAngR9cSS1GHhXIzlTjswb6lUfAv18DJGaRKvjA0/5j9kciWobduQDHqX/EGUkyeJC4LF/zvDhtx41wzQ==
-  dependencies:
-    "@radixdlt/crypto" "^2.1.5"
-    "@radixdlt/primitives" "^3.0.1"
-    "@radixdlt/util" "1.0.29"
-    neverthrow "4.0.1"
-    prelude-ts "^1.0.2"
-    rxjs "7.0.0"
-    uuid "^8.3.2"
-
-"@radixdlt/networking@^2.1.5":
-  version "2.1.5"
-  resolved "https://registry.yarnpkg.com/@radixdlt/networking/-/networking-2.1.5.tgz#3548970bb69299aff140201bd5a5bb11e97db739"
-  integrity sha512-f9lllU4vjemNIIJb5UZBJ6M5NM5xUb6AtC/t2Ba/RwBDO3EefjH7C5U1m56xL8xYJfkf8AfDewtZ3JrDMqujbg==
+"@radixdlt/networking@^2.1.12":
+  version "2.1.12"
+  resolved "https://registry.yarnpkg.com/@radixdlt/networking/-/networking-2.1.12.tgz#9b7184cdd52b63f2e3d6e2a1c4a2542cdca7d565"
+  integrity sha512-UIfPVG+VJT5u68KRv7KcjujvkguHSJpZ4IIVN9lJcfw5GpjAu6ErgyLftc3q38Y4jy5B7Mmzq/Pudmbg+ln8+A==
   dependencies:
     "@open-rpc/client-js" "1.6.2"
     "@open-rpc/schema-utils-js" "1.14.3"
     "@radixdlt/open-rpc-spec" "^1.0.19"
     "@radixdlt/util" "1.0.29"
     "@types/uuid" "^8.3.0"
+    axios "^0.24.0"
+    isomorphic-fetch "^3.0.0"
     neverthrow "^4.0.1"
     open-rpc-utils "^1.1.1"
     uuid "^8.3.2"
@@ -1673,10 +1636,10 @@
   resolved "https://registry.yarnpkg.com/@radixdlt/open-rpc-spec/-/open-rpc-spec-1.0.19.tgz#7392359e28a11f652c2501c25b3d4048cb68a0f9"
   integrity sha512-pcrUTk66h6jDXpq5Ly6uHpktO/lW5lCzdC7YqwsGfXzdFOLcRC8eCC9Teh9k6zH1gvMRyqid9gLRTE7nP2/L8A==
 
-"@radixdlt/primitives@^2.1.3":
-  version "2.1.3"
-  resolved "https://registry.yarnpkg.com/@radixdlt/primitives/-/primitives-2.1.3.tgz#bc80d974cd0a363b03291f36bef1369bd8c291b8"
-  integrity sha512-132/NJQMaHK0JtAPki2vjYCvPEFcVc9+oOsrU/7ydag63oYmWWe7HRAEwAoYQeTvY4eFmWGdU+mw9QtGWn7cvQ==
+"@radixdlt/primitives@^3.0.6":
+  version "3.0.6"
+  resolved "https://registry.yarnpkg.com/@radixdlt/primitives/-/primitives-3.0.6.tgz#94f611860c0a9554f768212265067f8f7dbdbdac"
+  integrity sha512-tL7GqRtBNbEdmc5eNdq73eieO9zKm7HL4Zl4thjPCGkRsQcuaVMXfbC1nourl2Egh+p+q07STDdn4iobMbr2iA==
   dependencies:
     "@radixdlt/data-formats" "1.0.30"
     "@radixdlt/uint256" "1.1.0"
@@ -1685,26 +1648,14 @@
     long "^4.0.0"
     neverthrow "^4.0.1"
 
-"@radixdlt/primitives@^3.0.1":
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/@radixdlt/primitives/-/primitives-3.0.1.tgz#e312475730ef0afefe1c646fc1e6805ce4c52e2c"
-  integrity sha512-cTjT6h4cy5vWvgDdtRkNqR5X1MTkOw+6eeq6zs9mVql2YBBtYoTDIB27gkYyRNPW5123ANsaPLauXeTrIYr7UQ==
+"@radixdlt/tx-parser@^2.1.15":
+  version "2.1.15"
+  resolved "https://registry.yarnpkg.com/@radixdlt/tx-parser/-/tx-parser-2.1.15.tgz#c45cf7ecaab908c1bb6a94b35aa9001891d7d641"
+  integrity sha512-qmBju23wT3Z3M19TjG48Sva56yNbdoLc6DUWjmUK6LCAORAPHn0JXTTgKp2YGPnmDS0qm3swfBWhTGdWi5lTwg==
   dependencies:
-    "@radixdlt/data-formats" "1.0.30"
-    "@radixdlt/uint256" "1.1.0"
-    "@radixdlt/util" "1.0.29"
-    bn.js "^5.1.3"
-    long "^4.0.0"
-    neverthrow "^4.0.1"
-
-"@radixdlt/tx-parser@^2.1.7":
-  version "2.1.7"
-  resolved "https://registry.yarnpkg.com/@radixdlt/tx-parser/-/tx-parser-2.1.7.tgz#bbc5ea62532654dbb57bdc66a9d109c300f7c71e"
-  integrity sha512-XjbkgoeH8jhNHI0CC0odcR+ubZ8pvMBTtKU0ulnRDWKkrd+2mInOrltDxjF3tEdIx+Gq31l9fF1+vwsxCEmsaA==
-  dependencies:
-    "@radixdlt/account" "^2.1.6"
-    "@radixdlt/crypto" "^2.1.3"
-    "@radixdlt/primitives" "^2.1.3"
+    "@radixdlt/account" "^3.0.6"
+    "@radixdlt/crypto" "^2.1.10"
+    "@radixdlt/primitives" "^3.0.6"
     "@radixdlt/uint256" "1.1.0"
     "@radixdlt/util" "1.0.29"
     long "^4.0.0"
@@ -2144,9 +2095,9 @@
     source-map "^0.6.1"
 
 "@types/uuid@^8.3.0":
-  version "8.3.0"
-  resolved "https://registry.yarnpkg.com/@types/uuid/-/uuid-8.3.0.tgz#215c231dff736d5ba92410e6d602050cce7e273f"
-  integrity sha512-eQ9qFW/fhfGJF8WKHGEHZEyVWfZxrT+6CLIJGBcZPfxUh/+BnEj+UCGYMlr9qZuX/2AltsvwrGqp0LhEW8D0zQ==
+  version "8.3.3"
+  resolved "https://registry.yarnpkg.com/@types/uuid/-/uuid-8.3.3.tgz#c6a60686d953dbd1b1d45e66f4ecdbd5d471b4d0"
+  integrity sha512-0LbEEx1zxrYB3pgpd1M5lEhLcXjKJnYghvhTRgaBeUivLHMDM1TzF3IJ6hXU2+8uA4Xz+5BA63mtZo5DjVT8iA==
 
 "@types/verror@^1.10.3":
   version "1.10.4"
@@ -3452,6 +3403,13 @@ aws4@^1.8.0:
   version "1.11.0"
   resolved "https://registry.yarnpkg.com/aws4/-/aws4-1.11.0.tgz#d61f46d83b2519250e2784daf5b09479a8b41c59"
   integrity sha512-xh1Rl34h6Fi1DC2WWKfxUTVqRsNnr6LsKz2+hfwDxQJWmrx8+c7ylaqBMcHfl1U1r2dsifOvKX3LQuLNZ+XSvA==
+
+axios@^0.24.0:
+  version "0.24.0"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-0.24.0.tgz#804e6fa1e4b9c5288501dd9dff56a7a0940d20d6"
+  integrity sha512-Q6cWsys88HoPgAaFAVUb0WpPk0O8iTeisR9IMqy9G8AbO4NlpVknrnQS03zzF9PGAWgO3cgletO3VjV/P7VztA==
+  dependencies:
+    follow-redirects "^1.14.4"
 
 babel-code-frame@^6.22.0:
   version "6.26.0"
@@ -6987,6 +6945,11 @@ follow-redirects@^1.0.0:
   resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.13.3.tgz#e5598ad50174c1bc4e872301e82ac2cd97f90267"
   integrity sha512-DUgl6+HDzB0iEptNQEXLx/KhTmDb8tZUHSeLqpnjpknR70H0nC2t9N73BK6fN4hOvJ84pKlIQVQ4k5FFlBedKA==
 
+follow-redirects@^1.14.4:
+  version "1.14.5"
+  resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.14.5.tgz#f09a5848981d3c772b5392309778523f8d85c381"
+  integrity sha512-wtphSXy7d4/OR+MvIFbCVBDzZ5520qV8XfPklSN5QtxuMUJZ+b0Wnst1e1lCDocfzuCkHqj8k0FpZqO+UIaKNA==
+
 for-in@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/for-in/-/for-in-1.0.2.tgz#81068d295a8142ec0ac726c6e2200c30fb6d5e80"
@@ -10214,10 +10177,15 @@ neverthrow@4.0.1:
   resolved "https://registry.yarnpkg.com/neverthrow/-/neverthrow-4.0.1.tgz#74a264db31ef771dc3288b8a03d0cff7d7131345"
   integrity sha512-qQfNyQWZx6cJsJu4pndtF4S1frUCqxBNVEdFEcdwlGgh09ToSTgOI6du+rb0Veh8TwalW1mIKqk4rg/9yzzr7A==
 
-neverthrow@^4.0.1, neverthrow@^4.2.1:
+neverthrow@^4.0.1:
   version "4.2.1"
   resolved "https://registry.yarnpkg.com/neverthrow/-/neverthrow-4.2.1.tgz#c582dee4772528d15c9a170599c5382d366fd419"
   integrity sha512-faWQGNqVQrXOuG8K7E0PRzsfBHzfVqeDX9nwawKDseuH/qEGIH02Nrq03OJOs5eTFML03xeol3otzagPoHyEPA==
+
+neverthrow@^4.2.1:
+  version "4.3.1"
+  resolved "https://registry.yarnpkg.com/neverthrow/-/neverthrow-4.3.1.tgz#04c4c15e7f6fc45faad36885fa7a42b85f8f39ab"
+  integrity sha512-+vxjSaiDWjAj6kR6KKW0YDuV6O4UCNWGAO8m8ITjFKPWcTmU1GVnL+J5TAUTKpPnUAHCKDxXpOHVaERid223Ww==
 
 nice-try@^1.0.4:
   version "1.0.5"

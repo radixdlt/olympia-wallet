@@ -29,15 +29,15 @@
     <div class="overflow-x-scroll relative">
       <div class="flex flex-row absolute">
         <div class="flex-1 flex flex-row items-center px-6 overflow-x-auto">
-          <span class="text-sm font-mono text-rGrayDark">{{ truncateRRIStringForDisplay(tokenBalance.tokenIdentifier.toString()) }}</span>
+          <span class="text-sm font-mono text-rGrayDark">{{ truncateRRIStringForDisplay(tokenBalance.token_identifier.rri.toString()) }}</span>
           <div class="hover:text-rGreen flex flex-row items-center cursor-pointer transition-colors">
-            <click-to-copy :address="tokenBalance.tokenIdentifier.toString()"/>
+            <click-to-copy :address="tokenBalance.token_identifier.rri.toString()"/>
           </div>
         </div>
       </div>
       <div class="flex flex-row py-1 mt-6">
         <div class="flex-1 flex flex-row items-center px-6 py-3">
-          <big-amount :amount="tokenBalance.amount" class="text-2xl font-light mr-4 text-rBlack" />
+          <big-amount :amount="tokenBalance.value" class="text-2xl font-light mr-4 text-rBlack" />
           <token-symbol v-if="token">{{ token.symbol.toUpperCase() }}</token-symbol>
         </div>
       </div>
@@ -50,11 +50,11 @@ import { computed, ComputedRef, defineComponent, PropType, ref, toRef, Ref } fro
 import BigAmount from '@/components/BigAmount.vue'
 import TokenSymbol from '@/components/TokenSymbol.vue'
 import ClickToCopy from '@/components/ClickToCopy.vue'
-import { SimpleTokenBalance, Token } from '@radixdlt/application'
+import { Token } from '@radixdlt/application'
 import { truncateRRIStringForDisplay } from '@/helpers/formatter'
 import { useRouter } from 'vue-router'
-import { useWallet } from '@/composables'
-import { firstValueFrom } from 'rxjs'
+import { useTokenBalances, useWallet } from '@/composables'
+import { Decoded } from '@radixdlt/application/dist/api/open-api/_types'
 
 export default defineComponent({
   components: {
@@ -65,7 +65,7 @@ export default defineComponent({
 
   props: {
     tokenBalance: {
-      type: Object as PropType<SimpleTokenBalance>,
+      type: Object as PropType<Decoded.TokenAmount>,
       required: true
     },
     explorerUrlBase: {
@@ -79,13 +79,12 @@ export default defineComponent({
     const tokenBalance = toRef(props, 'tokenBalance')
     const router = useRouter()
     const { radix } = useWallet(router)
+    const { tokenInfoFor } = useTokenBalances(radix)
 
-    firstValueFrom(radix.ledger.tokenInfo(tokenBalance.value.tokenIdentifier)).then((t: Token) => {
-      token.value = t
-    })
+    token.value = tokenInfoFor(tokenBalance.value.token_identifier.rri)
 
     const rriUrl: ComputedRef<string> = computed(() =>
-      `${props.explorerUrlBase}/#/tokens/${props.tokenBalance.tokenIdentifier.toString()}`
+      `${props.explorerUrlBase}/#/tokens/${props.tokenBalance.token_identifier.rri.toString()}`
     )
 
     return {

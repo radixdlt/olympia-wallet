@@ -68,14 +68,14 @@
 
 <script lang="ts">
 import { MnemomicT, Keystore, KeystoreT, StrengthT } from '@radixdlt/application'
-import { defineComponent, PropType, ref, Ref, ComputedRef, computed } from 'vue'
+import { defineComponent, computed, PropType, ref, Ref, ComputedRef, toRef } from 'vue'
 import { useForm } from 'vee-validate'
 import MnemonicDisplay from '@/components/MnemonicDisplay.vue'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
 import PasswordField from '@/components/PasswordField.vue'
 import { touchKeystore } from '@/actions/vue/create-wallet'
-import { Result } from 'neverthrow'
 import FormErrorMessage from '@/components/FormErrorMessage.vue'
+import { useI18n } from 'vue-i18n'
 
 interface RevealMnemonicForm {
   password: string;
@@ -89,20 +89,40 @@ const SettingsRevealMnemonic = defineComponent({
     FormErrorMessage
   },
 
-  setup (props) {
+  setup (props, { emit }) {
     const { errors, meta, values, setErrors, resetForm } = useForm<RevealMnemonicForm>()
     const enteringPassword: Ref<boolean> = ref(false)
+    const mneumonic = toRef(props, 'mnemonic')
+    const { t } = useI18n()
+    const handleSubmit = async () => {
+      try {
+        const keystore: KeystoreT = await touchKeystore()
+        const decryptedResult = await Keystore.decrypt({ keystore, password: values.password })
+        if (decryptedResult.isOk()) {
+          emit('clickAccessMnemonic')
+          enteringPassword.value = false
+        } else {
+          setErrors({ password: t('validations.incorrectPassword') })
+        }
+      } catch {
+        setErrors({ password: t('validations.incorrectPassword') })
+      }
+    }
 
-    const displayMnemonic: ComputedRef<string[]> = computed(() =>
-      props.mnemonic ? props.mnemonic.words : Array(12).fill('noop')
-    )
+    const disableSubmit = computed(() => {
+      return meta.value.dirty ? !meta.value.valid : true
+    })
+
+    const mnemonicNotRequested = computed(() => {
+      return !mneumonic.value && !enteringPassword.value
+    })
+
+    const displayMnemonic = computed(() => {
+      return mneumonic.value ? mneumonic.value.words : Array(12).fill('noop')
+    })
 
     const mnemonicStrength: ComputedRef<StrengthT> = computed(() =>
       props.mnemonic ? props.mnemonic.strength : StrengthT.WORD_COUNT_12
-    )
-
-    const mnemonicNotRequested: ComputedRef<boolean> = computed(() =>
-      !props.mnemonic && !enteringPassword.value
     )
 
     const submitDisabled: ComputedRef<boolean> = computed(() =>
@@ -121,6 +141,8 @@ const SettingsRevealMnemonic = defineComponent({
       values,
 
       // methods
+      disableSubmit,
+      handleSubmit,
       setErrors,
       resetForm
     }
@@ -130,33 +152,6 @@ const SettingsRevealMnemonic = defineComponent({
     mnemonic: {
       type: Object as PropType<MnemomicT> | null,
       required: false
-    }
-  },
-
-  methods: {
-    handleSubmit () {
-      touchKeystore()
-        .then((keystore: KeystoreT) =>
-          Keystore.decrypt({
-            keystore,
-            password: this.values.password
-          })
-        )
-        .then((res: Result<Buffer, Error>) => {
-          if (res.isOk()) {
-            this.$emit('clickAccessMnemonic')
-            this.enteringPassword = false
-          } else {
-            this.setErrors({
-              password: this.$t('validations.incorrectPassword')
-            })
-          }
-        })
-        .catch(() => {
-          this.setErrors({
-            password: this.$t('validations.incorrectPassword')
-          })
-        })
     }
   },
 

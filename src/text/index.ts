@@ -111,6 +111,15 @@ const messages = {
       hideBalanceModalContent: 'Are you sure you want to hide this %{tokenName} balance? This balance can be unhidden in settings.',
       hideBalanceModalSubmit: 'Hide Balance'
     },
+    hardware: {
+      disclaimer: 'Whenever copying a hardware wallet address, it is strongly recommended to verify it on the hardware device. To copy and verify this address, please switch to the hardware address first by selecting it in the account picker.',
+      nonMainnetDisclaimer: 'You are currently not connected to Radix mainnet, so the address shown on your Ledger\'s screen will not match the address shown here for this network.',
+      buttonDismiss: 'Dismiss',
+      buttonDone: 'Done',
+      error: 'Your Ledger device was not detected. Please attach it you would like to verify your address.',
+      verificationMessage: 'Please verify this address matches the one currently shown on your Ledger.',
+      labelAddress: 'Address'
+    },
     history: {
       historyHeading: 'History',
       unstakeAction: 'Request Unstake',
@@ -124,7 +133,10 @@ const messages = {
       otherAction: 'Other',
       previous: 'Previous',
       next: 'Next',
-      noHistory: 'Sorry, but you don\'t have transaction history for this account.'
+      noHistory: 'Sorry, but you don\'t have transaction history for this account.',
+      unknownTransaction: 'Unknown transaction',
+      complexTransactionSomeUnrelated: 'Complex transaction, additional actions not shown',
+      complexTransaction: 'Complex Transaction'
     },
     transaction: {
       transactionHeading: 'Send Tokens',
@@ -152,13 +164,14 @@ const messages = {
       stakeTab: 'Stake Tokens',
       unstakeTab: 'Request Unstake',
       unstakingLabel: 'Unstaking',
+      pendingStakeLabel: 'Pending Stake',
       stakedLabel: 'Staked',
       addButton: 'add stake',
       reduceButton: 'reduce stake',
       fromLabel: 'Staking Account',
       validatorLabel: 'Validator',
       amountLabel: 'Amount',
-      amountPlaceholder: '90 XRD min stake. Available balance ...',
+      amountPlaceholder: 'Available balance ...',
       feeLabel: 'Fee',
       stakeButton: 'Stake',
       unstakeButton: 'Request Unstake',
@@ -261,6 +274,53 @@ const messages = {
       unableToPrepareUnstakingTransactionPointOne: 'Attempting to request an unstake in the same “epoch” (~30 min period) that you staked',
       unableToPrepareUnstakingTransactionPointTwo: 'Attempting to unstake more than you currently have staked to the validator',
       unableToPrepareUnstakingTransactionPointThree: 'Insufficient XRD to pay the required transaction fee'
+    },
+    apiErrors: {
+      unknown: 'Unexpected Error',
+      contactCopyOne: 'Please contact support at',
+      contactCopyTwo: 'and provide the following.',
+      InvalidAccountAddressError: {
+        message: 'The recipient Radix address specified is not valid.',
+        title: 'Cannot Create Transaction'
+      },
+      InvalidValidatorAddressError: {
+        message: 'The validator node address specified is not valid.',
+        title: 'Cannot Complete Stake or Unstake'
+      },
+      NotEnoughNativeTokensForFeesError: {
+        message: 'You do not have enough XRD to pay the required transaction fee',
+        title: 'Cannot Create Transaction'
+      },
+      NotEnoughTokensForTransferError: {
+        message: 'You do not have enough of the specified token for this transfer.',
+        title: 'Cannot Create Transaction'
+      },
+      NotEnoughTokensForStakeError: {
+        message: 'You do not have enough XRD for the requested stake.',
+        title: 'Cannot Complete Stake'
+      },
+      NotEnoughTokensForUnstakeError: {
+        requested: {
+          message: 'You do not have enough XRD for the requested unstake.',
+          title: 'Cannot Complete Unstake'
+        },
+        pending: {
+          message: 'You must wait until the next epoch (approx. 30 minutes) before unstaking this quantity of XRD – %{pending} XRD are currently pending stake and cannot yet be unstaked.',
+          title: 'Cannot Complete Unstake'
+        }
+      },
+      BelowMinimumStakeError: {
+        message: 'You must stake at least %{minimum} XRD.',
+        title: 'Cannot Complete Stake'
+      },
+      CannotStakeError: {
+        message: 'The specified validator node does not accept stake, other than from its owner.',
+        title: 'Cannot Complete Stake'
+      },
+      MessageTooLongError: {
+        message: 'The messages specified for the transaction is too long.',
+        title: 'Cannot Create Transaction'
+      }
     }
   }
 }

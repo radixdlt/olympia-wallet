@@ -10,7 +10,7 @@
     <div class="flex flex-col items-end">
       <div class="flex flex-row flex-1 min-w-0 items-center">
         <span>{{ $t('history.validatorLabel') }}:</span> <span class="ml-2 mr-1 min-w-0 font-mono">{{ displayAddress }}</span>
-        <click-to-copy :address="action.validator.toString()" />
+        <click-to-copy :address="action.from_validator.toString()" />
       </div>
     </div>
   </div>
@@ -45,7 +45,7 @@ const ActionListItemUnstakeTokens = defineComponent({
   },
   computed: {
     displayAddress (): string {
-      return formatValidatorAddressForDisplay(this.action.validator)
+      return formatValidatorAddressForDisplay(this.action.from_validator)
     }
   }
 })

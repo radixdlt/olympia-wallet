@@ -58,7 +58,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { computed, defineComponent, ref } from 'vue'
 import { useForm } from 'vee-validate'
 import PinInput from '@/components/PinInput.vue'
 import { storePin, touchKeystore } from '@/actions/vue/create-wallet'
@@ -67,6 +67,7 @@ import PasswordField from '@/components/PasswordField.vue'
 import { Result } from 'neverthrow'
 import FormErrorMessage from '@/components/FormErrorMessage.vue'
 import { Keystore, KeystoreT } from '@radixdlt/application'
+import { useI18n } from 'vue-i18n'
 
 interface ResetPinForm {
   password: string;
@@ -84,77 +85,71 @@ const SettingsResetPin = defineComponent({
 
   setup () {
     const { errors, meta, values, setErrors, resetForm } = useForm<ResetPinForm>()
+    const { t } = useI18n()
+    const activePin = ref(0)
+    const isValidPin = ref(false)
+    const updatedPin = ref(false)
+    const resetFormForNonmatchingPins = () => {
+      const newValues = { password: values.password, pin: '', confirmationPin: '' }
+      const newErrors = { confirmationPin: t('validations.pinMatch') }
+      resetForm({ values: newValues, errors: newErrors })
+      activePin.value = 1
+    }
 
-    return { errors, meta, values, setErrors, resetForm }
-  },
+    const handleComparePin = () => {
+      if (values.pin === values.confirmationPin) {
+        isValidPin.value = true
+      } else {
+        resetFormForNonmatchingPins()
+      }
+    }
 
-  data () {
+    const handleUnfinishedPin = () => {
+      isValidPin.value = false
+    }
+
+    const handleResetPin = async () => {
+      if (values.pin !== values.confirmationPin) {
+        resetFormForNonmatchingPins()
+        return Promise.resolve()
+      }
+      try {
+        const keystore = await touchKeystore()
+        const decryptedResult = await Keystore.decrypt({ keystore, password: values.password })
+        if (decryptedResult.isOk()) {
+          const storePinResult = await storePin(values.pin)
+          resetForm()
+          updatedPin.value = true
+        } else {
+          setErrors({ password: t('validations.incorrectPassword') })
+        }
+      } catch {
+        setErrors({ password: t('validations.incorrectPassword') })
+      }
+    }
+
+    const disableSubmit = computed(() => {
+      return meta.value.dirty ? !meta.value.valid : true
+    })
+
     return {
-      activePin: 0,
-      isValidPin: false,
-      updatedPin: false
-    }
-  },
+      /* refs */
+      activePin,
+      isValidPin,
+      updatedPin,
+      errors,
+      meta,
+      values,
 
-  computed: {
-    disableSubmit (): boolean {
-      return this.meta.dirty ? !this.meta.valid : true
-    }
-  },
+      /* functions */
+      setErrors,
+      resetForm,
+      handleComparePin,
+      handleUnfinishedPin,
+      handleResetPin,
 
-  methods: {
-    resetFormForNonmatchingPins () {
-      const values = { password: this.values.password, pin: '', confirmationPin: '' }
-      const errors = { confirmationPin: this.$t('validations.pinMatch') }
-      this.resetForm({
-        values: values,
-        errors: errors
-      })
-      this.activePin = 1
-    },
-
-    handleComparePin () {
-      if (this.values.pin === this.values.confirmationPin) {
-        this.isValidPin = true
-      } else {
-        this.resetFormForNonmatchingPins()
-      }
-    },
-
-    handleUnfinishedPin () {
-      this.isValidPin = false
-    },
-
-    handleResetPin () {
-      if (this.values.pin !== this.values.confirmationPin) {
-        this.resetFormForNonmatchingPins()
-      } else {
-        touchKeystore()
-          .then((keystore: KeystoreT) =>
-            Keystore.decrypt({
-              keystore,
-              password: this.values.password
-            })
-          )
-          .then((res: Result<Buffer, Error>) => {
-            if (res.isOk()) {
-              storePin(this.values.pin)
-                .then(() => {
-                  this.resetForm()
-                  this.updatedPin = true
-                })
-            } else {
-              this.setErrors({
-                password: this.$t('validations.incorrectPassword')
-              })
-            }
-          })
-          .catch(() => {
-            this.setErrors({
-              password: this.$t('validations.incorrectPassword')
-            })
-          })
-      }
+      /* computed */
+      disableSubmit
     }
   }
 })
