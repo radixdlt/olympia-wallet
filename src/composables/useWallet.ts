@@ -44,7 +44,7 @@ import { sha256Twice } from '@radixdlt/crypto'
 import { sendAPDU } from '@/actions/vue/hardware-wallet'
 import { HardwareWalletLedger } from '@radixdlt/hardware-ledger'
 
-const radix: RadixT = Radix.create()
+const radix = Radix.create()
 
 export type WalletError = ErrorT<ErrorCategory.WALLET>
 
@@ -111,7 +111,7 @@ interface useWalletInterface {
   readonly ledgerVerifyError: Ref<Error | null>;
   readonly networkPreamble: ComputedRef<string>;
   readonly nodeUrl: ComputedRef<string | null>;
-  readonly radix: RadixT;
+  readonly radix: any;
   readonly showDeleteHWWalletPrompt: Ref<boolean>;
   readonly showLedgerVerify: Ref<boolean>;
   readonly switching: ComputedRef<boolean>;

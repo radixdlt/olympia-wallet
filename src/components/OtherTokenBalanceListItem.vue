@@ -39,7 +39,7 @@ import { computed, ComputedRef, defineComponent, PropType, ref, toRef, Ref } fro
 import BigAmount from '@/components/BigAmount.vue'
 import TokenSymbol from '@/components/TokenSymbol.vue'
 import ClickToCopy from '@/components/ClickToCopy.vue'
-import { SimpleTokenBalance, Token } from '@radixdlt/application'
+import { SimpleTokenBalance, Token, TokenInfoEndpoint } from '@radixdlt/application'
 import { truncateRRIStringForDisplay } from '@/helpers/formatter'
 import { useRouter } from 'vue-router'
 import { useWallet } from '@/composables'
@@ -69,7 +69,8 @@ export default defineComponent({
     const router = useRouter()
     const { radix } = useWallet(router)
 
-    firstValueFrom(radix.ledger.tokenInfo(tokenBalance.value.tokenIdentifier)).then((t: Token) => {
+    firstValueFrom(radix.ledger.tokenInfo(tokenBalance.value.tokenIdentifier))
+    .then((t: any) => {
       token.value = t
     })
 

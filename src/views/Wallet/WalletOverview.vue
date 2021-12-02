@@ -114,7 +114,7 @@ const WalletOverview = defineComponent({
 
     const balanceSub = updateObservable.pipe(
       switchMap(() => radix.activeAccount),
-      mergeMap((account) => forkJoin([
+      mergeMap((account: any) => forkJoin([
         radix.ledger.tokenBalancesForAddress(account.address),
         radix.ledger.stakesForAddress(account.address),
         radix.ledger.unstakesForAddress(account.address)

@@ -195,7 +195,7 @@ const WalletConfirmTransactionModal = defineComponent({
 
     const balanceSub = updateObservable.pipe(
       switchMap(() => radix.activeAccount),
-      mergeMap((account) =>
+      mergeMap((account: any) =>
         radix.ledger.tokenBalancesForAddress(account.address)
       )
     ).subscribe((balances: any) => {

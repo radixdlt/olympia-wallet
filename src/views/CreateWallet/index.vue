@@ -119,7 +119,7 @@ const CreateWallet = defineComponent({
     if (!network) {
       radix.connect('https://mainnet.radixdlt.com').then(() => {
         return firstValueFrom(radix.ledger.networkId())
-      }).then((net) => {
+      }).then((net: any) => {
         setNetwork(net)
         network = net
       }).catch(() => {
