@@ -19,7 +19,10 @@ import {
   fetchSelectedNode,
   persistCustomNodeURL,
   fetchCustomNodeURLs,
-  forgetCustomNodeURL
+  forgetCustomNodeURL,
+  hideTokenType,
+  getHiddenTokens,
+  unhideTokenType,
 } from './actions/electron/data-store'
 import { getIsUpdateAvailable } from './actions/electron/general'
 import { sendAPDU } from './actions/electron/hardware-wallet'
@@ -129,6 +132,9 @@ ipcMain.handle('fetch-selected-node', fetchSelectedNode)
 ipcMain.handle('persist-custom-node-url', persistCustomNodeURL)
 ipcMain.handle('fetch-custom-node-urls', fetchCustomNodeURLs)
 ipcMain.handle('forget-custom-node-url', forgetCustomNodeURL)
+ipcMain.handle('hide-token-type', hideTokenType)
+ipcMain.handle('unhide-token-type', unhideTokenType)
+ipcMain.handle('get-hidden-tokens', getHiddenTokens)
 ipcMain.handle('refresh-app', () => { win.reload() })
 ipcMain.handle('get-version-number', () => pkg.version)
 ipcMain.handle('download-latest-version', downloadUpdate)

@@ -2,6 +2,9 @@ import { createI18n } from 'vue-i18n'
 
 const messages = {
   en: {
+    general: {
+      cancel: 'Cancel'
+    },
     validations: {
       default: '%{field} is invalid',
       required: '%{field} is required',
@@ -100,7 +103,10 @@ const messages = {
       version: 'Version',
       network: 'Network',
       update: 'Update Available',
-      disconnected: 'Disconnected'
+      disconnected: 'Disconnected',
+      hideBalanceModalTitle: 'Hide Balance',
+      hideBalanceModalContent: 'Are you sure you want to hide this %{tokenName} balance? This balance can be unhidden in settings.',
+      hideBalanceModalSubmit: 'Hide Balance'
     },
     history: {
       historyHeading: 'History',
@@ -218,7 +224,13 @@ const messages = {
       networkChangeCopy: 'Please note that you will need to re-enter your password in order to switch networks. Do you wish to proceed?',
       mainnetUnavailableOne: 'Cannot currently connect to mainnet. Please check the ',
       mainnetUnavailableLink: 'status page',
-      mainnetUnavailableTwo: ' for more information.'
+      mainnetUnavailableTwo: ' for more information.',
+      tokensDescription: 'You have hidden the tokens below from display in your balances. You may choose to unhide them if you wish to see them listed in your balances again.',
+      emptyTokensDescription: 'You have not hidden any tokens from display in your balances. Once a token is hidden, you may choose to unhide it below if you wish to see them listed in your balances again.',
+      unhideTokenBalanceModalTitle: 'Unhide Balance',
+      unhideTokenButton: 'unhide token',
+      confirmUnhideToken: 'Are you sure you want to unhide %{tokenName} balance?',
+      unhideBalanceSubmit: 'Unhide Balance'
     },
     errors: {
       hardwareMismatchTitle: 'Hardware Wallet Account Mismatch',
