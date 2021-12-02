@@ -1,5 +1,5 @@
 <template>
-  <div data-ci="create-wallet-view" class="flex flex-row min-h-screen">
+  <div data-ci="create-wallet-view" class="flex flex-row h-screen">
     <div class="w-72 mr-5 py-8 px-5 text-white leading-snug">
       <router-link to="/" class="flex">
         <img alt="Radix DLT Logo" src="../../assets/logo.svg" class="w-30 mb-12 ">
@@ -52,7 +52,7 @@
       </router-link>
     </div>
 
-    <div class="bg-white pt-headerHeight pb-8 px-11 flex-1">
+    <div class="bg-white pt-headerHeight pb-8 px-11 flex-1 overflow-y-scroll">
       <restore-wallet-enter-mnemonic
         v-if="step == 0"
         @confirm="captureMnemonic"

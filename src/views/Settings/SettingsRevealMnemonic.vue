@@ -7,19 +7,22 @@
       {{ $t('settings.mnemonicDisclaimerThree') }}
     </div>
 
-    <div class="flex flex-row flex-wrap relative">
-      <div
+    <div
+      class="grid gap-y-12 relative mb-12"
+      :class="{
+        'grid-cols-4': mnemonicStrength === StrengthT.WORD_COUNT_12,
+        'grid-cols-6': mnemonicStrength != StrengthT.WORD_COUNT_12
+      }"
+    >
+      <mnemonic-display
         v-for="(word, i) in displayMnemonic"
         :key="i"
-        class="w-1/4 mb-8"
+        :word="word"
+        :index="i"
+        :obfuscate="!this.mnemonic"
+        :isWide="mnemonicStrength === StrengthT.WORD_COUNT_12"
       >
-        <mnemonic-display
-          :word="word"
-          :index="i"
-          :obfuscate="!this.mnemonic"
-        >
-        </mnemonic-display>
-      </div>
+      </mnemonic-display>
 
       <ButtonSubmit
         v-if="mnemonicNotRequested"
@@ -45,7 +48,7 @@
           />
           <FormErrorMessage name="password" />
           <ButtonSubmit
-            :disabled="disableSubmit"
+            :disabled="submitDisabled"
             class="mb-2 mt-9"
           >
             {{ $t('settings.accessMnemonicButton') }}
@@ -64,8 +67,8 @@
 </template>
 
 <script lang="ts">
-import { MnemomicT, Keystore, KeystoreT } from '@radixdlt/application'
-import { defineComponent, PropType } from 'vue'
+import { MnemomicT, Keystore, KeystoreT, StrengthT } from '@radixdlt/application'
+import { defineComponent, PropType, ref, Ref, ComputedRef, computed } from 'vue'
 import { useForm } from 'vee-validate'
 import MnemonicDisplay from '@/components/MnemonicDisplay.vue'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
@@ -86,34 +89,47 @@ const SettingsRevealMnemonic = defineComponent({
     FormErrorMessage
   },
 
-  setup () {
+  setup (props) {
     const { errors, meta, values, setErrors, resetForm } = useForm<RevealMnemonicForm>()
+    const enteringPassword: Ref<boolean> = ref(false)
 
-    return { errors, meta, values, setErrors, resetForm }
+    const displayMnemonic: ComputedRef<string[]> = computed(() =>
+      props.mnemonic ? props.mnemonic.words : Array(12).fill('noop')
+    )
+
+    const mnemonicStrength: ComputedRef<StrengthT> = computed(() =>
+      props.mnemonic ? props.mnemonic.strength : StrengthT.WORD_COUNT_12
+    )
+
+    const mnemonicNotRequested: ComputedRef<boolean> = computed(() =>
+      !props.mnemonic && !enteringPassword.value
+    )
+
+    const submitDisabled: ComputedRef<boolean> = computed(() =>
+      meta.value.dirty ? !meta.value.valid : true
+    )
+
+    return {
+      displayMnemonic,
+      enteringPassword,
+      errors,
+      meta,
+      mnemonicNotRequested,
+      mnemonicStrength,
+      submitDisabled,
+      StrengthT,
+      values,
+
+      // methods
+      setErrors,
+      resetForm
+    }
   },
 
   props: {
     mnemonic: {
       type: Object as PropType<MnemomicT> | null,
       required: false
-    }
-  },
-
-  data () {
-    return {
-      enteringPassword: false
-    }
-  },
-
-  computed: {
-    displayMnemonic (): string[] {
-      return this.mnemonic ? this.mnemonic.words : Array(12).fill('noop')
-    },
-    mnemonicNotRequested (): boolean {
-      return !this.mnemonic && !this.enteringPassword
-    },
-    disableSubmit (): boolean {
-      return this.meta.dirty ? !this.meta.valid : true
     }
   },
 
