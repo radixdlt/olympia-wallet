@@ -119,7 +119,7 @@ const WalletOverview = defineComponent({
         radix.ledger.stakesForAddress(account.address),
         radix.ledger.unstakesForAddress(account.address)
       ]))
-    ).subscribe(([balances, stakes, unstakes]: [any, any, any]) => {
+    ).subscribe(([balances, stakes, unstakes]: any) => {
       tokenBalances.value = balances
       activeStakes.value = stakes
       activeUnstakes.value = unstakes
