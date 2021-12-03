@@ -16,6 +16,15 @@ export const saveAccountName = (event: IpcMainInvokeEvent, data: string) => {
   return store.set(`account.${accountAddress}`, prettyName)
 }
 
+export const getLatestAccountAddress = (event: IpcMainInvokeEvent, network: string): string => {
+  return store.get(`wallets.${network}.latestAddress`, '') as string
+}
+
+export const saveLatestAccountAddress = (event: IpcMainInvokeEvent, data: string) => {
+  const { address, network } = JSON.parse(data)
+  return store.set(`wallets.${network}.latestAddress`, address)
+}
+
 export const getAccountNames = (): AccountName[] => {
   const accounts = store.get('account', {}) as { [key: string]: string; }
   const asAccounts: AccountName[] = []

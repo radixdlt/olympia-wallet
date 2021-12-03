@@ -30,7 +30,9 @@ import {
   saveAccountName,
   saveDerivedAccountsIndex,
   saveHardwareWalletAddress,
+  saveLatestAccountAddress,
   getAccountNames,
+  getLatestAccountAddress,
   persistNodeSelection,
   fetchSelectedNodeFromStore
 } from '@/actions/vue/data-store'
@@ -71,6 +73,7 @@ const switching = ref(false)
 const updateAvailable: Ref<boolean> = ref(false)
 const versionNumber: Ref<string> = ref('')
 const wallet: Ref<WalletT | null> = ref(null)
+const latestAddress: Ref<string> = ref('')
 
 const setWallet = (newWallet: WalletT) => {
   wallet.value = newWallet
@@ -198,7 +201,19 @@ const initWallet = (): void => {
 
   subs.add(reloadTrigger.asObservable()
     .pipe(switchMap(() => radix.accounts))
-    .subscribe((accountsRes: AccountsT) => { accounts.value = accountsRes; allAccounts.value = accountsRes.all }))
+    .subscribe((accountsRes: AccountsT) => {
+      accounts.value = accountsRes
+      allAccounts.value = accountsRes.all
+
+      const latestIsActive = activeAccount.value
+        ? activeAccount.value.address.toString() === latestAddress.value : false
+
+      const foundLatest = accountsRes.all.find((a: AccountT) =>
+        latestAddress.value === a.address.toString()
+      )
+
+      if (foundLatest && !latestIsActive) switchAccount(foundLatest)
+    }))
 
   subs.add(reloadTrigger.asObservable()
     .pipe(switchMap(() => radix.activeAddress))
@@ -211,6 +226,10 @@ const initWallet = (): void => {
       fetchAccountsForNetwork(network)
       if (network === 'MAINNET') explorerUrlBase.value = 'https://explorer.radixdlt.com/'
       else explorerUrlBase.value = 'https://stokenet-explorer.radixdlt.com/'
+
+      getLatestAccountAddress(network).then((acctAddress) => {
+        latestAddress.value = acctAddress
+      })
     })
 
   subs.add(networkObserver)
@@ -234,11 +253,16 @@ const addAccount = () => {
 }
 
 const switchAccount = (account: AccountT) => {
-  radix.switchAccount({ toAccount: account })
-  if (activeNetwork.value) {
-    fetchAccountsForNetwork(activeNetwork.value)
+  const newAddress = account.address.toString()
+  if (newAddress !== activeAddress.value?.toString()) {
+    radix.switchAccount({ toAccount: account })
+    if (activeNetwork.value) {
+      fetchAccountsForNetwork(activeNetwork.value)
+      saveLatestAccountAddress(newAddress, activeNetwork.value)
+    }
+    latestAddress.value = newAddress
+    reloadSubscriptions()
   }
-  reloadSubscriptions()
 }
 
 const accountNameFor = (accountAddress: AccountAddressT): string => {
