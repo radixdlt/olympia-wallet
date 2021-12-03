@@ -312,6 +312,7 @@ const hashNodeUrl = async (url:string, signingKeychain: SigningKeychainT): Promi
 }
 
 const persistNodeUrl = async (url: string): Promise<void> => {
+  console.log(url, 'node url')
   if (!signingKeychain.value) return
   const hash = await hashNodeUrl(url, signingKeychain.value)
   const saveToStore = await persistNodeSelection(url, hash)
@@ -455,6 +456,7 @@ export default function useWallet (router: Router): useWalletInterface {
     },
 
     setNetwork (network: Network) {
+      console.log(network)
       activeNetwork.value = network
     },
 

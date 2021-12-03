@@ -280,7 +280,8 @@ export default function useTransactions (radix: RadixT, router: Router, activeAc
         next: (txnID: TransactionIdentifierT) => {
           pendingTransactions.value = pendingTransactions.value.filter((pendingTxn: TransactionStateSuccess) => {
             const transactionState = pendingTxn.transactionState as unknown as FinalizedTransaction
-            return txnID.toString() !== transactionState.txID.toString()
+            return false
+            // return txnID.toString() !== transactionState.txID.toString()
           })
           shouldShowConfirmation.value = false
           router.push('/wallet/history')
@@ -361,7 +362,7 @@ export default function useTransactions (radix: RadixT, router: Router, activeAc
   const unstakeTokens = (unstakeTokensInput: UnstakeTokensInput) => {
     let pollTXStatusTrigger: Observable<unknown>
     cleanupInputs()
-    stakeInput.value = unstakeTokensInput
+    // stakeInput.value = unstakeTokensInput
     confirmationMode.value = 'unstake'
 
     const buildTransferTokens = (): UnstakeOptions => ({
