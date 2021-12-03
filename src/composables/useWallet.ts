@@ -209,7 +209,7 @@ const initWallet = (): void => {
     .subscribe((network: Network) => {
       activeNetwork.value = network
       fetchAccountsForNetwork(network)
-      if (network === 'MAINNET') explorerUrlBase.value = 'https://explorer.radixdlt.com/'
+      if (network === Network.MAINNET) explorerUrlBase.value = 'https://explorer.radixdlt.com/'
       else explorerUrlBase.value = 'https://stokenet-explorer.radixdlt.com/'
     })
 
@@ -465,9 +465,9 @@ export default function useWallet (router: Router): useWalletInterface {
     networkPreamble: computed(() => {
       switch (activeNetwork.value) {
         case Network.STOKENET:
-          return HRP.STOKENET.account
-        case HRP.MAINNET.account:
-          return HRP.MAINNET.account
+          return HRP[Network.STOKENET].account
+        case Network.MAINNET:
+          return HRP[Network.MAINNET].account
         default:
           return ''
       }
