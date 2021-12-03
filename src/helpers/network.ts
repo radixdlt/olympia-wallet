@@ -8,17 +8,17 @@ export type ChosenNetworkT = {
 
 export const network = (networkName: Network): ChosenNetworkT => {
   let response: ChosenNetworkT
-  if (networkName === 'STOKENET') {
+  if (networkName === 'stokenet') {
     response = {
       network: Network.STOKENET,
       networkURL: 'https://stokenet.radixdlt.com',
-      preamble: HRP.STOKENET.account
+      preamble: HRP[Network.STOKENET].account
     }
-  } else if (networkName === 'MAINNET') {
+  } else if (networkName === 'mainnet') {
     response = {
       network: Network.MAINNET,
       networkURL: 'https://mainnet.radixdlt.com',
-      preamble: HRP.MAINNET.account
+      preamble: HRP[Network.MAINNET].account
     }
   } else {
     throw new Error(`Invalid Network Name ${networkName} Provided`)
@@ -30,12 +30,12 @@ export const defaultNetworks: ChosenNetworkT[] = [
   {
     network: Network.MAINNET,
     networkURL: 'https://mainnet.radixdlt.com',
-    preamble: HRP.MAINNET.account
+    preamble: HRP[Network.MAINNET].account
   },
   {
     network: Network.STOKENET,
     networkURL: 'https://stokenet.radixdlt.com',
-    preamble: HRP.STOKENET.account
+    preamble: HRP[Network.STOKENET].account
   }
 ]
 
