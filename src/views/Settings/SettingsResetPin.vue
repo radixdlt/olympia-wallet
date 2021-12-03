@@ -8,18 +8,18 @@
       <br />
       {{ $t('settings.resetPinDisclaimerTwo') }}
     </div>
-    <FormField
-      type="password"
-      name="password"
-      class="w-96 mb-2"
-      :placeholder="$t('settings.passwordRequiredLabel')"
-      rules="required"
-      data-ci="create-wallet-passcode-input"
-      :validateOnInput="true"
-      @blur="activePin = 1"
-      @click="activePin = 0"
-    />
-    <FormErrorMessage name="password" />
+    <div class="w-96 mb-2">
+      <PasswordField
+        name="password"
+        :placeholder="$t('settings.passwordRequiredLabel')"
+        rules="required"
+        data-ci="create-wallet-passcode-input"
+        :validateOnInput="true"
+        @blur="activePin = 1"
+        @click="activePin = 0"
+      />
+      <FormErrorMessage name="password" />
+    </div>
 
     <div class="text-rGrayDark mt-12 mb-2">{{ $t('settings.pinLabel') }}</div>
     <pin-input
@@ -63,7 +63,7 @@ import { useForm } from 'vee-validate'
 import PinInput from '@/components/PinInput.vue'
 import { storePin, touchKeystore } from '@/actions/vue/create-wallet'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
-import FormField from '@/components/FormField.vue'
+import PasswordField from '@/components/PasswordField.vue'
 import { Result } from 'neverthrow'
 import FormErrorMessage from '@/components/FormErrorMessage.vue'
 import { Keystore, KeystoreT } from '@radixdlt/application'
@@ -77,8 +77,8 @@ interface ResetPinForm {
 const SettingsResetPin = defineComponent({
   components: {
     ButtonSubmit,
+    PasswordField,
     PinInput,
-    FormField,
     FormErrorMessage
   },
 
