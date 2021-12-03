@@ -31,11 +31,11 @@ export default function useStaking (radix: RadixT): useStakingInterface {
     loadingUnstakes.value = false
   })
   const validatorSub = radix.ledger.networkId()
-  .pipe(mergeMap((network) => radix.ledger.validators({ network })))
-  .subscribe((validatorsRes: any) => {
-    validators.value = validatorsRes
-    loadingValidators.value = false
-  })
+    .pipe(mergeMap((network) => radix.ledger.validators({ network })))
+    .subscribe((validatorsRes: any) => {
+      validators.value = validatorsRes
+      loadingValidators.value = false
+    })
 
   return {
     activeForm: computed(() => activeForm.value),

@@ -9,7 +9,7 @@ interface useNativeTokenInterface {
 
 export default function useNativeToken (radix: RadixT): useNativeTokenInterface {
   const nativeToken: Ref<Token | null> = ref(null)
-  const nativeTokenSub = 
+  const nativeTokenSub =
   radix.ledger.networkId()
     .pipe(mergeMap((networkId: string) => radix.ledger.nativeToken(networkId)))
     .subscribe((nativeTokenRes) => {

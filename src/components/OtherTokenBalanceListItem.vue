@@ -70,9 +70,9 @@ export default defineComponent({
     const { radix } = useWallet(router)
 
     firstValueFrom(radix.ledger.tokenInfo(tokenBalance.value.tokenIdentifier))
-    .then((t: any) => {
-      token.value = t
-    })
+      .then((t: any) => {
+        token.value = t
+      })
 
     const rriUrl: ComputedRef<string> = computed(() =>
       `${props.explorerUrlBase}/#/tokens/${props.tokenBalance.tokenIdentifier.toString()}`
