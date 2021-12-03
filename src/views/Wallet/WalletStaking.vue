@@ -221,7 +221,7 @@ const WalletStaking = defineComponent({
 
     const validatorsTopOneHundred: ComputedRef<Array<Position>> = computed(() => {
       if (validators.value && validators.value.validators) {
-        const vals: Validator[] = validators.value.validators
+        const vals: Validator[] = validators.value.validators.slice(0, 100)
         return sortedPositions.value.filter((pos: Position) => {
           const withinTopOneHundredIndex = vals.findIndex((validator: Validator) => pos.address.toString() === validator.address.toString())
           return withinTopOneHundredIndex !== -1
