@@ -8,13 +8,13 @@ export type ChosenNetworkT = {
 
 export const network = (networkName: Network): ChosenNetworkT => {
   let response: ChosenNetworkT
-  if (networkName === 'stokenet') {
+  if (networkName === Network.STOKENET) {
     response = {
       network: Network.STOKENET,
       networkURL: 'https://stokenet.radixdlt.com',
       preamble: HRP[Network.STOKENET].account
     }
-  } else if (networkName === 'mainnet') {
+  } else if (networkName === Network.MAINNET) {
     response = {
       network: Network.MAINNET,
       networkURL: 'https://mainnet.radixdlt.com',
