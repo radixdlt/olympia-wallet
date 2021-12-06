@@ -15,7 +15,9 @@
 
       <p>On the next screen you will be asked to provide a new name for the first account you used previously. After this, please use the "Add Account" feature to re-add, name, and access your other previous accounts. They will be re-added in exactly the same order as before, and will hold any tokens you held there previously.</p>
       <div>
-        <AppButtonSubmit @click="handleClose">I Understand</AppButtonSubmit>
+        <ButtonSubmit class="w-96" :disabled="disableSubmit">
+          I Understand
+        </ButtonSubmit>
       </div>
     </template>
   </AppModal>
@@ -24,11 +26,11 @@
 <script lang="ts">
 import { defineComponent, Ref, ref } from 'vue'
 import AppModal from '@/components/AppModal.vue'
-import AppButtonSubmit from '@/components/AppButtonCancel.vue'
+import ButtonSubmit from '@/components/ButtonSubmit.vue'
 
 export default defineComponent({
   components: {
-    AppButtonSubmit,
+    ButtonSubmit,
     AppModal
   },
 
