@@ -71,6 +71,7 @@
         @enteredPin="handleEnterPin"
       >
       </create-wallet-create-pin>
+      <multiple-accounts-disclaimer-modal/>
     </div>
   </div>
 </template>
@@ -83,6 +84,7 @@ import { initWallet, storePin } from '@/actions/vue/create-wallet'
 import RestoreWalletEnterMnemonic from './RestoreWalletEnterMnemonic.vue'
 import CreateWalletCreatePasscode from '@/views/CreateWallet/CreateWalletCreatePasscode.vue'
 import CreateWalletCreatePin from '@/views/CreateWallet/CreateWalletCreatePin.vue'
+import MultipleAccountsDisclaimerModal from '@/components/MultipleAccountsDisclaimerModal.vue'
 import { ref as rxRef } from '@nopr3d/vue-next-rx'
 import { saveDerivedAccountsIndex } from '@/actions/vue/data-store'
 import { useSidebar, useWallet } from '@/composables'
@@ -93,6 +95,7 @@ const RestoreWallet = defineComponent({
   components: {
     CreateWalletCreatePasscode,
     CreateWalletCreatePin,
+    MultipleAccountsDisclaimerModal,
     RestoreWalletEnterMnemonic,
     WizardHeading
   },
