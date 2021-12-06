@@ -1267,6 +1267,14 @@
     "@json-schema-spec/json-pointer" "^0.1.2"
     isomorphic-fetch "^3.0.0"
 
+"@json-schema-tools/reference-resolver@^1.2.1":
+  version "1.2.3"
+  resolved "https://registry.yarnpkg.com/@json-schema-tools/reference-resolver/-/reference-resolver-1.2.3.tgz#01feb01833cf94deba87923c0c3980a8e2d449a3"
+  integrity sha512-Bc7TjkuSy9PnQDeIenA3aU1cgh2/Wh042sxTfEaav38+Jf+2+U2kMBmMKS4nZLCR+L0fh71V3IwE2FMJleQCGw==
+  dependencies:
+    "@json-schema-spec/json-pointer" "^0.1.2"
+    isomorphic-fetch "^3.0.0"
+
 "@json-schema-tools/traverse@^1.7.5":
   version "1.7.7"
   resolved "https://registry.yarnpkg.com/@json-schema-tools/traverse/-/traverse-1.7.7.tgz#1b5ec2854fec23a5ac3ff04d459c2ac11bcf2df2"
@@ -1444,6 +1452,16 @@
     mkdirp "^1.0.4"
     rimraf "^3.0.2"
 
+"@open-rpc/client-js@1.6.2":
+  version "1.6.2"
+  resolved "https://registry.yarnpkg.com/@open-rpc/client-js/-/client-js-1.6.2.tgz#6f63053af16f577c574279702bbee8152296d11f"
+  integrity sha512-GT6mFF7tH/ANaKuRz6tULakZpW0lgaogwl4VZoLm1yHOZnHKUCwe+I6QRRebwUyAYH4rD6weoihoIH2j4U+HLg==
+  dependencies:
+    isomorphic-fetch "^3.0.0"
+    isomorphic-ws "^4.0.1"
+    strict-event-emitter-types "^2.0.0"
+    ws "^7.0.0"
+
 "@open-rpc/examples@^1.6.1":
   version "1.6.1"
   resolved "https://registry.yarnpkg.com/@open-rpc/examples/-/examples-1.6.1.tgz#c48b8976be21c839711f1f0ef49ab1aa2dd9bc44"
@@ -1494,15 +1512,15 @@
     node-ipc "^9.1.1"
     ws "^7.3.1"
 
-"@radixdlt/account@^3.0.3":
-  version "3.0.3"
-  resolved "https://registry.yarnpkg.com/@radixdlt/account/-/account-3.0.3.tgz#9b0d876daa7dee60826745a7529e5cd8140b4147"
-  integrity sha512-5bkAGvNfF2VoZHk8ho4xrWJBNTugn+sHTqVmpD5U6oVQq1Dk9BmiwYv+4Gh7+WmPZcdkRbz+DsVdUFi5XGJ5xQ==
+"@radixdlt/account@^3.0.5":
+  version "3.0.5"
+  resolved "https://registry.yarnpkg.com/@radixdlt/account/-/account-3.0.5.tgz#fc84ac42910c17fee39d21f592fc659c24842f99"
+  integrity sha512-F3aUb9Dc0v/cgswfyRyilUb/B/jsrHFD+u/Iw4k4xQS2+v7fr+FuCgApOaNtLfjC01eAX3ewfzR45aDqKmUhyw==
   dependencies:
-    "@radixdlt/crypto" "^2.1.7"
+    "@radixdlt/crypto" "^2.1.9"
     "@radixdlt/data-formats" "1.0.30"
-    "@radixdlt/hardware-wallet" "^2.1.10"
-    "@radixdlt/primitives" "^3.0.3"
+    "@radixdlt/hardware-wallet" "^2.1.12"
+    "@radixdlt/primitives" "^3.0.5"
     "@radixdlt/uint256" "1.1.0"
     "@radixdlt/util" "1.0.29"
     bech32 "^2.0.0"
@@ -1513,10 +1531,10 @@
     prelude-ts "^1.0.2"
     rxjs "7.0.0"
 
-"@radixdlt/application@^4.0.1":
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/@radixdlt/application/-/application-4.0.1.tgz#2bbba43dc4b6aae4823232ce9513e213e5fa62c9"
-  integrity sha512-uKVBUh71pkYkftcmXabG6rDJGu1JhSLOCaxWalR7vwXjslcBawRjapwOqHoSJKXcpvt2UBJWQ4Ka92p8NtSIVA==
+"@radixdlt/application@^4.0.6":
+  version "4.0.6"
+  resolved "https://registry.yarnpkg.com/@radixdlt/application/-/application-4.0.6.tgz#4539fc212395b62b0aa3da33ff0a4c92a777911b"
+  integrity sha512-MEf1naBzTqeb2xY7s+SPcoA+92l91ZyoUXh/1rYhIZyuR78S76NfjkeaIFwFl7IQuFN5sW06mg/s5dsLUIPAXA==
   dependencies:
     "@open-rpc/mock-server" "1.7.2"
     "@open-rpc/schema-utils-js" "1.14.3"
@@ -1527,13 +1545,13 @@
     ramda "^0.27.1"
     rxjs "7.0.0"
 
-"@radixdlt/crypto@^2.1.7":
-  version "2.1.7"
-  resolved "https://registry.yarnpkg.com/@radixdlt/crypto/-/crypto-2.1.7.tgz#06ae0732912175bc208401dce312c7cfbb16e7c6"
-  integrity sha512-MzVe1i+MkA3gEysYIRLNV8vBXCapcW3pNsWzXfUBgMV6dLlgNvGuqkY734zuG2KDb+K5Cl8m6j57NC3zGrAjIA==
+"@radixdlt/crypto@^2.1.9":
+  version "2.1.9"
+  resolved "https://registry.yarnpkg.com/@radixdlt/crypto/-/crypto-2.1.9.tgz#0bea2c44aa66edea976ac856d3c62ece98f185d7"
+  integrity sha512-6KWY/NeBqHpmasRDTgZ+WJV+Bcl+iv0ucWIgkvuZCJeY0O6PO5l2WyBfeHPP072mEadYTvP+pWLqbOHitZwADQ==
   dependencies:
     "@radixdlt/data-formats" "1.0.30"
-    "@radixdlt/primitives" "^3.0.3"
+    "@radixdlt/primitives" "^3.0.5"
     "@radixdlt/uint256" "1.1.0"
     "@radixdlt/util" "1.0.29"
     base-x "^3.0.8"
@@ -1552,39 +1570,60 @@
     neverthrow "^4.0.1"
     ramda "^0.27.1"
 
-"@radixdlt/hardware-ledger@^2.1.26":
-  version "2.1.26"
-  resolved "https://registry.yarnpkg.com/@radixdlt/hardware-ledger/-/hardware-ledger-2.1.26.tgz#d14c9aeb87fde2505a828991354681b5d813dae8"
-  integrity sha512-Zk9xRCeioSxGyoYfdoUHUx3yytx7I47wmnhUbdx0H48CrWmlH0NYhOSi8dXSaWQ0XxlUE/MXJrnmyib/VimbqA==
+"@radixdlt/hardware-ledger@^2.1.28":
+  version "2.1.28"
+  resolved "https://registry.yarnpkg.com/@radixdlt/hardware-ledger/-/hardware-ledger-2.1.28.tgz#f105032ed3434f8c6e7a05366fabe5345adb48c9"
+  integrity sha512-ouZkZhQQ6TOQ4T+fnnuAMkz4q+/8W+tY4yhiSwPgQF99C5b+nSutoq3KBng3kLlDMwClynhJCN5p+QgBF1/Xag==
   dependencies:
     "@ledgerhq/hw-transport-node-hid" "^6.2.0"
-    "@radixdlt/crypto" "^2.1.7"
-    "@radixdlt/hardware-wallet" "^2.1.10"
-    "@radixdlt/primitives" "^3.0.3"
-    "@radixdlt/tx-parser" "^2.1.12"
+    "@radixdlt/crypto" "^2.1.9"
+    "@radixdlt/hardware-wallet" "^2.1.12"
+    "@radixdlt/primitives" "^3.0.5"
+    "@radixdlt/tx-parser" "^2.1.14"
     "@radixdlt/util" "1.0.29"
     neverthrow "4.0.1"
     prelude-ts "^1.0.2"
     rxjs "7.0.0"
     uuid "^8.3.2"
 
-"@radixdlt/hardware-wallet@^2.1.10":
-  version "2.1.10"
-  resolved "https://registry.yarnpkg.com/@radixdlt/hardware-wallet/-/hardware-wallet-2.1.10.tgz#b374bc29fef4bcae89976360fdea27b727d878d6"
-  integrity sha512-uSSQA3jcI6L/CjlwI4JgK1uELwhOaT8F3si48tZaYsHucyI7oB4+SigDcKei0LSexA9U2VU+ofWknwtfwLRnHA==
+"@radixdlt/hardware-wallet@^2.1.12":
+  version "2.1.12"
+  resolved "https://registry.yarnpkg.com/@radixdlt/hardware-wallet/-/hardware-wallet-2.1.12.tgz#de53ff4071e33bb05aa0d5b059dd5685219b4f0b"
+  integrity sha512-FEe1vqoeVFXBfuQSvaVDPW4QVl1htCYovErwTuxF7jB+liZTuM9OEDntVvs+52sU8y//ka1W4KxfDuS7L6IHIg==
   dependencies:
-    "@radixdlt/crypto" "^2.1.7"
-    "@radixdlt/primitives" "^3.0.3"
+    "@radixdlt/crypto" "^2.1.9"
+    "@radixdlt/primitives" "^3.0.5"
     "@radixdlt/util" "1.0.29"
     neverthrow "4.0.1"
     prelude-ts "^1.0.2"
     rxjs "7.0.0"
     uuid "^8.3.2"
 
-"@radixdlt/primitives@^3.0.3":
-  version "3.0.3"
-  resolved "https://registry.yarnpkg.com/@radixdlt/primitives/-/primitives-3.0.3.tgz#473ff28d302c465bca2a91e71ed3a1f868206b24"
-  integrity sha512-r8tOoxDoB2z0K2pGocWaWpEOYoi3itComVEeNHZJf7ilBODcSlJmVECadFam/AbEg1mpqRJk1wRBDs9CqL/UPQ==
+"@radixdlt/networking@^2.1.9":
+  version "2.1.9"
+  resolved "https://registry.yarnpkg.com/@radixdlt/networking/-/networking-2.1.9.tgz#d654c9cbc3767bc619a5c06570a23f72534d4db0"
+  integrity sha512-VgJcW+fNytsVNPff95x9Ws3RbZMRX5aZ8TDfLdprBS7Ux2Wjjeh7b2OPgV3UYUA+C85YgLSy/cObx0jNQsprGg==
+  dependencies:
+    "@open-rpc/client-js" "1.6.2"
+    "@open-rpc/schema-utils-js" "1.14.3"
+    "@radixdlt/open-rpc-spec" "^1.0.19"
+    "@radixdlt/util" "1.0.29"
+    "@types/uuid" "^8.3.0"
+    axios "^0.24.0"
+    isomorphic-fetch "^3.0.0"
+    neverthrow "^4.0.1"
+    open-rpc-utils "^1.1.1"
+    uuid "^8.3.2"
+
+"@radixdlt/open-rpc-spec@^1.0.19":
+  version "1.0.19"
+  resolved "https://registry.yarnpkg.com/@radixdlt/open-rpc-spec/-/open-rpc-spec-1.0.19.tgz#7392359e28a11f652c2501c25b3d4048cb68a0f9"
+  integrity sha512-pcrUTk66h6jDXpq5Ly6uHpktO/lW5lCzdC7YqwsGfXzdFOLcRC8eCC9Teh9k6zH1gvMRyqid9gLRTE7nP2/L8A==
+
+"@radixdlt/primitives@^3.0.5":
+  version "3.0.5"
+  resolved "https://registry.yarnpkg.com/@radixdlt/primitives/-/primitives-3.0.5.tgz#4364935335e8eb9d48bc79dc87b00e1eb8aeb7b5"
+  integrity sha512-jadgue2nctgsPVr3TzF5gOOxsjQ5uHIt0UZ+h2ZVk8252+StLTYh51Vnhm5gePgpE6OhHjSQLtJdMzw9GVdwvQ==
   dependencies:
     "@radixdlt/data-formats" "1.0.30"
     "@radixdlt/uint256" "1.1.0"
@@ -1593,14 +1632,14 @@
     long "^4.0.0"
     neverthrow "^4.0.1"
 
-"@radixdlt/tx-parser@^2.1.12":
-  version "2.1.12"
-  resolved "https://registry.yarnpkg.com/@radixdlt/tx-parser/-/tx-parser-2.1.12.tgz#338f156e2f8fac1993ab9d557d69d03408c09cff"
-  integrity sha512-FAqWeWQB01QuaHZ4sWrL2sUZsicIJywPOUUOcmdw1fheIr/TC3QAtEdpN0hgHwdH+l5bRtx2ly8WZq5yr7iaeg==
+"@radixdlt/tx-parser@^2.1.14":
+  version "2.1.14"
+  resolved "https://registry.yarnpkg.com/@radixdlt/tx-parser/-/tx-parser-2.1.14.tgz#086358deaec4323e06746b267a8505f93457206e"
+  integrity sha512-VwRIdzDdQmU+i/8pGq30uo6jELPVtVQfu+hcMZz0RQm9us/tpVZUZYBBBv4d6/alOthxrapG6qiimfU+VzDjKQ==
   dependencies:
-    "@radixdlt/account" "^3.0.3"
-    "@radixdlt/crypto" "^2.1.7"
-    "@radixdlt/primitives" "^3.0.3"
+    "@radixdlt/account" "^3.0.5"
+    "@radixdlt/crypto" "^2.1.9"
+    "@radixdlt/primitives" "^3.0.5"
     "@radixdlt/uint256" "1.1.0"
     "@radixdlt/util" "1.0.29"
     long "^4.0.0"
@@ -2038,6 +2077,11 @@
   integrity sha512-EGkrJD5Uy+Pg0NUR8uA4bJ5WMfljyad0G+784vLCNUkD+QwOJXUbBYExXfVGf7YtyzdQp3L/XMYcliB987kL5Q==
   dependencies:
     source-map "^0.6.1"
+
+"@types/uuid@^8.3.0":
+  version "8.3.3"
+  resolved "https://registry.yarnpkg.com/@types/uuid/-/uuid-8.3.3.tgz#c6a60686d953dbd1b1d45e66f4ecdbd5d471b4d0"
+  integrity sha512-0LbEEx1zxrYB3pgpd1M5lEhLcXjKJnYghvhTRgaBeUivLHMDM1TzF3IJ6hXU2+8uA4Xz+5BA63mtZo5DjVT8iA==
 
 "@types/verror@^1.10.3":
   version "1.10.4"
@@ -3343,6 +3387,13 @@ aws4@^1.8.0:
   version "1.11.0"
   resolved "https://registry.yarnpkg.com/aws4/-/aws4-1.11.0.tgz#d61f46d83b2519250e2784daf5b09479a8b41c59"
   integrity sha512-xh1Rl34h6Fi1DC2WWKfxUTVqRsNnr6LsKz2+hfwDxQJWmrx8+c7ylaqBMcHfl1U1r2dsifOvKX3LQuLNZ+XSvA==
+
+axios@^0.24.0:
+  version "0.24.0"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-0.24.0.tgz#804e6fa1e4b9c5288501dd9dff56a7a0940d20d6"
+  integrity sha512-Q6cWsys88HoPgAaFAVUb0WpPk0O8iTeisR9IMqy9G8AbO4NlpVknrnQS03zzF9PGAWgO3cgletO3VjV/P7VztA==
+  dependencies:
+    follow-redirects "^1.14.4"
 
 babel-code-frame@^6.22.0:
   version "6.26.0"
@@ -6878,6 +6929,11 @@ follow-redirects@^1.0.0:
   resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.13.3.tgz#e5598ad50174c1bc4e872301e82ac2cd97f90267"
   integrity sha512-DUgl6+HDzB0iEptNQEXLx/KhTmDb8tZUHSeLqpnjpknR70H0nC2t9N73BK6fN4hOvJ84pKlIQVQ4k5FFlBedKA==
 
+follow-redirects@^1.14.4:
+  version "1.14.5"
+  resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.14.5.tgz#f09a5848981d3c772b5392309778523f8d85c381"
+  integrity sha512-wtphSXy7d4/OR+MvIFbCVBDzZ5520qV8XfPklSN5QtxuMUJZ+b0Wnst1e1lCDocfzuCkHqj8k0FpZqO+UIaKNA==
+
 for-in@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/for-in/-/for-in-1.0.2.tgz#81068d295a8142ec0ac726c6e2200c30fb6d5e80"
@@ -8470,6 +8526,11 @@ isomorphic-fetch@^3.0.0:
   dependencies:
     node-fetch "^2.6.1"
     whatwg-fetch "^3.4.1"
+
+isomorphic-ws@^4.0.1:
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/isomorphic-ws/-/isomorphic-ws-4.0.1.tgz#55fd4cd6c5e6491e76dc125938dd863f5cd4f2dc"
+  integrity sha512-BhBvN2MBpWTaSHdWRb/bwdZJ1WaehQ2L1KngkCkfLUGF0mAWAT1sQUQacEmQ0jXkFw/czDXPNQSL5u2/Krsz1w==
 
 isstream@~0.1.2:
   version "0.1.2"
@@ -10105,6 +10166,11 @@ neverthrow@^4.0.1:
   resolved "https://registry.yarnpkg.com/neverthrow/-/neverthrow-4.2.1.tgz#c582dee4772528d15c9a170599c5382d366fd419"
   integrity sha512-faWQGNqVQrXOuG8K7E0PRzsfBHzfVqeDX9nwawKDseuH/qEGIH02Nrq03OJOs5eTFML03xeol3otzagPoHyEPA==
 
+neverthrow@^4.2.1:
+  version "4.3.1"
+  resolved "https://registry.yarnpkg.com/neverthrow/-/neverthrow-4.3.1.tgz#04c4c15e7f6fc45faad36885fa7a42b85f8f39ab"
+  integrity sha512-+vxjSaiDWjAj6kR6KKW0YDuV6O4UCNWGAO8m8ITjFKPWcTmU1GVnL+J5TAUTKpPnUAHCKDxXpOHVaERid223Ww==
+
 nice-try@^1.0.4:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/nice-try/-/nice-try-1.0.5.tgz#a3378a7696ce7d223e88fc9b764bd7ef1089e366"
@@ -10518,6 +10584,23 @@ ono@^4.0.11:
   integrity sha512-jQ31cORBFE6td25deYeD80wxKBMj+zBmHTrVxnc6CKhx8gho6ipmWM5zj/oeoqioZ99yqBls9Z/9Nss7J26G2g==
   dependencies:
     format-util "^1.0.3"
+
+open-rpc-utils@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/open-rpc-utils/-/open-rpc-utils-1.1.1.tgz#3ee32d3d45ac984db5ce3c3693556170e0c0b0ad"
+  integrity sha512-HyzUwv4gYwxtv6XVHctOKhQjCylRVk+9LLyQG1CgmRcjyUF/yoF/exawbNOEiHnvTG+pY8YxnR4C7LnKoISJmw==
+  dependencies:
+    "@json-schema-tools/dereferencer" "^1.4.0"
+    "@json-schema-tools/meta-schema" "^1.5.10"
+    "@json-schema-tools/reference-resolver" "^1.2.1"
+    "@open-rpc/meta-schema" "^1.14.0"
+    ajv "^6.10.0"
+    detect-node "^2.0.4"
+    fast-safe-stringify "^2.0.7"
+    fs-extra "^9.0.0"
+    is-url "^1.2.4"
+    isomorphic-fetch "^3.0.0"
+    neverthrow "^4.2.1"
 
 open@^6.3.0:
   version "6.4.0"
@@ -13004,6 +13087,11 @@ stream-shift@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/stream-shift/-/stream-shift-1.0.1.tgz#d7088281559ab2778424279b0877da3c392d5a3d"
   integrity sha512-AiisoFqQ0vbGcZgQPY1cdP2I76glaVA/RauYR4G4thNFgkTqr90yXTo4LYX60Jl+sIlPNHHdGSwo01AvbKUSVQ==
+
+strict-event-emitter-types@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/strict-event-emitter-types/-/strict-event-emitter-types-2.0.0.tgz#05e15549cb4da1694478a53543e4e2f4abcf277f"
+  integrity sha512-Nk/brWYpD85WlOgzw5h173aci0Teyv8YdIAEtV+N88nDB0dLlazZyJMIsN6eo1/AR61l+p6CJTG1JIyFaoNEEA==
 
 strict-uri-encode@^1.0.0:
   version "1.1.0"
