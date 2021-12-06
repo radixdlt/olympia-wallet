@@ -5,7 +5,7 @@ const package = require('./package.json')
 const builderReleaseOptions = package.latest ? ['github'] : {
   provider: 'github',
   private: false,
-  releaseType: 'release'
+  releaseType: 'draft'
 }
 
 module.exports = {
