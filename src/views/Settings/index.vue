@@ -6,7 +6,7 @@
         <tabs-tab :isActive="activeTab === 'pin'" @click="() => handleClickTab('pin')" :isDisabled="!connected">Change PIN</tabs-tab>
         <tabs-tab :isActive="activeTab === 'mnemonic'" @click="() => handleClickTab('mnemonic')" :isDisabled="!connected">Reveal Seed Phrase</tabs-tab>
         <tabs-tab :isActive="activeTab === 'tokens'" @click="() => handleClickTab('tokens')">Balances</tabs-tab>
-        <tabs-tab :isActive="activeTab === 'nodes'" @click="() => handleClickTab('nodes')">Choose Node/Network</tabs-tab>
+        <tabs-tab :isActive="activeTab === 'nodes'" @click="() => handleClickTab('nodes')">Choose Gateway</tabs-tab>
       </div>
       <tabs-content :leftTabIsActive="activeTab === 'password'">
         <settings-reset-password

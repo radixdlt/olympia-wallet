@@ -138,7 +138,7 @@ export default defineComponent({
           .catch(() => {
             // Report errors for non url strings
             setErrors({
-              nodeURL: 'Please enter a valid URL address for an archive node'
+              nodeURL: 'Please enter a valid URL address for a Gateway'
             })
           })
         const networkId = await firstValueFrom(tempRadix.ledger.networkId())
@@ -149,7 +149,7 @@ export default defineComponent({
       } catch (error) {
         // Report errors for urls that don't resolve to a radix network
         setErrors({
-          nodeURL: 'Please enter a valid URL address for an archive node'
+          nodeURL: 'Please enter a valid URL address for a Gateway'
         })
         toast.error('Invalid network, unable to connect')
       }
