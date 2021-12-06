@@ -96,7 +96,7 @@ const Home = defineComponent({
         //   radix.connect('https://mainnet.radixdlt.com'),
         //   new Promise((resolve, reject) => setTimeout(() => reject(new Error()), 5000))
         // ]).then(() => {
-        radix.connect('https://mainnet.radixdlt.com').then(() => {
+        radix.connect('https://milestonenet-gateway.radixdlt.com').then(() => {
           console.log('hello')
           connected.value = true
           return firstValueFrom(radix.ledger.networkId())

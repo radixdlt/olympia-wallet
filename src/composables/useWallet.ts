@@ -86,7 +86,7 @@ const createWallet = (mnemonic: MnemomicT, pass: string, network: Network) => {
     hasWallet.value = true
     setWallet(newWallet)
     saveDerivedAccountsIndex(0, network)
-    persistNodeUrl('https://mainnet.radixdlt.com')
+    persistNodeUrl('https://milestonenet-gateway.radixdlt.com')
   })
 
   return newWalletPromise
@@ -322,7 +322,7 @@ const fetchSavedNodeUrl = async (signingKeychain: SigningKeychainT): Promise<str
   const { selectedNode, selectedNodeHash } = await fetchSelectedNodeFromStore()
   if (!selectedNode) {
     // set a default node, one did not exist.
-    const defaultToMainnet = 'https://mainnet.radixdlt.com'
+    const defaultToMainnet = 'https://milestonenet-gateway.radixdlt.com'
     const hash = await hashNodeUrl(defaultToMainnet, signingKeychain)
     const saveToStore = await persistNodeSelection(defaultToMainnet, hash)
     return defaultToMainnet
