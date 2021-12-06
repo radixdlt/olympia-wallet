@@ -120,6 +120,7 @@ const WalletOverview = defineComponent({
         radix.ledger.unstakesForAddress(account.address)
       ]))
     ).subscribe(([balances, stakes, unstakes]: any) => {
+      console.log(balances.account_balances.liquid_balances[0].value.toString(), balances.account_balances.staked_and_unstaking_balance)
       tokenBalances.value = balances
       activeStakes.value = stakes
       activeUnstakes.value = unstakes
