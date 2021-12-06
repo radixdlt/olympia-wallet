@@ -5,7 +5,11 @@ Welcome to the Radix Wallet README.
 ```
 yarn
 cp .envrc{.sample,}
+cp dev-app-update.yml{.sample,}
 ```
+
+After copying the contents of `dev-app-update.yml.sample` to
+`dev-app-update.yml`, make sure to update the github token to a valid token.
 
 ### Compiles and hot-reloads for development
 ```

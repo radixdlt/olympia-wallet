@@ -27,3 +27,6 @@ pnpm-debug.log*
 /dist_electron
 
 keystore.json
+
+# Auto updater dev file
+dev-app-update.yml

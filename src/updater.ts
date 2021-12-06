@@ -1,8 +1,15 @@
+import path from 'path'
 import { dialog } from 'electron'
 import { autoUpdater } from 'electron-updater'
 import { setUpdateIsAvailable } from '@/actions/electron/general'
 
 autoUpdater.autoDownload = false
+if (process.env.WEBPACK_DEV_SERVER_URL) {
+  autoUpdater.updateConfigPath = path.join(
+    __dirname,
+    '../dev-app-update.yml'
+  )
+}
 
 autoUpdater.on('error', (error) => {
   dialog.showErrorBox('Error: ', error == null ? 'unknown' : (error.stack || error).toString())
