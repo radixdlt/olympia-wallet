@@ -160,7 +160,7 @@ const messages = {
       feeLabel: 'Fee',
       stakeButton: 'Stake',
       unstakeButton: 'Request Unstake',
-      stakeDisclaimer: 'Holders of XRD tokens may stake them to validator gateways of their choice to receive potential incentive rewards. Note that once XRD tokens are staked, unstaking cannot be requested for up to 2 hours, and {bold}. Please visit {link} for more information about staking, unstaking, and selecting good validator gateways. ',
+      stakeDisclaimer: 'Holders of XRD tokens may stake them to validator nodes of their choice to receive potential incentive rewards. Note that once XRD tokens are staked, unstaking cannot be requested for up to 2 hours, and {bold}. Please visit {link} for more information about staking, unstaking, and selecting good validator nodes. ',
       stakeDisclaimerBold: 'unstake requests will be subject to a lengthy delay before tokens are available',
       guideTitle: 'learn.radixdlt.com',
       unstakeDisclaimer: 'Your current stakes are shown at right. You may request an unstake of some or all of your XRD tokens from a validator. Once the request transaction has been processed, {bold}, after which they will become available for transfer once more. Please visit {link} for more information about unstaking.',
