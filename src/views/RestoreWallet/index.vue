@@ -66,12 +66,16 @@
       </create-wallet-create-passcode>
 
       <create-wallet-create-pin
-        v-if="step == 2 || step == 3"
+        v-if="step == 2 || step == 3 && !pinIsSet"
         @confirm="handleCreatePin"
         @enteredPin="handleEnterPin"
       >
       </create-wallet-create-pin>
-      <multiple-accounts-disclaimer-modal/>
+
+      <multiple-accounts-disclaimer-modal
+        v-if="pinIsSet"
+        @understood="completeWalletRestore"
+      />
     </div>
   </div>
 </template>
@@ -108,6 +112,7 @@ const RestoreWallet = defineComponent({
     const { loginWithWallet, setNetwork, walletLoaded, setWallet, waitUntilAllLoaded } = useWallet(router)
     const { setState } = useSidebar()
     const newWallet: Ref<WalletT | null> = ref(null)
+    const pinIsSet: Ref<boolean> = ref(false)
 
     // Create wallet with password and path to keystore
     const createWallet = (pass: string) => {
@@ -136,19 +141,25 @@ const RestoreWallet = defineComponent({
     }
 
     const handleCreatePin = (pin: string) => {
+      pinIsSet.value = true
       if (!newWallet.value) return
       setWallet(newWallet.value)
       storePin(pin)
-      loginWithWallet(passcode.value).then((client) => {
-        return firstValueFrom(client.ledger.networkId())
-      }).then((network) => {
-        setNetwork(network)
-        walletLoaded()
-        return waitUntilAllLoaded()
-      }).then(() => {
-        setState(true)
-        router.push('/wallet/account-edit-name')
-      })
+    }
+
+    const completeWalletRestore = (isUnderstood: boolean) => {
+      if (isUnderstood) {
+        loginWithWallet(passcode.value).then((client) => {
+          return firstValueFrom(client.ledger.networkId())
+        }).then((network) => {
+          setNetwork(network)
+          walletLoaded()
+          return waitUntilAllLoaded()
+        }).then(() => {
+          setState(true)
+          router.push('/wallet/account-edit-name')
+        })
+      }
     }
 
     return {
@@ -156,9 +167,11 @@ const RestoreWallet = defineComponent({
       mnemonic,
       step,
       passcode,
+      pinIsSet,
       // methods
       createWallet,
       captureMnemonic,
+      completeWalletRestore,
       handleEnterPin,
       handleCreatePin
     }
