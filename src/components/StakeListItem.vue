@@ -14,6 +14,7 @@
                   <span class="text-rRed ml-2 mr-3">{{ $t('staking.unregistered') }}</span>
                 </div>
                 <div v-if="notTopOneHundred" class="inline-flex items-center">
+                  <span v-if="notTopOneHundred && !validator.registered"></span>
                   <span class="bg-rRed w-2 h-2 rounded-full"></span>
                   <span class="text-rRed ml-2">{{ $t('staking.notTopOneHundred') }}</span>
                 </div>
