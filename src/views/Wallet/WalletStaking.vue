@@ -110,7 +110,7 @@
 </template>
 
 <script lang="ts">
-import { StakePosition, UnstakePosition, AccountAddressT, Amount, AmountT, Validator } from '@radixdlt/application'
+import { StakePosition, AccountAddressT, Amount, AmountT, Validator } from '@radixdlt/application'
 import { computed, defineComponent, ComputedRef } from 'vue'
 import { useForm } from 'vee-validate'
 import StakeListItem from '@/components/StakeListItem.vue'
@@ -177,11 +177,14 @@ const WalletStaking = defineComponent({
       resetForm()
     }
 
+    const zero = Amount.fromUnsafe(0)._unsafeUnwrap()
+
     // Computed Values
     const xrdBalance: ComputedRef<AmountT> = computed(() => {
-      if (!tokenBalances.value || !nativeToken.value) return Amount.fromUnsafe(0)._unsafeUnwrap()
+      if (!tokenBalances.value || !nativeToken.value) return zero
       const nativeTokenBalance = tokenBalanceFor(nativeToken.value)
-      return nativeTokenBalance ? nativeTokenBalance.amount : Amount.fromUnsafe(0)._unsafeUnwrap()
+      if (!nativeTokenBalance) return zero
+      return nativeTokenBalance.value
     })
 
     const sortedPositions: ComputedRef<Array<Position>> = computed(() => {
@@ -199,13 +202,13 @@ const WalletStaking = defineComponent({
         }
       })
 
-      activeUnstakes.value.forEach((unstake: UnstakePosition) => {
-        const address = unstake.validator.toString()
+      activeUnstakes.value.forEach((unstake) => {
+        // const address = unstake.validator.toString()
         const existingPositionIndex = positions.findIndex((pos: Position) => pos.validator.equals(unstake.validator))
         if (existingPositionIndex === -1) {
-          positions = [...positions, { address, validator: unstake.validator, unstakes: [unstake], stakes: [] }]
+          // positions = [...positions, { address, validator: unstake.validator, unstakes: [unstake], stakes: [] }]
         } else {
-          positions[existingPositionIndex] = { ...positions[existingPositionIndex], unstakes: [...positions[existingPositionIndex].unstakes, unstake] }
+          // positions[existingPositionIndex] = { ...positions[existingPositionIndex], unstakes: [...positions[existingPositionIndex].unstakes, unstake] }
         }
       })
 
@@ -251,8 +254,8 @@ const WalletStaking = defineComponent({
     const explorerUrl: ComputedRef<string> = computed(() => `${explorerUrlBase.value}/#/validators`)
 
     const hasTokenBalances = computed(() => {
-      if (!tokenBalances.value?.tokenBalances) return false
-      return tokenBalances.value?.tokenBalances.length > 0
+      if (!tokenBalances.value?.account_balances.liquid_balances) return false
+      return tokenBalances.value?.account_balances.liquid_balances.length > 0
     })
 
     const loadedAllData: ComputedRef<boolean> = computed(() => {
@@ -280,14 +283,14 @@ const WalletStaking = defineComponent({
       const safeAddress = safelyUnwrapValidator(values.validator)
       const safeAmount = safelyUnwrapAmount(Number(values.amount))
       const greaterThanZero = safeAmount && validateGreaterThanZero(safeAmount)
-      const validAmount = safeAmount && validateAmountOfType(safeAmount, nativeTokenBalance.token)
+      const validAmount = safeAmount && validateAmountOfType(safeAmount)
 
       if (!greaterThanZero) {
         setErrors({ amount: t('validations.greaterThanZero') })
         return
       }
       if (!validAmount) {
-        setErrors({ amount: t('validations.amountOfType', { granularity: nativeTokenBalance.token.granularity.toString() }) })
+        setErrors({ amount: t('validations.amountOfType', { granularity: '' }) })
         return
       }
       if (!safeAddress || !safeAmount) return

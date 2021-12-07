@@ -1,6 +1,5 @@
 import { computed, ComputedRef, ref, Ref } from 'vue'
 import {
-  BehaviorSubject,
   combineLatest,
   firstValueFrom,
   interval,
@@ -11,25 +10,21 @@ import {
   Subscription,
   timer
 } from 'rxjs'
-import { catchError, delay, mergeMap, retryWhen, take, filter, delayWhen, tap } from 'rxjs/operators'
+import { catchError, mergeMap, retryWhen, take, delayWhen, tap } from 'rxjs/operators'
 import {
   AmountT,
   ExecutedTransaction,
-  FinalizedTransaction,
   IntendedAction,
   ManualUserConfirmTX,
   MessageInTransaction,
-  RadixT,
+  Radix,
   StakeOptions,
   StakeTokensInput,
   TokenBalance,
   TransactionHistory,
   TransactionHistoryOfKnownAddressRequestInput,
   TransactionIntent,
-  TransactionStateError,
   TransactionStateSuccess,
-  TransactionStateUpdate,
-  TransactionIdentifierT,
   TransactionTracking,
   TransferTokensInput,
   TransferTokensOptions,
@@ -39,7 +34,6 @@ import {
 } from '@radixdlt/application'
 import { Router } from 'vue-router'
 import { useErrors } from '.'
-import { TransactionStateT, ClientAppErrorTypeT } from './useErrors'
 
 export interface PendingTransaction extends TransactionStateSuccess {
   actions: IntendedAction[]
@@ -72,7 +66,7 @@ interface useTransactionsInterface {
   refreshHistory: () => void;
   setActiveTransactionForm: (val: string) => void;
   stakeTokens: (input: StakeTokensInput) => void;
-  transferTokens: (input: TransferTokensInput, message: MessageInTransaction, sc: TokenBalance) => void;
+  // transferTokens: (input: TransferTokensInput, message: MessageInTransaction, sc: Decoded.TokenAmount) => void;
   unstakeTokens: (input: UnstakeTokensInput) => void;
   transactionUnsub: () => void;
 }
@@ -109,10 +103,10 @@ const hasCalculatedFee: Ref<boolean> = ref(false)
 const transactionState: Ref<string> = ref('confirm')
 const userDidConfirm = new Subject<boolean>()
 const userDidCancel = new Subject<boolean>()
-let userConfirmation = new ReplaySubject<ManualUserConfirmTX>()
+const userConfirmation = new ReplaySubject<ManualUserConfirmTX>()
 const historyPagination = new Subject<TransactionHistoryOfKnownAddressRequestInput>()
 
-export default function useTransactions (radix: RadixT, router: Router, activeAccount: AccountT | null, hardwareAccount: AccountT | null): useTransactionsInterface {
+export default function useTransactions (radix: ReturnType<typeof Radix.create>, router: Router, activeAccount: AccountT | null, hardwareAccount: AccountT | null): useTransactionsInterface {
   const { setError } = useErrors(radix)
   const refreshHistory = () => {
     loadingHistory.value = true
@@ -190,144 +184,144 @@ export default function useTransactions (radix: RadixT, router: Router, activeAc
   const setActiveTransactionForm = (val: string) => {
     activeTransactionForm.value = val
   }
-  let activeTransactionSubs = new Subscription()
-  const confirmAndExecuteTransaction = (transactionTracking: TransactionTracking) => {
-    activeTransactionSubs.unsubscribe()
-    activeTransactionSubs = new Subscription()
-    activeTransaction.value = transactionTracking
-    const transactionDidComplete = new BehaviorSubject<boolean>(false)
-    userDidCancel.next(false)
-    transactionState.value = 'building'
-    shouldShowConfirmation.value = true
-    transactionErrorMessage.value = null
-    // Subscribe to initial userConfirmation and display modal
-    const createUserConfirmation = userConfirmation
-      .subscribe((txnToConfirm: ManualUserConfirmTX) => {
-        transactionToConfirm.value = txnToConfirm
-        userDidConfirm.next(false)
-        transactionState.value = 'confirm'
-        transactionFee.value = txnToConfirm.txToConfirm.fee
-        hasCalculatedFee.value = true
-      })
-    subs.add(createUserConfirmation)
-    activeTransactionSubs.add(createUserConfirmation)
+  // let activeTransactionSubs = new Subscription()
+  // const confirmAndExecuteTransaction = (transactionTracking) => {
+  //   activeTransactionSubs.unsubscribe()
+  //   activeTransactionSubs = new Subscription()
+  //   activeTransaction.value = transactionTracking
+  //   const transactionDidComplete = new BehaviorSubject<boolean>(false)
+  //   userDidCancel.next(false)
+  //   transactionState.value = 'building'
+  //   shouldShowConfirmation.value = true
+  //   transactionErrorMessage.value = null
+  //   // Subscribe to initial userConfirmation and display modal
+  //   const createUserConfirmation = userConfirmation
+  //     .subscribe((txnToConfirm: ManualUserConfirmTX) => {
+  //       transactionToConfirm.value = txnToConfirm
+  //       userDidConfirm.next(false)
+  //       transactionState.value = 'confirm'
+  //       transactionFee.value = txnToConfirm.txToConfirm.fee
+  //       hasCalculatedFee.value = true
+  //     })
+  //   subs.add(createUserConfirmation)
+  //   activeTransactionSubs.add(createUserConfirmation)
 
-    // Confirm transaction and move user to history view after they press confirm
-    const watchUserDidConfirm = combineLatest<[ManualUserConfirmTX, boolean]>([userConfirmation, userDidConfirm])
-      .subscribe(([txnToConfirm, didConfirm]: [ManualUserConfirmTX, boolean]) => {
-        if (didConfirm) { txnToConfirm.confirm() }
-      })
-    subs.add(watchUserDidConfirm)
-    activeTransactionSubs.add(watchUserDidConfirm)
+  //   // Confirm transaction and move user to history view after they press confirm
+  //   const watchUserDidConfirm = combineLatest<[ManualUserConfirmTX, boolean]>([userConfirmation, userDidConfirm])
+  //     .subscribe(([txnToConfirm, didConfirm]: [ManualUserConfirmTX, boolean]) => {
+  //       if (didConfirm) { txnToConfirm.confirm() }
+  //     })
+  //   subs.add(watchUserDidConfirm)
+  //   activeTransactionSubs.add(watchUserDidConfirm)
 
-    // Catch errors that were silently failing
-    const trackingSubmittedEventErrors = transactionTracking.events
-      .pipe(filter((trackingEvent: TransactionStateUpdate) => {
-        const errorEvent: TransactionStateError = trackingEvent as TransactionStateError
-        return errorEvent && errorEvent.error != null
-      }))
-      .subscribe((event: TransactionStateUpdate) => {
-        const errorEvent: TransactionStateError = event as TransactionStateError
-        const transactionStateConstant: TransactionStateT = transactionState.value.toUpperCase() as TransactionStateT
-        setError({
-          type: 'TRANSACTION-' + transactionStateConstant as ClientAppErrorTypeT,
-          error: errorEvent.error
-        })
+  //   // Catch errors that were silently failing
+  //   const trackingSubmittedEventErrors = transactionTracking.events
+  //     .pipe(filter((trackingEvent: TransactionStateUpdate) => {
+  //       const errorEvent: TransactionStateError = trackingEvent as TransactionStateError
+  //       return errorEvent && errorEvent.error != null
+  //     }))
+  //     .subscribe((event: TransactionStateUpdate) => {
+  //       const errorEvent: TransactionStateError = event as TransactionStateError
+  //       const transactionStateConstant: TransactionStateT = transactionState.value.toUpperCase() as TransactionStateT
+  //       setError({
+  //         type: 'TRANSACTION-' + transactionStateConstant as ClientAppErrorTypeT,
+  //         error: errorEvent.error
+  //       })
 
-        // const errorEvent: TransactionStateError = event as TransactionStateError
-        userDidCancel.next(true)
-        shouldShowConfirmation.value = false
-        const isLedgerConnectedError = errorEvent.error.message && errorEvent.error.message.includes('Failed to sign tx with Ledger')
-        if (isLedgerConnectedError) {
-          ledgerTxError.value = errorEvent.error
-          transactionErrorMessage.value = null
-          return
-        }
+  //       // const errorEvent: TransactionStateError = event as TransactionStateError
+  //       userDidCancel.next(true)
+  //       shouldShowConfirmation.value = false
+  //       const isLedgerConnectedError = errorEvent.error.message && errorEvent.error.message.includes('Failed to sign tx with Ledger')
+  //       if (isLedgerConnectedError) {
+  //         ledgerTxError.value = errorEvent.error
+  //         transactionErrorMessage.value = null
+  //         return
+  //       }
 
-        transactionErrorMessage.value = `validations.${activeTransactionForm.value}Failed`
-      })
+  //       transactionErrorMessage.value = `validations.${activeTransactionForm.value}Failed`
+  //     })
 
-    subs.add(trackingSubmittedEventErrors)
-    activeTransactionSubs.add(trackingSubmittedEventErrors)
+  //   subs.add(trackingSubmittedEventErrors)
+  //   activeTransactionSubs.add(trackingSubmittedEventErrors)
 
-    // Store draft transaction actions
-    const draftTransactionSub = transactionTracking.events
-      .pipe(filter((trackingEvent: TransactionStateUpdate) => trackingEvent.eventUpdateType === 'INITIATED'))
-      .subscribe((res: TransactionStateUpdate) => {
-        draftTransaction.value = (res as TransactionStateSuccess).transactionState as TransactionIntent
-      })
-    subs.add(draftTransactionSub)
-    activeTransactionSubs.add(draftTransactionSub)
+  //   // Store draft transaction actions
+  //   const draftTransactionSub = transactionTracking.events
+  //     .pipe(filter((trackingEvent: TransactionStateUpdate) => trackingEvent.eventUpdateType === 'INITIATED'))
+  //     .subscribe((res: TransactionStateUpdate) => {
+  //       draftTransaction.value = (res as TransactionStateSuccess).transactionState as TransactionIntent
+  //     })
+  //   subs.add(draftTransactionSub)
+  //   activeTransactionSubs.add(draftTransactionSub)
 
-    // Track pending transactions augmented with actions array
-    const trackingSubmittedEvents = transactionTracking.events
-      .pipe(filter((trackingEvent: TransactionStateUpdate) => trackingEvent.eventUpdateType === 'SUBMITTED'))
-      .subscribe((res: TransactionStateUpdate) => {
-        const finalizedTransaction = res as unknown as TransactionStateSuccess
-        pendingTransactions.value = pendingTransactions.value.concat([{
-          ...finalizedTransaction,
-          actions: draftTransaction.value ? draftTransaction.value.actions : []
-        }])
-        draftTransaction.value = null
-        transactionState.value = 'submitting'
-      })
-    subs.add(trackingSubmittedEvents)
-    activeTransactionSubs.add(trackingSubmittedEvents)
+  //   // Track pending transactions augmented with actions array
+  //   const trackingSubmittedEvents = transactionTracking.events
+  //     .pipe(filter((trackingEvent: TransactionStateUpdate) => trackingEvent.eventUpdateType === 'SUBMITTED'))
+  //     .subscribe((res: TransactionStateUpdate) => {
+  //       const finalizedTransaction = res as unknown as TransactionStateSuccess
+  //       pendingTransactions.value = pendingTransactions.value.concat([{
+  //         ...finalizedTransaction,
+  //         actions: draftTransaction.value ? draftTransaction.value.actions : []
+  //       }])
+  //       draftTransaction.value = null
+  //       transactionState.value = 'submitting'
+  //     })
+  //   subs.add(trackingSubmittedEvents)
+  //   activeTransactionSubs.add(trackingSubmittedEvents)
 
-    // When a transaction has been completed, remove it from pending transactions
-    const transactionCompleteSub = transactionTracking.completion
-      .subscribe({
-        next: (txnID: TransactionIdentifierT) => {
-          pendingTransactions.value = pendingTransactions.value.filter((pendingTxn: TransactionStateSuccess) => {
-            const transactionState = pendingTxn.transactionState as unknown as FinalizedTransaction
-            return false
-            // return txnID.toString() !== transactionState.txID.toString()
-          })
-          shouldShowConfirmation.value = false
-          router.push('/wallet/history')
-          hasCalculatedFee.value = false
-          transactionDidComplete.next(true)
-          // If we receive a completion event but never received a confirmation event and cleared
-          // pending transaction, we should warn the user that something went wrong
-          if (transactionState.value !== 'submitting') {
-            setError({
-              type: 'TRANSACTION-CONFIRM'
-            })
-          }
-        }
-      })
-    subs.add(transactionCompleteSub)
-    activeTransactionSubs.add(transactionCompleteSub)
+  //   // When a transaction has been completed, remove it from pending transactions
+  //   const transactionCompleteSub = transactionTracking.completion
+  //     .subscribe({
+  //       next: (txnID: TransactionIdentifierT) => {
+  //         pendingTransactions.value = pendingTransactions.value.filter((pendingTxn: TransactionStateSuccess) => {
+  //           const transactionState = pendingTxn.transactionState as unknown as FinalizedTransaction
+  //           return false
+  //           // return txnID.toString() !== transactionState.txID.toString()
+  //         })
+  //         shouldShowConfirmation.value = false
+  //         router.push('/wallet/history')
+  //         hasCalculatedFee.value = false
+  //         transactionDidComplete.next(true)
+  //         // If we receive a completion event but never received a confirmation event and cleared
+  //         // pending transaction, we should warn the user that something went wrong
+  //         if (transactionState.value !== 'submitting') {
+  //           setError({
+  //             type: 'TRANSACTION-CONFIRM'
+  //           })
+  //         }
+  //       }
+  //     })
+  //   subs.add(transactionCompleteSub)
+  //   activeTransactionSubs.add(transactionCompleteSub)
 
-    // Cleanup subscriptions on cancel and complete
-    const cleanupTransactionSubs = () => {
-      userConfirmation = new ReplaySubject<ManualUserConfirmTX>()
-      createUserConfirmation.unsubscribe()
-      watchUserDidConfirm.unsubscribe()
-      trackingSubmittedEvents.unsubscribe()
-      hasCalculatedFee.value = false
-      transactionErrorMessage.value = null
-    }
+  //   // Cleanup subscriptions on cancel and complete
+  //   const cleanupTransactionSubs = () => {
+  //     userConfirmation = new ReplaySubject<ManualUserConfirmTX>()
+  //     createUserConfirmation.unsubscribe()
+  //     watchUserDidConfirm.unsubscribe()
+  //     trackingSubmittedEvents.unsubscribe()
+  //     hasCalculatedFee.value = false
+  //     transactionErrorMessage.value = null
+  //   }
 
-    userDidCancel.subscribe((didCancel: boolean) => {
-      if (didCancel) {
-        cleanupTransactionSubs()
-        activeTransactionSubs.unsubscribe()
-        shouldShowConfirmation.value = false
-        activeMessage.value = ''
-        hasCalculatedFee.value = false
-      }
-    })
+  //   userDidCancel.subscribe((didCancel: boolean) => {
+  //     if (didCancel) {
+  //       cleanupTransactionSubs()
+  //       activeTransactionSubs.unsubscribe()
+  //       shouldShowConfirmation.value = false
+  //       activeMessage.value = ''
+  //       hasCalculatedFee.value = false
+  //     }
+  //   })
 
-    subs.add(transactionDidComplete.subscribe((didComplete: boolean) => {
-      if (didComplete) {
-        cleanupTransactionSubs()
-        activeMessage.value = ''
-        hasCalculatedFee.value = false
-        historyPagination.next({ size: PAGE_SIZE })
-      }
-    }))
-  }
+  //   subs.add(transactionDidComplete.subscribe((didComplete: boolean) => {
+  //     if (didComplete) {
+  //       cleanupTransactionSubs()
+  //       activeMessage.value = ''
+  //       hasCalculatedFee.value = false
+  //       historyPagination.next({ size: PAGE_SIZE })
+  //     }
+  //   }))
+  // }
 
   const cleanupInputs = () => {
     transferInput.value = null
@@ -349,13 +343,13 @@ export default function useTransactions (radix: RadixT, router: Router, activeAc
       pollTXStatusTrigger: pollTXStatusTrigger
     })
 
-    const transactionTracking: TransactionTracking = radix.transferTokens({
+    const transactionTracking = radix.transferTokens({
       ...buildTransferTokens(),
       userConfirmation,
       message
     })
 
-    confirmAndExecuteTransaction(transactionTracking)
+    // confirmAndExecuteTransaction(transactionTracking)
   }
 
   // call unstakeTokens() with built options and subscribe to confirmation and results
@@ -371,12 +365,12 @@ export default function useTransactions (radix: RadixT, router: Router, activeAc
       pollTXStatusTrigger: pollTXStatusTrigger
     })
 
-    const unstakingTransactionTracking: TransactionTracking = radix.unstakeTokens({
+    const unstakingTransactionTracking = radix.unstakeTokens({
       ...buildTransferTokens(),
       userConfirmation
     })
 
-    confirmAndExecuteTransaction(unstakingTransactionTracking)
+    // confirmAndExecuteTransaction(unstakingTransactionTracking)
   }
 
   // call stakeTokens() with built options and subscribe to confirmation and results
@@ -392,12 +386,12 @@ export default function useTransactions (radix: RadixT, router: Router, activeAc
       pollTXStatusTrigger: pollTXStatusTrigger
     })
 
-    const stakingTransactionTracking: TransactionTracking = radix.stakeTokens({
+    const stakingTransactionTracking = radix.stakeTokens({
       ...buildTransferTokens(),
       userConfirmation
     })
 
-    confirmAndExecuteTransaction(stakingTransactionTracking)
+    // confirmAndExecuteTransaction(stakingTransactionTracking)
   }
 
   const transactionUnsub = () => {
@@ -432,7 +426,7 @@ export default function useTransactions (radix: RadixT, router: Router, activeAc
     refreshHistory,
     setActiveTransactionForm,
     stakeTokens,
-    transferTokens,
+    // transferTokens,
     transactionUnsub,
     unstakeTokens
   }

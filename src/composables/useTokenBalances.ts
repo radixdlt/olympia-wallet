@@ -1,17 +1,22 @@
 import { ref, Ref } from 'vue'
-import { RadixT, Token, TokenBalance, TokenBalances } from '@radixdlt/application'
+import { Radix, Token } from '@radixdlt/application'
+import { mergeMap } from 'rxjs/operators'
+import { Observed } from '@/helpers/typeHelpers'
 
-interface useTokenBalancesInterface {
-  readonly tokenBalances: Ref<TokenBalances | null>;
-  tokenBalancesUnsub: () => void;
-  tokenBalanceFor: (token: Token) => TokenBalance | null;
-}
+// interface useTokenBalancesInterface {
+//   readonly tokenBalances: Ref<Observed<ReturnType<typeof radix.ledger.tokenBalancesForAddress> | null>;
+//   tokenBalancesUnsub: () => void;
+//   tokenBalanceFor: (token: Token) => AmountT | null;
+// }
 
-export default function useTokenBalances (radix: RadixT): useTokenBalancesInterface {
-  const tokenBalances: Ref<TokenBalances | null> = ref(null)
-  const tokenBalancesSub = radix.tokenBalances.subscribe((tokenBalancesRes: TokenBalances) => {
-    tokenBalances.value = tokenBalancesRes
-  })
+export default function useTokenBalances (radix: ReturnType<typeof Radix.create>) {
+  const tokenBalances: Ref<Observed<ReturnType<typeof radix.ledger.tokenBalancesForAddress>> | null> = ref(null)
+  const tokenBalancesSub = radix.activeAccount
+    .pipe(
+      mergeMap((account) => radix.ledger.tokenBalancesForAddress(account.address))
+    ).subscribe((tokenBalancesRes) => {
+      tokenBalances.value = tokenBalancesRes
+    })
 
   return {
     tokenBalances,
@@ -21,7 +26,7 @@ export default function useTokenBalances (radix: RadixT): useTokenBalancesInterf
 
     tokenBalanceFor: (token: Token) => {
       if (!tokenBalances.value) return null
-      return tokenBalances.value.tokenBalances.find((tb: TokenBalance) => tb.token.rri.equals(token.rri)) || null
+      return tokenBalances.value.account_balances.liquid_balances.find((lb) => lb.token_identifier.rri.equals(token.rri)) || null
     }
   }
 }

@@ -1,5 +1,5 @@
 import { ref, Ref } from 'vue'
-import { RadixT, Token } from '@radixdlt/application'
+import { Radix, Token } from '@radixdlt/application'
 import { mergeMap } from 'rxjs/operators'
 
 interface useNativeTokenInterface {
@@ -7,7 +7,7 @@ interface useNativeTokenInterface {
   nativeTokenUnsub: () => void;
 }
 
-export default function useNativeToken (radix: RadixT): useNativeTokenInterface {
+export default function useNativeToken (radix: ReturnType<typeof Radix.create>): useNativeTokenInterface {
   const nativeToken: Ref<Token | null> = ref(null)
   const nativeTokenSub =
   radix.ledger.networkId()

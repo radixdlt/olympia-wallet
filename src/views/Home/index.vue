@@ -90,20 +90,17 @@ const Home = defineComponent({
 
     hasKeystore().then((val: boolean) => {
       loading.value = false
-      console.log('hi', val)
       if (!val) {
         // Promise.race([
         //   radix.connect('https://mainnet.radixdlt.com'),
         //   new Promise((resolve, reject) => setTimeout(() => reject(new Error()), 5000))
         // ]).then(() => {
         radix.connect('https://milestonenet-gateway.radixdlt.com').then(() => {
-          console.log('hello')
           connected.value = true
           return firstValueFrom(radix.ledger.networkId())
         }).then((network: Network) => {
           setNetwork(network as Network)
         }).catch(() => {
-          console.log('whoops')
           unableToConnect.value = true
           connected.value = false
         })

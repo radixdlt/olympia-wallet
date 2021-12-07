@@ -1,4 +1,4 @@
-import { ErrorT, RadixT } from '@radixdlt/application'
+import { ErrorT, Radix } from '@radixdlt/application'
 import { Ref, ref, computed, ComputedRef } from 'vue'
 
 export type TransactionStateT = 'HW-SIGNING' | 'BUILDING' | 'CONFIRM' | 'SUBMITTING'
@@ -27,7 +27,7 @@ const clearLatestError = () => {
   appErrors.value = latestErrors
 }
 
-export default function useErrors (radix: RadixT): useErrorsInterface {
+export default function useErrors (radix: ReturnType<typeof Radix.create>): useErrorsInterface {
   radix.errors
     .subscribe((error: ErrorT<'wallet'>) => {
       console.log('error sink:', error)

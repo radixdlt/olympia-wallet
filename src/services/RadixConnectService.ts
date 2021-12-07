@@ -1,8 +1,8 @@
-import { Network, Radix, RadixT, HRP } from '@radixdlt/application'
+import { Network, Radix, HRP } from '@radixdlt/application'
 import { network } from '@/helpers/network'
 
 export default class RadixConnectService extends EventTarget {
-  private radix: RadixT = Radix.create();
+  private radix: ReturnType<typeof Radix.create> = Radix.create();
   private currentNetworkId: Network = process.env.VUE_APP_NETWORK_NAME as Network;
 
   async establishConnection (): Promise<void> {
@@ -19,7 +19,7 @@ export default class RadixConnectService extends EventTarget {
     this.dispatchEvent(event)
   }
 
-  getRadixInstance (): RadixT {
+  getRadixInstance (): ReturnType<typeof Radix.create> {
     return this.radix
   }
 
