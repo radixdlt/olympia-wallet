@@ -77,3 +77,11 @@ export const getHiddenTokens = async (): Promise<string[]> => {
   const data = await window.ipcRenderer.invoke('get-hidden-tokens')
   return data
 }
+
+export const getAcceptedTos = (): Promise<boolean> => new Promise((resolve) => {
+  resolve(window.ipcRenderer.invoke('get-accepted-tos'))
+})
+
+export const setAcceptedTos = (value: boolean): Promise<boolean> => new Promise((resolve) => {
+  resolve(window.ipcRenderer.invoke('set-accepted-tos', value))
+})

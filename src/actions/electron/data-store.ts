@@ -101,6 +101,14 @@ export const unhideTokenType = (event: IpcMainInvokeEvent, tokenRRI: string): st
   return hiddenTokens
 }
 
+export const getAcceptedTos = (): boolean => {
+  return store.get('acceptedTos', false) as boolean
+}
+
+export const setAcceptedTos = (event: IpcMainInvokeEvent, value: boolean): void => {
+  store.set('acceptedTos', value)
+}
+
 export const getHiddenTokens = (): string[] => {
   const hiddenTokens = store.get('hiddenTokens', []) as string[]
   return hiddenTokens

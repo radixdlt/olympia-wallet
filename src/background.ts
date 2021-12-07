@@ -14,6 +14,8 @@ import {
   saveDerivedAccountsIndex,
   saveHardwareAddress,
   saveLatestAccountAddress,
+  getAcceptedTos,
+  setAcceptedTos,
   getHardwareAddress,
   deleteHardwareAddress,
   resetStore,
@@ -143,6 +145,8 @@ ipcMain.handle('refresh-app', () => { win.reload() })
 ipcMain.handle('get-version-number', () => pkg.version)
 ipcMain.handle('download-latest-version', downloadUpdate)
 ipcMain.handle('get-is-update-available', getIsUpdateAvailable)
+ipcMain.handle('get-accepted-tos', getAcceptedTos)
+ipcMain.handle('set-accepted-tos', setAcceptedTos)
 // Exit cleanly on request from parent process in development mode.
 if (isDevelopment) {
   if (process.platform === 'win32') {

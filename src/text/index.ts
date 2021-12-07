@@ -40,6 +40,7 @@ const messages = {
       restoreContent: 'You previously created a wallet and want to use your seed phrase to restore your access.',
       restoreButton: 'Restore a previous wallet',
       forgotPassword: 'I forgot my password',
+      acceptTos: 'Accept',
       deleteWalletTitle: 'Do you want to delete your current wallet?',
       deleteWalletContent: 'If you can\'t remember your password, you\'ll need to delete this local wallet and restore from your seed phrase or create a new wallet.',
       deleteChoiceContent: 'Are you sure you want to proceed?',
