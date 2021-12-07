@@ -15,7 +15,7 @@
                 </div>
                 <div v-if="notTopOneHundred" class="inline-flex items-center">
                   <span class="bg-rOrange w-2 h-2 rounded-full"></span>
-                  <span class="text-rOrange ml-2">{{ $t('staking.noEmissions') }}</span>
+                  <span class="text-rOrange ml-2">{{ $t('staking.notTopOneHundred') }}</span>
                 </div>
               </div>
               <a class="relative text-rBlack hover:text-rBlue group underline" v-if="validator.infoURL && validatedValidatorUrl" :href="validator.infoURL" target="__blank"> {{ validator.name }}
