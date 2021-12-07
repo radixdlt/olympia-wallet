@@ -122,7 +122,7 @@ import { defineComponent, Ref, ref, ComputedRef, computed, watch } from 'vue'
 import { useForm } from 'vee-validate'
 
 import { safelyUnwrapAddress, safelyUnwrapAmount, validateAmountOfType, validateGreaterThanZero } from '@/helpers/validateRadixTypes'
-import { Token, TokenBalance } from '@radixdlt/application'
+import { Token } from '@radixdlt/application'
 import { asBigNumber } from '@/components/BigAmount.vue'
 import ClickToCopy from '@/components/ClickToCopy.vue'
 import FormErrorMessage from '@/components/FormErrorMessage.vue'
@@ -133,6 +133,8 @@ import FormCheckbox from '@/components/FormCheckbox.vue'
 import { useNativeToken, useTransactions, useTokenBalances, useWallet } from '@/composables'
 import { useRouter, onBeforeRouteLeave } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import { Decoded } from '@radixdlt/application/dist/api/open-api/_types'
+import { Observed } from '@/helpers/typeHelpers'
 
 interface TransactionForm {
   recipient: string;
@@ -156,7 +158,7 @@ const WalletTransaction = defineComponent({
     const router = useRouter()
     const { activeAddress, activeAccount, hardwareAccount, networkPreamble, radix, verifyHardwareWalletAddress } = useWallet(router)
 
-    const { transferTokens, transactionUnsub, setActiveTransactionForm } = useTransactions(radix, router, activeAccount.value, hardwareAccount.value)
+    const { transactionUnsub, setActiveTransactionForm } = useTransactions(radix, router, activeAccount.value, hardwareAccount.value)
 
     setActiveTransactionForm('transaction')
 
@@ -184,41 +186,41 @@ const WalletTransaction = defineComponent({
       }
     })
 
+    type tokenAmountT = Observed<ReturnType<typeof radix.ledger.tokenBalancesForAddress>>;
+
     const currency: Ref<string | null> = ref(null)
-    const tokenOptions: Ref<Array<TokenBalance>> = ref([])
+    const tokenOptions: Ref<Decoded.TokenAmount[]> = ref([]) // To Do fix this any
 
     // Set XRD as default and move to top of list of options. Ensure native token subscription has returned before doing so
     const setXRDByDefault = (nativeToken: Token) => {
-      if (!tokenBalances.value || tokenBalances.value.tokenBalances.length === 0) return
+      if (!tokenBalances.value || tokenBalances.value.account_balances.liquid_balances.length === 0) return
       const nativeTokenBalance = tokenBalanceFor(nativeToken)
-      const balances = tokenBalances.value ? tokenBalances.value.tokenBalances : []
+      const balances = tokenBalances.value ? tokenBalances.value.account_balances.liquid_balances : []
 
-      currency.value = nativeTokenBalance ? nativeTokenBalance.token.name : balances[0].token.name
+      currency.value = nativeTokenBalance ? nativeTokenBalance.token_identifier.rri.name : balances[0].token_identifier.rri.name
 
-      tokenOptions.value = balances
-        .reduce((acc: TokenBalance[], tb: TokenBalance) => {
-          if (tb.token.rri.equals(nativeToken.rri)) return [tb, ...acc]
-          return [...acc, tb]
-        }, [])
+      const nativeTb = balances.find((b) => b.token_identifier.rri.equals(nativeToken.rri))
+      const remainingTb = balances.filter((b) => !b.token_identifier.rri.equals(nativeToken.rri)) || []
+      tokenOptions.value = nativeTb ? [nativeTb, ...remainingTb] : remainingTb
     }
 
     if (nativeToken.value) setXRDByDefault(nativeToken.value)
 
     const hasTokenBalances = computed(() => {
-      if (!tokenBalances.value?.tokenBalances) return false
-      return tokenBalances.value?.tokenBalances.length > 0
+      if (!tokenBalances.value?.account_balances.liquid_balances) return false
+      return tokenBalances.value?.account_balances.liquid_balances.length > 0
     })
 
-    const selectedCurrency: ComputedRef<TokenBalance | null> = computed(() => {
-      if (!tokenBalances.value || tokenBalances.value.tokenBalances.length <= 0) return null
+    const selectedCurrency: ComputedRef<Decoded.TokenAmount | null> = computed(() => {
+      if (!tokenBalances.value || tokenBalances.value.account_balances.liquid_balances.length <= 0) return null
 
-      const selectedCurrency = tokenBalances.value.tokenBalances.find((tokenBalance: TokenBalance) => tokenBalance.token.name === currency.value)
+      const selectedCurrency = tokenBalances.value.account_balances.liquid_balances.find((tokenBalance) => tokenBalance.token_identifier.rri.name === currency.value)
       return selectedCurrency || null
     })
 
     const amountPlaceholder: ComputedRef<string> = computed(() => {
-      if (!selectedCurrency.value || !selectedCurrency.value.amount) return ''
-      return `${t('transaction.amountPlaceholder')} ${asBigNumber(selectedCurrency.value.amount, true)} `
+      if (!selectedCurrency.value || !selectedCurrency.value.value) return ''
+      return `${t('transaction.amountPlaceholder')} ${asBigNumber(selectedCurrency.value.value, true)} `
     })
 
     const disableSubmit: ComputedRef<boolean> = computed(() => {
@@ -251,16 +253,17 @@ const WalletTransaction = defineComponent({
         if (!meta.value.valid || !selectedCurrency.value) return false
         const safeAddress = safelyUnwrapAddress(values.recipient, networkPreamble.value)
         const safeAmount = safelyUnwrapAmount(Number(values.amount))
-        const token = selectedCurrency.value.token
+        const token = selectedCurrency.value.token_identifier
         const greaterThanZero = safeAmount && validateGreaterThanZero(safeAmount)
-        const validAmount = safeAmount && validateAmountOfType(safeAmount, token) && validateGreaterThanZero(safeAmount)
+        // to do: we need to get full token info before we can validate
+        const validAmount = safeAmount && validateAmountOfType(safeAmount) && validateGreaterThanZero(safeAmount)
         if (!greaterThanZero) {
           setErrors({ amount: t('validations.greaterThanZero') })
           return
         }
         if (!validAmount) {
           setErrors({
-            amount: t('validations.amountOfType', { granularity: token.granularity.toString() })
+            amount: t('validations.amountOfType', { granularity: 'hi' })
           })
           return
         }
@@ -273,18 +276,18 @@ const WalletTransaction = defineComponent({
         }
 
         if (safeAddress && safeAmount) {
-          transferTokens(
-            {
-              to_account: safeAddress,
-              amount: safeAmount,
-              tokenIdentifier: token.rri.toString()
-            },
-            {
-              plaintext: values.message,
-              encrypt: values.encrypt
-            },
-            selectedCurrency.value
-          )
+          // transferTokens(
+          //   {
+          //     to_account: safeAddress,
+          //     amount: safeAmount,
+          //     tokenIdentifier: token.rri.toString()
+          //   },
+          //   {
+          //     plaintext: values.message,
+          //     encrypt: values.encrypt
+          //   },
+          //   selectedCurrency.value
+          // )
         }
       }
     }

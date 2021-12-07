@@ -58,10 +58,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, ComputedRef, ref, Ref, onMounted } from 'vue'
-import { merge, forkJoin, interval, Subject, Subscription } from 'rxjs'
+import { defineComponent, computed, ComputedRef, ref, Ref, onMounted, onUnmounted } from 'vue'
+import { merge, forkJoin, interval, Subject, Subscription, Observable } from 'rxjs'
 import { switchMap, mergeMap } from 'rxjs/operators'
-import { StakePosition, Amount, AmountT, Token, SimpleTokenBalance, StakePositions, StakePositionsEndpoint, UnstakePositionsEndpoint, SimpleTokenBalances } from '@radixdlt/application'
+import { StakePosition, Amount, AmountT, Token, SimpleTokenBalance, StakePositions, UnstakePositionsEndpoint, SimpleTokenBalances, Radix } from '@radixdlt/application'
 import BigAmount from '@/components/BigAmount.vue'
 import TokenSymbol from '@/components/TokenSymbol.vue'
 import ClickToCopy from '@/components/ClickToCopy.vue'
@@ -70,7 +70,8 @@ import { createRRIUrl } from '@/helpers/explorerLinks'
 import { truncateRRIStringForDisplay } from '@/helpers/formatter'
 import { sumAmounts, add } from '@/helpers/arithmetic'
 import { useRouter, onBeforeRouteLeave } from 'vue-router'
-import { useNativeToken, useWallet } from '@/composables'
+import { useNativeToken, useTokenBalances, useWallet } from '@/composables'
+import { Observed } from '@/helpers/typeHelpers'
 
 const WalletOverview = defineComponent({
   components: {
@@ -89,6 +90,7 @@ const WalletOverview = defineComponent({
       verifyHardwareWalletAddress,
       hasWallet
     } = useWallet(router)
+    const { tokenBalances, tokenBalanceFor, tokenBalancesUnsub } = useTokenBalances(radix)
 
     const subs = new Subscription()
 
@@ -99,10 +101,13 @@ const WalletOverview = defineComponent({
       pageTrigger.next(Math.random())
     })
 
+    onUnmounted(() => {
+      tokenBalancesUnsub()
+    })
+
     const { nativeToken } = useNativeToken(radix)
-    const tokenBalances: Ref<SimpleTokenBalances | null> = ref(null)
-    const activeStakes: Ref<StakePositions> = ref([])
-    const activeUnstakes: Ref<UnstakePositionsEndpoint.DecodedResponse> = ref([])
+    const activeStakes: Ref<Observed<ReturnType<typeof radix.ledger.stakesForAddress>>> = ref([])
+    const activeUnstakes: Ref<Observed<ReturnType<typeof radix.ledger.stakesForAddress>>> = ref([])
     const updateObservable = merge(
       radix.activeAccount,
       interval(15000)
@@ -119,8 +124,7 @@ const WalletOverview = defineComponent({
         radix.ledger.stakesForAddress(account.address),
         radix.ledger.unstakesForAddress(account.address)
       ]))
-    ).subscribe(([balances, stakes, unstakes]: any) => {
-      console.log(balances.account_balances.liquid_balances[0].value.toString(), balances.account_balances.staked_and_unstaking_balance)
+    ).subscribe(([balances, stakes, unstakes]) => {
       tokenBalances.value = balances
       activeStakes.value = stakes
       activeUnstakes.value = unstakes
@@ -137,19 +141,13 @@ const WalletOverview = defineComponent({
       return {}
     }
 
-    const tokenBalanceFor = (token: Token) => {
-      if (!tokenBalances.value) return null
-      return tokenBalances.value.tokenBalances.find((tb: SimpleTokenBalance) => tb.tokenIdentifier.equals(token.rri)) || null
-    }
-
     const zero = Amount.fromUnsafe(0)._unsafeUnwrap()
 
     const totalXRD: ComputedRef<AmountT> = computed(() => {
       if (!tokenBalances.value || !nativeToken.value) return zero
       const nativeTokenBalance = tokenBalanceFor(nativeToken.value)
       if (!nativeTokenBalance) return zero
-      const xrdAmount = Amount.fromUnsafe(nativeTokenBalance.amount)
-      return xrdAmount.isErr() ? zero : xrdAmount.value
+      return nativeTokenBalance.value
     })
 
     const totalStakedAndUnstaked: ComputedRef<AmountT> = computed(() => {
@@ -165,20 +163,21 @@ const WalletOverview = defineComponent({
       if (!nativeTokenBalance) return zero
       if (!activeStakes.value || !activeUnstakes.value) return zero
 
-      const xrdAmount = Amount.fromUnsafe(nativeTokenBalance.amount)
-      const totalXRD = xrdAmount.isErr() ? zero : xrdAmount.value
+      // const xrdAmount = Amount.fromUnsafe(nativeTokenBalance)
+      // const totalXRD = xrdAmount.isErr() ? zero : xrdAmount.value
 
       const totalStakedAndUnstaked = sumAmounts(activeStakes.value.flatMap((item: StakePosition) => item.amount)) || zero
       const totalUnstaked = sumAmounts(activeUnstakes.value.flatMap((item: StakePosition) => item.amount)) || zero
       const totalStakedAndUnstakedSum = sumAmounts([totalStakedAndUnstaked, totalUnstaked]) || zero
-      return add(totalXRD, totalStakedAndUnstakedSum)
+      return add(totalXRD.value, totalStakedAndUnstakedSum)
     })
 
     const otherTokenBalances: ComputedRef<SimpleTokenBalance[]> = computed(() => {
-      if (!tokenBalances.value || !nativeToken.value) return []
-      return tokenBalances.value.tokenBalances.filter((tb: SimpleTokenBalance) => {
-        return nativeToken.value && !tb.tokenIdentifier.equals(nativeToken.value.rri)
-      })
+      return []
+      // if (!tokenBalances.value || !nativeToken.value) return []
+      // return tokenBalances.value.tokenBalances.filter((tb: SimpleTokenBalance) => {
+      //   return nativeToken.value && !tb.tokenIdentifier.equals(nativeToken.value.rri)
+      // })
     })
 
     return {

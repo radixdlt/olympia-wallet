@@ -10,7 +10,6 @@ import {
   MnemomicT,
   Network,
   Radix,
-  RadixT,
   SigningKeychain,
   SigningKeychainT,
   WalletErrorCause,
@@ -111,7 +110,7 @@ interface useWalletInterface {
   readonly ledgerVerifyError: Ref<Error | null>;
   readonly networkPreamble: ComputedRef<string>;
   readonly nodeUrl: ComputedRef<string | null>;
-  readonly radix: any;
+  readonly radix: ReturnType<typeof Radix.create>;
   readonly showDeleteHWWalletPrompt: Ref<boolean>;
   readonly showLedgerVerify: Ref<boolean>;
   readonly switching: ComputedRef<boolean>;
@@ -128,7 +127,7 @@ interface useWalletInterface {
   hideLedgerVerify: () => void;
   hideLedgerInteraction: () => void;
   initWallet: () => void;
-  loginWithWallet: (password: string) => Promise<RadixT>;
+  loginWithWallet: (password: string) => Promise<ReturnType<typeof Radix.create>>;
   persistNodeUrl: (url: string) => Promise<void>;
   reloadSubscriptions: () => void;
   reset: () => void;
@@ -312,7 +311,6 @@ const hashNodeUrl = async (url:string, signingKeychain: SigningKeychainT): Promi
 }
 
 const persistNodeUrl = async (url: string): Promise<void> => {
-  console.log(url, 'node url')
   if (!signingKeychain.value) return
   const hash = await hashNodeUrl(url, signingKeychain.value)
   const saveToStore = await persistNodeSelection(url, hash)
@@ -456,7 +454,6 @@ export default function useWallet (router: Router): useWalletInterface {
     },
 
     setNetwork (network: Network) {
-      console.log(network)
       activeNetwork.value = network
     },
 
