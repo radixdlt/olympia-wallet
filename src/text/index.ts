@@ -170,8 +170,8 @@ const messages = {
       validatorPlaceholder: 'Enter validator address',
       validatorFeeLabel: 'Validator Fee',
       recentUptimeLabel: 'Recent Uptime',
-      unregistered: 'unregistered',
-      noEmissions: 'no emissions'
+      unregistered: 'Unregistered',
+      notTopOneHundred: 'Not in top 100 validators'
     },
     confirmation: {
       transferFromLabel: 'Your address',
