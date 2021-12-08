@@ -107,7 +107,7 @@ const HomeEnterPasscode = defineComponent({
   },
 
   mounted () {
-    const passEl = document.getElementById('password')
+    const passEl = document.querySelector<HTMLInputElement>('input[type=\'password\']')
     if (passEl) passEl.focus()
   },
 
