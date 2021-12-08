@@ -39,11 +39,12 @@ import { computed, ComputedRef, defineComponent, PropType, ref, toRef, Ref } fro
 import BigAmount from '@/components/BigAmount.vue'
 import TokenSymbol from '@/components/TokenSymbol.vue'
 import ClickToCopy from '@/components/ClickToCopy.vue'
-import { SimpleTokenBalance, Token, TokenInfoEndpoint } from '@radixdlt/application'
+import { Token } from '@radixdlt/application'
 import { truncateRRIStringForDisplay } from '@/helpers/formatter'
 import { useRouter } from 'vue-router'
 import { useWallet } from '@/composables'
 import { firstValueFrom } from 'rxjs'
+import { Decoded } from '@radixdlt/application/dist/api/open-api/_types'
 
 export default defineComponent({
   components: {
@@ -54,7 +55,7 @@ export default defineComponent({
 
   props: {
     tokenBalance: {
-      type: Object as PropType<SimpleTokenBalance>,
+      type: Object as PropType<Decoded.TokenAmount>,
       required: true
     },
     explorerUrlBase: {
@@ -69,13 +70,13 @@ export default defineComponent({
     const router = useRouter()
     const { radix } = useWallet(router)
 
-    firstValueFrom(radix.ledger.tokenInfo(tokenBalance.value.tokenIdentifier))
+    firstValueFrom(radix.ledger.tokenInfo(tokenBalance.value.token_identifier.rri))
       .then((t: any) => {
         token.value = t
       })
 
     const rriUrl: ComputedRef<string> = computed(() =>
-      `${props.explorerUrlBase}/#/tokens/${props.tokenBalance.tokenIdentifier.toString()}`
+      `${props.explorerUrlBase}/#/tokens/${props.tokenBalance.token_identifier.rri.toString()}`
     )
 
     return {

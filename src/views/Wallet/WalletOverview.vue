@@ -61,8 +61,7 @@
 import { defineComponent, computed, ComputedRef, ref, Ref, onMounted, onUnmounted } from 'vue'
 import { merge, forkJoin, interval, Subject, Subscription, Observable } from 'rxjs'
 import { switchMap, mergeMap } from 'rxjs/operators'
-import { StakePosition, Amount, AmountT, Token, SimpleTokenBalance, StakePositions, UnstakePositionsEndpoint, SimpleTokenBalances, Radix } from '@radixdlt/application'
-import BigAmount from '@/components/BigAmount.vue'
+import { StakePosition, Amount, AmountT } from '@radixdlt/application'
 import TokenSymbol from '@/components/TokenSymbol.vue'
 import ClickToCopy from '@/components/ClickToCopy.vue'
 import OtherTokenBalanceListItem from '@/components/OtherTokenBalanceListItem.vue'
@@ -72,6 +71,7 @@ import { sumAmounts, add } from '@/helpers/arithmetic'
 import { useRouter, onBeforeRouteLeave } from 'vue-router'
 import { useNativeToken, useTokenBalances, useWallet } from '@/composables'
 import { Observed } from '@/helpers/typeHelpers'
+import { Decoded } from '@radixdlt/application/dist/api/open-api/_types'
 
 const WalletOverview = defineComponent({
   components: {
@@ -163,21 +163,17 @@ const WalletOverview = defineComponent({
       if (!nativeTokenBalance) return zero
       if (!activeStakes.value || !activeUnstakes.value) return zero
 
-      // const xrdAmount = Amount.fromUnsafe(nativeTokenBalance)
-      // const totalXRD = xrdAmount.isErr() ? zero : xrdAmount.value
-
       const totalStakedAndUnstaked = sumAmounts(activeStakes.value.flatMap((item: StakePosition) => item.amount)) || zero
       const totalUnstaked = sumAmounts(activeUnstakes.value.flatMap((item: StakePosition) => item.amount)) || zero
       const totalStakedAndUnstakedSum = sumAmounts([totalStakedAndUnstaked, totalUnstaked]) || zero
       return add(totalXRD.value, totalStakedAndUnstakedSum)
     })
 
-    const otherTokenBalances: ComputedRef<SimpleTokenBalance[]> = computed(() => {
-      return []
-      // if (!tokenBalances.value || !nativeToken.value) return []
-      // return tokenBalances.value.tokenBalances.filter((tb: SimpleTokenBalance) => {
-      //   return nativeToken.value && !tb.tokenIdentifier.equals(nativeToken.value.rri)
-      // })
+    const otherTokenBalances: ComputedRef<Decoded.TokenAmount[]> = computed(() => {
+      if (!tokenBalances.value || !nativeToken.value) return []
+      return tokenBalances.value.account_balances.liquid_balances.filter((tb) => {
+        return !tb.token_identifier.rri.equals(nativeToken.value!.rri)
+      })
     })
 
     return {
