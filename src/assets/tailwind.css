@@ -19,3 +19,23 @@
 ::selection {
   @apply bg-rGreen text-white;
 }
+
+ol.decimal {
+  counter-reset: item;
+}
+
+ol.decimal > li:before {
+  display: inline-block;
+  margin-right: 16px;
+  content: counters(item, ".");
+  counter-increment: item;
+}
+
+ol.alpha {
+  counter-reset: list;
+}
+
+ol.alpha > li:before {
+  content:"(" counter(list, lower-alpha) ") ";
+  counter-increment: list;
+}
