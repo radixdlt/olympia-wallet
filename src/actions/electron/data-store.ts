@@ -89,7 +89,7 @@ export const forgetCustomNodeURL = (event: IpcMainInvokeEvent, nodeURL: string):
 }
 
 export const hideTokenType = (event: IpcMainInvokeEvent, tokenRRI: string): string[] => {
-  let hiddenTokens = store.get('hiddenTokens', []) as string[]
+  const hiddenTokens = store.get('hiddenTokens', []) as string[]
   store.set('hiddenTokens', [...hiddenTokens, tokenRRI])
   return [...hiddenTokens, tokenRRI]
 }
@@ -99,6 +99,14 @@ export const unhideTokenType = (event: IpcMainInvokeEvent, tokenRRI: string): st
   hiddenTokens = hiddenTokens.filter((t: string) => t !== tokenRRI)
   store.set('hiddenTokens', hiddenTokens)
   return hiddenTokens
+}
+
+export const getAcceptedTos = (): boolean => {
+  return store.get('acceptedTos', false) as boolean
+}
+
+export const setAcceptedTos = (event: IpcMainInvokeEvent, value: boolean): void => {
+  store.set('acceptedTos', value)
 }
 
 export const getHiddenTokens = (): string[] => {
