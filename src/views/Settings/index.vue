@@ -2,11 +2,11 @@
   <div class="bg-rGrayLightest p-5 flex-1 overflow-y-auto">
     <div class="flex flex-col">
       <div class="flex flex-row">
-        <tabs-tab :isActive="activeTab === 'password'" @click="() => handleClickTab('password')" :isDisabled="!connected">Change Password</tabs-tab>
-        <tabs-tab :isActive="activeTab === 'pin'" @click="() => handleClickTab('pin')" :isDisabled="!connected">Change PIN</tabs-tab>
-        <tabs-tab :isActive="activeTab === 'mnemonic'" @click="() => handleClickTab('mnemonic')" :isDisabled="!connected">Reveal Seed Phrase</tabs-tab>
-        <tabs-tab :isActive="activeTab === 'tokens'" @click="() => handleClickTab('tokens')">Balances</tabs-tab>
-        <tabs-tab :isActive="activeTab === 'nodes'" @click="() => handleClickTab('nodes')">Choose Gateway</tabs-tab>
+        <tabs-tab :isActive="activeTab === 'password'" @click="() => handleClickTab('password')" :isDisabled="!connected">{{ $t('settings.tabTitlePassword') }}</tabs-tab>
+        <tabs-tab :isActive="activeTab === 'pin'" @click="() => handleClickTab('pin')" :isDisabled="!connected">{{ $t('settings.tabTitlePin') }}</tabs-tab>
+        <tabs-tab :isActive="activeTab === 'mnemonic'" @click="() => handleClickTab('mnemonic')" :isDisabled="!connected">{{ $t('settings.tabTitleMnemonic') }}</tabs-tab>
+        <tabs-tab :isActive="activeTab === 'tokens'" @click="() => handleClickTab('tokens')">{{ $t('settings.tabTitleTokens') }}</tabs-tab>
+        <tabs-tab :isActive="activeTab === 'nodes'" @click="() => handleClickTab('nodes')">{{ $t('settings.tabTitleGateway') }}</tabs-tab>
       </div>
       <tabs-content :leftTabIsActive="activeTab === 'password'">
         <settings-reset-password

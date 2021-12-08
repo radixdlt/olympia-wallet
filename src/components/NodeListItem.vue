@@ -7,7 +7,7 @@
         @click="handleSelectNode"
         class="mr-2"
       />
-      <span class="mr-4">{{ $t('settings.nodeAddressLabel') }}:</span>
+      <span class="mr-4">{{ $t('settings.gatewayAddressLabel') }}:</span>
       <span>{{ url }}</span>
     </div>
     <div class="flex-grow-0 w-48">{{ $t('settings.nodeNetworkLabel')}}:

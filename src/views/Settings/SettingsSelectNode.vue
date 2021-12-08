@@ -1,8 +1,8 @@
 <template>
   <div class="pt-6 px-6 pb-4">
     <div class="text-rGrayDark text-sm mb-7 w-full max-w-xl">
-      <p>{{ $t('settings.nodeDisclaimer') }}</p>
-      <p class="mt-2">{{ $t('settings.nodeDisclaimerWarning') }}</p>
+      <p>{{ $t('settings.gatewayDisclaimer') }}</p>
+      <p class="mt-2">{{ $t('settings.gatewayDisclaimerWarning') }}</p>
     </div>
     <div class="relative">
       <div class="absolute z-20 w-full h-full bg-white" v-if="switching">
@@ -38,7 +38,7 @@
         />
 
         <form class="border border-solid border-rGray px-5 py-7 rounded-md flex flex-row items-start text-rGrayMed w-full mb-2 justify-between" @submit.prevent="handleAddNode">
-          <div class="mr-4 my-2">{{ $t('settings.addCustomNodeLabel' )}}</div>
+          <div class="mr-4 my-2">{{ $t('settings.addCustomGatewayLabel' )}}</div>
           <div class="flex-1 mr-4">
             <FormField
               type="text"
@@ -65,7 +65,7 @@
               <path d="M6 1V11" class="stroke-current" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
               <path d="M1 6H11" class="stroke-current" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
-            {{ $t('settings.addNodeButton') }}
+            {{ $t('settings.addGatewayButton') }}
           </button>
         </form>
       </div>
