@@ -192,7 +192,7 @@ const WalletStaking = defineComponent({
       // If more than 1 stake exists for the same validator, only display the validator once and sum their amounts
       let positions: Position[] = []
 
-      activeStakes.value.forEach((stake: StakePosition) => {
+      activeStakes.value.stakes.forEach((stake: StakePosition) => {
         const existingPositionIndex = positions.findIndex((pos: Position) => pos.validator.equals(stake.validator))
         const address = stake.validator.toString()
         if (existingPositionIndex === -1) {

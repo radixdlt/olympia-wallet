@@ -18,7 +18,7 @@ const validators: Ref<Validators | null> = ref(null)
 const loadingValidators: Ref<boolean> = ref(true)
 
 export default function useStaking (radix: ReturnType<typeof Radix.create>) {
-  const activeStakes: Ref<StakePositions | null> = ref(null)
+  const activeStakes: Ref<Observed<typeof radix.stakingPositions> | null> = ref(null)
   const activeUnstakes: Ref<Observed<typeof radix.unstakingPositions> | null> = ref(null)
   const loadingStakes: Ref<boolean> = ref(true)
   const loadingUnstakes: Ref<boolean> = ref(true)
@@ -32,7 +32,7 @@ export default function useStaking (radix: ReturnType<typeof Radix.create>) {
     loadingUnstakes.value = false
   })
   const validatorSub = radix.ledger.networkId()
-    .pipe(mergeMap((network) => radix.ledger.validators({ network })))
+    .pipe(mergeMap((network) => radix.ledger.validators(network)))
     .subscribe((validatorsRes: any) => {
       validators.value = validatorsRes
       loadingValidators.value = false

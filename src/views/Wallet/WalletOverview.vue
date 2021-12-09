@@ -106,8 +106,8 @@ const WalletOverview = defineComponent({
     })
 
     const { nativeToken } = useNativeToken(radix)
-    const activeStakes: Ref<Observed<ReturnType<typeof radix.ledger.stakesForAddress>>> = ref([])
-    const activeUnstakes: Ref<Observed<ReturnType<typeof radix.ledger.stakesForAddress>>> = ref([])
+    const activeStakes: Ref<Observed<ReturnType<typeof radix.ledger.stakesForAddress>> | null> = ref(null)
+    const activeUnstakes: Ref<Observed<ReturnType<typeof radix.ledger.unstakesForAddress>> | null> = ref(null)
     const updateObservable = merge(
       radix.activeAccount,
       interval(15000)
@@ -152,7 +152,7 @@ const WalletOverview = defineComponent({
 
     const totalStakedAndUnstaked: ComputedRef<AmountT> = computed(() => {
       if (!activeStakes.value || !activeUnstakes.value) return zero
-      const totalStakedAndUnstaked = sumAmounts(activeStakes.value.flatMap((item: StakePosition) => item.amount)) || zero
+      const totalStakedAndUnstaked = sumAmounts(activeStakes.value.stakes.flatMap((item: StakePosition) => item.amount)) || zero
       const totalUnstaked = sumAmounts(activeUnstakes.value.flatMap((item: StakePosition) => item.amount)) || zero
       return sumAmounts([totalStakedAndUnstaked, totalUnstaked]) || zero
     })
@@ -163,7 +163,7 @@ const WalletOverview = defineComponent({
       if (!nativeTokenBalance) return zero
       if (!activeStakes.value || !activeUnstakes.value) return zero
 
-      const totalStakedAndUnstaked = sumAmounts(activeStakes.value.flatMap((item: StakePosition) => item.amount)) || zero
+      const totalStakedAndUnstaked = sumAmounts(activeStakes.value.stakes.flatMap((item: StakePosition) => item.amount)) || zero
       const totalUnstaked = sumAmounts(activeUnstakes.value.flatMap((item: StakePosition) => item.amount)) || zero
       const totalStakedAndUnstakedSum = sumAmounts([totalStakedAndUnstaked, totalUnstaked]) || zero
       return add(totalXRD.value, totalStakedAndUnstakedSum)
