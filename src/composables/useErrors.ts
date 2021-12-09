@@ -28,10 +28,10 @@ const clearLatestError = () => {
 }
 
 export default function useErrors (radix: ReturnType<typeof Radix.create>): useErrorsInterface {
-  radix.errors
-    .subscribe((error: ErrorT<'wallet'>) => {
-      console.log('error sink:', error)
-    })
+  // radix.errors
+  //   .subscribe((error: ErrorT<'wallet'>) => {
+  //     console.log('error sink:', error)
+  //   })
 
   return {
     appErrors: computed(() => appErrors.value),

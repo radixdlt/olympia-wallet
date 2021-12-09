@@ -159,9 +159,9 @@ const walletLoaded = () => {
 }
 const invalidPasswordError: Ref<WalletError | null> = ref(null)
 
-radix.errors
-  .pipe(filter(errorNotification => errorNotification.cause === WalletErrorCause.LOAD_KEYSTORE_FAILED))
-  .subscribe((errorNotification: ErrorT<'wallet'>) => { invalidPasswordError.value = errorNotification })
+// radix.errors
+//   .pipe(filter(errorNotification => errorNotification.cause === WalletErrorCause.LOAD_KEYSTORE_FAILED))
+//   .subscribe((errorNotification: ErrorT<'wallet'>) => { invalidPasswordError.value = errorNotification })
 
 hasKeystore().then((res: boolean) => { hasWallet.value = res })
 
