@@ -59,11 +59,12 @@
 
 <script lang="ts">
 import { defineComponent, computed, ComputedRef, ref, Ref, onMounted, onUnmounted } from 'vue'
-import { merge, forkJoin, interval, Subject, Subscription, Observable } from 'rxjs'
+import { merge, forkJoin, interval, Subject, Subscription } from 'rxjs'
 import { switchMap, mergeMap } from 'rxjs/operators'
 import { StakePosition, Amount, AmountT } from '@radixdlt/application'
 import TokenSymbol from '@/components/TokenSymbol.vue'
 import ClickToCopy from '@/components/ClickToCopy.vue'
+import BigAmount from '@/components/BigAmount.vue'
 import OtherTokenBalanceListItem from '@/components/OtherTokenBalanceListItem.vue'
 import { createRRIUrl } from '@/helpers/explorerLinks'
 import { truncateRRIStringForDisplay } from '@/helpers/formatter'
@@ -126,6 +127,7 @@ const WalletOverview = defineComponent({
       ]))
     ).subscribe(([balances, stakes, unstakes]) => {
       tokenBalances.value = balances
+      console.log('balances', balances)
       activeStakes.value = stakes
       activeUnstakes.value = unstakes
       loading.value = false
@@ -151,22 +153,12 @@ const WalletOverview = defineComponent({
     })
 
     const totalStakedAndUnstaked: ComputedRef<AmountT> = computed(() => {
-      if (!activeStakes.value || !activeUnstakes.value) return zero
-      const totalStakedAndUnstaked = sumAmounts(activeStakes.value.stakes.flatMap((item: StakePosition) => item.amount)) || zero
-      const totalUnstaked = sumAmounts(activeUnstakes.value.flatMap((item: StakePosition) => item.amount)) || zero
-      return sumAmounts([totalStakedAndUnstaked, totalUnstaked]) || zero
+      if (!tokenBalances.value) return zero
+      return tokenBalances.value.account_balances.staked_and_unstaking_balance.value || zero
     })
 
     const availablePlusStakedAndUnstakedXRD: ComputedRef<AmountT> = computed(() => {
-      if (!tokenBalances.value || !nativeToken.value) return zero
-      const nativeTokenBalance = tokenBalanceFor(nativeToken.value)
-      if (!nativeTokenBalance) return zero
-      if (!activeStakes.value || !activeUnstakes.value) return zero
-
-      const totalStakedAndUnstaked = sumAmounts(activeStakes.value.stakes.flatMap((item: StakePosition) => item.amount)) || zero
-      const totalUnstaked = sumAmounts(activeUnstakes.value.flatMap((item: StakePosition) => item.amount)) || zero
-      const totalStakedAndUnstakedSum = sumAmounts([totalStakedAndUnstaked, totalUnstaked]) || zero
-      return add(totalXRD.value, totalStakedAndUnstakedSum)
+      return add(totalXRD.value, totalStakedAndUnstaked.value)
     })
 
     const otherTokenBalances: ComputedRef<Decoded.TokenAmount[]> = computed(() => {
