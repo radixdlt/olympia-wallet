@@ -42,8 +42,7 @@ import ClickToCopy from '@/components/ClickToCopy.vue'
 import { Token } from '@radixdlt/application'
 import { truncateRRIStringForDisplay } from '@/helpers/formatter'
 import { useRouter } from 'vue-router'
-import { useWallet } from '@/composables'
-import { firstValueFrom } from 'rxjs'
+import { useTokenBalances, useWallet } from '@/composables'
 import { Decoded } from '@radixdlt/application/dist/api/open-api/_types'
 
 export default defineComponent({
@@ -69,11 +68,9 @@ export default defineComponent({
     const tokenBalance = toRef(props, 'tokenBalance')
     const router = useRouter()
     const { radix } = useWallet(router)
+    const { tokenInfoFor } = useTokenBalances(radix)
 
-    firstValueFrom(radix.ledger.tokenInfo(tokenBalance.value.token_identifier.rri))
-      .then((t: any) => {
-        token.value = t
-      })
+    token.value = tokenInfoFor(tokenBalance.value.token_identifier.rri)
 
     const rriUrl: ComputedRef<string> = computed(() =>
       `${props.explorerUrlBase}/#/tokens/${props.tokenBalance.token_identifier.rri.toString()}`

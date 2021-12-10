@@ -79,7 +79,7 @@
                     :key="token.token_identifier.rri.name"
                     :value="token.token_identifier.rri.name"
                   >
-                    {{ token.token_identifier.rri.name }}
+                    {{ tokenInfoFor(token.token_identifier.rri).symbol.toUpperCase() }}
                   </option>
                 </select>
               </div>
@@ -164,7 +164,7 @@ const WalletTransaction = defineComponent({
 
     const { t } = useI18n({ useScope: 'global' })
     const { nativeToken, nativeTokenUnsub } = useNativeToken(radix)
-    const { tokenBalances, tokenBalanceFor, tokenBalancesUnsub } = useTokenBalances(radix)
+    const { tokenBalances, tokenBalanceFor, tokenInfoFor, tokenBalancesUnsub } = useTokenBalances(radix)
     const nativeTokenLoaded: Ref<boolean> = ref(false)
 
     onBeforeRouteLeave(() => {
@@ -249,14 +249,16 @@ const WalletTransaction = defineComponent({
       disableSubmit,
       loadedAllData,
       verifyHardwareWalletAddress,
+      tokenInfoFor,
       handleSubmit () {
         if (!meta.value.valid || !selectedCurrency.value) return false
         const safeAddress = safelyUnwrapAddress(values.recipient, networkPreamble.value)
         const safeAmount = safelyUnwrapAmount(Number(values.amount))
-        const token = selectedCurrency.value.token_identifier
+        const token = tokenInfoFor(selectedCurrency.value.token_identifier.rri)
+        if (!token) return false
         const greaterThanZero = safeAmount && validateGreaterThanZero(safeAmount)
         // to do: we need to get full token info before we can validate
-        const validAmount = safeAmount && validateAmountOfType(safeAmount) && validateGreaterThanZero(safeAmount)
+        const validAmount = safeAmount && validateAmountOfType(safeAmount, token) && validateGreaterThanZero(safeAmount)
         if (!greaterThanZero) {
           setErrors({ amount: t('validations.greaterThanZero') })
           return

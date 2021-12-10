@@ -155,7 +155,7 @@ const WalletStaking = defineComponent({
     const { activeForm, setActiveForm, activeStakes, activeUnstakes, loadingAnyStaking, stakingUnsub, validators } = useStaking(radix)
     const { stakeTokens, unstakeTokens, transactionUnsub, setActiveTransactionForm, transactionErrorMessage } = useTransactions(radix, router, activeAccount.value, hardwareAccount.value)
     const { nativeToken, nativeTokenUnsub } = useNativeToken(radix)
-    const { tokenBalances, tokenBalanceFor, tokenBalancesUnsub } = useTokenBalances(radix)
+    const { tokenBalances, tokenBalanceFor, tokenInfoFor, tokenBalancesUnsub } = useTokenBalances(radix)
 
     onBeforeRouteLeave(() => {
       nativeTokenUnsub()
@@ -244,7 +244,7 @@ const WalletStaking = defineComponent({
       const safeAddress = safelyUnwrapValidator(values.validator)
       const safeAmount = safelyUnwrapAmount(Number(values.amount))
       const greaterThanZero = safeAmount && validateGreaterThanZero(safeAmount)
-      const validAmount = safeAmount && validateAmountOfType(safeAmount)
+      const validAmount = safeAmount && validateAmountOfType(safeAmount, nativeToken.value)
 
       if (!greaterThanZero) {
         setErrors({ amount: t('validations.greaterThanZero') })

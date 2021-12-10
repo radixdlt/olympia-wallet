@@ -45,7 +45,7 @@
     </div>
 
     <div class="bg-white text-rBlack py-4 px-8 flex-1">
-      <div class="grid grid-cols-2 gap-4" v-if="!loading">
+      <div class="grid grid-cols-2 gap-4" v-if="!loading && !loadingRelatedTokens">
         <other-token-balance-list-item
           v-for="(tokenBalance, i) in otherTokenBalances"
           :key="i"
@@ -61,14 +61,14 @@
 import { defineComponent, computed, ComputedRef, ref, Ref, onMounted, onUnmounted } from 'vue'
 import { merge, forkJoin, interval, Subject, Subscription } from 'rxjs'
 import { switchMap, mergeMap } from 'rxjs/operators'
-import { StakePosition, Amount, AmountT } from '@radixdlt/application'
+import { Amount, AmountT } from '@radixdlt/application'
 import TokenSymbol from '@/components/TokenSymbol.vue'
 import ClickToCopy from '@/components/ClickToCopy.vue'
 import BigAmount from '@/components/BigAmount.vue'
 import OtherTokenBalanceListItem from '@/components/OtherTokenBalanceListItem.vue'
 import { createRRIUrl } from '@/helpers/explorerLinks'
 import { truncateRRIStringForDisplay } from '@/helpers/formatter'
-import { sumAmounts, add } from '@/helpers/arithmetic'
+import { add } from '@/helpers/arithmetic'
 import { useRouter, onBeforeRouteLeave } from 'vue-router'
 import { useNativeToken, useTokenBalances, useWallet } from '@/composables'
 import { Observed } from '@/helpers/typeHelpers'
@@ -91,7 +91,7 @@ const WalletOverview = defineComponent({
       verifyHardwareWalletAddress,
       hasWallet
     } = useWallet(router)
-    const { tokenBalances, tokenBalanceFor, tokenBalancesUnsub } = useTokenBalances(radix)
+    const { tokenBalances, tokenBalanceFor, tokenBalancesUnsub, loadingRelatedTokens } = useTokenBalances(radix)
 
     const subs = new Subscription()
 
@@ -121,13 +121,10 @@ const WalletOverview = defineComponent({
     const balanceSub = updateObservable.pipe(
       switchMap(() => radix.activeAccount),
       mergeMap((account: any) => forkJoin([
-        radix.ledger.tokenBalancesForAddress(account.address),
         radix.ledger.stakesForAddress(account.address),
         radix.ledger.unstakesForAddress(account.address)
       ]))
-    ).subscribe(([balances, stakes, unstakes]) => {
-      tokenBalances.value = balances
-      console.log('balances', balances)
+    ).subscribe(([stakes, unstakes]) => {
       activeStakes.value = stakes
       activeUnstakes.value = unstakes
       loading.value = false
@@ -174,6 +171,7 @@ const WalletOverview = defineComponent({
       activeUnstakes,
       explorerUrlBase,
       loading,
+      loadingRelatedTokens,
       nativeToken,
       tokenBalances,
       totalXRD,

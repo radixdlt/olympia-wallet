@@ -55,7 +55,7 @@
             <div class="flex-1 flex flex-row items-center">
               <big-amount :amount="amount" class="mr-1" />
               <span class="uppercase" v-if="(stakeInput || unstakeInput) && nativeToken">{{ nativeToken.symbol }}</span>
-              <span class="uppercase" v-else-if="selectedCurrency">{{ selectedCurrency.token_identifier.rri.name }}</span>
+              <span class="uppercase" v-else-if="selectedCurrencyToken">{{ selectedCurrencyToken.symbol }}</span>
             </div>
           </div>
 
@@ -182,7 +182,7 @@ const WalletConfirmTransactionModal = defineComponent({
       reset
     } = useWallet(router)
     const { nativeToken, nativeTokenUnsub } = useNativeToken(radix)
-    const { tokenBalances, tokenBalanceFor, tokenBalancesUnsub } = useTokenBalances(radix)
+    const { tokenBalances, tokenBalanceFor, tokenInfoFor, tokenBalancesUnsub } = useTokenBalances(radix)
 
     const updateObservable = merge(
       radix.activeAccount,
@@ -225,6 +225,10 @@ const WalletConfirmTransactionModal = defineComponent({
       transactionUnsub,
       selectedCurrency
     } = useTransactions(radix, router, activeAccount.value, hardwareAccount.value)
+
+    const selectedCurrencyToken: ComputedRef<Token | null> = computed(() => {
+      return selectedCurrency.value ? tokenInfoFor(selectedCurrency.value.token_identifier.rri) : null
+    })
 
     const escapeListener = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
@@ -337,7 +341,7 @@ const WalletConfirmTransactionModal = defineComponent({
       if (totalXRD.value && Number(totalXRD.value) < Math.pow(10, 19)) {
         return false
       // Check transaction fee doesn't bring total < 10 xrd for non-exd transactioins
-      } else if (selectedCurrency.value && selectedCurrency.value.token_identifier.rri.name !== 'xrd' && toLabel.value !== 'Unstake from') {
+      } else if (selectedCurrencyToken.value && selectedCurrencyToken.value.symbol !== 'xrd' && toLabel.value !== 'Unstake from') {
         return Number(totalXRD.value) - Number(transactionFee.value) < Math.pow(10, 19)
       // Check amount and transaction feed don't bring total < 10 xrd
       } else if (totalXRD.value && amount.value && transactionFee && toLabel.value !== 'Unstake from') {
@@ -366,6 +370,8 @@ const WalletConfirmTransactionModal = defineComponent({
       nativeToken,
       pinAttempts,
       resetForm,
+      selectedCurrency,
+      selectedCurrencyToken,
       setErrors,
       stakeInput,
       unstakeInput,
@@ -376,7 +382,6 @@ const WalletConfirmTransactionModal = defineComponent({
       transferInput,
       totalXRD,
       values,
-      selectedCurrency,
       xrdRemainderBalanceBelowTen
     }
   }

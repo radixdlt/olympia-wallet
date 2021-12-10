@@ -31,12 +31,11 @@ export const safelyUnwrapAmount = (amount: number): AmountT | null => {
   return amountResult ? amountResult.value : null
 }
 
-export const validateAmountOfType = (amount: AmountT): boolean =>
-  true
-  // Amount.isAmountMultipleOf({
-  //   amount: Amount.fromUnsafe(amount)._unsafeUnwrap(),
-  //   granularity: Amount.fromUnsafe(token.granularity)._unsafeUnwrap()
-  // })
+export const validateAmountOfType = (amount: AmountT, token: Token): boolean =>
+  Amount.isAmountMultipleOf({
+    amount: Amount.fromUnsafe(amount)._unsafeUnwrap(),
+    granularity: Amount.fromUnsafe(token.granularity)._unsafeUnwrap()
+  })
 
 export const validateGreaterThanZero = (amount: AmountT): boolean => {
   const zero = Amount.fromUnsafe(0)._unsafeUnwrap()
