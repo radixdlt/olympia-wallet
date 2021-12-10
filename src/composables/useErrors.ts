@@ -9,15 +9,15 @@ export type ClientAppErrorT = {
   error?: ErrorT<'wallet'> | Error
 }
 
-const appErrors: Ref<ClientAppErrorT[]> = ref([])
+const appErrors: Ref<Error[]> = ref([])
 
 interface useErrorsInterface {
-  readonly appErrors: ComputedRef<ClientAppErrorT[]>;
+  readonly appErrors: ComputedRef<Error[]>;
   clearLatestError: () => void;
-  setError: (error: ClientAppErrorT) => void;
+  setError: (error: Error) => void;
 }
 
-const setError = (error: ClientAppErrorT) => {
+const setError = (error: Error) => {
   appErrors.value = [...appErrors.value, error]
 }
 

@@ -45,7 +45,7 @@ const App = defineComponent({
     const { radix } = useWallet(router)
     const { appErrors } = useErrors(radix)
 
-    const latestError: ComputedRef<ClientAppErrorT | null> = computed(() => {
+    const latestError: ComputedRef<Error | null> = computed(() => {
       return appErrors.value[appErrors.value.length - 1]
     })
     const errorsCount: ComputedRef<number> = computed(() => appErrors.value.length)
