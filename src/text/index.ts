@@ -143,6 +143,7 @@ const messages = {
       stakeTab: 'Stake Tokens',
       unstakeTab: 'Request Unstake',
       unstakingLabel: 'Unstaking',
+      pendingStakeLabel: 'Pending Stake',
       stakedLabel: 'Staked',
       addButton: 'add stake',
       reduceButton: 'reduce stake',

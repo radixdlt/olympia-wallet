@@ -1,5 +1,5 @@
-import { ref, computed, Ref } from 'vue'
-import { Radix, StakePositions, Validators } from '@radixdlt/application'
+import { ref, computed, Ref, ComputedRef } from 'vue'
+import { Amount, Radix, StakePositions, Validator, ValidatorAddress, ValidatorAddressT, Validators } from '@radixdlt/application'
 import { mergeMap } from 'rxjs/operators'
 import { Observed } from '@/helpers/typeHelpers'
 
@@ -38,13 +38,51 @@ export default function useStaking (radix: ReturnType<typeof Radix.create>) {
       loadingValidators.value = false
     })
 
+  const validatorsTopOneHundred: ComputedRef<Array<Validator>> = computed(() => {
+    if (validators.value && validators.value.validators) return validators.value.validators.slice(0, 100)
+    return []
+  })
+
+  const maybeGetValidator = (validatorAddress: ValidatorAddressT) => {
+    if (validators.value && validators.value.validators) {
+      return validators.value.validators.find((v) => v.address.equals(validatorAddress)) || null
+    }
+    return null
+  }
+
+  const getUnstakeAmountForValidator = (validatorAddress: ValidatorAddressT) => {
+    if (!activeUnstakes.value) return Amount.fromUnsafe(0)._unsafeUnwrap()
+    return activeUnstakes.value
+      .filter((unstake) => unstake.validator.equals(validatorAddress))
+      .reduce((accum, unstake) => unstake.amount.add(accum), Amount.fromUnsafe(0)._unsafeUnwrap())
+  }
+
+  const getActiveStakeAmountForValidator = (validatorAddress: ValidatorAddressT) => {
+    if (!activeStakes.value || !activeStakes.value.stakes) return Amount.fromUnsafe(0)._unsafeUnwrap()
+    return activeStakes.value.stakes
+      .filter((unstake) => unstake.validator.equals(validatorAddress))
+      .reduce((accum, unstake) => unstake.amount.add(accum), Amount.fromUnsafe(0)._unsafeUnwrap())
+  }
+
+  const getPendingStakeAmountForValidator = (validatorAddress: ValidatorAddressT) => {
+    if (!activeStakes.value || !activeStakes.value.pendingStakes) return Amount.fromUnsafe(0)._unsafeUnwrap()
+    return activeStakes.value.pendingStakes
+      .filter((unstake) => unstake.validator.equals(validatorAddress))
+      .reduce((accum, unstake) => unstake.amount.add(accum), Amount.fromUnsafe(0)._unsafeUnwrap())
+  }
+
   return {
     activeForm: computed(() => activeForm.value),
     activeStakes,
     activeUnstakes,
     loadingAnyStaking: computed(() => loadingStakes.value || loadingUnstakes.value || loadingValidators.value),
     validators: computed(() => validators.value),
+    validatorsTopOneHundred: computed(() => validatorsTopOneHundred.value),
 
+    getActiveStakeAmountForValidator,
+    getPendingStakeAmountForValidator,
+    getUnstakeAmountForValidator,
+    maybeGetValidator,
     setActiveForm: (form: 'STAKING'|'UNSTAKING') => { activeForm.value = form },
     stakingUnsub: () => {
       loadingStakes.value = true

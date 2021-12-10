@@ -27,8 +27,8 @@
             </div>
           </div>
           <div class="text-xs flex items-center text-rGrayDark font-mono group">
-            {{ validatorAddress }}
-            <click-to-copy :address="position.address" class="group-hover:text-rGreen active:text-rGreenDark" />
+            {{ validatorAddressForDisplay }}
+            <click-to-copy :address="validatorAddress.toString()" class="group-hover:text-rGreen active:text-rGreenDark" />
           </div>
         </div>
         <div class="flex-grow-0">
@@ -59,27 +59,31 @@
           </div>
         </dl>
         <dl class="mt-1">
-          <div class="flex items-center flex-wrap">
-            <div class="mb-1 w-26 flex-grow-0 text-rGrayMed text-xs">{{ $t('staking.stakedLabel') }}:</div>
-            <div class="mb-1 flex-1 text-rBlack"><big-amount :amount="stakeAmount" /> <span class="text-rGrayDark ml-1 uppercase">{{ nativeToken.symbol }}</span></div>
+          <div v-if="validateGreaterThanZero(pendingStakeAmount)" class="flex items-center flex-wrap">
+            <div class="mb-1 w-26 flex-grow-0 text-rGrayMed text-xs">{{ $t('staking.pendingStakeLabel') }}:</div>
+            <div class="mb-1 flex-1 text-rBlack"><big-amount :amount="pendingStakeAmount" /> <span class="text-rGrayDark ml-1 uppercase">{{ nativeToken.symbol }}</span></div>
           </div>
           <div class="flex items-center flex-wrap">
-            <div v-if="unstakeAmount" class="mb-1 w-26 flex-grow-0 text-rGrayMed text-xs">{{ $t('staking.unstakingLabel') }}:</div>
-            <div v-if="unstakeAmount" class="mb-1 flex-1 text-rBlack"><big-amount :amount="unstakeAmount" /> <span class="text-rGrayDark ml-1 uppercase">{{ nativeToken.symbol }}</span></div>
+            <div class="mb-1 w-26 flex-grow-0 text-rGrayMed text-xs">{{ $t('staking.stakedLabel') }}:</div>
+            <div class="mb-1 flex-1 text-rBlack"><big-amount :amount="getActiveStakeAmountForValidator(validatorAddress)" /> <span class="text-rGrayDark ml-1 uppercase">{{ nativeToken.symbol }}</span></div>
+          </div>
+          <div v-if="validateGreaterThanZero(unstakeAmount)" class="flex items-center flex-wrap">
+            <div class="mb-1 w-26 flex-grow-0 text-rGrayMed text-xs">{{ $t('staking.unstakingLabel') }}:</div>
+            <div class="mb-1 flex-1 text-rBlack"><big-amount :amount="unstakeAmount" /> <span class="text-rGrayDark ml-1 uppercase">{{ nativeToken.symbol }}</span></div>
           </div>
         </dl>
       </div>
       <div class="flex flex-row justify-end mb-px text-rGrayDark text-xs py-2 pr-4 bg-rGrayLightest">
         <button
           class="text-rBlue hover:text-rGreen transition-colors cursor-pointer pointer-events-auto mr-px outline-none focus:outline-none px-2"
-          @click="$emit('addToValidator', position.validator)"
+          @click="$emit('addToValidator', validatorAddress)"
         >
           {{ $t('staking.addButton') }}
         </button>
         /
         <button
           class="text-rBlue hover:text-rGreen transition-colors cursor-pointer pointer-events-auto ml-px outline-none focus:outline-none pl-2"
-          @click="$emit('reduceFromValidator', position.validator)"
+          @click="$emit('reduceFromValidator', validatorAddress)"
         >
           {{ $t('staking.reduceButton') }}
         </button>
@@ -90,17 +94,18 @@
 </template>
 
 <script lang="ts">
-import { Token, UnstakePosition, Validator, Amount, AmountT, StakePosition } from '@radixdlt/application'
-import { computed, ComputedRef, defineComponent, PropType, Ref, ref, toRef } from 'vue'
+import { AmountT, Token, ValidatorAddressT } from '@radixdlt/application'
+import { computed, ComputedRef, defineComponent, PropType, Ref, ref } from 'vue'
 import BigAmount from '@/components/BigAmount.vue'
 import ClickToCopy from '@/components/ClickToCopy.vue'
 import { checkValidatorUrlExploitable } from '@/helpers/explorerLinks'
 import { firstValueFrom } from 'rxjs'
 import { formatValidatorAddressForDisplay } from '@/helpers/formatter'
-import { Position } from '@/services/_types'
 import Tooltip from '@/components/Tooltip.vue'
-import { useWallet } from '@/composables'
+import { useStaking, useWallet } from '@/composables'
 import { useRouter } from 'vue-router'
+import { Observed } from '@/helpers/typeHelpers'
+import { validateGreaterThanZero } from '@/helpers/validateRadixTypes'
 
 const StakeListItem = defineComponent({
   components: {
@@ -110,8 +115,8 @@ const StakeListItem = defineComponent({
   },
 
   props: {
-    position: {
-      type: Object as PropType<Position>,
+    validatorAddress: {
+      type: Object as PropType<ValidatorAddressT>,
       required: true
     },
     nativeToken: {
@@ -121,62 +126,56 @@ const StakeListItem = defineComponent({
     explorerUrlBase: {
       type: String,
       required: true
-    },
-    notTopOneHundred: {
-      type: Boolean,
-      required: true
-    },
-    preloadedValidator: {
-      type: Object as PropType<Validator>,
-      required: false
     }
   },
 
   setup (props) {
-    const validator: Ref<Validator | null> = ref(null)
     const router = useRouter()
     const { radix } = useWallet(router)
+    const validator: Ref<Observed<ReturnType<typeof radix.ledger.lookupValidator>> | null> = ref(null)
+    const { validatorsTopOneHundred, maybeGetValidator, getActiveStakeAmountForValidator, getPendingStakeAmountForValidator, getUnstakeAmountForValidator } = useStaking(radix)
 
-    const position = toRef(props, 'position')
-    const preloadedValidator = toRef(props, 'preloadedValidator')
-
-    // If validator was included in top 100, use the preloaded value instead of re-fetching
-    if (!preloadedValidator.value) firstValueFrom(radix.ledger.lookupValidator(position.value.validator)).then((validatorRes: any) => { validator.value = validatorRes })
+    // Attempt to get validator from memory before re-fetching
+    validator.value = maybeGetValidator(props.validatorAddress)
+    if (!validator.value) {
+      firstValueFrom(radix.ledger.lookupValidator(props.validatorAddress))
+        .then((validatorRes) => { validator.value = validatorRes })
+    }
 
     const explorerUrl: ComputedRef<string> = computed(() =>
       validator.value ? `${props.explorerUrlBase}/#/validators/${validator.value.address.toString()}` : `${props.explorerUrlBase}/#/validators/`
     )
 
+    const notTopOneHundred: ComputedRef<boolean> = computed(() =>
+      validatorsTopOneHundred.value && (!!validatorsTopOneHundred.value.find((v) => v.address.equals(props.validatorAddress)))
+    )
+
+    const validatorAddressForDisplay: ComputedRef<string> = computed(() =>
+      formatValidatorAddressForDisplay(props.validatorAddress)
+    )
+
+    const validatedValidatorUrl: ComputedRef<boolean> = computed(() => {
+      if (!validator.value || !validator.value.infoURL) return false
+      return checkValidatorUrlExploitable(validator.value.infoURL.toString())
+    })
+
+    const unstakeAmount: ComputedRef<AmountT> = computed(() => getUnstakeAmountForValidator(props.validatorAddress))
+    const pendingStakeAmount: ComputedRef<AmountT> = computed(() => getPendingStakeAmountForValidator(props.validatorAddress))
+
     return {
-      validator: computed(() => preloadedValidator.value || validator.value),
-      explorerUrl
-    }
-  },
+      explorerUrl,
+      notTopOneHundred,
+      pendingStakeAmount,
+      unstakeAmount,
+      validateGreaterThanZero,
+      validatedValidatorUrl,
+      validator,
+      validatorAddressForDisplay,
 
-  computed: {
-    validatorAddress (): string {
-      return formatValidatorAddressForDisplay(this.position.validator)
-    },
-    unstakesForValidator (): UnstakePosition[] {
-      return this.position.unstakes
-    },
-    validatedValidatorUrl (): boolean {
-      if (!this.validator) {
-        return false
-      }
-      return checkValidatorUrlExploitable(this.validator.infoURL.toString())
-    },
-
-    stakeAmount (): AmountT {
-      const zero = Amount.fromUnsafe(0)._unsafeUnwrap()
-      if (this.position.stakes.length === 0) { return zero }
-      return this.position.stakes.map((el: StakePosition) => el.amount).reduce((prev: AmountT, curr: AmountT) => prev.add(curr), zero)
-    },
-
-    unstakeAmount (): AmountT | null {
-      const zero = Amount.fromUnsafe(0)._unsafeUnwrap()
-      if (this.position.unstakes.length === 0) { return null }
-      return this.position.unstakes.map((el: UnstakePosition) => el.amount).reduce((prev: AmountT, curr: AmountT) => prev.add(curr), zero)
+      // methods
+      getActiveStakeAmountForValidator,
+      getPendingStakeAmountForValidator,
+      getUnstakeAmountForValidator
     }
   },
 

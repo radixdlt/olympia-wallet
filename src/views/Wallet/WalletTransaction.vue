@@ -64,7 +64,7 @@
                     :rules="{
                       required: true,
                       validAmount: true,
-                      insufficientFunds: this.selectedCurrency.amount.toString()
+                      insufficientFunds: this.selectedCurrency.value.toString()
                     }"
                   />
 
@@ -76,10 +76,10 @@
                 >
                   <option
                     v-for="token in tokenOptions"
-                    :key="token.token.name"
-                    :value="token.token.name"
+                    :key="token.token_identifier.rri.name"
+                    :value="token.token_identifier.rri.name"
                   >
-                    {{ token.token.symbol.toUpperCase() }}
+                    {{ token.token_identifier.rri.name }}
                   </option>
                 </select>
               </div>
@@ -158,7 +158,7 @@ const WalletTransaction = defineComponent({
     const router = useRouter()
     const { activeAddress, activeAccount, hardwareAccount, networkPreamble, radix, verifyHardwareWalletAddress } = useWallet(router)
 
-    const { transactionUnsub, setActiveTransactionForm } = useTransactions(radix, router, activeAccount.value, hardwareAccount.value)
+    const { transactionUnsub, setActiveTransactionForm, transferTokens } = useTransactions(radix, router, activeAccount.value, hardwareAccount.value)
 
     setActiveTransactionForm('transaction')
 
@@ -276,18 +276,18 @@ const WalletTransaction = defineComponent({
         }
 
         if (safeAddress && safeAmount) {
-          // transferTokens(
-          //   {
-          //     to_account: safeAddress,
-          //     amount: safeAmount,
-          //     tokenIdentifier: token.rri.toString()
-          //   },
-          //   {
-          //     plaintext: values.message,
-          //     encrypt: values.encrypt
-          //   },
-          //   selectedCurrency.value
-          // )
+          transferTokens(
+            {
+              to_account: safeAddress,
+              amount: safeAmount,
+              tokenIdentifier: token.rri.toString()
+            },
+            {
+              plaintext: values.message,
+              encrypt: values.encrypt
+            },
+            selectedCurrency.value
+          )
         }
       }
     }

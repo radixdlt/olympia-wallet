@@ -18,15 +18,15 @@
     <div class="overflow-x-scroll relative">
       <div class="flex flex-row absolute">
         <div class="flex-1 flex flex-row items-center px-6 overflow-x-auto">
-          <span class="text-sm font-mono text-rGrayDark">{{ truncateRRIStringForDisplay(tokenBalance.tokenIdentifier.toString()) }}</span>
+          <span class="text-sm font-mono text-rGrayDark">{{ truncateRRIStringForDisplay(tokenBalance.token_identifier.rri.toString()) }}</span>
           <div class="hover:text-rGreen flex flex-row items-center cursor-pointer transition-colors">
-            <click-to-copy :address="tokenBalance.tokenIdentifier.toString()"/>
+            <click-to-copy :address="tokenBalance.token_identifier.rri.toString()"/>
           </div>
         </div>
       </div>
       <div class="flex flex-row py-1 mt-6">
         <div class="flex-1 flex flex-row items-center px-6 py-3">
-          <big-amount :amount="tokenBalance.amount" class="text-2xl font-light mr-4 text-rBlack" />
+          <big-amount :amount="tokenBalance.value" class="text-2xl font-light mr-4 text-rBlack" />
           <token-symbol v-if="token">{{ token.symbol.toUpperCase() }}</token-symbol>
         </div>
       </div>

@@ -10,7 +10,7 @@ import {
   Subscription,
   timer
 } from 'rxjs'
-import { catchError, mergeMap, retryWhen, take, delayWhen, tap } from 'rxjs/operators'
+import { catchError, mergeMap, retryWhen, take, delayWhen, tap, filter } from 'rxjs/operators'
 import {
   AmountT,
   ExecutedTransaction,
@@ -30,10 +30,13 @@ import {
   TransferTokensOptions,
   UnstakeOptions,
   UnstakeTokensInput,
-  AccountT
+  AccountT,
+  TransactionTrackingEventType
 } from '@radixdlt/application'
 import { Router } from 'vue-router'
 import { useErrors } from '.'
+import { Decoded } from '@radixdlt/application/dist/api/open-api/_types'
+import { fetchSelectedNode } from '@/actions/electron/data-store'
 
 export interface PendingTransaction extends TransactionStateSuccess {
   actions: IntendedAction[]
@@ -45,15 +48,16 @@ interface useTransactionsInterface {
   readonly activeTransactionForm: Ref<string | null>;
   readonly confirmationMode: Ref<string | null>;
   readonly decryptedMessages: Ref<{id: string, message: string}[]>;
-  readonly selectedCurrency: Ref<TokenBalance | null>;
+  readonly selectedCurrency: Ref<Decoded.TokenAmount | null>;
   readonly shouldShowConfirmation: Ref<boolean>;
   readonly stakeInput: Ref<StakeTokensInput | null>;
+  readonly unstakeInput: Ref<UnstakeTokensInput | null>;
   readonly transactionState: Ref<string>;
   readonly transferInput: Ref<TransferTokensInput | null>;
   readonly transactionFee: Ref<AmountT | null>;
   readonly transactionHistory: Ref<TransactionHistory>;
   readonly transactionErrorMessage: Ref<string | null>;
-  readonly pendingTransactions: Ref<Array<PendingTransaction>>;
+  readonly pendingTransactions: Ref<Array<TransactionIntent>>;
   readonly canGoBack: ComputedRef<boolean>;
   readonly canGoNext: Ref<boolean>;
   readonly loadingHistory: Ref<boolean>;
@@ -66,14 +70,14 @@ interface useTransactionsInterface {
   refreshHistory: () => void;
   setActiveTransactionForm: (val: string) => void;
   stakeTokens: (input: StakeTokensInput) => void;
-  // transferTokens: (input: TransferTokensInput, message: MessageInTransaction, sc: Decoded.TokenAmount) => void;
+  transferTokens: (input: TransferTokensInput, message: MessageInTransaction, sc: Decoded.TokenAmount) => void;
   unstakeTokens: (input: UnstakeTokensInput) => void;
   transactionUnsub: () => void;
 }
 
 const subs = new Subscription()
 
-const PAGE_SIZE = 50
+const PAGE_SIZE = 30
 
 const activeMessage: Ref<string> = ref('')
 const activeMessageInTransaction: Ref<MessageInTransaction | null> = ref(null)
@@ -83,15 +87,16 @@ const ledgerTxError: Ref<Error | null> = ref(null)
 const loadingHistory: Ref<boolean> = ref(true)
 const loadingHistoryPage: Ref<boolean> = ref(true)
 
-const selectedCurrency: Ref<TokenBalance | null> = ref(null)
+const selectedCurrency: Ref<Decoded.TokenAmount | null> = ref(null)
 const shouldShowConfirmation: Ref<boolean> = ref(false)
 const canGoNext: Ref<boolean> = ref(false)
 const confirmationMode: Ref<string | null> = ref(null)
 const cursorStack: Ref<string[]> = ref([])
 const decryptedMessages: Ref<{id: string, message: string}[]> = ref([])
 const draftTransaction: Ref<TransactionIntent | null> = ref(null)
-const pendingTransactions: Ref<Array<PendingTransaction>> = ref([])
+const pendingTransactions: Ref<PendingTransaction[]> = ref([])
 const stakeInput: Ref<StakeTokensInput | null> = ref(null)
+const unstakeInput: Ref<UnstakeTokensInput | null> = ref(null)
 const transactionErrorMessage: Ref<string | null> = ref(null)
 const transactionFee: Ref<AmountT | null> = ref(null)
 const transactionHistory: Ref<TransactionHistory> = ref({ transactions: [], cursor: '' })
@@ -103,7 +108,7 @@ const hasCalculatedFee: Ref<boolean> = ref(false)
 const transactionState: Ref<string> = ref('confirm')
 const userDidConfirm = new Subject<boolean>()
 const userDidCancel = new Subject<boolean>()
-const userConfirmation = new ReplaySubject<ManualUserConfirmTX>()
+let userConfirmation = new ReplaySubject<ManualUserConfirmTX>()
 const historyPagination = new Subject<TransactionHistoryOfKnownAddressRequestInput>()
 
 export default function useTransactions (radix: ReturnType<typeof Radix.create>, router: Router, activeAccount: AccountT | null, hardwareAccount: AccountT | null): useTransactionsInterface {
@@ -168,8 +173,33 @@ export default function useTransactions (radix: ReturnType<typeof Radix.create>,
       transactionHistory.value = history
     })
 
+  // Confirm transaction and move user to history view after they press confirm
+  const watchUserDidConfirm = combineLatest<[ManualUserConfirmTX, boolean]>([userConfirmation, userDidConfirm])
+    .subscribe(([txnToConfirm, didConfirm]: [ManualUserConfirmTX, boolean]) => {
+      if (didConfirm) { txnToConfirm.confirm() }
+    })
+  subs.add(watchUserDidConfirm)
+
+  // Cleanup subscriptions on cancel and complete
+  const cleanupTransactionSubs = () => {
+    userConfirmation = new ReplaySubject<ManualUserConfirmTX>()
+    watchUserDidConfirm.unsubscribe()
+    hasCalculatedFee.value = false
+    transactionErrorMessage.value = null
+  }
+
+  userDidCancel.subscribe((didCancel: boolean) => {
+    if (didCancel) {
+      cleanupTransactionSubs()
+      shouldShowConfirmation.value = false
+      activeMessage.value = ''
+      hasCalculatedFee.value = false
+    }
+  })
+
   const confirmTransaction = () => {
     if (activeAccount && hardwareAccount && activeAccount === hardwareAccount) {
+      // To Do: Tell the ledger to confirm txn
       transactionState.value = 'hw-signing'
     }
     userDidConfirm.next(true)
@@ -194,24 +224,24 @@ export default function useTransactions (radix: ReturnType<typeof Radix.create>,
   //   transactionState.value = 'building'
   //   shouldShowConfirmation.value = true
   //   transactionErrorMessage.value = null
-  //   // Subscribe to initial userConfirmation and display modal
-  //   const createUserConfirmation = userConfirmation
-  //     .subscribe((txnToConfirm: ManualUserConfirmTX) => {
-  //       transactionToConfirm.value = txnToConfirm
-  //       userDidConfirm.next(false)
-  //       transactionState.value = 'confirm'
-  //       transactionFee.value = txnToConfirm.txToConfirm.fee
-  //       hasCalculatedFee.value = true
-  //     })
+  // // Subscribe to initial userConfirmation and display modal
+  // const createUserConfirmation = userConfirmation
+  //   .subscribe((txnToConfirm: ManualUserConfirmTX) => {
+  //     transactionToConfirm.value = txnToConfirm
+  //     userDidConfirm.next(false)
+  //     transactionState.value = 'confirm'
+  //     transactionFee.value = txnToConfirm.txToConfirm.fee
+  //     hasCalculatedFee.value = true
+  //   })
   //   subs.add(createUserConfirmation)
   //   activeTransactionSubs.add(createUserConfirmation)
 
-  //   // Confirm transaction and move user to history view after they press confirm
-  //   const watchUserDidConfirm = combineLatest<[ManualUserConfirmTX, boolean]>([userConfirmation, userDidConfirm])
-  //     .subscribe(([txnToConfirm, didConfirm]: [ManualUserConfirmTX, boolean]) => {
-  //       if (didConfirm) { txnToConfirm.confirm() }
-  //     })
-  //   subs.add(watchUserDidConfirm)
+  // // Confirm transaction and move user to history view after they press confirm
+  // const watchUserDidConfirm = combineLatest<[ManualUserConfirmTX, boolean]>([userConfirmation, userDidConfirm])
+  //   .subscribe(([txnToConfirm, didConfirm]: [ManualUserConfirmTX, boolean]) => {
+  //     if (didConfirm) { txnToConfirm.confirm() }
+  //   })
+  // subs.add(watchUserDidConfirm)
   //   activeTransactionSubs.add(watchUserDidConfirm)
 
   //   // Catch errors that were silently failing
@@ -293,26 +323,6 @@ export default function useTransactions (radix: ReturnType<typeof Radix.create>,
   //   subs.add(transactionCompleteSub)
   //   activeTransactionSubs.add(transactionCompleteSub)
 
-  //   // Cleanup subscriptions on cancel and complete
-  //   const cleanupTransactionSubs = () => {
-  //     userConfirmation = new ReplaySubject<ManualUserConfirmTX>()
-  //     createUserConfirmation.unsubscribe()
-  //     watchUserDidConfirm.unsubscribe()
-  //     trackingSubmittedEvents.unsubscribe()
-  //     hasCalculatedFee.value = false
-  //     transactionErrorMessage.value = null
-  //   }
-
-  //   userDidCancel.subscribe((didCancel: boolean) => {
-  //     if (didCancel) {
-  //       cleanupTransactionSubs()
-  //       activeTransactionSubs.unsubscribe()
-  //       shouldShowConfirmation.value = false
-  //       activeMessage.value = ''
-  //       hasCalculatedFee.value = false
-  //     }
-  //   })
-
   //   subs.add(transactionDidComplete.subscribe((didComplete: boolean) => {
   //     if (didComplete) {
   //       cleanupTransactionSubs()
@@ -326,72 +336,99 @@ export default function useTransactions (radix: ReturnType<typeof Radix.create>,
   const cleanupInputs = () => {
     transferInput.value = null
     stakeInput.value = null
+    unstakeInput.value = null
   }
 
   // call transferTokens() with built options and subscribe to confirmation and results
-  const transferTokens = (transferTokensInput: TransferTokensInput, message: MessageInTransaction, sc: TokenBalance) => {
-    let pollTXStatusTrigger: Observable<unknown>
+  const transferTokens = (transferTokensInput: TransferTokensInput, message: MessageInTransaction, sc: Decoded.TokenAmount) => {
     cleanupInputs()
     transferInput.value = transferTokensInput
     selectedCurrency.value = sc
     activeMessage.value = message.plaintext
     activeMessageInTransaction.value = message
     confirmationMode.value = 'transfer'
-    const buildTransferTokens = (): TransferTokensOptions => ({
-      transferInput: transferTokensInput,
-      userConfirmation: userConfirmation,
-      pollTXStatusTrigger: pollTXStatusTrigger
-    })
 
-    const transactionTracking = radix.transferTokens({
-      ...buildTransferTokens(),
+    const { events, completion } = radix.transferTokens({
+      transferInput: transferTokensInput,
       userConfirmation,
+      pollTXStatusTrigger: interval(500),
       message
     })
 
-    // confirmAndExecuteTransaction(transactionTracking)
+    userDidConfirm.next(false)
+    shouldShowConfirmation.value = true
+
+    subs.add(completion.subscribe(txID => {
+      shouldShowConfirmation.value = false
+      router.push('/wallet/history')
+    }))
+
+    subs.add(events.subscribe(txState => {
+      transactionState.value = txState.eventUpdateType
+      // To Do:
+      // Cleanup subscription after completed event
+      // Add pending transactions to list
+
+      const t: any = txState
+      if (t.transactionState && t.transactionState.fee) transactionFee.value = t.transactionState.fee
+      // if (t.transactionState && t.transactionState.actions) draftTransaction.value = t.transactionState
+    }))
   }
 
   // call unstakeTokens() with built options and subscribe to confirmation and results
-  const unstakeTokens = (unstakeTokensInput: UnstakeTokensInput) => {
-    let pollTXStatusTrigger: Observable<unknown>
+  const unstakeTokens = async (unstakeTokensInput: UnstakeTokensInput) => {
     cleanupInputs()
-    // stakeInput.value = unstakeTokensInput
+    unstakeInput.value = unstakeTokensInput
     confirmationMode.value = 'unstake'
 
-    const buildTransferTokens = (): UnstakeOptions => ({
+    const { completion, events } = await radix.unstakeTokens({
       unstakeInput: unstakeTokensInput,
-      userConfirmation: userConfirmation,
-      pollTXStatusTrigger: pollTXStatusTrigger
+      userConfirmation,
+      pollTXStatusTrigger: interval(1000)
     })
 
-    const unstakingTransactionTracking = radix.unstakeTokens({
-      ...buildTransferTokens(),
-      userConfirmation
-    })
+    userDidConfirm.next(false)
+    shouldShowConfirmation.value = true
 
-    // confirmAndExecuteTransaction(unstakingTransactionTracking)
+    subs.add(completion.subscribe(() => {
+      shouldShowConfirmation.value = false
+      router.push('/wallet/history')
+    }))
+
+    subs.add(events.subscribe(txState => {
+      transactionState.value = txState.eventUpdateType
+
+      const t: any = txState
+      if (t.transactionState && t.transactionState.fee) transactionFee.value = t.transactionState.fee
+    }))
   }
 
   // call stakeTokens() with built options and subscribe to confirmation and results
-  const stakeTokens = (stakeTokensInput: StakeTokensInput) => {
-    let pollTXStatusTrigger: Observable<unknown>
+  const stakeTokens = async (stakeTokensInput: StakeTokensInput) => {
     cleanupInputs()
     stakeInput.value = stakeTokensInput
     confirmationMode.value = 'stake'
 
-    const buildTransferTokens = (): StakeOptions => ({
+    const { completion, events } = await radix.stakeTokens({
       stakeInput: stakeTokensInput,
-      userConfirmation: userConfirmation,
-      pollTXStatusTrigger: pollTXStatusTrigger
+      userConfirmation,
+      pollTXStatusTrigger: interval(1000)
     })
 
-    const stakingTransactionTracking = radix.stakeTokens({
-      ...buildTransferTokens(),
-      userConfirmation
-    })
+    userDidConfirm.next(false)
+    shouldShowConfirmation.value = true
 
-    // confirmAndExecuteTransaction(stakingTransactionTracking)
+    subs.add(completion.subscribe(() => {
+      shouldShowConfirmation.value = false
+      router.push('/wallet/history')
+    }))
+
+    subs.add(events.subscribe(txState => {
+      transactionState.value = txState.eventUpdateType
+
+      const t: any = txState
+      if (t.transactionState && t.transactionState.fee) transactionFee.value = t.transactionState.fee
+    }))
   }
 
   const transactionUnsub = () => {
@@ -408,6 +445,7 @@ export default function useTransactions (radix: ReturnType<typeof Radix.create>,
     selectedCurrency,
     shouldShowConfirmation,
     stakeInput,
+    unstakeInput,
     transactionState,
     transferInput,
     transactionFee,
@@ -426,7 +464,7 @@ export default function useTransactions (radix: ReturnType<typeof Radix.create>,
     refreshHistory,
     setActiveTransactionForm,
     stakeTokens,
-    // transferTokens,
+    transferTokens,
     transactionUnsub,
     unstakeTokens
   }

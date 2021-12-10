@@ -155,10 +155,10 @@ export default defineComponent({
             related = action.to_account.equals(this.activeAddress) || action.from_account.equals(this.activeAddress)
             break
           case ActionType.STAKE_TOKENS:
-            related = action.to_validator.equals(this.activeAddress)
+            related = action.from_account.equals(this.activeAddress)
             break
           case ActionType.UNSTAKE_TOKENS:
-            related = action.from_validator.equals(this.activeAddress)
+            related = action.to_account.equals(this.activeAddress)
             break
           case ActionType.OTHER:
             related = false
