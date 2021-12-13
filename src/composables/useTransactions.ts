@@ -3,6 +3,7 @@ import {
   combineLatest,
   firstValueFrom,
   interval,
+  merge,
   Observable,
   of,
   ReplaySubject,
@@ -10,7 +11,7 @@ import {
   Subscription,
   timer
 } from 'rxjs'
-import { catchError, mergeMap, retryWhen, take, delayWhen, tap, filter } from 'rxjs/operators'
+import { catchError, mergeMap, retryWhen, take, delayWhen, tap, filter, mapTo } from 'rxjs/operators'
 import {
   AmountT,
   ExecutedTransaction,
@@ -111,8 +112,22 @@ const transactionState: Ref<string> = ref('confirm')
 const transactionError: Ref<Error | null> = ref(null)
 const userDidConfirm = new Subject<boolean>()
 const userDidCancel = new Subject<boolean>()
-let userConfirmation = new ReplaySubject<ManualUserConfirmTX>()
+const userConfirmation = new ReplaySubject<ManualUserConfirmTX>()
 const historyPagination = new Subject<TransactionHistoryOfKnownAddressRequestInput>()
+
+userConfirmation
+  .pipe(
+    mergeMap((txnToConfirm) =>
+      merge(userDidConfirm.pipe(mapTo(true)), userDidCancel.pipe(mapTo(false))).pipe(
+        take(1),
+        filter((didConfirm) => didConfirm),
+        mapTo(txnToConfirm.confirm)
+      )
+    )
+  )
+  .subscribe((txnToConfirm) => {
+    txnToConfirm()
+  })
 
 export default function useTransactions (radix: ReturnType<typeof Radix.create>, router: Router, activeAccount: AccountT | null, hardwareAccount: AccountT | null): useTransactionsInterface {
   const { setError } = useErrors(radix)
@@ -176,17 +191,8 @@ export default function useTransactions (radix: ReturnType<typeof Radix.create>,
       transactionHistory.value = history
     })
 
-  // Confirm transaction and move user to history view after they press confirm
-  const watchUserDidConfirm = combineLatest<[ManualUserConfirmTX, boolean]>([userConfirmation, userDidConfirm])
-    .subscribe(([txnToConfirm, didConfirm]: [ManualUserConfirmTX, boolean]) => {
-      if (didConfirm) { txnToConfirm.confirm() }
-    })
-  subs.add(watchUserDidConfirm)
-
   // Cleanup subscriptions on cancel and complete
   const cleanupTransactionSubs = () => {
-    userConfirmation = new ReplaySubject<ManualUserConfirmTX>()
-    watchUserDidConfirm.unsubscribe()
     transactionErrorMessage.value = null
     // To Do: Where in the flow can we safely unsubscvribe from these txns?
     // Unsubscribing here breaks further transactions
@@ -266,7 +272,6 @@ export default function useTransactions (radix: ReturnType<typeof Radix.create>,
       message
     })
 
-    userDidConfirm.next(false)
     shouldShowConfirmation.value = true
 
     transactionSubs.add(completion.subscribe(handleTransactionCompleted))
@@ -285,7 +290,6 @@ export default function useTransactions (radix: ReturnType<typeof Radix.create>,
       pollTXStatusTrigger: interval(1000)
     })
 
-    userDidConfirm.next(false)
     shouldShowConfirmation.value = true
 
     transactionSubs.add(completion.subscribe(handleTransactionCompleted))
@@ -304,7 +308,6 @@ export default function useTransactions (radix: ReturnType<typeof Radix.create>,
       pollTXStatusTrigger: interval(1000)
     })
 
-    userDidConfirm.next(false)
     shouldShowConfirmation.value = true
 
     transactionSubs.add(completion.subscribe(handleTransactionCompleted))
