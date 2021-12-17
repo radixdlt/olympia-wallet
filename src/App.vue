@@ -31,7 +31,6 @@ import { useWallet, useErrors } from './composables'
 import ErrorModalGeneric from '@/components/ErrorModalGeneric.vue'
 import ErrorModalTransactionBuilding from '@/components/ErrorModalTransactionBuilding.vue'
 import ErrorModalTransactionConfirming from '@/components/ErrorModalTransactionConfirming.vue'
-import { ClientAppErrorT } from './composables/useErrors'
 
 const App = defineComponent({
   components: {

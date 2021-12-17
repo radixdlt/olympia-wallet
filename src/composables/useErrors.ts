@@ -1,20 +1,12 @@
-import { ErrorT, Radix } from '@radixdlt/application'
+import { Radix } from '@radixdlt/application'
 import { Ref, ref, computed, ComputedRef } from 'vue'
-
-export type TransactionStateT = 'HW-SIGNING' | 'BUILDING' | 'CONFIRM' | 'SUBMITTING'
-
-export type ClientAppErrorTypeT = 'GENERIC' | 'TRANSACTION-HW-SIGNING' | 'TRANSACTION-BUILDING' | 'TRANSACTION-CONFIRM' | 'TRANSACTION-SUBMITTING'
-export type ClientAppErrorT = {
-  type: ClientAppErrorTypeT,
-  error?: ErrorT<'wallet'> | Error
-}
-
 const appErrors: Ref<Error[]> = ref([])
 
 interface useErrorsInterface {
   readonly appErrors: ComputedRef<Error[]>;
   clearLatestError: () => void;
   setError: (error: Error) => void;
+  getApiErrorMsg: (type: string) => string;
 }
 
 const setError = (error: Error) => {
