@@ -3,8 +3,13 @@
     <div class="bg-rBlue w-1/2 h-tallest origin-center transform rotate-45 absolute z-0 top-0 left-0 -translate-x-1/2 -translate-y-1/2"></div>
     <div class="relative z-10 min-h-screen">
       <template v-if="latestError">
+        <ErrorModalApi
+          v-if="isApiError"
+          :error="latestError.error"
+          :errorsCount="errorsCount"
+        />
         <ErrorModalTransactionBuilding
-          v-if="latestError.type === 'TRANSACTION-BUILDING'"
+          v-else-if="latestError.type === 'TRANSACTION-BUILDING'"
           :error="latestError.error"
           :errorsCount="errorsCount"
         />
@@ -29,6 +34,7 @@ import { computed, ComputedRef, defineComponent } from 'vue'
 import { useRouter } from 'vue-router'
 import { useWallet, useErrors } from './composables'
 import ErrorModalGeneric from '@/components/ErrorModalGeneric.vue'
+import ErrorModalApi from '@/components/ErrorModalApi.vue'
 import ErrorModalTransactionBuilding from '@/components/ErrorModalTransactionBuilding.vue'
 import ErrorModalTransactionConfirming from '@/components/ErrorModalTransactionConfirming.vue'
 
@@ -36,7 +42,8 @@ const App = defineComponent({
   components: {
     ErrorModalGeneric,
     ErrorModalTransactionBuilding,
-    ErrorModalTransactionConfirming
+    ErrorModalTransactionConfirming,
+    ErrorModalApi
   },
 
   setup () {
@@ -47,12 +54,19 @@ const App = defineComponent({
     const latestError: ComputedRef<Error | null> = computed(() => {
       return appErrors.value[appErrors.value.length - 1]
     })
+    const isApiError: ComputedRef<boolean> = computed(() => {
+      const latest: any = appErrors.value[appErrors.value.length - 1]
+      if (latest === null) return false
+      return latest.error?.details?.type
+    })
+
     const errorsCount: ComputedRef<number> = computed(() => appErrors.value.length)
 
     return {
       appErrors,
       errorsCount,
-      latestError
+      latestError,
+      isApiError
     }
   }
 })
