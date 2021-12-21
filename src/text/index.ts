@@ -241,7 +241,7 @@ const messages = {
       unableToPrepareUnstakingTransactionTitle: 'The transaction you’ve specified cannot be created. Possible reasons for this error include:',
       unableToPrepareUnstakingTransactionPointOne: 'Attempting to request an unstake in the same “epoch” (~30 min period) that you staked',
       unableToPrepareUnstakingTransactionPointTwo: 'Attempting to unstake more than you currently have staked to the validator',
-      unableToPrepareUnstakingTransactionPointThree: 'Insufficient XRD to paythe required transaction fee'
+      unableToPrepareUnstakingTransactionPointThree: 'Insufficient XRD to pay the required transaction fee'
     },
     apiErrors: {
       NetworkNotSupportedError: 'The network selected is not valid.',
@@ -251,8 +251,11 @@ const messages = {
       NotEnoughNativeTokensForFeesError: 'You do not have enough XRD to pay the required transaction fee',
       NotEnoughTokensForTransferError: 'You do not have enough of the specified token for this transfer.',
       NotEnoughTokensForStakeError: 'You do not have enough XRD for the requested stake.',
-      NotEnoughTokensForUnstakeError: 'You do not have enough XRD for the requested unstake. You must wait until the next epoch (approx 30 minutes) before unstaking this XRD.',
-      BelowMinimumStakeError: 'You must stake at least 90 XRD.',
+      NotEnoughTokensForUnstakeError: {
+        default: 'You do not have enough XRD for the requested unstake.',
+        pending: 'You must wait until the next epoch (approx. 30 minutes) before unstaking this quantity of XRD – %{pending} XRD are currently pending stake and cannot yet be unstaked.'
+      },
+      BelowMinimumStakeError: 'You must stake at least %{minimum} XRD.',
       CannotStakeError: 'The specified validator node does not accept stake, other than from its owner.',
       MessageTooLongError: 'The messages specified for the transaction is too long.'
     }

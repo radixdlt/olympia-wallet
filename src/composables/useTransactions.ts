@@ -33,7 +33,8 @@ import {
   UnstakeTokensInput,
   AccountT,
   TransactionTrackingEventType,
-  TransactionStateUpdate
+  TransactionStateUpdate,
+  APIError
 } from '@radixdlt/application'
 import { Router } from 'vue-router'
 import { useErrors } from '.'
@@ -252,8 +253,11 @@ export default function useTransactions (radix: ReturnType<typeof Radix.create>,
     if (t.transactionState && t.transactionState.fee) transactionFee.value = t.transactionState.fee
     if (t.error) {
       cancelTransaction()
-      setError(t.error)
     }
+  }
+
+  const errorHandler = (err: any) => {
+    setError(err)
   }
 
   // call transferTokens() with built options and subscribe to confirmation and results
@@ -274,8 +278,12 @@ export default function useTransactions (radix: ReturnType<typeof Radix.create>,
 
     shouldShowConfirmation.value = true
 
-    transactionSubs.add(completion.subscribe(handleTransactionCompleted))
-    transactionSubs.add(events.subscribe(handleTransactionLifecycleEvent))
+    transactionSubs.add(
+      completion.subscribe(handleTransactionCompleted, errorHandler)
+    )
+    transactionSubs.add(
+      events.subscribe(handleTransactionLifecycleEvent, errorHandler)
+    )
   }
 
   // call unstakeTokens() with built options and subscribe to confirmation and results
@@ -292,8 +300,12 @@ export default function useTransactions (radix: ReturnType<typeof Radix.create>,
 
     shouldShowConfirmation.value = true
 
-    transactionSubs.add(completion.subscribe(handleTransactionCompleted))
-    transactionSubs.add(events.subscribe(handleTransactionLifecycleEvent))
+    transactionSubs.add(
+      completion.subscribe(handleTransactionCompleted, errorHandler)
+    )
+    transactionSubs.add(
+      events.subscribe(handleTransactionLifecycleEvent, errorHandler)
+    )
   }
 
   // call stakeTokens() with built options and subscribe to confirmation and results
@@ -310,8 +322,12 @@ export default function useTransactions (radix: ReturnType<typeof Radix.create>,
 
     shouldShowConfirmation.value = true
 
-    transactionSubs.add(completion.subscribe(handleTransactionCompleted))
-    transactionSubs.add(events.subscribe(handleTransactionLifecycleEvent))
+    transactionSubs.add(
+      completion.subscribe(handleTransactionCompleted, errorHandler)
+    )
+    transactionSubs.add(
+      events.subscribe(handleTransactionLifecycleEvent, errorHandler)
+    )
   }
 
   const transactionUnsub = () => {

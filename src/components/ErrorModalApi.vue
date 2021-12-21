@@ -15,9 +15,17 @@
         <div class="bg-rRed rounded-full inline-block px-2 py-0.5 m-2 text-white text-sm">{{ errorsCount }}</div>
       </div>
       <div v-if="showDetails">
-        <p class="mb-2">Error Code: {{ error.code }}</p>
-        <p class="mb-2">Error Type: {{ error.details.type }}</p>
-        <p class="mb-5">{{ error.message }}</p>
+        <p class="mb-2">Please contact support at <a class="text-rBlue"
+        href="mailto:hello@radixdlt.com">hello@radixdlt.com</a> and provide the following.
+        </p>
+        <p class="mb-2 flex justify-between">
+          <span class="flex-1">Error: {{ error.details.type }}</span>
+          <click-to-copy :address="error.details.type" />
+        </p>
+        <p class="mb-5 flex justify-between">
+          <span class="flex-1">Trace ID: {{ error.trace_id }}</span>
+          <click-to-copy :address="error.trace_id" />
+        </p>
       </div>
       <div class="flex flex-row space-x-5 justify-center">
         <AppButtonCancel @click="handleClose" class="w-44">{{ $t('errors.closeModal') }}</AppButtonCancel>
@@ -29,17 +37,22 @@
 
 <script lang="ts">
 import { defineComponent, Ref, ref, toRef, watch } from 'vue'
+import { Amount } from '@radixdlt/application'
 import AppButtonCancel from '@/components/AppButtonCancel.vue'
 import AppModal from '@/components/AppModal.vue'
 import { useRouter } from 'vue-router'
 import { useWallet, useErrors } from '@/composables'
 import { refreshApp } from '@/actions/vue/general'
 import { useI18n } from 'vue-i18n'
+import { asBigNumber } from '@/components/BigAmount.vue'
+import ClickToCopy from '@/components/ClickToCopy.vue'
+import { add } from '@/helpers/arithmetic'
 
 export default defineComponent({
   components: {
     AppButtonCancel,
-    AppModal
+    AppModal,
+    ClickToCopy
   },
 
   props: {
@@ -74,7 +87,25 @@ export default defineComponent({
     }
     const type: string = error.value?.details?.type
     const showDetails = !isApiError(type)
-    const errorMsg: string = showDetails ? 'Unknown Api Error' : t(`apiErrors.${type}`)
+    let errorMsg: string
+    if (showDetails) {
+      errorMsg = 'Unexpected Error'
+    } else if (type === 'BelowMinimumStakeError') {
+      const minimum = error.value.details?.minimum_amount?.value
+      const displayMinimum = minimum ? asBigNumber(minimum) : '10'
+      errorMsg = t(`apiErrors.${type}`, { minimum: displayMinimum })
+    } else if (type === 'NotEnoughTokensForUnstakeError') {
+      const requested = Amount.fromUnsafe(error.value.details.requested_amount.value)._unsafeUnwrap()
+      const staked = Amount.fromUnsafe(error.value.details.stake.delegated_stake.value)._unsafeUnwrap()
+      const pending = Amount.fromUnsafe(error.value.details.pending_stake.delegated_stake.value)._unsafeUnwrap()
+      if (requested > add(staked, pending)) {
+        errorMsg = t(`apiErrors.${type}.default`)
+      } else {
+        errorMsg = t(`apiErrors.${type}.pending`, { pending: asBigNumber(pending) })
+      }
+    } else {
+      errorMsg = t(`apiErrors.${type}`)
+    }
 
     return {
       handleClose,
