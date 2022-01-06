@@ -18,7 +18,6 @@ export default function useTokenBalances (radix: ReturnType<typeof Radix.create>
       // Don't save duplicates
       tokenBalancesRes.account_balances.liquid_balances.map((balance) => {
         if (!relatedTokens.value.find((t) => t.rri.equals(balance.token_identifier.rri))) {
-          console.log('getting info for', balance)
           firstValueFrom(radix.ledger.tokenInfo(balance.token_identifier.rri))
             .then((t) => {
               if (!relatedTokens.value.find((t) => t.rri.equals(balance.token_identifier.rri))) {
