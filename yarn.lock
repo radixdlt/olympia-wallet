@@ -1531,10 +1531,10 @@
     prelude-ts "^1.0.2"
     rxjs "7.0.0"
 
-"@radixdlt/application@^4.0.8":
-  version "4.0.8"
-  resolved "https://registry.yarnpkg.com/@radixdlt/application/-/application-4.0.8.tgz#19e46da4d1c50b3814ee1dd5573b017e154d281e"
-  integrity sha512-Y5Qo5mB9N1YzSlR8rWDlBzS6vFrJoKcfWYd/WQTiALUjjohrSFbN62aduxlEcenir5N6h8gSXnvU3FPjQ0yYJQ==
+"@radixdlt/application@4.0.9":
+  version "4.0.9"
+  resolved "https://registry.yarnpkg.com/@radixdlt/application/-/application-4.0.9.tgz#ce3cd1249bf52a85efbdc5814b5ee186c8019cf9"
+  integrity sha512-FPMQj1MR0RYVPKLXlUZ1rMHwbHjRGSMZeA89xCAcoCth8YZImNu/1Pwb0Ei/SSv7ChiFamCqqxKNmRHgF1QCPw==
   dependencies:
     "@open-rpc/mock-server" "1.7.2"
     "@open-rpc/schema-utils-js" "1.14.3"
@@ -1549,6 +1549,22 @@
   version "2.1.10"
   resolved "https://registry.yarnpkg.com/@radixdlt/crypto/-/crypto-2.1.10.tgz#130f129724199fcde5253da697c3688db9169b92"
   integrity sha512-T4jhxqsuRS0xk0F+rwolN9l5l1jYApanMxKG91Je9QPEf3tqCgYo5vrbJ1GYvwvKriZl0/+czfmuzXJd20CUuw==
+  dependencies:
+    "@radixdlt/data-formats" "1.0.30"
+    "@radixdlt/primitives" "^3.0.6"
+    "@radixdlt/uint256" "1.1.0"
+    "@radixdlt/util" "1.0.29"
+    base-x "^3.0.8"
+    elliptic "^6.5.3"
+    neverthrow "^4.0.1"
+    node-forge "^0.10.0"
+    scrypt-js "^3.0.1"
+    uuid "^8.3.2"
+
+"@radixdlt/crypto@^2.1.11":
+  version "2.1.11"
+  resolved "https://registry.yarnpkg.com/@radixdlt/crypto/-/crypto-2.1.11.tgz#faa6b49e01d5613af14eb1262213c995f33f8fe3"
+  integrity sha512-jVfCByaJT3Jo4+cV5BPBtJNX8+pTc50BOABQX5a7Y7+tlEGlFK7DEhHtECc8x5slLkY89z1NH42fMx8zZRJe8w==
   dependencies:
     "@radixdlt/data-formats" "1.0.30"
     "@radixdlt/primitives" "^3.0.6"
