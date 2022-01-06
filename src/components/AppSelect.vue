@@ -1,6 +1,6 @@
 <template>
   <div class="mt-1 relative w-56">
-    <button
+    <div
       class="bg-white relative flex items-center justify-between w-full border border-gray-300 rounded-sm shadow-sm px-3 py-2 text-left cursor-pointer focus:outline-none focus:ring-1 focus:ring-rBlue focus:border-rBlue sm:text-sm hover:bg-rGrayLight transition-colors"
       @click="toggleIsOpen"
     >
@@ -10,7 +10,7 @@
       <svg width="14" height="8" viewBox="0 0 14 8" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M1 1L7 7L13 1" class="stroke-current text-rBlack" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
-    </button>
+    </div>
 
     <ul
       v-if="isOpen"
