@@ -271,7 +271,7 @@ export default function useTransactions (radix: ReturnType<typeof Radix.create>,
       pollTXStatusTrigger: interval(1000),
       message
     })
-    userDidConfirm.next(false)
+
     shouldShowConfirmation.value = true
 
     transactionSubs.add(completion.subscribe(handleTransactionCompleted))
@@ -290,7 +290,6 @@ export default function useTransactions (radix: ReturnType<typeof Radix.create>,
       pollTXStatusTrigger: interval(1000)
     })
 
-    userDidConfirm.next(false)
     shouldShowConfirmation.value = true
 
     transactionSubs.add(completion.subscribe(handleTransactionCompleted))
@@ -309,7 +308,6 @@ export default function useTransactions (radix: ReturnType<typeof Radix.create>,
       pollTXStatusTrigger: interval(1000)
     })
 
-    userDidConfirm.next(false)
     shouldShowConfirmation.value = true
 
     transactionSubs.add(completion.subscribe(handleTransactionCompleted))
