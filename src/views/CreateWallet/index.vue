@@ -117,7 +117,7 @@ const CreateWallet = defineComponent({
 
     let network = activeNetwork.value
     if (!network) {
-      radix.connect('https://sandpitnet-gateway.radixdlt.com').then(() => {
+      radix.connect('https://stokenet-gateway.radixdlt.com').then(() => {
         return firstValueFrom(radix.ledger.networkId())
       }).then((net: any) => {
         setNetwork(net)
