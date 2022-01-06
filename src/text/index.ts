@@ -74,8 +74,9 @@ const messages = {
     restoreWallet: {
       recoveryTitle: 'Seed Phrase',
       recoveryHelp: 'Enter your 12, 18 or 24 word seed phrase to restore your wallet.',
-      recoveryButtonDisabled: 'Fill these out first',
-      recoveryButtonEnabled: 'I\'ve done it!',
+      recoveryButtonDisabled: 'Enter words to proceed',
+      recoveryButtonEnabled: 'Proceed',
+      invalidMnemonic: 'This mnemonic doesn\'t match an existing wallet. Please try again.',
       passwordTitle: 'Password',
       passwordHelp: 'Please enter a secure password here. This password secures your mnemonicly generated key, and will be required every time you open this application',
       pinTitle: 'PIN',

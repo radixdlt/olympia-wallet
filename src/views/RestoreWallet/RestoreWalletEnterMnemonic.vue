@@ -19,6 +19,8 @@
       </div>
     </div>
 
+    <div v-if="hasError" class="text-sm text-rRed -mt-4 mb-4">{{ $t('restoreWallet.invalidMnemonic') }}</div>
+
     <AppSelect
       :options="mnemonicStrengthOptions"
       :selected="selectedStrengthOption"
@@ -37,7 +39,7 @@ import { computed, ComputedRef, defineComponent, onMounted, ref, Ref } from 'vue
 import MnemonicInput from '@/components/MnemonicInput.vue'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
 import AppSelect, { AppSelectOptionT } from '@/components/AppSelect.vue'
-import { StrengthT } from '@radixdlt/application'
+import { Mnemonic, StrengthT } from '@radixdlt/application'
 import { useI18n } from 'vue-i18n'
 import { mnemonicStrengthOptions } from '@/helpers/mnemonic'
 
@@ -51,6 +53,7 @@ const RestoreWalletEnterMnemonic = defineComponent({
   setup (props, { emit }) {
     const { t } = useI18n({ useScope: 'global' })
     const mnemonicStrength: Ref<StrengthT> = ref(StrengthT.WORD_COUNT_12)
+    const hasError: Ref<boolean> = ref(false)
 
     const selectedStrengthOption: ComputedRef<AppSelectOptionT | undefined> = computed(() => {
       return mnemonicStrengthOptions.find((opt: AppSelectOptionT) => opt.id === mnemonicStrength.value)
@@ -88,13 +91,21 @@ const RestoreWalletEnterMnemonic = defineComponent({
     }
 
     const handleSubmit = () => {
-      if (inputValid.value) emit('confirm', inputWords.value)
+      if (inputValid.value) {
+        const mnemonicRes = Mnemonic.fromEnglishWords(inputWords.value)
+        if (mnemonicRes.isErr()) {
+          hasError.value = true
+        } else {
+          emit('confirm', mnemonicRes)
+        }
+      }
     }
 
     onMounted(() => { initInputWords() })
 
     return {
       buttonText,
+      hasError,
       inputWords,
       inputValid,
       mnemonicStrength,
