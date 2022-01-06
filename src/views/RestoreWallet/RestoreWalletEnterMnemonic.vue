@@ -1,5 +1,5 @@
 <template>
-  <form data-ci="create-wallet-enter-mnemonic-component" @submit.prevent="$emit('confirm', inputWords)">
+  <form data-ci="create-wallet-enter-mnemonic-component" @submit.prevent="handleSubmit">
     <div
       class="grid"
       :class="{
@@ -48,7 +48,7 @@ const RestoreWalletEnterMnemonic = defineComponent({
     MnemonicInput
   },
 
-  setup () {
+  setup (props, { emit }) {
     const { t } = useI18n({ useScope: 'global' })
     const mnemonicStrength: Ref<StrengthT> = ref(StrengthT.WORD_COUNT_12)
 
@@ -87,6 +87,10 @@ const RestoreWalletEnterMnemonic = defineComponent({
       inputWords.value = new Array(arrLength).fill('') as string[]
     }
 
+    const handleSubmit = () => {
+      if (inputValid.value) emit('confirm', inputWords.value)
+    }
+
     onMounted(() => { initInputWords() })
 
     return {
@@ -100,7 +104,8 @@ const RestoreWalletEnterMnemonic = defineComponent({
 
       // methods
       handleChange,
-      handleSelect
+      handleSelect,
+      handleSubmit
     }
   },
 
