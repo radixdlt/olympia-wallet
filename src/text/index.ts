@@ -150,7 +150,7 @@ const messages = {
       fromLabel: 'Staking Account',
       validatorLabel: 'Validator',
       amountLabel: 'Amount',
-      amountPlaceholder: '90 XRD min stake. Available balance ...',
+      amountPlaceholder: 'Available balance ...',
       feeLabel: 'Fee',
       stakeButton: 'Stake',
       unstakeButton: 'Request Unstake',
@@ -244,15 +244,14 @@ const messages = {
       unableToPrepareUnstakingTransactionPointThree: 'Insufficient XRD to pay the required transaction fee'
     },
     apiErrors: {
-      NetworkNotSupportedError: 'The network selected is not valid.',
-      InvalidTokenRRIError: 'The token specified is not valid.',
+      unknown: 'Unexpected Error',
       InvalidAccountAddressError: 'The recipient Radix address specified is not valid.',
       InvalidValidatorAddressError: 'The validator node address specified is not valid.',
       NotEnoughNativeTokensForFeesError: 'You do not have enough XRD to pay the required transaction fee',
       NotEnoughTokensForTransferError: 'You do not have enough of the specified token for this transfer.',
       NotEnoughTokensForStakeError: 'You do not have enough XRD for the requested stake.',
       NotEnoughTokensForUnstakeError: {
-        default: 'You do not have enough XRD for the requested unstake.',
+        requested: 'You do not have enough XRD for the requested unstake.',
         pending: 'You must wait until the next epoch (approx. 30 minutes) before unstaking this quantity of XRD – %{pending} XRD are currently pending stake and cannot yet be unstaked.'
       },
       BelowMinimumStakeError: 'You must stake at least %{minimum} XRD.',

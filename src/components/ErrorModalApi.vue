@@ -87,24 +87,30 @@ export default defineComponent({
     }
     const type: string = error.value?.details?.type
     const showDetails = !isApiError(type)
-    let errorMsg: string
-    if (showDetails) {
-      errorMsg = 'Unexpected Error'
-    } else if (type === 'BelowMinimumStakeError') {
-      const minimum = error.value.details?.minimum_amount?.value
-      const displayMinimum = minimum ? asBigNumber(minimum) : '10'
-      errorMsg = t(`apiErrors.${type}`, { minimum: displayMinimum })
-    } else if (type === 'NotEnoughTokensForUnstakeError') {
-      const requested = Amount.fromUnsafe(error.value.details.requested_amount.value)._unsafeUnwrap()
-      const staked = Amount.fromUnsafe(error.value.details.stake.delegated_stake.value)._unsafeUnwrap()
-      const pending = Amount.fromUnsafe(error.value.details.pending_stake.delegated_stake.value)._unsafeUnwrap()
-      if (requested > add(staked, pending)) {
-        errorMsg = t(`apiErrors.${type}.default`)
-      } else {
-        errorMsg = t(`apiErrors.${type}.pending`, { pending: asBigNumber(pending) })
+    let errorMsg: string = t('apiErrors.unknown')
+    if (!showDetails) {
+      switch (type) {
+        case 'BelowMinimumStakeError': {
+          const minimum = error.value.details?.minimum_amount?.value
+          const displayMinimum = minimum ? asBigNumber(minimum) : '90'
+          errorMsg = t('apiErrors.BelowMinimumStakeError', { minimum: displayMinimum })
+          break
+        }
+        case 'NotEnoughTokensForUnstakeError': {
+          const requested = Amount.fromUnsafe(error.value.details.requested_amount.value)._unsafeUnwrap()
+          const staked = Amount.fromUnsafe(error.value.details.stake.delegated_stake.value)._unsafeUnwrap()
+          const pending = Amount.fromUnsafe(error.value.details.pending_stake.delegated_stake.value)._unsafeUnwrap()
+          if (requested > add(staked, pending)) {
+            errorMsg = t('apiErrors.NotEnoughTokensForUnstakeError.requested')
+            break
+          }
+          errorMsg = t('apiErrors.NotEnoughTokensForUnstakeError.pending', { pending: asBigNumber(pending) })
+          break
+        }
+        default:
+          errorMsg = t(`apiErrors.${type}`)
+          break
       }
-    } else {
-      errorMsg = t(`apiErrors.${type}`)
     }
 
     return {

@@ -4,8 +4,6 @@ import { Ref, ref, computed, ComputedRef } from 'vue'
 const appErrors: Ref<Error[]> = ref([])
 
 export const apiErrors = [
-  'NetworkNotSupportedError',
-  'InvalidTokenRRIError',
   'InvalidAccountAddressError',
   'InvalidValidatorAddressError',
   'NotEnoughNativeTokensForFeesError',
