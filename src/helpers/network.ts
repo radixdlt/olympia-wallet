@@ -26,6 +26,8 @@ export const network = (networkName: Network): ChosenNetworkT => {
   return response
 }
 
+export const defaultNetwork = 'https://stokenet-gateway.radixdlt.com'
+
 export const defaultNetworks: ChosenNetworkT[] = [
   {
     network: Network.MAINNET,

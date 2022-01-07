@@ -70,6 +70,8 @@ import { firstValueFrom } from 'rxjs'
 import { Network } from '@radixdlt/application'
 import WalletLoading from '@/views/Wallet/WalletLoading.vue'
 import { hasKeystore } from '@/actions/vue/create-wallet'
+import { defaultNetwork } from '@/helpers/network'
+
 const Home = defineComponent({
   components: {
     HomeCreateAndRestore,
@@ -95,7 +97,7 @@ const Home = defineComponent({
         //   radix.connect('https://mainnet.radixdlt.com'),
         //   new Promise((resolve, reject) => setTimeout(() => reject(new Error()), 5000))
         // ]).then(() => {
-        radix.connect('https://stokenet-gateway.radixdlt.com').then(() => {
+        radix.connect(defaultNetwork).then(() => {
           connected.value = true
           return firstValueFrom(radix.ledger.networkId())
         }).then((network: Network) => {
