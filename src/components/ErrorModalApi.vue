@@ -1,7 +1,7 @@
 <template>
   <AppModal
     :visible="isVisible"
-    :title="errorMsg"
+    :title="errorTitle"
   >
     <template v-slot:icon>
       <svg width="50" height="50" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg" class="transform rotate-45">
@@ -26,6 +26,9 @@
           <span class="flex-1">Trace ID: {{ error.trace_id }}</span>
           <click-to-copy :address="error.trace_id" />
         </p>
+      </div>
+      <div v-else>
+        <p class="mb-5">{{ errorMsg }}</p>
       </div>
       <div class="flex flex-row space-x-5 justify-center">
         <AppButtonCancel @click="handleClose" class="w-44">{{ $t('errors.closeModal') }}</AppButtonCancel>
@@ -88,12 +91,14 @@ export default defineComponent({
     const type: string = error.value?.details?.type
     const showDetails = !isApiError(type)
     let errorMsg: string = t('apiErrors.unknown')
+    let errorTitle: string = t('apiErrors.unknown')
     if (!showDetails) {
       switch (type) {
         case 'BelowMinimumStakeError': {
           const minimum = error.value.details?.minimum_amount?.value
           const displayMinimum = minimum ? asBigNumber(minimum) : '90'
-          errorMsg = t('apiErrors.BelowMinimumStakeError', { minimum: displayMinimum })
+          errorMsg = t('apiErrors.BelowMinimumStakeError.message', { minimum: displayMinimum })
+          errorTitle = t('apiErrors.BelowMinimumStakeError.title')
           break
         }
         case 'NotEnoughTokensForUnstakeError': {
@@ -101,14 +106,17 @@ export default defineComponent({
           const staked = Amount.fromUnsafe(error.value.details.stake.delegated_stake.value)._unsafeUnwrap()
           const pending = Amount.fromUnsafe(error.value.details.pending_stake.delegated_stake.value)._unsafeUnwrap()
           if (requested > add(staked, pending)) {
-            errorMsg = t('apiErrors.NotEnoughTokensForUnstakeError.requested')
+            errorMsg = t('apiErrors.NotEnoughTokensForUnstakeError.requested.message')
+            errorTitle = t('apiErrors.NotEnoughTokensForUnstakeError.requested.title')
             break
           }
-          errorMsg = t('apiErrors.NotEnoughTokensForUnstakeError.pending', { pending: asBigNumber(pending) })
+          errorMsg = t('apiErrors.NotEnoughTokensForUnstakeError.pending.message', { pending: asBigNumber(pending) })
+          errorTitle = t('apiErrors.NotEnoughTokensForUnstakeError.pending.title')
           break
         }
         default:
-          errorMsg = t(`apiErrors.${type}`)
+          errorMsg = t(`apiErrors.${type}.message`)
+          errorTitle = t(`apiErrors.${type}.title`)
           break
       }
     }
@@ -119,6 +127,7 @@ export default defineComponent({
       refreshApp,
       updateVisible,
       errorMsg,
+      errorTitle,
       showDetails
     }
   }

@@ -245,18 +245,48 @@ const messages = {
     },
     apiErrors: {
       unknown: 'Unexpected Error',
-      InvalidAccountAddressError: 'The recipient Radix address specified is not valid.',
-      InvalidValidatorAddressError: 'The validator node address specified is not valid.',
-      NotEnoughNativeTokensForFeesError: 'You do not have enough XRD to pay the required transaction fee',
-      NotEnoughTokensForTransferError: 'You do not have enough of the specified token for this transfer.',
-      NotEnoughTokensForStakeError: 'You do not have enough XRD for the requested stake.',
-      NotEnoughTokensForUnstakeError: {
-        requested: 'You do not have enough XRD for the requested unstake.',
-        pending: 'You must wait until the next epoch (approx. 30 minutes) before unstaking this quantity of XRD – %{pending} XRD are currently pending stake and cannot yet be unstaked.'
+      InvalidAccountAddressError: {
+        message: 'The recipient Radix address specified is not valid.',
+        title: 'Cannot Create Transaction'
       },
-      BelowMinimumStakeError: 'You must stake at least %{minimum} XRD.',
-      CannotStakeError: 'The specified validator node does not accept stake, other than from its owner.',
-      MessageTooLongError: 'The messages specified for the transaction is too long.'
+      InvalidValidatorAddressError: {
+        message: 'The validator node address specified is not valid.',
+        title: 'Cannot Complete Stake or Unstake'
+      },
+      NotEnoughNativeTokensForFeesError: {
+        message: 'You do not have enough XRD to pay the required transaction fee',
+        title: 'Cannot Create Transaction'
+      },
+      NotEnoughTokensForTransferError: {
+        message: 'You do not have enough of the specified token for this transfer.',
+        title: 'Cannot Create Transaction'
+      },
+      NotEnoughTokensForStakeError: {
+        message: 'You do not have enough XRD for the requested stake.',
+        title: 'Cannot Complete Stake'
+      },
+      NotEnoughTokensForUnstakeError: {
+        requested: {
+          message: 'You do not have enough XRD for the requested unstake.',
+          title: 'Cannot Complete Unstake'
+        },
+        pending: {
+          message: 'You must wait until the next epoch (approx. 30 minutes) before unstaking this quantity of XRD – %{pending} XRD are currently pending stake and cannot yet be unstaked.',
+          title: 'Cannot Complete Unstake'
+        }
+      },
+      BelowMinimumStakeError: {
+        message: 'You must stake at least %{minimum} XRD.',
+        title: 'Cannot Complete Stake'
+      },
+      CannotStakeError: {
+        message: 'The specified validator node does not accept stake, other than from its owner.',
+        title: 'Cannot Complete Stake'
+      },
+      MessageTooLongError: {
+        message: 'The messages specified for the transaction is too long.',
+        title: 'Cannot Create Transaction'
+      }
     }
   }
 }
