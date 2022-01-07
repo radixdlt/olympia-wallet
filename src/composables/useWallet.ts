@@ -42,6 +42,7 @@ import { sha256Twice } from '@radixdlt/crypto'
 
 import { sendAPDU } from '@/actions/vue/hardware-wallet'
 import { HardwareWalletLedger } from '@radixdlt/hardware-ledger'
+import { defaultNetwork } from '@/helpers/network'
 
 const radix = Radix.create()
 
@@ -85,7 +86,7 @@ const createWallet = (mnemonic: MnemomicT, pass: string, network: Network) => {
     hasWallet.value = true
     setWallet(newWallet)
     saveDerivedAccountsIndex(0, network)
-    persistNodeUrl('https://stokenet-gateway.radixdlt.com')
+    persistNodeUrl(defaultNetwork)
   })
 
   return newWalletPromise
