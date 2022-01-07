@@ -1531,10 +1531,10 @@
     prelude-ts "^1.0.2"
     rxjs "7.0.0"
 
-"@radixdlt/application@4.0.10":
-  version "4.0.10"
-  resolved "https://registry.yarnpkg.com/@radixdlt/application/-/application-4.0.10.tgz#c72e9583cb57c88a67764f3233183c5e7cce1381"
-  integrity sha512-sHnJhff0fBA3I3Eb+86MUuy/mgkVJHeNYOjjbLsI6wPdkscIpRFH//5ufxbJWazmFenS1W38ttqM6dLXYMy5IA==
+"@radixdlt/application@4.0.11":
+  version "4.0.11"
+  resolved "https://registry.yarnpkg.com/@radixdlt/application/-/application-4.0.11.tgz#398eed62df07b71caa866933dc3ad97669297e37"
+  integrity sha512-nI/xs+wuctRhiiEhyJuaqRayo1gZRoEs8kUR5bffWKFNSlidHdloLL27tPoF8Qf05b2FYrC8fQ+K9y6xXe2VEA==
   dependencies:
     "@open-rpc/mock-server" "1.7.2"
     "@open-rpc/schema-utils-js" "1.14.3"
@@ -1615,10 +1615,10 @@
     rxjs "7.0.0"
     uuid "^8.3.2"
 
-"@radixdlt/networking@^2.1.10":
-  version "2.1.10"
-  resolved "https://registry.yarnpkg.com/@radixdlt/networking/-/networking-2.1.10.tgz#01d21ead352ba03f80d11d7ee20df59297c3ec74"
-  integrity sha512-P4oSzzSrTAYEIk24lBkq0B7PW98j6quuwMcgAeCSycozrrtod3GboMIWDA0tcG8mIiSswgnjVuv4wmg3KJ5C/w==
+"@radixdlt/networking@^2.1.12":
+  version "2.1.12"
+  resolved "https://registry.yarnpkg.com/@radixdlt/networking/-/networking-2.1.12.tgz#9b7184cdd52b63f2e3d6e2a1c4a2542cdca7d565"
+  integrity sha512-UIfPVG+VJT5u68KRv7KcjujvkguHSJpZ4IIVN9lJcfw5GpjAu6ErgyLftc3q38Y4jy5B7Mmzq/Pudmbg+ln8+A==
   dependencies:
     "@open-rpc/client-js" "1.6.2"
     "@open-rpc/schema-utils-js" "1.14.3"
