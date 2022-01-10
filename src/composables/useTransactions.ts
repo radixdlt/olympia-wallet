@@ -257,7 +257,8 @@ export default function useTransactions (radix: ReturnType<typeof Radix.create>,
   }
 
   const errorHandler = (err: any) => {
-    setError(err)
+    const apiError = { ...err, type: 'api' }
+    setError(apiError)
   }
 
   // call transferTokens() with built options and subscribe to confirmation and results

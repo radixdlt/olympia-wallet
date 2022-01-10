@@ -57,7 +57,7 @@ const App = defineComponent({
     const isApiError: ComputedRef<boolean> = computed(() => {
       const latest: any = appErrors.value[appErrors.value.length - 1]
       if (latest === null) return false
-      return latest.error?.details?.type
+      return latest.type === 'api'
     })
 
     const errorsCount: ComputedRef<number> = computed(() => appErrors.value.length)
