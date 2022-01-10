@@ -19,7 +19,7 @@ interface useErrorsInterface {
   readonly appErrors: ComputedRef<Error[]>;
   clearLatestError: () => void;
   setError: (error: Error) => void;
-  isApiError: (type: string) => boolean;
+  isKnownApiError: (type: string) => boolean;
 }
 
 const setError = (error: Error) => {
@@ -32,7 +32,7 @@ const clearLatestError = () => {
   appErrors.value = latestErrors
 }
 
-const isApiError = (type: string) => {
+const isKnownApiError = (type: string) => {
   return apiErrors.includes(type)
 }
 
@@ -46,6 +46,6 @@ export default function useErrors (radix: ReturnType<typeof Radix.create>): useE
     appErrors: computed(() => appErrors.value),
     clearLatestError,
     setError,
-    isApiError
+    isKnownApiError
   }
 }

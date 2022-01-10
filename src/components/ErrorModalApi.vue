@@ -75,7 +75,7 @@ export default defineComponent({
     const error = toRef(props, 'error')
     const router = useRouter()
     const { radix } = useWallet(router)
-    const { clearLatestError, isApiError } = useErrors(radix)
+    const { clearLatestError, isKnownApiError } = useErrors(radix)
     const { t } = useI18n()
 
     watch((error), (newErrorVal) => {
@@ -89,7 +89,7 @@ export default defineComponent({
       if (props.errorsCount <= 1) isVisible.value = false
     }
     const type: string = error.value?.details?.type
-    const showDetails = !isApiError(type)
+    const showDetails = !isKnownApiError(type)
     let errorMsg: string = t('apiErrors.unknown')
     let errorTitle: string = t('apiErrors.unknown')
     if (!showDetails) {
