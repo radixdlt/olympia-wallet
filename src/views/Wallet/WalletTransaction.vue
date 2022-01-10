@@ -96,6 +96,7 @@
                       class="w-full"
                       label="Message"
                       :placeholder="$t('transaction.messagePlaceholder')"
+                      :rules="{}"
                     />
                   </div>
                   <FormCheckbox name="encrypt" label="Encrypt" :value="true" />
