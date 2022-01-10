@@ -245,6 +245,8 @@ const messages = {
     },
     apiErrors: {
       unknown: 'Unexpected Error',
+      contactCopyOne: 'Please contact support at',
+      contactCopyTwo: 'and provide the following.',
       InvalidAccountAddressError: {
         message: 'The recipient Radix address specified is not valid.',
         title: 'Cannot Create Transaction'

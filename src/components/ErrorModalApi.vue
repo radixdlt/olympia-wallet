@@ -15,8 +15,10 @@
         <div class="bg-rRed rounded-full inline-block px-2 py-0.5 m-2 text-white text-sm">{{ errorsCount }}</div>
       </div>
       <div v-if="showDetails">
-        <p class="mb-2">Please contact support at <a class="text-rBlue"
-        href="mailto:hello@radixdlt.com">hello@radixdlt.com</a> and provide the following.
+        <p class="mb-2 px-12">
+          {{ $t('apiErrors.contactCopyOne') }}
+          <a class="text-rBlue" href="mailto:hello@radixdlt.com">hello@radixdlt.com</a>
+          {{ $t('apiErrors.contactCopyTwo') }}
         </p>
         <p class="mb-2 flex justify-between">
           <span class="flex-1">Error: {{ error.details.type }}</span>
