@@ -115,7 +115,10 @@ const messages = {
       otherAction: 'Other',
       previous: 'Previous',
       next: 'Next',
-      noHistory: 'Sorry, but you don\'t have transaction history for this account.'
+      noHistory: 'Sorry, but you don\'t have transaction history for this account.',
+      unknownTransaction: 'Unknown transaction',
+      complexTransactionSomeUnrelated: 'Complex transaction, additional actions not shown',
+      complexTransaction: 'Complex Transaction'
     },
     transaction: {
       transactionHeading: 'Send Tokens',
