@@ -118,14 +118,9 @@ const RestoreWallet = defineComponent({
         })
     }
 
-    const captureMnemonic = (mneomnicVal: string[]) => {
-      const mnemonicRes = Mnemonic.fromEnglishWords(mneomnicVal)
-      if (mnemonicRes.isErr()) {
-        console.warn('error, invalid mnemonic!')
-      } else {
-        mnemonic.value = mnemonicRes.value
-        step.value = 1
-      }
+    const captureMnemonic = (mnemonicVal: MnemomicT) => {
+      mnemonic.value = mnemonicVal
+      step.value = 1
     }
 
     const handleEnterPin = (val: boolean) => {
