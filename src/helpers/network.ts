@@ -11,13 +11,13 @@ export const network = (networkName: Network): ChosenNetworkT => {
   if (networkName === Network.STOKENET) {
     response = {
       network: Network.STOKENET,
-      networkURL: 'https://stokenet.radixdlt.com',
+      networkURL: 'https://stokenet-gatway.radixdlt.com',
       preamble: HRP[Network.STOKENET].account
     }
   } else if (networkName === Network.MAINNET) {
     response = {
       network: Network.MAINNET,
-      networkURL: 'https://mainnet.radixdlt.com',
+      networkURL: 'https://mainnet-gateway.radixdlt.com',
       preamble: HRP[Network.MAINNET].account
     }
   } else {
@@ -31,12 +31,12 @@ export const defaultNetwork = 'https://stokenet-gateway.radixdlt.com'
 export const defaultNetworks: ChosenNetworkT[] = [
   {
     network: Network.MAINNET,
-    networkURL: 'https://mainnet.radixdlt.com',
+    networkURL: 'https://mainnet-gateway.radixdlt.com',
     preamble: HRP[Network.MAINNET].account
   },
   {
     network: Network.STOKENET,
-    networkURL: 'https://stokenet.radixdlt.com',
+    networkURL: 'https://stokenet-gateway.radixdlt.com',
     preamble: HRP[Network.STOKENET].account
   }
 ]
