@@ -78,6 +78,8 @@ import { Network } from '@radixdlt/application'
 import WalletLoading from '@/views/Wallet/WalletLoading.vue'
 import { hasKeystore } from '@/actions/vue/create-wallet'
 import { getAcceptedTos, setAcceptedTos } from '@/actions/vue/data-store'
+import { defaultNetwork } from '@/helpers/network'
+
 const Home = defineComponent({
   components: {
     HomeCreateAndRestore,
@@ -104,12 +106,12 @@ const Home = defineComponent({
       loading.value = false
       if (!val) {
         Promise.race([
-          radix.connect('https://mainnet.radixdlt.com'),
+          radix.connect(defaultNetwork),
           new Promise((resolve, reject) => setTimeout(() => reject(new Error()), 5000))
         ]).then(() => {
           connected.value = true
           return firstValueFrom(radix.ledger.networkId())
-        }).then((network) => {
+        }).then((network: Network) => {
           setNetwork(network as Network)
         }).catch(() => {
           unableToConnect.value = true

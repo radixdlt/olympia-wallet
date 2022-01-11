@@ -52,6 +52,11 @@
             :activeAddress="activeAddress"
           />
         </div>
+        <div class="text-rGrayMed">
+          <span v-if="customTxnDisplayType === 'UNKNOWN'">{{ $t('history.unknownTransaction') }}</span>
+          <span v-else-if="customTxnDisplayType === 'COMPLEX' && relatedActions.length !== transaction.actions.length">{{ $t('history.complexTransactionSomeUnrelated') }}</span>
+          <span v-else-if="customTxnDisplayType === 'COMPLEX'">{{ $t('history.complexTransaction') }}</span>
+        </div>
       </div>
       <div v-if="messageState" class="text-sm px-3 py-2 bg-rGrayLightest bg-opacity-60 flex items-center">
         <div class="h-5 w-6 flex items-center justify-center -ml-1 mr-1">
@@ -137,33 +142,44 @@ export default defineComponent({
       `${props.explorerUrlBase}/#/transactions/${props.transaction.txID}`
     )
 
+    const relatedActions: ComputedRef<ExecutedAction[]> = computed(() => {
+      return props.transaction.actions.filter((action: ExecutedAction) => {
+        let related
+        switch (action.type) {
+          case ActionType.TOKEN_TRANSFER:
+            related = action.to_account.equals(props.activeAddress) || action.from_account.equals(props.activeAddress)
+            break
+          case ActionType.STAKE_TOKENS:
+            related = action.from_account.equals(props.activeAddress)
+            break
+          case ActionType.UNSTAKE_TOKENS:
+            related = action.to_account.equals(props.activeAddress)
+            break
+          case ActionType.OTHER:
+            related = false
+            break
+        }
+        return !!related
+      }) || []
+    })
+
+    // Handle edge case transaction types in wallet UI
+    const customTxnDisplayType: ComputedRef<'UNKNOWN' | 'COMPLEX' | 'DEFAULT'> = computed(() => {
+      if (props.transaction.actions.length <= 0) return 'UNKNOWN'
+      else if (props.transaction.actions.length > 1) return 'COMPLEX'
+      return 'DEFAULT'
+    })
+
     return {
-      explorerUrl
+      customTxnDisplayType,
+      explorerUrl,
+      relatedActions
     }
   },
 
   computed: {
     sentAt (): string {
       return DateTime.fromJSDate(this.transaction.sentAt).toLocaleString(DateTime.DATETIME_SHORT)
-    },
-
-    relatedActions (): ExecutedAction[] {
-      return this.transaction.actions.filter((action: ExecutedAction) => {
-        let related
-        switch (action.type) {
-          case ActionType.TOKEN_TRANSFER:
-            related = action.to.equals(this.activeAddress) || action.from.equals(this.activeAddress)
-            break
-          case ActionType.STAKE_TOKENS:
-          case ActionType.UNSTAKE_TOKENS:
-            related = action.from.equals(this.activeAddress)
-            break
-          case ActionType.OTHER:
-            related = false
-            break
-        }
-        return related
-      })
     },
 
     showMessageLock (): boolean {

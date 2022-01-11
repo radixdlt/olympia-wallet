@@ -93,13 +93,11 @@
       </div>
       <template v-else>
         <stake-list-item
-          v-for="(position) in sortedPositions"
-          :key="position.address"
-          :position="position"
+          v-for="(v) in relatedValidators"
+          :key="v.toString()"
+          :validatorAddress="v"
           :nativeToken="nativeToken"
           :explorerUrlBase="explorerUrlBase"
-          :notTopOneHundred="!validatorsTopOneHundred.includes(position)"
-          :preloadedValidator="maybeGetPreloadedValidator(position)"
           @addToValidator="handleAddToValidator"
           @reduceFromValidator="handleReduceFromValidator"
         >
@@ -110,7 +108,7 @@
 </template>
 
 <script lang="ts">
-import { StakePosition, UnstakePosition, AccountAddressT, Amount, AmountT, Validator } from '@radixdlt/application'
+import { StakePosition, AccountAddressT, Amount, AmountT, Validator, ValidatorAddressT } from '@radixdlt/application'
 import { computed, defineComponent, ComputedRef } from 'vue'
 import { useForm } from 'vee-validate'
 import StakeListItem from '@/components/StakeListItem.vue'
@@ -155,11 +153,9 @@ const WalletStaking = defineComponent({
       radix
     } = useWallet(router)
     const { activeForm, setActiveForm, activeStakes, activeUnstakes, loadingAnyStaking, stakingUnsub, validators } = useStaking(radix)
-
     const { stakeTokens, unstakeTokens, transactionUnsub, setActiveTransactionForm, transactionErrorMessage } = useTransactions(radix, router, activeAccount.value, hardwareAccount.value)
-
     const { nativeToken, nativeTokenUnsub } = useNativeToken(radix)
-    const { tokenBalances, tokenBalanceFor, tokenBalancesUnsub } = useTokenBalances(radix)
+    const { tokenBalances, tokenBalanceFor, tokenInfoFor, tokenBalancesUnsub } = useTokenBalances(radix)
 
     onBeforeRouteLeave(() => {
       nativeTokenUnsub()
@@ -177,63 +173,31 @@ const WalletStaking = defineComponent({
       resetForm()
     }
 
+    const zero = Amount.fromUnsafe(0)._unsafeUnwrap()
+
     // Computed Values
     const xrdBalance: ComputedRef<AmountT> = computed(() => {
-      if (!tokenBalances.value || !nativeToken.value) return Amount.fromUnsafe(0)._unsafeUnwrap()
+      if (!tokenBalances.value || !nativeToken.value) return zero
       const nativeTokenBalance = tokenBalanceFor(nativeToken.value)
-      return nativeTokenBalance ? nativeTokenBalance.amount : Amount.fromUnsafe(0)._unsafeUnwrap()
+      if (!nativeTokenBalance) return zero
+      return nativeTokenBalance.value
     })
 
-    const sortedPositions: ComputedRef<Array<Position>> = computed(() => {
-      if (!activeStakes.value || !activeUnstakes.value) return []
-      // If more than 1 stake exists for the same validator, only display the validator once and sum their amounts
-      let positions: Position[] = []
-
-      activeStakes.value.forEach((stake: StakePosition) => {
-        const existingPositionIndex = positions.findIndex((pos: Position) => pos.validator.equals(stake.validator))
-        const address = stake.validator.toString()
-        if (existingPositionIndex === -1) {
-          positions = [...positions, { address, validator: stake.validator, stakes: [stake], unstakes: [] }]
-        } else {
-          positions[existingPositionIndex] = { ...positions[existingPositionIndex], stakes: [...positions[existingPositionIndex].stakes, stake] }
-        }
-      })
-
-      activeUnstakes.value.forEach((unstake: UnstakePosition) => {
-        const address = unstake.validator.toString()
-        const existingPositionIndex = positions.findIndex((pos: Position) => pos.validator.equals(unstake.validator))
-        if (existingPositionIndex === -1) {
-          positions = [...positions, { address, validator: unstake.validator, unstakes: [unstake], stakes: [] }]
-        } else {
-          positions[existingPositionIndex] = { ...positions[existingPositionIndex], unstakes: [...positions[existingPositionIndex].unstakes, unstake] }
-        }
-      })
-
-      return positions.sort((a: Position, b: Position) => {
-        const zero = Amount.fromUnsafe(0)._unsafeUnwrap()
-        const aTotal = a.stakes.map((el: StakePosition) => el.amount).reduce((prev: AmountT, curr: AmountT) => prev.add(curr), zero)
-        const bTotal = b.stakes.map((el: StakePosition) => el.amount).reduce((prev: AmountT, curr: AmountT) => prev.add(curr), zero)
-        if (aTotal > bTotal) return -1
-        if (bTotal > aTotal) return 1
-        return 0
-      })
-    })
-
-    const validatorsTopOneHundred: ComputedRef<Array<Position>> = computed(() => {
-      if (validators.value && validators.value.validators) {
-        const vals: Validator[] = validators.value.validators
-        return sortedPositions.value.filter((pos: Position) => {
-          const withinTopOneHundredIndex = vals.findIndex((validator: Validator) => pos.address.toString() === validator.address.toString())
-          return withinTopOneHundredIndex !== -1
+    const relatedValidators: ComputedRef<Array<ValidatorAddressT>> = computed(() => {
+      const vals: ValidatorAddressT[] = []
+      if (activeStakes.value) {
+        activeStakes.value.stakes.map((stake) => vals.push(stake.validator))
+        activeStakes.value.pendingStakes.map((stake) => {
+          if (!vals.find((v) => stake.validator.equals(v))) vals.push(stake.validator)
         })
       }
-      return []
+      if (activeUnstakes.value) {
+        activeUnstakes.value.map((unstake) => {
+          if (!vals.find((v) => unstake.validator.equals(v))) vals.push(unstake.validator)
+        })
+      }
+      return vals
     })
-
-    const maybeGetPreloadedValidator = (position: Position) => {
-      if (!validators.value) return null
-      return validators.value.validators.find((v: Validator) => position.validator.equals(v.address))
-    }
 
     const stakingDisclaimer: ComputedRef<string> = computed(() =>
       activeForm.value === 'STAKING' ? t('staking.stakeDisclaimer') : t('staking.unstakeDisclaimer'))
@@ -251,8 +215,8 @@ const WalletStaking = defineComponent({
     const explorerUrl: ComputedRef<string> = computed(() => `${explorerUrlBase.value}/#/validators`)
 
     const hasTokenBalances = computed(() => {
-      if (!tokenBalances.value?.tokenBalances) return false
-      return tokenBalances.value?.tokenBalances.length > 0
+      if (!tokenBalances.value?.account_balances.liquid_balances) return false
+      return tokenBalances.value?.account_balances.liquid_balances.length > 0
     })
 
     const loadedAllData: ComputedRef<boolean> = computed(() => {
@@ -261,13 +225,13 @@ const WalletStaking = defineComponent({
     })
 
     // Methods
-    const handleAddToValidator = (validator: AccountAddressT) => {
+    const handleAddToValidator = (validator: ValidatorAddressT) => {
       setActiveForm('STAKING')
       setActiveTransactionForm('stake')
       values.validator = validator.toString()
     }
 
-    const handleReduceFromValidator = (validator: AccountAddressT) => {
+    const handleReduceFromValidator = (validator: ValidatorAddressT) => {
       setActiveForm('UNSTAKING')
       setActiveTransactionForm('unstake')
       values.validator = validator.toString()
@@ -280,25 +244,27 @@ const WalletStaking = defineComponent({
       const safeAddress = safelyUnwrapValidator(values.validator)
       const safeAmount = safelyUnwrapAmount(Number(values.amount))
       const greaterThanZero = safeAmount && validateGreaterThanZero(safeAmount)
-      const validAmount = safeAmount && validateAmountOfType(safeAmount, nativeTokenBalance.token)
+      const validAmount = safeAmount && validateAmountOfType(safeAmount, nativeToken.value)
 
       if (!greaterThanZero) {
         setErrors({ amount: t('validations.greaterThanZero') })
         return
       }
       if (!validAmount) {
-        setErrors({ amount: t('validations.amountOfType', { granularity: nativeTokenBalance.token.granularity.toString() }) })
+        setErrors({ amount: t('validations.amountOfType', { granularity: '' }) })
         return
       }
       if (!safeAddress || !safeAmount) return
       activeForm.value === 'STAKING'
         ? stakeTokens({
-          validator: safeAddress,
-          amount: safeAmount
+          to_validator: safeAddress,
+          amount: safeAmount,
+          tokenIdentifier: nativeToken.value.rri
         })
         : unstakeTokens({
-          validator: safeAddress,
-          amount: safeAmount
+          from_validator: safeAddress,
+          amount: safeAmount,
+          tokenIdentifier: nativeToken.value.rri
         })
     }
 
@@ -315,12 +281,10 @@ const WalletStaking = defineComponent({
       loadingAnyStaking,
       meta,
       nativeToken,
-      sortedPositions,
+      relatedValidators,
       stakeButtonCopy,
       stakingDisclaimer,
       tokenBalances,
-      validatorsTopOneHundred,
-      maybeGetPreloadedValidator,
       values,
       xrdBalance,
       disableSubmit,

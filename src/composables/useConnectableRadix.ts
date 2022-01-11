@@ -1,4 +1,4 @@
-import { Network, Radix, RadixT } from '@radixdlt/application'
+import { Network, Radix } from '@radixdlt/application'
 import { Subscription } from 'rxjs'
 import { timeout } from 'rxjs/operators'
 import { computed, ComputedRef, ref, Ref } from 'vue'
@@ -23,7 +23,7 @@ export default function useConnectableRadix (): useConnectableRadixInterface {
     networkId: computed(() => network.value),
 
     testConnection: (networkURL: string) => {
-      const tempRadix: RadixT = Radix.create()
+      const tempRadix = Radix.create()
       isLoading.value = true
       isConnected.value = false
 
