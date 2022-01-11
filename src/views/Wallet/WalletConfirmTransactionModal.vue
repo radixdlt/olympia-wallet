@@ -196,17 +196,6 @@ const WalletConfirmTransactionModal = defineComponent({
       loading.value = true
     }))
 
-    // const balanceSub = updateObservable.pipe(
-    //   switchMap(() => radix.activeAccount),
-    //   mergeMap((account: any) =>
-    //     radix.ledger.tokenBalancesForAddress(account.address)
-    //   )
-    // ).subscribe((balances: any) => {
-    //   tokenBalances.value = balances
-    //   loading.value = false
-    // })
-    // subs.add(balanceSub)
-
     onUnmounted(() => {
       subs.unsubscribe()
       tokenBalancesUnsub()
@@ -316,12 +305,6 @@ const WalletConfirmTransactionModal = defineComponent({
     const handleUnfinishedPin = () => {
       isValidPin.value = false
     }
-
-    // const tokenBalances: Ref<SimpleTokenBalances | null> = ref(null)
-    // const tokenBalanceFor = (token: Token) => {
-    //   if (!tokenBalances.value) return null
-    //   return tokenBalances.value.tokenBalances.find((tb: SimpleTokenBalance) => tb.tokenIdentifier.equals(token.rri)) || null
-    // }
 
     const zero = Amount.fromUnsafe(0)._unsafeUnwrap()
 

@@ -163,6 +163,7 @@ const walletLoaded = () => {
 }
 const invalidPasswordError: Ref<WalletError | null> = ref(null)
 
+// Disable errors sink for now in favor of API errors
 // radix.errors
 //   .pipe(filter(errorNotification => errorNotification.cause === WalletErrorCause.LOAD_KEYSTORE_FAILED))
 //   .subscribe((errorNotification: ErrorT<'wallet'>) => { invalidPasswordError.value = errorNotification })

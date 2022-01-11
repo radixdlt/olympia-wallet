@@ -1,17 +1,7 @@
 import { ref, computed, Ref, ComputedRef } from 'vue'
-import { Amount, Radix, StakePositions, Validator, ValidatorAddress, ValidatorAddressT, Validators } from '@radixdlt/application'
+import { Amount, Radix, Validator, ValidatorAddressT, Validators } from '@radixdlt/application'
 import { mergeMap } from 'rxjs/operators'
 import { Observed } from '@/helpers/typeHelpers'
-
-// interface useStakingInterface {
-//   readonly activeForm: ComputedRef<'STAKING'|'UNSTAKING'>;
-//   readonly activeStakes: Ref<StakePositions | null>;
-//   readonly activeUnstakes: Ref<UnstakePositions | null>;
-//   readonly loadingAnyStaking: ComputedRef<boolean>;
-//   readonly validators: ComputedRef<Validators | null>;
-//   setActiveForm: (form: 'STAKING'|'UNSTAKING') => void;
-//   stakingUnsub: () => void;
-// }
 
 const activeForm: Ref<'STAKING'|'UNSTAKING'> = ref('STAKING')
 const validators: Ref<Validators | null> = ref(null)

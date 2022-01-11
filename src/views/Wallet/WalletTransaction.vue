@@ -187,7 +187,7 @@ const WalletTransaction = defineComponent({
     type tokenAmountT = Observed<ReturnType<typeof radix.ledger.tokenBalancesForAddress>>;
 
     const currency: Ref<string | null> = ref(null)
-    const tokenOptions: Ref<Decoded.TokenAmount[]> = ref([]) // To Do fix this any
+    const tokenOptions: Ref<Decoded.TokenAmount[]> = ref([])
 
     // Set XRD as default and move to top of list of options. Ensure native token subscription has returned before doing so
     const setXRDByDefault = (nativeToken: Token) => {
@@ -263,7 +263,7 @@ const WalletTransaction = defineComponent({
         }
         if (!validAmount) {
           setErrors({
-            amount: t('validations.amountOfType', { granularity: 'hi' })
+            amount: t('validations.amountOfType', { granularity: token.granularity.toString() })
           })
           return
         }

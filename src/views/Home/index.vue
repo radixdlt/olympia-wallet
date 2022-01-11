@@ -105,11 +105,10 @@ const Home = defineComponent({
     hasKeystore().then((val: boolean) => {
       loading.value = false
       if (!val) {
-        // Promise.race([
-        //   radix.connect('https://mainnet.radixdlt.com'),
-        //   new Promise((resolve, reject) => setTimeout(() => reject(new Error()), 5000))
-        // ]).then(() => {
-        radix.connect(defaultNetwork).then(() => {
+        Promise.race([
+          radix.connect(defaultNetwork),
+          new Promise((resolve, reject) => setTimeout(() => reject(new Error()), 5000))
+        ]).then(() => {
           connected.value = true
           return firstValueFrom(radix.ledger.networkId())
         }).then((network: Network) => {

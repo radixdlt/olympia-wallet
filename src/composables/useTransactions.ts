@@ -4,7 +4,6 @@ import {
   firstValueFrom,
   interval,
   merge,
-  Observable,
   of,
   ReplaySubject,
   Subject,
@@ -19,27 +18,20 @@ import {
   ManualUserConfirmTX,
   MessageInTransaction,
   Radix,
-  StakeOptions,
   StakeTokensInput,
-  TokenBalance,
   TransactionHistory,
   TransactionHistoryOfKnownAddressRequestInput,
   TransactionIntent,
   TransactionStateSuccess,
   TransactionTracking,
   TransferTokensInput,
-  TransferTokensOptions,
-  UnstakeOptions,
   UnstakeTokensInput,
   AccountT,
-  TransactionTrackingEventType,
-  TransactionStateUpdate,
-  APIError
+  TransactionStateUpdate
 } from '@radixdlt/application'
 import { Router } from 'vue-router'
 import { useErrors } from '.'
 import { Decoded } from '@radixdlt/application/dist/api/open-api/_types'
-import { fetchSelectedNode } from '@/actions/electron/data-store'
 
 export interface PendingTransaction extends TransactionStateSuccess {
   actions: IntendedAction[]
@@ -79,7 +71,6 @@ interface useTransactionsInterface {
   transactionUnsub: () => void;
 }
 
-const subs = new Subscription()
 const transactionSubs = new Subscription()
 
 const PAGE_SIZE = 30
@@ -195,9 +186,6 @@ export default function useTransactions (radix: ReturnType<typeof Radix.create>,
   // Cleanup subscriptions on cancel and complete
   const cleanupTransactionSubs = () => {
     transactionErrorMessage.value = null
-    // To Do: Where in the flow can we safely unsubscvribe from these txns?
-    // Unsubscribing here breaks further transactions
-    // transactionSubs.unsubscribe()
   }
 
   userDidCancel.subscribe((didCancel: boolean) => {
@@ -210,7 +198,6 @@ export default function useTransactions (radix: ReturnType<typeof Radix.create>,
 
   const confirmTransaction = () => {
     if (activeAccount && hardwareAccount && activeAccount === hardwareAccount) {
-      // To Do: Tell the ledger to confirm txn
       transactionState.value = 'hw-signing'
     }
     userDidConfirm.next(true)

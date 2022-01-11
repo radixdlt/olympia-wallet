@@ -53,10 +53,5 @@ export default function useTokenBalances (radix: ReturnType<typeof Radix.create>
       if (!relatedTokens.value) return null
       return relatedTokens.value.find((rt) => rt.rri.equals(rri)) || null
     }
-    // },
-    // tokenInfoForByString: (rri: string) => {
-    //   if (!relatedTokens.value) return null
-    //   return relatedTokens.value.find((rt) => rt.rri.toString() === rri) || null
-    // }
   }
 }
