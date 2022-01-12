@@ -9,12 +9,12 @@
           >
             <div class="flex flex-col">
               <div>
-                <div v-if="!validator.registered" class="inline-flex justify-start items-center">
+                <div v-if="!validator.registered" class="flex justify-start items-center">
                   <span class="bg-rRed w-2 h-2 rounded-full"></span>
                   <span class="text-rRed ml-2 mr-3">{{ $t('staking.unregistered') }}</span>
                 </div>
-                <div v-if="notTopOneHundred" class="inline-flex items-center">
-                  <span v-if="notTopOneHundred && !validator.registered"></span>
+                <div v-if="!inTopOneHundred" class="flex items-center">
+                  <span v-if="!inTopOneHundred && !validator.registered"></span>
                   <span class="bg-rRed w-2 h-2 rounded-full"></span>
                   <span class="text-rRed ml-2">{{ $t('staking.notTopOneHundred') }}</span>
                 </div>
@@ -147,8 +147,8 @@ const StakeListItem = defineComponent({
       validator.value ? `${props.explorerUrlBase}/#/validators/${validator.value.address.toString()}` : `${props.explorerUrlBase}/#/validators/`
     )
 
-    const notTopOneHundred: ComputedRef<boolean> = computed(() =>
-      validatorsTopOneHundred.value && (!!validatorsTopOneHundred.value.find((v) => v.address.equals(props.validatorAddress)))
+    const inTopOneHundred: ComputedRef<boolean> = computed(() =>
+      validatorsTopOneHundred.value && !!(validatorsTopOneHundred.value.find((v) => v.address.toString() === props.validatorAddress.toString()))
     )
 
     const validatorAddressForDisplay: ComputedRef<string> = computed(() =>
@@ -165,7 +165,7 @@ const StakeListItem = defineComponent({
 
     return {
       explorerUrl,
-      notTopOneHundred,
+      inTopOneHundred,
       pendingStakeAmount,
       unstakeAmount,
       validateGreaterThanZero,
