@@ -96,7 +96,7 @@ const RestoreWalletEnterMnemonic = defineComponent({
         if (mnemonicRes.isErr()) {
           hasError.value = true
         } else {
-          emit('confirm', mnemonicRes)
+          emit('confirm', mnemonicRes.value)
         }
       }
     }
@@ -118,9 +118,7 @@ const RestoreWalletEnterMnemonic = defineComponent({
       handleSelect,
       handleSubmit
     }
-  },
-
-  emits: ['confirm']
+  }
 })
 
 export default RestoreWalletEnterMnemonic
