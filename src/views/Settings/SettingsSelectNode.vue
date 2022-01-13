@@ -75,7 +75,7 @@
 </template>
 
 <script lang="ts">
-import { ref, Ref, computed, ComputedRef, defineComponent } from 'vue'
+import { ref, Ref, computed, ComputedRef, defineComponent, onMounted, onUnmounted } from 'vue'
 import { ChosenNetworkT, defaultNetworks } from '@/helpers/network'
 import NodeListItem from '@/components/NodeListItem.vue'
 import FormErrorMessage from '@/components/FormErrorMessage.vue'
@@ -112,6 +112,18 @@ export default defineComponent({
     const router = useRouter()
     const { updateConnection, switching } = useWallet(router)
     const customNodeURLs: Ref<string[]> = ref([])
+
+    const handleErr = (event: any) => {
+      toast.error('Unable to connect')
+    }
+
+    onMounted(() => {
+      window.addEventListener('unhandledrejection', handleErr)
+    })
+
+    onUnmounted(() => {
+      window.removeEventListener('unhandledrejection', handleErr)
+    })
 
     const loadURLs = () => {
       fetchCustomNodeURLs().then((urls) => { customNodeURLs.value = urls })
