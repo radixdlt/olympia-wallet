@@ -8,6 +8,11 @@
           :error="latestError.error"
           :errorsCount="errorsCount"
         />
+        <ErrorModalHardware
+          v-if="latestError.type === 'HARDWARE'"
+          :error="latestError.error"
+          :errorsCount="errorsCount"
+        />
         <ErrorModalTransactionBuilding
           v-else-if="latestError.type === 'TRANSACTION-BUILDING'"
           :error="latestError.error"
@@ -34,6 +39,7 @@ import { computed, ComputedRef, defineComponent } from 'vue'
 import { useRouter } from 'vue-router'
 import { useWallet, useErrors } from './composables'
 import ErrorModalGeneric from '@/components/ErrorModalGeneric.vue'
+import ErrorModalHardware from '@/components/ErrorModalHardware.vue'
 import ErrorModalApi from '@/components/ErrorModalApi.vue'
 import ErrorModalTransactionBuilding from '@/components/ErrorModalTransactionBuilding.vue'
 import ErrorModalTransactionConfirming from '@/components/ErrorModalTransactionConfirming.vue'
@@ -41,6 +47,7 @@ import ErrorModalTransactionConfirming from '@/components/ErrorModalTransactionC
 const App = defineComponent({
   components: {
     ErrorModalGeneric,
+    ErrorModalHardware,
     ErrorModalTransactionBuilding,
     ErrorModalTransactionConfirming,
     ErrorModalApi
