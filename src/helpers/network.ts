@@ -11,7 +11,7 @@ export const network = (networkName: Network): ChosenNetworkT => {
   if (networkName === Network.STOKENET) {
     response = {
       network: Network.STOKENET,
-      networkURL: 'https://stokenet-gatway.radixdlt.com',
+      networkURL: 'https://stokenet-gateway.radixdlt.com',
       preamble: HRP[Network.STOKENET].account
     }
   } else if (networkName === Network.MAINNET) {

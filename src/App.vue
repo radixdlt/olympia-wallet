@@ -20,7 +20,7 @@
         />
         <ErrorModalGeneric
           v-else
-          :error="latestError.error"
+          :error="latestError"
           :errorsCount="errorsCount"
         />
       </template>
@@ -30,13 +30,15 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent } from 'vue'
+import { computed, ComputedRef, defineComponent, onUnmounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useWallet, useErrors } from './composables'
 import ErrorModalGeneric from '@/components/ErrorModalGeneric.vue'
 import ErrorModalApi from '@/components/ErrorModalApi.vue'
 import ErrorModalTransactionBuilding from '@/components/ErrorModalTransactionBuilding.vue'
 import ErrorModalTransactionConfirming from '@/components/ErrorModalTransactionConfirming.vue'
+import { defaultNetwork, network } from './helpers/network'
+import { useI18n } from 'vue-i18n'
 
 const App = defineComponent({
   components: {
@@ -48,8 +50,10 @@ const App = defineComponent({
 
   setup () {
     const router = useRouter()
-    const { radix } = useWallet(router)
-    const { appErrors } = useErrors(radix)
+    const { radix, activeNetwork } = useWallet(router)
+    const { appErrors, setError } = useErrors(radix)
+    const { t } = useI18n()
+    const isConnected = ref(true)
 
     const latestError: ComputedRef<Error | null> = computed(() => {
       return appErrors.value[appErrors.value.length - 1]
@@ -59,10 +63,29 @@ const App = defineComponent({
       if (latest === null) return false
       return latest.type === 'api'
     })
+    const activeNetworkUrl: ComputedRef<string> = computed(() => {
+      if (!activeNetwork.value) return defaultNetwork
+      return activeNetwork ? network(activeNetwork.value).networkURL : defaultNetwork
+    })
 
     const errorsCount: ComputedRef<number> = computed(() => appErrors.value.length)
 
+    // Ping network every 10 seconds to check for connectivitiy
+    var networkPing = window.setInterval(() => {
+      fetch(activeNetworkUrl.value)
+        .then(() => { isConnected.value = true })
+        .catch(() => {
+          if (isConnected.value) {
+            setError(new Error(t('errors.networkError')))
+            isConnected.value = false
+          }
+        })
+    }, 10000)
+
+    onUnmounted(() => { clearInterval(networkPing) })
+
     return {
+      isConnected,
       appErrors,
       errorsCount,
       latestError,
