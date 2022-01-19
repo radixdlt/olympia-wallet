@@ -1,7 +1,7 @@
 <template>
   <div class="fixed w-screen h-screen z-20 flex items-center justify-center bg-translucent-black">
     <div class="h-modalMedium bg-white rounded-md py-7 px-7 w-full max-w-3xl absolute top-1/2 left-1/2 transform -translate-x-1/3 -translate-y-1/2">
-      <div v-if="transactionState === 'INITIATED' || transactionState === 'BUILT_FROM_INTENT'">
+      <div v-if="shouldShowBuildingModal">
         <div class="bg-white h-full flex flex-col flex-1 w-full justify-around box-border mt-52">
           <svg width="40" height="40" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" class="container animate-spin">
             <path fill-rule="evenodd" clip-rule="evenodd" d="M77.8789 52.8857C72.5168 68.6526 57.5862 80.0002 40.0001 80.0002C29.2115 80.0002 19.417 75.7265 12.2241 68.7838L14.9924 65.9158C21.4721 72.1701 30.2851 76.0141 40.0001 76.0141C55.8278 76.0141 69.2758 65.8025 74.1051 51.6023L77.8789 52.8857Z" fill="#052CC0"/>
@@ -9,7 +9,7 @@
             <path fill-rule="evenodd" clip-rule="evenodd" d="M38.0078 0H40.0008C62.0924 0 80.0008 17.9088 80.0008 40V41.993H38.0078V0ZM41.9939 4.04026V38.007H75.9606C74.9622 19.7039 60.2972 5.03859 41.9939 4.04026Z" fill="#00C389"/>
           </svg>
           <div class="text-center mt-8 text-rGrayDark text-lg">
-            Building Transaction...
+            {{ $t('transaction.buildingMessage') }}
           </div>
           <div class="text-center mt-4 text-rGrayDark text-sm">{{ transactionState }}</div>
           <button
@@ -20,7 +20,7 @@
           </button>
         </div>
       </div>
-      <div v-else-if="transactionState === 'hw-signing' || transactionState === 'confirm' || transactionState === 'CONFIRMED'">
+      <div v-else-if="shouldShowLedgerModal">
         <div class="bg-white h-full flex flex-col flex-1 w-full justify-around box-border mt-52">
           <svg width="40" height="40" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" class="container animate-spin">
             <path fill-rule="evenodd" clip-rule="evenodd" d="M77.8789 52.8857C72.5168 68.6526 57.5862 80.0002 40.0001 80.0002C29.2115 80.0002 19.417 75.7265 12.2241 68.7838L14.9924 65.9158C21.4721 72.1701 30.2851 76.0141 40.0001 76.0141C55.8278 76.0141 69.2758 65.8025 74.1051 51.6023L77.8789 52.8857Z" fill="#052CC0"/>
@@ -28,7 +28,7 @@
             <path fill-rule="evenodd" clip-rule="evenodd" d="M38.0078 0H40.0008C62.0924 0 80.0008 17.9088 80.0008 40V41.993H38.0078V0ZM41.9939 4.04026V38.007H75.9606C74.9622 19.7039 60.2972 5.03859 41.9939 4.04026Z" fill="#00C389"/>
           </svg>
           <div class="text-center mt-8 text-rGrayDark text-lg">
-            Please confirm and sign the transaction on your Ledger.
+            {{ $t('transaction.confirmMessage') }}
           </div>
         </div>
       </div>
@@ -131,7 +131,7 @@
             <path fill-rule="evenodd" clip-rule="evenodd" d="M38.0078 0H40.0008C62.0924 0 80.0008 17.9088 80.0008 40V41.993H38.0078V0ZM41.9939 4.04026V38.007H75.9606C74.9622 19.7039 60.2972 5.03859 41.9939 4.04026Z" fill="#00C389"/>
           </svg>
           <div class="text-center mt-8 text-rGrayDark text-lg">
-            Submitting Transaction...
+            {{ $t('transaction.submittingMessage') }}
           </div>
           <div class="text-center mt-4 text-rGrayDark text-sm">{{ transactionState }}</div>
         </div>
@@ -141,11 +141,10 @@
 </template>
 
 <script lang="ts">
-import { Amount, AmountT, AmountOrUnsafeInput, SimpleTokenBalance, SimpleTokenBalances, Token, StakePositions } from '@radixdlt/application'
-import { defineComponent, ref, Ref, onMounted, onUnmounted, computed, ComputedRef } from 'vue'
+import { Amount, AmountT, AmountOrUnsafeInput, Token } from '@radixdlt/application'
+import { defineComponent, ref, onMounted, onUnmounted, computed, ComputedRef } from 'vue'
 import { useForm } from 'vee-validate'
-import { merge, interval, Subscription, forkJoin } from 'rxjs'
-import { switchMap, mergeMap } from 'rxjs/operators'
+import { merge, interval, Subscription } from 'rxjs'
 import BigAmount from '@/components/BigAmount.vue'
 import PinInput from '@/components/PinInput.vue'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
@@ -277,6 +276,14 @@ const WalletConfirmTransactionModal = defineComponent({
       return t(`confirmation.${confirmationMode.value}ToLabel`)
     })
 
+    const shouldShowBuildingModal: ComputedRef<boolean> = computed(() =>
+      transactionState.value === 'INITIATED' || transactionState.value === 'BUILT_FROM_INTENT'
+    )
+
+    const shouldShowLedgerModal: ComputedRef<boolean> = computed(() =>
+      transactionState.value === 'hw-signing' || transactionState.value === 'confirm' || transactionState.value === 'CONFIRMED'
+    )
+
     const handleConfirm = () => {
       canCancel.value = false
       confirmTransaction()
@@ -356,6 +363,8 @@ const WalletConfirmTransactionModal = defineComponent({
       selectedCurrency,
       selectedCurrencyToken,
       setErrors,
+      shouldShowBuildingModal,
+      shouldShowLedgerModal,
       stakeInput,
       unstakeInput,
       toContent,

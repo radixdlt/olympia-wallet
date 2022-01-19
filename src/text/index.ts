@@ -155,7 +155,10 @@ const messages = {
       recipientPlaceholder: 'Enter address',
       amountPlaceholder: 'Available balance ...',
       messagePlaceholder: 'Add an optional message',
-      enterPin: 'Enter PIN'
+      enterPin: 'Enter PIN',
+      buildingMessage: 'Building Transaction...',
+      confirmMessage: 'Please confirm and sign the transaction on your Ledger.',
+      submittingMessage: 'Submitting Transaction...'
     },
     staking: {
       currentStakesHeading: 'Current Stakes',
