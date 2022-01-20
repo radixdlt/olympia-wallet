@@ -30,7 +30,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, onUnmounted, ref } from 'vue'
+import { computed, ComputedRef, defineComponent, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useWallet, useErrors } from './composables'
 import ErrorModalGeneric from '@/components/ErrorModalGeneric.vue'
@@ -39,6 +39,9 @@ import ErrorModalTransactionBuilding from '@/components/ErrorModalTransactionBui
 import ErrorModalTransactionConfirming from '@/components/ErrorModalTransactionConfirming.vue'
 import { defaultNetwork, network } from './helpers/network'
 import { useI18n } from 'vue-i18n'
+import { firstValueFrom, interval } from 'rxjs'
+import { timeout } from 'rxjs/operators'
+import { Network } from '@radixdlt/primitives'
 
 const App = defineComponent({
   components: {
@@ -50,17 +53,16 @@ const App = defineComponent({
 
   setup () {
     const router = useRouter()
-    const { radix, activeNetwork } = useWallet(router)
+    const { radix, activeNetwork, connected, setConnected, setNetwork, reloadSubscriptions } = useWallet(router)
     const { appErrors, setError } = useErrors(radix)
     const { t } = useI18n()
-    const isConnected = ref(true)
 
     const latestError: ComputedRef<Error | null> = computed(() => {
       return appErrors.value[appErrors.value.length - 1]
     })
     const isApiError: ComputedRef<boolean> = computed(() => {
       const latest: any = appErrors.value[appErrors.value.length - 1]
-      if (latest === null) return false
+      if (!latest) return false
       return latest.type === 'api'
     })
     const activeNetworkUrl: ComputedRef<string> = computed(() => {
@@ -70,22 +72,28 @@ const App = defineComponent({
 
     const errorsCount: ComputedRef<number> = computed(() => appErrors.value.length)
 
-    // Ping network every 10 seconds to check for connectivitiy
-    var networkPing = window.setInterval(() => {
-      fetch(activeNetworkUrl.value)
-        .then(() => { isConnected.value = true })
-        .catch(() => {
-          if (isConnected.value) {
-            setError(new Error(t('errors.networkError')))
-            isConnected.value = false
-          }
-        })
-    }, 10000)
+    const sub = interval(10000).subscribe(() => {
+      firstValueFrom(radix.ledger.networkId().pipe(
+        timeout({ each: 9000 })
+      )).then((network: Network) => {
+        if (!connected.value) {
+          reloadSubscriptions()
+        }
+        setConnected(true)
+        setNetwork(network)
+      }).catch(() => {
+        if (connected.value) {
+          setConnected(false)
+          setNetwork(null)
+          setError(new Error(t('errors.networkError')))
+        }
+      })
+    })
 
-    onUnmounted(() => { clearInterval(networkPing) })
+    onUnmounted(() => sub.unsubscribe())
 
     return {
-      isConnected,
+      connected,
       appErrors,
       errorsCount,
       latestError,

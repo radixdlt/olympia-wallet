@@ -138,7 +138,7 @@ interface useWalletInterface {
   resetWallet: (nextRoute: 'create-wallet' | 'restore-wallet') => void;
   setDeleteHWWalletPrompt: (val: boolean) => void;
   setConnected: (value: boolean) => void;
-  setNetwork: (network: Network) => void;
+  setNetwork: (network: Network | null) => void;
   setPin: (pin: string) => Promise<string>;
   setSwitching: (value: boolean) => void;
   setWallet: (newWallet: WalletT) => WalletT;
@@ -479,7 +479,7 @@ export default function useWallet (router: Router): useWalletInterface {
       // return network
     },
 
-    setNetwork (network: Network) {
+    setNetwork (network: Network | null) {
       activeNetwork.value = network
     },
 

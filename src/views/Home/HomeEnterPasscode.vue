@@ -45,7 +45,8 @@ import { useI18n } from 'vue-i18n'
 import { ref } from '@nopr3d/vue-next-rx'
 import { useRouter } from 'vue-router'
 import { useSettingsTab, useWallet } from '@/composables'
-import { firstValueFrom } from 'rxjs'
+import { firstValueFrom, throwError } from 'rxjs'
+import { timeout } from 'rxjs/operators'
 
 interface PasswordForm {
   password: string;
@@ -74,23 +75,28 @@ const HomeEnterPasscode = defineComponent({
     const handleSubmit = () => {
       isAuthenticating.value = true
       loginWithWallet(values.password).then((client) => {
-        isAuthenticating.value = false
-        return firstValueFrom(client.ledger.networkId())
+        const sub = client.ledger.networkId().pipe(
+          timeout({
+            each: 9000,
+            with: () => throwError(() => new Error('network timeout'))
+          })
+        )
+        return firstValueFrom(sub)
       }).then((network) => {
         router.push('/wallet')
         setNetwork(network)
-        isAuthenticating.value = false
         walletLoaded()
       }).catch((error) => {
         setConnected(false)
-        if (error.cause === 'NETWORK_ID_FAILED') {
+        if (error.message === 'network timeout') {
           setTab('nodes')
           router.push('/wallet/settings')
         }
-        isAuthenticating.value = false
         setErrors({
           password: t('validations.incorrectPassword')
         })
+      }).finally(() => {
+        isAuthenticating.value = false
       })
     }
 
