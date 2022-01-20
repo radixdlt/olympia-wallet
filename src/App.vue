@@ -25,7 +25,7 @@
         />
         <ErrorModalGeneric
           v-else
-          :error="latestError.error"
+          :error="latestError"
           :errorsCount="errorsCount"
         />
       </template>
@@ -35,7 +35,7 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent } from 'vue'
+import { computed, ComputedRef, defineComponent, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useWallet, useErrors } from './composables'
 import ErrorModalGeneric from '@/components/ErrorModalGeneric.vue'
@@ -43,6 +43,11 @@ import ErrorModalHardware from '@/components/ErrorModalHardware.vue'
 import ErrorModalApi from '@/components/ErrorModalApi.vue'
 import ErrorModalTransactionBuilding from '@/components/ErrorModalTransactionBuilding.vue'
 import ErrorModalTransactionConfirming from '@/components/ErrorModalTransactionConfirming.vue'
+import { defaultNetwork, network } from './helpers/network'
+import { useI18n } from 'vue-i18n'
+import { firstValueFrom, interval } from 'rxjs'
+import { timeout } from 'rxjs/operators'
+import { Network } from '@radixdlt/primitives'
 
 const App = defineComponent({
   components: {
@@ -55,21 +60,47 @@ const App = defineComponent({
 
   setup () {
     const router = useRouter()
-    const { radix } = useWallet(router)
-    const { appErrors } = useErrors(radix)
+    const { radix, activeNetwork, connected, setConnected, setNetwork, reloadSubscriptions } = useWallet(router)
+    const { appErrors, setError } = useErrors(radix)
+    const { t } = useI18n()
 
     const latestError: ComputedRef<Error | null> = computed(() => {
       return appErrors.value[appErrors.value.length - 1]
     })
     const isApiError: ComputedRef<boolean> = computed(() => {
       const latest: any = appErrors.value[appErrors.value.length - 1]
-      if (latest === null) return false
+      if (!latest) return false
       return latest.type === 'api'
+    })
+    const activeNetworkUrl: ComputedRef<string> = computed(() => {
+      if (!activeNetwork.value) return defaultNetwork
+      return activeNetwork ? network(activeNetwork.value).networkURL : defaultNetwork
     })
 
     const errorsCount: ComputedRef<number> = computed(() => appErrors.value.length)
 
+    const sub = interval(10000).subscribe(() => {
+      firstValueFrom(radix.ledger.networkId().pipe(
+        timeout({ each: 9000 })
+      )).then((network: Network) => {
+        if (!connected.value) {
+          reloadSubscriptions()
+        }
+        setConnected(true)
+        setNetwork(network)
+      }).catch(() => {
+        if (connected.value) {
+          setConnected(false)
+          setNetwork(null)
+          setError(new Error(t('errors.networkError')))
+        }
+      })
+    })
+
+    onUnmounted(() => sub.unsubscribe())
+
     return {
+      connected,
       appErrors,
       errorsCount,
       latestError,

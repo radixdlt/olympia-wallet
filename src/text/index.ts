@@ -277,7 +277,8 @@ const messages = {
       unableToPrepareUnstakingTransactionTitle: 'The transaction you’ve specified cannot be created. Possible reasons for this error include:',
       unableToPrepareUnstakingTransactionPointOne: 'Attempting to request an unstake in the same “epoch” (~30 min period) that you staked',
       unableToPrepareUnstakingTransactionPointTwo: 'Attempting to unstake more than you currently have staked to the validator',
-      unableToPrepareUnstakingTransactionPointThree: 'Insufficient XRD to pay the required transaction fee'
+      unableToPrepareUnstakingTransactionPointThree: 'Insufficient XRD to pay the required transaction fee',
+      networkError: 'Lost internet connection. Check internet connection before continuing.'
     },
     apiErrors: {
       unknown: 'Unexpected Error',
