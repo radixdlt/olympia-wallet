@@ -346,7 +346,7 @@ const fetchSavedNodeUrl = async (signingKeychain: SigningKeychainT): Promise<str
   const { selectedNode, selectedNodeHash } = await fetchSelectedNodeFromStore()
   if (!selectedNode) {
     // set a default node, one did not exist.
-    const defaultToMainnet = 'https://stokenet-gateway.radixdlt.com'
+    const defaultToMainnet = 'https://mainnet.radixdlt.com'
     const hash = await hashNodeUrl(defaultToMainnet, signingKeychain)
     const saveToStore = await persistNodeSelection(defaultToMainnet, hash)
     return defaultToMainnet

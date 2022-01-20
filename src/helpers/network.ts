@@ -26,7 +26,7 @@ export const network = (networkName: Network): ChosenNetworkT => {
   return response
 }
 
-export const defaultNetwork = 'https://stokenet-gateway.radixdlt.com'
+export const defaultNetwork = 'https://mainnet.radixdlt.com'
 
 export const defaultNetworks: ChosenNetworkT[] = [
   {
@@ -36,7 +36,7 @@ export const defaultNetworks: ChosenNetworkT[] = [
   },
   {
     network: Network.STOKENET,
-    networkURL: 'https://stokenet-gateway.radixdlt.com',
+    networkURL: 'https://mainnet.radixdlt.com',
     preamble: HRP[Network.STOKENET].account
   }
 ]
