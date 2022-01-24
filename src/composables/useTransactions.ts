@@ -246,7 +246,7 @@ export default function useTransactions (radix: ReturnType<typeof Radix.create>,
   const errorHandler = (err: any) => {
     // To Do: Nicely handle hardware device error when full error is returned from API
     // For now: pattern match on transaction errors that return a "No device found" string or "DisconnectedDevice"
-    if (err.toString().indexOf('Error: No device found') >= 0 || err.toString().indexOf('DisconnectedDevice')) {
+    if (err.toString().indexOf('Error: No device found') >= 0 || err.toString().indexOf('DisconnectedDevice') >= 0) {
       setError({ ...err, type: 'HARDWARE' })
     } else {
       const apiError = { ...err, type: 'api' }
