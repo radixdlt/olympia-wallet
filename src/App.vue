@@ -9,7 +9,7 @@
           :errorsCount="errorsCount"
         />
         <ErrorModalHardware
-          v-if="latestError.type === 'HARDWARE'"
+          v-else-if="latestError.type === 'HARDWARE'"
           :error="latestError.error"
           :errorsCount="errorsCount"
         />
