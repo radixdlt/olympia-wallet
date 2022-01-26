@@ -28,6 +28,10 @@ export const truncateRRIStringForDisplay = function (rriString: string): string 
   return rriString.substring(0, prefixLength) + '...' + rriString.substring(rriString.length - 9)
 }
 
+export const parseUnderscoresToSpaces = function (message: string): string {
+  return message.replaceAll('_', ' ')
+}
+
 const getSortedHRPKeys = function (): string[] {
   const allHRPKeys = []
   for (const [key, val] of Object.entries(HRP)) {
