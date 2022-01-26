@@ -143,7 +143,7 @@ const WalletStaking = defineComponent({
 
   setup () {
     const { t } = useI18n({ useScope: 'global' })
-    const { errors, values, meta, setErrors, resetForm } = useForm<StakeForm>()
+    const { errors, values, meta, setErrors, resetForm, validate } = useForm<StakeForm>()
     const router = useRouter()
     const {
       activeAddress,
@@ -229,12 +229,14 @@ const WalletStaking = defineComponent({
       setActiveForm('STAKING')
       setActiveTransactionForm('stake')
       values.validator = validator.toString()
+      validate()
     }
 
     const handleReduceFromValidator = (validator: ValidatorAddressT) => {
       setActiveForm('UNSTAKING')
       setActiveTransactionForm('unstake')
       values.validator = validator.toString()
+      validate()
     }
 
     const handleSubmitStake = () => {
