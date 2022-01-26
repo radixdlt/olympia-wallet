@@ -1,12 +1,18 @@
 <template>
   <div class="absolute inset-0 z-20 flex items-center justify-center bg-translucent-black">
-    <div class="h-modalSmall bg-white rounded-md pt-7 px-7 w-full max-w-lg absolute top-1/2 left-1/2 transform -translate-x-1/3 -translate-y-1/2">
+    <div class="bg-white rounded-md p-7 w-full max-w-lg absolute top-1/2 left-1/2 transform -translate-x-1/3 -translate-y-1/2">
       <div class="text-center">
         <div class="text-center mt-4 text-rRed text-lg">
           {{ $t('settings.networkChangeTitle') }}
         </div>
         <div class="text-center mt-4 mb-4 text-rBlack text-sm px-8">
           {{ $t('settings.networkChangeCopy') }}
+        </div>
+        <div
+          v-if="!isDefaultNetwork"
+          class="text-center mt-4 mb-4 text-rRed text-sm px-8"
+        >
+          {{ $t('settings.networkChangeWarning') }} <span class="font-bold">{{ $t('settings.networkChangeWarningBold') }}</span>
         </div>
 
         <div class="flex flex-row items-center justify-center gap-4 mb-8" v-if="loading">
@@ -31,9 +37,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onUnmounted, toRef } from 'vue'
+import { computed, ComputedRef, defineComponent, onUnmounted, toRef } from 'vue'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
 import { useConnectableRadix } from '@/composables'
+import { isDefaultNetworkByUrl } from '@/helpers/network'
 
 const WalletLedgerDeleteModal = defineComponent({
   components: {
@@ -50,10 +57,16 @@ const WalletLedgerDeleteModal = defineComponent({
   setup (props) {
     const url = toRef(props, 'url')
     const { connected, loading, testConnection, networkId, cleanupSubscriptions } = useConnectableRadix()
+
+    const isDefaultNetwork: ComputedRef<boolean> = computed(() => isDefaultNetworkByUrl(url.value))
+
     testConnection(url.value)
+
     onUnmounted(() => cleanupSubscriptions())
+
     return {
       connected,
+      isDefaultNetwork,
       loading,
       networkId
     }

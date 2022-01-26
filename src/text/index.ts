@@ -241,6 +241,8 @@ const messages = {
       clickToRefresh: 'click here to refresh.',
       networkChangeTitle: 'Gateway Change',
       networkChangeCopy: 'Please note that you will need to re-enter your password in order to switch networks. Do you wish to proceed?',
+      networkChangeWarning: 'WARNING: You are about to connect to a custom Gateway. The Radix Desktop Wallet relies on the Gateway to correctly formulate transactions and present an accurate view of your accounts and balances.',
+      networkChangeWarningBold: 'Ensure that you trust this Gateway before proceeding.',
       mainnetUnavailableOne: 'Cannot currently connect to mainnet. Please check the ',
       mainnetUnavailableLink: 'status page',
       mainnetUnavailableTwo: ' for more information.',
