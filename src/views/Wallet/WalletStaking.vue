@@ -192,7 +192,10 @@ const WalletStaking = defineComponent({
         })
       }
       if (activeUnstakes.value) {
-        activeUnstakes.value.map((unstake) => {
+        activeUnstakes.value.unstakes.map((unstake) => {
+          if (!vals.find((v) => unstake.validator.equals(v))) vals.push(unstake.validator)
+        })
+        activeUnstakes.value.pendingUnstakes.map((unstake) => {
           if (!vals.find((v) => unstake.validator.equals(v))) vals.push(unstake.validator)
         })
       }
