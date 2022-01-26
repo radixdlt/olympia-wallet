@@ -196,7 +196,18 @@ const messages = {
       stakeFromLabel: 'Your address',
       stakeToLabel: 'Stake to',
       unstakeFromLabel: 'Your address',
-      unstakeToLabel: 'Unstake from'
+      unstakeToLabel: 'Unstake from',
+      transactionState: {
+        INITIATED: 'Initiated',
+        BUILT_FROM_INTENT: 'Built',
+        ASKED_FOR_CONFIRMATION: 'Confirming',
+        CONFIRMED: 'Confirmed',
+        SIGNED: 'Signed',
+        FINALIZED: 'Finalized',
+        SUBMITTED: 'Submitted to network',
+        UPDATE_OF_STATUS_OF_PENDING_TX: 'Network processing',
+        COMPLETED: 'Completed'
+      }
     },
     account: {
       editNameHeading: 'Let’s set the name of your account',
