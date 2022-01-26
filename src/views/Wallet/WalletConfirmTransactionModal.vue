@@ -133,7 +133,7 @@
           <div class="text-center mt-8 text-rGrayDark text-lg">
             {{ $t('transaction.submittingMessage') }}
           </div>
-          <div class="text-center mt-4 text-rGrayDark text-sm">{{ parsedTransactionState }}</div>
+          <div class="text-center mt-4 text-rGrayDark text-sm">{{ $t(`confirmation.transactionState.${transactionState}`) }}</div>
         </div>
       </div>
     </div>
@@ -149,7 +149,6 @@ import BigAmount from '@/components/BigAmount.vue'
 import PinInput from '@/components/PinInput.vue'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
 import { validatePin } from '@/actions/vue/create-wallet'
-import { parseUnderscoresToSpaces } from '@/helpers/formatter'
 import { useRouter } from 'vue-router'
 import { useNativeToken, useHomeModal, useTransactions, useWallet, useTokenBalances } from '@/composables'
 import { useI18n } from 'vue-i18n'
@@ -285,10 +284,6 @@ const WalletConfirmTransactionModal = defineComponent({
       transactionState.value === 'hw-signing' || transactionState.value === 'confirm' || transactionState.value === 'CONFIRMED'
     )
 
-    const parsedTransactionState: ComputedRef<string> = computed(() =>
-      parseUnderscoresToSpaces(transactionState.value)
-    )
-
     const handleConfirm = () => {
       canCancel.value = false
       confirmTransaction()
@@ -364,7 +359,6 @@ const WalletConfirmTransactionModal = defineComponent({
       meta,
       nativeToken,
       pinAttempts,
-      parsedTransactionState,
       resetForm,
       selectedCurrency,
       selectedCurrencyToken,
