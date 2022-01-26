@@ -44,3 +44,7 @@ export const defaultNetworks: ChosenNetworkT[] = [
 export const isDefaultNetwork = (network: ChosenNetworkT): boolean => {
   return !!defaultNetworks.find((n: ChosenNetworkT) => n.networkURL === network.networkURL)
 }
+
+export const isDefaultNetworkByUrl = (url: string): boolean => {
+  return !!defaultNetworks.find((n: ChosenNetworkT) => n.networkURL === url)
+}
