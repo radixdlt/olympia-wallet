@@ -10,6 +10,7 @@
       :label="label"
       :validateOnInput="validateOnInput"
       :validateOnBlur="validateOnBlur"
+      @blur="clearCapsLockStatus"
       @keyup="checkCapsLock"
       @keydown.caps-lock="checkCapsLock"
     >
@@ -43,6 +44,9 @@ const PasswordField = defineComponent({
   methods: {
     checkCapsLock (event: KeyboardEvent) {
       this.isCapsEnabled = event.getModifierState('CapsLock')
+    },
+    clearCapsLockStatus () {
+      this.isCapsEnabled = false
     }
   },
 
