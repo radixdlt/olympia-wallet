@@ -40,25 +40,32 @@ export default function useStaking (radix: ReturnType<typeof Radix.create>) {
     return null
   }
 
+  // Return sum of unstakes and pending unstakes for a given validator
   const getUnstakeAmountForValidator = (validatorAddress: ValidatorAddressT) => {
-    if (!activeUnstakes.value) return Amount.fromUnsafe(0)._unsafeUnwrap()
-    return activeUnstakes.value
+    if (!activeUnstakes.value || !activeUnstakes.value.unstakes) return Amount.fromUnsafe(0)._unsafeUnwrap()
+    const unstakesTotal = activeUnstakes.value.unstakes
       .filter((unstake) => unstake.validator.equals(validatorAddress))
-      .reduce((accum, unstake) => unstake.amount.add(accum), Amount.fromUnsafe(0)._unsafeUnwrap())
+      .reduce((accum, unstake) => accum.add(unstake.amount), Amount.fromUnsafe(0)._unsafeUnwrap())
+    const pendingUnstakesTotal = activeUnstakes.value.pendingUnstakes
+      .filter((unstake) => unstake.validator.equals(validatorAddress))
+      .reduce((accum, unstake) => accum.add(unstake.amount), Amount.fromUnsafe(0)._unsafeUnwrap())
+    return unstakesTotal.add(pendingUnstakesTotal)
   }
 
+  // Return sum of stakes for a given validator
   const getActiveStakeAmountForValidator = (validatorAddress: ValidatorAddressT) => {
     if (!activeStakes.value || !activeStakes.value.stakes) return Amount.fromUnsafe(0)._unsafeUnwrap()
     return activeStakes.value.stakes
-      .filter((unstake) => unstake.validator.equals(validatorAddress))
-      .reduce((accum, unstake) => unstake.amount.add(accum), Amount.fromUnsafe(0)._unsafeUnwrap())
+      .filter((stake) => stake.validator.equals(validatorAddress))
+      .reduce((accum, stake) => accum.add(stake.amount), Amount.fromUnsafe(0)._unsafeUnwrap())
   }
 
+  // Return sum of pending stakes for a given validator
   const getPendingStakeAmountForValidator = (validatorAddress: ValidatorAddressT) => {
     if (!activeStakes.value || !activeStakes.value.pendingStakes) return Amount.fromUnsafe(0)._unsafeUnwrap()
     return activeStakes.value.pendingStakes
-      .filter((unstake) => unstake.validator.equals(validatorAddress))
-      .reduce((accum, unstake) => unstake.amount.add(accum), Amount.fromUnsafe(0)._unsafeUnwrap())
+      .filter((stake) => stake.validator.equals(validatorAddress))
+      .reduce((accum, stake) => accum.add(stake.amount), Amount.fromUnsafe(0)._unsafeUnwrap())
   }
 
   return {
