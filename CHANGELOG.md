@@ -1,5 +1,12 @@
 # Changelog
 
+### [1.3.1](https://www.github.com/radixdlt/olympia-wallet/compare/v1.3.0...v1.3.1) (2022-01-27)
+
+
+### Bug Fixes
+
+* send user to settings page if unable to login ([#434](https://www.github.com/radixdlt/olympia-wallet/issues/434)) ([f197b5b](https://www.github.com/radixdlt/olympia-wallet/commit/f197b5b9a63294285eca0704a2c9fda2fd640615))
+
 ## [1.3.0](https://www.github.com/radixdlt/olympia-wallet/compare/v1.2.7...v1.3.0) (2022-01-26)
 
 
