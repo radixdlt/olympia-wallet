@@ -44,7 +44,7 @@ import ButtonSubmit from '@/components/ButtonSubmit.vue'
 import { useI18n } from 'vue-i18n'
 import { ref } from '@nopr3d/vue-next-rx'
 import { useRouter } from 'vue-router'
-import { useSettingsTab, useWallet } from '@/composables'
+import { useSettingsTab, useWallet, useErrors } from '@/composables'
 import { firstValueFrom, throwError } from 'rxjs'
 import { timeout } from 'rxjs/operators'
 
@@ -64,8 +64,9 @@ const HomeEnterPasscode = defineComponent({
     const { errors, values, meta, setErrors } = useForm<PasswordForm>()
     const { t } = useI18n({ useScope: 'global' })
     const router = useRouter()
-    const { setConnected, setNetwork, loginWithWallet, walletLoaded } = useWallet(router)
+    const { radix, setConnected, setNetwork, loginWithWallet, walletLoaded, nodeUrl } = useWallet(router)
     const { setTab } = useSettingsTab()
+    const { setError } = useErrors(radix)
 
     const disableSubmit: ComputedRef<boolean> = computed(() => {
       const metaIsDirty = meta.value.dirty ? !meta.value.valid : true
@@ -89,6 +90,10 @@ const HomeEnterPasscode = defineComponent({
       }).catch((error) => {
         setConnected(false)
         if (error.message === 'network timeout') {
+          setTab('nodes')
+          router.push('/wallet/settings')
+        } else if (error.cause === 'NETWORK_ID_FAILED') {
+          setError(new Error(t('errors.gatewayError', { url: nodeUrl.value })))
           setTab('nodes')
           router.push('/wallet/settings')
         }

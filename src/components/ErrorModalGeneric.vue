@@ -14,7 +14,7 @@
       <div v-if="errorsCount > 1" class="absolute top-0 right-0">
         <div class="bg-rRed rounded-full inline-block px-2 py-0.5 m-2 text-white text-sm">{{ errorsCount }}</div>
       </div>
-      <p class="mb-5">{{ error }}</p>
+      <p class="whitespace-pre-line mb-5">{{ errorMessage }}</p>
       <div class="flex flex-row space-x-5 justify-center">
         <AppButtonCancel @click="handleClose" class="w-44">{{ $t('errors.closeModal') }}</AppButtonCancel>
         <AppButtonCancel @click="refreshApp" class="w-44">{{ $t('errors.refreshApp') }}</AppButtonCancel>
@@ -53,6 +53,7 @@ export default defineComponent({
     const isVisible: Ref<boolean> = ref(true)
     const updateVisible = () => { isVisible.value = !isVisible.value }
     const error = toRef(props, 'error')
+    const errorMessage = error.value.message
     const router = useRouter()
     const { radix } = useWallet(router)
     const { clearLatestError } = useErrors(radix)
@@ -72,7 +73,8 @@ export default defineComponent({
       handleClose,
       isVisible,
       refreshApp,
-      updateVisible
+      updateVisible,
+      errorMessage
     }
   }
 })
