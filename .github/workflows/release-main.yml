@@ -2,30 +2,10 @@ on:
   push:
     branches:
       - main
-  workflow_dispatch:
-    inputs:
-      manual_release_version:
-        description: 'Release Tag'
-        required: true
-        default: 'vX.X.X'
 
 name: release-please
 jobs:
-  release-please:
-    runs-on: ubuntu-latest
-    outputs:
-      release_created: ${{ steps.release.outputs.release_created }}
-    steps:
-      - uses: GoogleCloudPlatform/release-please-action@v2
-        id: release
-        with:
-          release-type: node
-          package-name: radixdtl-desktop-wallet
-          changelog-types: '[{"type":"feat","section":"Features","hidden":false},{"type":"fix","section":"Bug Fixes","hidden":false},{"type":"docs","section":"Documentation","hidden":false},{"type":"chore","section":"Dependencies","hidden":false},{"type":"security","section":"Security","hidden":false},{"type":"style","section":"Code Style","hidden":false},{"type":"test","section":"Test Coverage","hidden":false}]'
-
   build-release:
-    needs: [release-please]
-    if: ${{ needs.release-please.outputs.release_created || github.event_name == 'workflow_dispatch' }}
     runs-on: ${{ matrix.os }}
     env:
       GITHUB_TOKEN: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
