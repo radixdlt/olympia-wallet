@@ -205,6 +205,7 @@ const WalletConfirmTransactionModal = defineComponent({
       cancelTransaction,
       confirmationMode,
       confirmTransaction,
+      ledgerState,
       stakeInput,
       unstakeInput,
       transactionFee,
@@ -278,8 +279,10 @@ const WalletConfirmTransactionModal = defineComponent({
       transactionState.value === 'INITIATED' || transactionState.value === 'BUILT_FROM_INTENT'
     )
 
+    // Show ledger modal when hw-signing is in progress and the transaction is CONFIRMED
+    // To Do: Need a way to show modal to user who needs to encrypt a hardware message before transaction is INITIATED
     const shouldShowLedgerModal: ComputedRef<boolean> = computed(() =>
-      transactionState.value === 'hw-signing' || transactionState.value === 'confirm' || transactionState.value === 'CONFIRMED'
+      (transactionState.value === 'CONFIRMED') && ledgerState.value === 'hw-signing'
     )
 
     const handleConfirm = () => {
@@ -354,6 +357,7 @@ const WalletConfirmTransactionModal = defineComponent({
       handleUnfinishedPin,
       handleValidatePin,
       isValidPin,
+      ledgerState,
       meta,
       nativeToken,
       pinAttempts,

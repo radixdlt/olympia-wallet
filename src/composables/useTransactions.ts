@@ -40,6 +40,7 @@ interface useTransactionsInterface {
   readonly stakeInput: Ref<StakeTokensInput | null>;
   readonly unstakeInput: Ref<UnstakeTokensInput | null>;
   readonly transactionState: Ref<string>;
+  readonly ledgerState: Ref<string>;
   readonly transactionError: Ref<Error | null>;
   readonly transferInput: Ref<TransferTokensInput | null>;
   readonly transactionFee: Ref<AmountT | null>;
@@ -72,7 +73,8 @@ const transactionFee: Ref<AmountT | null> = ref(null)
 const transferInput: Ref<TransferTokensInput | null> = ref(null)
 
 // can be building, confirm, submitting
-const transactionState: Ref<string> = ref('confirm')
+const transactionState: Ref<string> = ref('PENDING')
+const ledgerState: Ref<string> = ref('')
 const transactionError: Ref<Error | null> = ref(null)
 const userDidConfirm = new Subject<boolean>()
 const userDidCancel = new Subject<boolean>()
@@ -105,12 +107,14 @@ export default function useTransactions (radix: ReturnType<typeof Radix.create>,
       cleanupTransactionSubs()
       shouldShowConfirmation.value = false
       activeMessage.value = ''
+      ledgerState.value = ''
+      transactionState.value = 'PENDING'
     }
   })
 
   const confirmTransaction = () => {
     if (activeAccount && hardwareAccount && activeAccount === hardwareAccount) {
-      transactionState.value = 'hw-signing'
+      ledgerState.value = 'hw-signing'
     }
     userDidConfirm.next(true)
   }
@@ -135,6 +139,8 @@ export default function useTransactions (radix: ReturnType<typeof Radix.create>,
     shouldShowConfirmation.value = false
     cleanupTransactionSubs()
     activeMessage.value = ''
+    ledgerState.value = ''
+    transactionState.value = 'PENDING'
 
     router.push('/wallet/history')
   }
@@ -268,6 +274,7 @@ export default function useTransactions (radix: ReturnType<typeof Radix.create>,
     activeTransaction,
     activeTransactionForm,
     confirmationMode,
+    ledgerState,
     selectedCurrency,
     shouldShowConfirmation,
     stakeInput,
