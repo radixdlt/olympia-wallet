@@ -193,6 +193,8 @@ export default function useTransactions (radix: ReturnType<typeof Radix.create>,
           category: 'SignatureTimedOut'
         }
       })
+    } else if (err.toString().indexOf('(denied by the user') >= 0) {
+      cancelTransaction()
     } else {
       const apiError = { ...err, type: 'api' }
       setError(apiError)
