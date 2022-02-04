@@ -1,5 +1,12 @@
 # Changelog
 
+### [1.3.2](https://www.github.com/radixdlt/olympia-wallet/compare/v1.3.1...v1.3.2) (2022-02-04)
+
+
+### Bug Fixes
+
+* Isolate Transaction History logic for fewer rxjs side effects ([0a45978](https://www.github.com/radixdlt/olympia-wallet/commit/0a459782b2a89f4546042d4bb6c03c17fcf0bb64))
+
 ### [1.3.1](https://www.github.com/radixdlt/olympia-wallet/compare/v1.3.0...v1.3.1) (2022-01-27)
 
 
