@@ -24,7 +24,6 @@
       >
       </wizard-heading>
       <div class="border border-white rounded p-3 mb-8" v-if="step === 1">{{ $t('restoreWallet.passwordHelp') }}</div>
-
       <wizard-heading
         :name="$t('restoreWallet.pinTitle')"
         :isActiveStep="step === 2"
@@ -36,8 +35,9 @@
         }"
       >
       </wizard-heading>
-      <div class="border border-white rounded p-3 mb-8" v-if="step === 2">{{ $t('restoreWallet.pinHelpOne') }}</div>
-      <div class="border border-white rounded p-3 mb-8" v-if="step === 3">{{ $t('restoreWallet.pinHelpTwo') }}</div>
+      <div class="border border-white rounded p-3 mb-8" v-if="step === 2 && !pinIsSet">{{ $t('restoreWallet.pinHelpOne') }}</div>
+      <div class="border border-white rounded p-3 mb-8" v-if="step === 3 && !pinIsSet">{{ $t('restoreWallet.pinHelpTwo') }}</div>
+      <div class="border border-white rounded p-3 mb-8" v-if="step === 3 && pinIsSet">Please confirm you understand the disclaimer</div>
 
       <router-link
         to="/"
@@ -51,14 +51,15 @@
         {{ $t('createWallet.startOver') }}
       </router-link>
     </div>
-
-    <div class="bg-white pt-headerHeight pb-8 px-11 flex-1 overflow-y-scroll">
+    <div class="bg-white pb-8" v-if="pinIsSet">
+      <multiple-accounts-disclaimer v-if="pinIsSet" @understood="completeWalletRestore"/>
+    </div>
+    <div v-else  class="bg-white pt-headerHeight pb-8 px-11 flex-1 overflow-y-scroll" >
       <restore-wallet-enter-mnemonic
         v-if="step == 0"
         @confirm="captureMnemonic"
       >
       </restore-wallet-enter-mnemonic>
-
       <create-wallet-create-passcode
         v-if="step == 1"
         @confirm="createWallet"
@@ -71,8 +72,6 @@
         @enteredPin="handleEnterPin"
       >
       </create-wallet-create-pin>
-
-      <multiple-accounts-disclaimer v-if="pinIsSet" @understood="completeWalletRestore"/>
     </div>
   </div>
 </template>

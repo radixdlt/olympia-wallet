@@ -11,9 +11,9 @@
     </div>
 
   <div class="text-center">
-    <p class="text-justify p-6">If you previously used multiple accounts in the wallet, all of these accounts are associated to your seed phrase and will be recovered in the order you added them. However, the Desktop Wallet app cannot tell from the seed phrase how many accounts you had before or what you named them.<br><br>
+    <p class="text-justify py-16 px-32">If you previously used multiple accounts in the wallet, all of these accounts are associated to your seed phrase and will be recovered in the order you added them. However, the Desktop Wallet app cannot tell from the seed phrase how many accounts you had before or what you named them.<br><br>
       On the next screen you will be asked to provide a new name for the first account you used previously. After this, please use the "Add Account" feature to re-add, name, and access your other previous accounts. They will be re-added in exactly the same order as before, and will hold any tokens you held there previously.</p>
-    <ButtonSubmit class="w-50 my-5" :disabled="false" @click="$emit('understood', true) ">
+    <ButtonSubmit class="w-50 my-10" :disabled="false" @click="$emit('understood', true) ">
       I understand
     </ButtonSubmit>
   </div>
