@@ -153,7 +153,7 @@ const WalletStaking = defineComponent({
       radix
     } = useWallet(router)
     const { activeForm, setActiveForm, activeStakes, activeUnstakes, loadingAnyStaking, stakingUnsub, validators } = useStaking(radix)
-    const { stakeTokens, unstakeTokens, transactionUnsub, setActiveTransactionForm, transactionErrorMessage } = useTransactions(radix, router, activeAccount.value, hardwareAccount.value)
+    const { stakeTokens, unstakeTokens, setActiveTransactionForm, transactionErrorMessage } = useTransactions(radix, router, activeAccount.value, hardwareAccount.value)
     const { nativeToken, nativeTokenUnsub } = useNativeToken(radix)
     const { tokenBalances, tokenBalanceFor, tokenInfoFor, tokenBalancesUnsub } = useTokenBalances(radix)
 
@@ -161,7 +161,6 @@ const WalletStaking = defineComponent({
       nativeTokenUnsub()
       tokenBalancesUnsub()
       stakingUnsub()
-      transactionUnsub()
     })
 
     // default active form is stake

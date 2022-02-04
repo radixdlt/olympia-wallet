@@ -156,7 +156,7 @@ const WalletTransaction = defineComponent({
     const router = useRouter()
     const { activeAddress, activeAccount, hardwareAccount, networkPreamble, radix, verifyHardwareWalletAddress } = useWallet(router)
 
-    const { transactionUnsub, setActiveTransactionForm, transferTokens } = useTransactions(radix, router, activeAccount.value, hardwareAccount.value)
+    const { setActiveTransactionForm, transferTokens } = useTransactions(radix, router, activeAccount.value, hardwareAccount.value)
 
     setActiveTransactionForm('transaction')
 
@@ -168,7 +168,6 @@ const WalletTransaction = defineComponent({
     onBeforeRouteLeave(() => {
       nativeTokenUnsub()
       tokenBalancesUnsub()
-      transactionUnsub()
     })
 
     // Clear form input and validation errors when switching accounts
