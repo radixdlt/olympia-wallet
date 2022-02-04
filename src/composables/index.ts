@@ -1,23 +1,25 @@
 import useConnectableRadix from './useConnectableRadix'
+import useErrors from './useErrors'
+import useHistory from './useHistory'
 import useHomeModal from './useHomeModal'
 import useNativeToken from './useNativeToken'
-import useErrors from './useErrors'
 import useSettingsTab from './useSettingsTab'
-import useStaking from './useStaking'
 import useSidebar from './useSidebar'
-import useTransactions from './useTransactions'
+import useStaking from './useStaking'
 import useTokenBalances from './useTokenBalances'
+import useTransactions from './useTransactions'
 import useWallet from './useWallet'
 
 export {
   useConnectableRadix,
+  useErrors,
+  useHistory,
   useHomeModal,
   useNativeToken,
-  useErrors,
   useSettingsTab,
-  useStaking,
   useSidebar,
-  useTransactions,
+  useStaking,
   useTokenBalances,
+  useTransactions,
   useWallet
 }

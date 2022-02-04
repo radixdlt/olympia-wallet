@@ -63,15 +63,11 @@ const WalletIndex = defineComponent({
       waitUntilAllLoaded
     } = useWallet(router)
 
-    const { shouldShowConfirmation, transactionUnsub } = useTransactions(radix, router, activeAccount.value, hardwareAccount.value)
+    const { shouldShowConfirmation } = useTransactions(radix, router, activeAccount.value, hardwareAccount.value)
 
     onBeforeRouteUpdate(async () => {
       await waitUntilAllLoaded()
       return true
-    })
-
-    onBeforeRouteLeave(() => {
-      transactionUnsub()
     })
 
     // Return home if wallet is undefined

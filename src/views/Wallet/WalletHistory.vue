@@ -20,9 +20,9 @@
       <div v-if="loadingHistory || !nativeToken" class="p-4 flex items-center justify-center">
         <loading-icon class="text-rGrayDark" />
       </div>
-      <template v-else-if="pendingTransactions.length > 0 || transactionsWithMessages.length > 0">
+      <template v-else-if="transactionsWithMessages.length > 0">
         <div>
-          <transaction-list-item
+          <!-- <transaction-list-item
             v-for="(txn, i) in pendingTransactions"
             :key="i"
             :transaction="txn"
@@ -31,7 +31,7 @@
             :pending="true"
             :nativeToken="nativeToken"
             :explorerUrlBase="explorerUrlBase"
-          />
+          /> -->
 
           <transaction-list-item
             v-for="(txn, i) in transactionsWithMessages"
@@ -92,7 +92,7 @@ import { computed, defineComponent, onMounted, watch } from 'vue'
 import TransactionListItem from '@/components/TransactionListItem.vue'
 import LoadingIcon from '@/components/LoadingIcon.vue'
 import ClickToCopy from '@/components/ClickToCopy.vue'
-import { useNativeToken, useTransactions, useWallet } from '@/composables'
+import { useNativeToken, useWallet, useHistory } from '@/composables'
 import { useRouter, onBeforeRouteLeave } from 'vue-router'
 
 const WalletHistory = defineComponent({
@@ -108,29 +108,31 @@ const WalletHistory = defineComponent({
       activeAddress,
       activeAccount,
       explorerUrlBase,
-      hardwareAccount,
       radix,
       verifyHardwareWalletAddress
     } = useWallet(router)
+
+    if (!activeAccount.value) {
+      return
+    }
 
     const {
       canGoBack,
       canGoNext,
       decryptedMessages,
       loadingHistory,
-      pendingTransactions,
-      transactionHistory,
-      previousPage,
-      nextPage,
+      transactions,
       decryptMessage,
-      refreshHistory,
-      transactionUnsub
-    } = useTransactions(radix, router, activeAccount.value, hardwareAccount.value)
+      leavingHistory,
+      nextPage,
+      previousPage,
+      resetHistory
+    } = useHistory(radix, activeAccount.value)
 
     const { nativeToken, nativeTokenUnsub } = useNativeToken(radix)
 
     const transactionsWithMessages = computed(() => {
-      return transactionHistory.value.transactions.map((tx) => {
+      return transactions.value.map((tx) => {
         const msg = decryptedMessages.value.find((msg) => msg.id === tx.txID.toString())
         return !msg ? { tx } : {
           tx,
@@ -140,16 +142,16 @@ const WalletHistory = defineComponent({
     })
 
     // Fetch new history when active account changes
-    watch((activeAccount), () => { refreshHistory() })
+    watch((activeAccount), () => { resetHistory() })
 
     // Fetch initial history on route load
     onMounted(() => {
-      refreshHistory()
+      resetHistory()
     })
 
     onBeforeRouteLeave(() => {
       nativeTokenUnsub()
-      transactionUnsub()
+      leavingHistory()
     })
 
     return {
@@ -163,10 +165,8 @@ const WalletHistory = defineComponent({
       loadingHistory,
       nativeToken,
       nextPage,
-      pendingTransactions,
       previousPage,
-      refreshHistory,
-      transactionHistory,
+      resetHistory,
       transactionsWithMessages,
       verifyHardwareWalletAddress
     }

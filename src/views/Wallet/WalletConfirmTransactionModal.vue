@@ -210,7 +210,6 @@ const WalletConfirmTransactionModal = defineComponent({
       transactionFee,
       transactionState,
       transferInput,
-      transactionUnsub,
       selectedCurrency
     } = useTransactions(radix, router, activeAccount.value, hardwareAccount.value)
 
@@ -234,7 +233,6 @@ const WalletConfirmTransactionModal = defineComponent({
 
     onUnmounted(() => {
       nativeTokenUnsub()
-      transactionUnsub()
       window.removeEventListener('keydown', escapeListener)
     })
 
