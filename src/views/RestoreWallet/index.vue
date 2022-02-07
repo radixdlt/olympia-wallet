@@ -8,7 +8,10 @@
         :name="$t('restoreWallet.recoveryTitle')"
         :isActiveStep="step === 0"
         :isCompleted="step > 1"
-        @click="step = 0"
+        @click="() => {
+          step = 0
+          pinIsSet = false
+        }"
       >
       </wizard-heading>
       <div v-if="step === 0">
@@ -20,7 +23,10 @@
         :isActiveStep="step === 1"
         :isCompleted="step > 1"
         :disabled="step < 1"
-        @click="step = 1"
+        @click="() => {
+          step = 1
+          pinIsSet = false
+        }"
       >
       </wizard-heading>
       <div class="border border-white rounded p-3 mb-8" v-if="step === 1">{{ $t('restoreWallet.passwordHelp') }}</div>
@@ -31,6 +37,7 @@
         :disabled="step < 2"
         @click="() => {
           step = 2
+          pinIsSet = false
           resetPinTrigger = resetPinTrigger + 1
         }"
       >
@@ -51,10 +58,10 @@
         {{ $t('createWallet.startOver') }}
       </router-link>
     </div>
-    <div class="bg-white pb-8" v-if="pinIsSet">
-      <multiple-accounts-disclaimer v-if="pinIsSet" @understood="completeWalletRestore"/>
+    <div class="bg-white flex-1 overflow-y-scroll" v-if="pinIsSet">
+      <multiple-accounts-disclaimer v-if="pinIsSet && step == 3" @understood="completeWalletRestore"/>
     </div>
-    <div v-else  class="bg-white pt-headerHeight pb-8 px-11 flex-1 overflow-y-scroll" >
+    <div v-else class="bg-white pt-headerHeight pb-8 px-11 flex-1 overflow-y-scroll" >
       <restore-wallet-enter-mnemonic
         v-if="step == 0"
         @confirm="captureMnemonic"
@@ -67,7 +74,7 @@
       </create-wallet-create-passcode>
 
       <create-wallet-create-pin
-        v-if="step == 2 || step == 3 && !pinIsSet"
+        v-if="(step == 2 || step == 3) && !pinIsSet"
         @confirm="handleCreatePin"
         @enteredPin="handleEnterPin"
       >
