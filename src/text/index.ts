@@ -81,7 +81,12 @@ const messages = {
       passwordHelp: 'Please enter a secure password here. This password secures your mnemonicly generated key, and will be required every time you open this application',
       pinTitle: 'PIN',
       pinHelpOne: 'Please enter a secure PIN. This will be used to verify all transactions made in the Wallet.',
-      pinHelpTwo: 'Please confirm your PIN.'
+      pinHelpTwo: 'Please confirm your PIN.',
+      disclaimerHeader: 'Re-adding Accounts',
+      disclaimerHelp: 'Please confirm you understand the disclaimer',
+      disclaimerParagraphOne: 'If you previously used multiple accounts in the wallet, all of these accounts are associated to your seed phrase and will be recovered in the order you added them. However, the Desktop Wallet app cannot tell from the seed phrase how many accounts you had before or what you named them.',
+      disclaimerParagraphTwo: 'On the next screen you will be asked to provide a new name for the first account you used previously. After this, please use the "Add Account" feature to re-add, name, and access your other previous accounts. They will be re-added in exactly the same order as before, and will hold any tokens you held there previously.',
+      disclaimerUnderstandButton: 'I understand'
     },
     wallet: {
       addressLabel: 'Address:',

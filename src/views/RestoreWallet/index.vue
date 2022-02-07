@@ -44,7 +44,7 @@
       </wizard-heading>
       <div class="border border-white rounded p-3 mb-8" v-if="step === 2 && !pinIsSet">{{ $t('restoreWallet.pinHelpOne') }}</div>
       <div class="border border-white rounded p-3 mb-8" v-if="step === 3 && !pinIsSet">{{ $t('restoreWallet.pinHelpTwo') }}</div>
-      <div class="border border-white rounded p-3 mb-8" v-if="step === 3 && pinIsSet">Please confirm you understand the disclaimer</div>
+      <div class="border border-white rounded p-3 mb-8" v-if="step === 3 && pinIsSet">{{ $t('restoreWallet.disclaimerHelp') }}</div>
 
       <router-link
         to="/"
