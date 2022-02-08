@@ -273,7 +273,7 @@ const messages = {
       hardwareMismatchTitle: 'Hardware Wallet Account Mismatch',
       hardwareMismatchCopyOne: 'The account provided by the connected hardware wallet device does not match your current hardware wallet account address. Ensure you are using the same hardware wallet device.',
       hardwareMismatchCopyTwo: 'If you would like to use a different hardware wallet device, please remove the existing hardware wallet account and add a new one with the desired device connected. You can always re-add a previous hardware wallet device account later.',
-      hardwareSignatureErrorTitle: 'Could not complete transaction.',
+      hardwareSignatureErrorTitle: 'Could not complete transaction',
       hardwareErrorDetails: 'Check your ledger device and try again.',
       hardwareSignatureTimedOut: 'No approval was received from hardware device - transaction timed out.',
       hardwareUserRejectedSignature: 'The transaction was canceled on the hardware device.',
