@@ -71,14 +71,16 @@ export default defineComponent({
     }
     const type: string = error.value.category
     let errorMsg: string = t('errors.hardwareErrorDetails')
-    const errorTitle: string = t('errors.genericErrorTitle')
+    let errorTitle: string = t('errors.genericErrorTitle')
     if (type) {
       switch (type) {
         case 'SignatureTimedOut': {
+          errorTitle = t('errors.hardwareSignatureErrorTitle')
           errorMsg = t('errors.hardwareSignatureTimedOut')
           break
         }
         case 'UserRejectedSignature': {
+          errorTitle = t('errors.hardwareSignatureErrorTitle')
           errorMsg = t('errors.hardwareUserRejectedSignature')
           break
         }
