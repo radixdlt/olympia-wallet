@@ -1,6 +1,13 @@
 # Changelog
 
-### [1.3.1](https://www.github.com/radixdlt/olympia-wallet/compare/v1.3.0...v1.3.1) (2022-01-27)
+## [1.3.2](https://www.github.com/radixdlt/olympia-wallet/compare/v1.3.1...v1.3.2) (2022-02-08)
+
+### Bug Fixes
+
+* fix: Isolate History Logic in https://github.com/radixdlt/olympia-wallet/pull/439
+* chore: Update and Document Release Process in https://github.com/radixdlt/olympia-wallet/pull/436
+
+## [1.3.1](https://www.github.com/radixdlt/olympia-wallet/compare/v1.3.0...v1.3.1) (2022-01-27)
 
 
 ### Bug Fixes
