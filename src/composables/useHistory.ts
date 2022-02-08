@@ -14,6 +14,8 @@ const activeCursor: Ref<string> = ref('')
 
 const transactions: Ref<SimpleExecutedTransaction[]> = ref([])
 
+const isDecrypting: Ref<boolean> = ref(false)
+
 export default function useHistory (radix: ReturnType<typeof Radix.create>, activeAccount: AccountT) {
   let transactionSub: Subscription | null
 
@@ -38,9 +40,10 @@ export default function useHistory (radix: ReturnType<typeof Radix.create>, acti
   }
 
   const decryptMessage = (tx: ExecutedTransaction) => {
+    isDecrypting.value = true
     firstValueFrom(radix.decryptTransaction(tx)).then((val) => {
       decryptedMessages.value.push({ id: tx.txID.toString(), message: val })
-    })
+    }).finally(() => { isDecrypting.value = false })
   }
 
   const previousPage = () => {
@@ -72,6 +75,7 @@ export default function useHistory (radix: ReturnType<typeof Radix.create>, acti
     leavingHistory,
     nextPage,
     previousPage,
-    resetHistory
+    resetHistory,
+    isDecrypting
   }
 }

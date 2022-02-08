@@ -136,7 +136,8 @@ const messages = {
       noHistory: 'Sorry, but you don\'t have transaction history for this account.',
       unknownTransaction: 'Unknown transaction',
       complexTransactionSomeUnrelated: 'Complex transaction, additional actions not shown',
-      complexTransaction: 'Complex Transaction'
+      complexTransaction: 'Complex Transaction',
+      hardwareDecryptLabel: 'Please confirm decryption on your Ledger.'
     },
     transaction: {
       transactionHeading: 'Send Tokens',
