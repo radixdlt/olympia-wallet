@@ -171,6 +171,22 @@ export default function useTransactions (radix: ReturnType<typeof Radix.create>,
           }
         }
       })
+    } else if (err.toString().indexOf('Error: Failed to sign tx with Ledger') >= 0 && err.toString().includes('(0x6985')) {
+      setError({
+        ...err,
+        type: 'HARDWARE',
+        error: {
+          category: 'UserRejectedSignature'
+        }
+      })
+    } else if (err.toString().indexOf('Error: Failed to sign tx with Ledger') >= 0 && err.toString().includes('(0x530c')) {
+      setError({
+        ...err,
+        type: 'HARDWARE',
+        error: {
+          category: 'SignatureTimedOut'
+        }
+      })
     } else {
       const apiError = { ...err, type: 'api' }
       setError(apiError)

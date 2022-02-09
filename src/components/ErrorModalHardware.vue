@@ -1,7 +1,7 @@
 <template>
   <AppModal
     :visible="isVisible"
-    :title="$t('errors.genericErrorTitle')"
+    :title="errorTitle"
   >
     <template v-slot:icon>
       <svg width="50" height="50" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg" class="transform rotate-45">
@@ -14,7 +14,7 @@
       <div v-if="errorsCount > 1" class="absolute top-0 right-0">
         <div class="bg-rRed rounded-full inline-block px-2 py-0.5 m-2 text-white text-sm">{{ errorsCount }}</div>
       </div>
-      <p class="mb-5">{{ $t('errors.hardwareErrorDetails') }}</p>
+      <p class="mb-5">{{ errorMsg }}</p>
       <div class="flex flex-row space-x-5 justify-center">
         <AppButtonCancel @click="handleClose" class="w-44">{{ $t('errors.closeModal') }}</AppButtonCancel>
         <AppButtonCancel @click="refreshApp" class="w-44">{{ $t('errors.refreshApp') }}</AppButtonCancel>
@@ -31,6 +31,7 @@ import { ErrorT } from '@radixdlt/application'
 import { useRouter } from 'vue-router'
 import { useWallet, useErrors } from '@/composables'
 import { refreshApp } from '@/actions/vue/general'
+import { useI18n } from 'vue-i18n'
 
 export default defineComponent({
   components: {
@@ -56,6 +57,7 @@ export default defineComponent({
     const router = useRouter()
     const { radix } = useWallet(router)
     const { clearLatestError } = useErrors(radix)
+    const { t } = useI18n()
 
     watch((error), (newErrorVal) => {
       if (newErrorVal) isVisible.value = true
@@ -67,8 +69,27 @@ export default defineComponent({
       // Close modal if this is the last error
       if (props.errorsCount <= 1) isVisible.value = false
     }
+    const type: string = error.value.category
+    let errorMsg: string = t('errors.hardwareErrorDetails')
+    let errorTitle: string = t('errors.genericErrorTitle')
+    if (type) {
+      switch (type) {
+        case 'SignatureTimedOut': {
+          errorTitle = t('errors.hardwareSignatureErrorTitle')
+          errorMsg = t('errors.hardwareSignatureTimedOut')
+          break
+        }
+        case 'UserRejectedSignature': {
+          errorTitle = t('errors.hardwareSignatureErrorTitle')
+          errorMsg = t('errors.hardwareUserRejectedSignature')
+          break
+        }
+      }
+    }
 
     return {
+      errorMsg,
+      errorTitle,
       handleClose,
       isVisible,
       refreshApp,
