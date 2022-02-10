@@ -8,7 +8,10 @@
         :name="$t('restoreWallet.recoveryTitle')"
         :isActiveStep="step === 0"
         :isCompleted="step > 1"
-        @click="step = 0"
+        @click="() => {
+          step = 0
+          pinIsSet = false
+        }"
       >
       </wizard-heading>
       <div v-if="step === 0">
@@ -20,11 +23,13 @@
         :isActiveStep="step === 1"
         :isCompleted="step > 1"
         :disabled="step < 1"
-        @click="step = 1"
+        @click="() => {
+          step = 1
+          pinIsSet = false
+        }"
       >
       </wizard-heading>
       <div class="border border-white rounded p-3 mb-8" v-if="step === 1">{{ $t('restoreWallet.passwordHelp') }}</div>
-
       <wizard-heading
         :name="$t('restoreWallet.pinTitle')"
         :isActiveStep="step === 2"
@@ -32,12 +37,14 @@
         :disabled="step < 2"
         @click="() => {
           step = 2
+          pinIsSet = false
           resetPinTrigger = resetPinTrigger + 1
         }"
       >
       </wizard-heading>
-      <div class="border border-white rounded p-3 mb-8" v-if="step === 2">{{ $t('restoreWallet.pinHelpOne') }}</div>
-      <div class="border border-white rounded p-3 mb-8" v-if="step === 3">{{ $t('restoreWallet.pinHelpTwo') }}</div>
+      <div class="border border-white rounded p-3 mb-8" v-if="step === 2 && !pinIsSet">{{ $t('restoreWallet.pinHelpOne') }}</div>
+      <div class="border border-white rounded p-3 mb-8" v-if="step === 3 && !pinIsSet">{{ $t('restoreWallet.pinHelpTwo') }}</div>
+      <div class="border border-white rounded p-3 mb-8" v-if="step === 3 && pinIsSet">{{ $t('restoreWallet.disclaimerHelp') }}</div>
 
       <router-link
         to="/"
@@ -51,14 +58,18 @@
         {{ $t('createWallet.startOver') }}
       </router-link>
     </div>
-
-    <div class="bg-white pt-headerHeight pb-8 px-11 flex-1 overflow-y-scroll">
+    <div class="bg-white flex-1 overflow-y-scroll" v-if="pinIsSet">
+      <multiple-accounts-disclaimer
+        v-if="pinIsSet && step == 3"
+        @understood="completeWalletRestore"
+      />
+    </div>
+    <div v-else class="bg-white pt-headerHeight pb-8 px-11 flex-1 overflow-y-scroll" >
       <restore-wallet-enter-mnemonic
         v-if="step == 0"
         @confirm="captureMnemonic"
       >
       </restore-wallet-enter-mnemonic>
-
       <create-wallet-create-passcode
         v-if="step == 1"
         @confirm="createWallet"
@@ -66,7 +77,7 @@
       </create-wallet-create-passcode>
 
       <create-wallet-create-pin
-        v-if="step == 2 || step == 3"
+        v-if="(step == 2 || step == 3) && !pinIsSet"
         @confirm="handleCreatePin"
         @enteredPin="handleEnterPin"
       >
@@ -83,6 +94,7 @@ import { initWallet, storePin } from '@/actions/vue/create-wallet'
 import RestoreWalletEnterMnemonic from './RestoreWalletEnterMnemonic.vue'
 import CreateWalletCreatePasscode from '@/views/CreateWallet/CreateWalletCreatePasscode.vue'
 import CreateWalletCreatePin from '@/views/CreateWallet/CreateWalletCreatePin.vue'
+import MultipleAccountsDisclaimer from '@/views/CreateWallet/MultipleAccountsDisclaimer.vue'
 import { ref as rxRef } from '@nopr3d/vue-next-rx'
 import { saveDerivedAccountsIndex } from '@/actions/vue/data-store'
 import { useSidebar, useWallet } from '@/composables'
@@ -93,6 +105,7 @@ const RestoreWallet = defineComponent({
   components: {
     CreateWalletCreatePasscode,
     CreateWalletCreatePin,
+    MultipleAccountsDisclaimer,
     RestoreWalletEnterMnemonic,
     WizardHeading
   },
@@ -105,6 +118,7 @@ const RestoreWallet = defineComponent({
     const { loginWithWallet, setNetwork, walletLoaded, setWallet, waitUntilAllLoaded } = useWallet(router)
     const { setState } = useSidebar()
     const newWallet: Ref<WalletT | null> = ref(null)
+    const pinIsSet: Ref<boolean> = ref(false)
 
     // Create wallet with password and path to keystore
     const createWallet = (pass: string) => {
@@ -128,19 +142,25 @@ const RestoreWallet = defineComponent({
     }
 
     const handleCreatePin = (pin: string) => {
+      pinIsSet.value = true
       if (!newWallet.value) return
       setWallet(newWallet.value)
       storePin(pin)
-      loginWithWallet(passcode.value).then((client) => {
-        return firstValueFrom(client.ledger.networkId())
-      }).then((network) => {
-        setNetwork(network)
-        walletLoaded()
-        return waitUntilAllLoaded()
-      }).then(() => {
-        setState(true)
-        router.push('/wallet/account-edit-name')
-      })
+    }
+
+    const completeWalletRestore = (isUnderstood: boolean) => {
+      if (isUnderstood) {
+        loginWithWallet(passcode.value).then((client) => {
+          return firstValueFrom(client.ledger.networkId())
+        }).then((network) => {
+          setNetwork(network)
+          walletLoaded()
+          return waitUntilAllLoaded()
+        }).then(() => {
+          setState(true)
+          router.push('/wallet/account-edit-name')
+        })
+      }
     }
 
     return {
@@ -148,9 +168,11 @@ const RestoreWallet = defineComponent({
       mnemonic,
       step,
       passcode,
+      pinIsSet,
       // methods
       createWallet,
       captureMnemonic,
+      completeWalletRestore,
       handleEnterPin,
       handleCreatePin
     }
