@@ -13,7 +13,11 @@
   <div class="text-center">
     <p class="text-justify py-16 px-32">{{ $t('restoreWallet.disclaimerParagraphOne') }}<br><br>
       {{ $t('restoreWallet.disclaimerParagraphTwo') }}</p>
-    <ButtonSubmit class="w-50 my-10" :disabled="false" @click="$emit('understood', true) ">
+    <ButtonSubmit
+      class="w-50 my-10"
+      :disabled="false"
+      @click="$emit('understood', true)"
+    >
       {{ $t('restoreWallet.disclaimerUnderstandButton') }}
     </ButtonSubmit>
   </div>

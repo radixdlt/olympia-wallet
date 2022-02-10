@@ -59,7 +59,10 @@
       </router-link>
     </div>
     <div class="bg-white flex-1 overflow-y-scroll" v-if="pinIsSet">
-      <multiple-accounts-disclaimer v-if="pinIsSet && step == 3" @understood="completeWalletRestore"/>
+      <multiple-accounts-disclaimer
+        v-if="pinIsSet && step == 3"
+        @understood="completeWalletRestore"
+      />
     </div>
     <div v-else class="bg-white pt-headerHeight pb-8 px-11 flex-1 overflow-y-scroll" >
       <restore-wallet-enter-mnemonic
