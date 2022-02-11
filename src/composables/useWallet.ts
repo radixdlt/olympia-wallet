@@ -1,4 +1,4 @@
-import { ref, computed, Ref, ComputedRef } from 'vue'
+import { ref, computed, Ref, ComputedRef, watch } from 'vue'
 import {
   AccountAddressT,
   AccountsT,
@@ -54,6 +54,7 @@ const accountNames: Ref<AccountName[]> = ref([])
 const accounts: Ref<AccountsT | null> = ref(null)
 const allAccounts: Ref<AccountT[]> = ref([])
 const activeAccount: Ref<AccountT | null> = ref(null)
+const activeAccountSub = new Subject<AccountT | null>()
 const activeAddress: Ref<AccountAddressT | null> = ref(null)
 const activeNetwork: Ref<Network | null> = ref(null)
 const connected = ref(false)
@@ -82,6 +83,11 @@ const setWallet = (newWallet: WalletT) => {
 
 const subs = new Subscription()
 
+watch((activeAccount), (a) => {
+  console.log('updating active account', a?.address.toString())
+  activeAccountSub.next(a)
+})
+
 const createWallet = (mnemonic: MnemomicT, pass: string, network: Network) => {
   const newWalletPromise = createNewWallet(mnemonic, pass, network)
 
@@ -101,6 +107,7 @@ interface useWalletInterface {
   readonly accounts: Ref<AccountsT | null>;
   readonly allAccounts: Ref<AccountT[]>;
   readonly activeAccount: Ref<AccountT | null>;
+  readonly activeAccountSub: Subject<AccountT | null>;
   readonly activeAddress: Ref<AccountAddressT | null>;
   readonly activeNetwork: Ref<Network | null>;
   readonly connected: ComputedRef<boolean>;
@@ -198,7 +205,9 @@ const reloadSubscriptions = () => reloadTrigger.next(Math.random())
 const initWallet = (): void => {
   subs.add(reloadTrigger.asObservable()
     .pipe(switchMap(() => radix.activeAccount))
-    .subscribe((account: AccountT) => { activeAccount.value = account }))
+    .subscribe((account: AccountT) => {
+      activeAccount.value = account
+    }))
 
   subs.add(reloadTrigger.asObservable()
     .pipe(switchMap(() => radix.accounts))
@@ -224,6 +233,7 @@ const initWallet = (): void => {
     .pipe(switchMap(() => radix.ledger.networkId()))
     .subscribe((network: Network) => {
       activeNetwork.value = network
+      console.log('got network', network)
       fetchAccountsForNetwork(network)
       if (network === Network.MAINNET) explorerUrlBase.value = 'https://explorer.radixdlt.com/'
       else explorerUrlBase.value = 'https://stokenet-explorer.radixdlt.com/'
@@ -387,6 +397,7 @@ export default function useWallet (router: Router): useWalletInterface {
   return {
     accounts,
     activeAccount,
+    activeAccountSub,
     activeAddress,
     activeNetwork,
     allAccounts,

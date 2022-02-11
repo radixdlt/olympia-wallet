@@ -48,10 +48,10 @@ export default defineComponent({
 
   setup (props) {
     const router = useRouter()
-    const { radix } = useWallet(router)
+    const { radix, activeAccountSub } = useWallet(router)
     const tokenBalance = toRef(props, 'tokenBalance')
     const token: Ref<Token | null> = ref(null)
-    const { tokenInfoFor } = useTokenBalances(radix)
+    const { tokenInfoFor } = useTokenBalances(radix, activeAccountSub)
 
     token.value = tokenInfoFor(tokenBalance.value.token_identifier.rri)
 

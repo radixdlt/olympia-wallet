@@ -2,6 +2,7 @@
   <div class="flex flex-col flex-1 min-w-0 overflow-y-auto overflow-x-hidden bg-white">
     <div class="bg-rGrayLightest px-8">
       <div class="flex justify-between mb-4 pt-4">
+        {{ activeAccount }}
         <h3 class="font-medium text-rBlack">{{ $t('wallet.balancesHeading') }}</h3>
         <div class="flex items-center text-rBlack text-sm" v-if="activeAddress">
           <span class="text-rGrayDark mr-2">{{ $t('wallet.currentAddress') }}</span> <span class="font-mono text-rBlack">{{ activeAddress.toString() }}</span>
@@ -114,13 +115,15 @@ const WalletOverview = defineComponent({
   setup () {
     const router = useRouter()
     const {
+      activeAccount,
       activeAddress,
+      activeAccountSub,
       explorerUrlBase,
       radix,
       verifyHardwareWalletAddress,
       hasWallet
     } = useWallet(router)
-    const { tokenBalances, tokenBalanceFor, tokenBalancesUnsub, loadingRelatedTokens } = useTokenBalances(radix)
+    const { tokenBalances, tokenBalanceFor, tokenBalancesUnsub, loadingRelatedTokens } = useTokenBalances(radix, activeAccountSub)
 
     const subs = new Subscription()
 
@@ -217,6 +220,7 @@ const WalletOverview = defineComponent({
 
     return {
       activeAddress,
+      activeAccount,
       activeStakes,
       activeUnstakes,
       explorerUrlBase,

@@ -154,7 +154,7 @@ const WalletTransaction = defineComponent({
   setup () {
     const { errors, values, meta, setErrors, resetForm } = useForm<TransactionForm>()
     const router = useRouter()
-    const { activeAddress, activeAccount, hardwareAccount, networkPreamble, radix, verifyHardwareWalletAddress } = useWallet(router)
+    const { activeAddress, activeAccount, activeAccountSub, hardwareAccount, networkPreamble, radix, verifyHardwareWalletAddress } = useWallet(router)
 
     const { setActiveTransactionForm, transferTokens } = useTransactions(radix, router, activeAccount.value, hardwareAccount.value)
 
@@ -162,7 +162,7 @@ const WalletTransaction = defineComponent({
 
     const { t } = useI18n({ useScope: 'global' })
     const { nativeToken, nativeTokenUnsub } = useNativeToken(radix)
-    const { tokenBalances, tokenBalanceFor, tokenInfoFor, tokenBalancesUnsub } = useTokenBalances(radix)
+    const { tokenBalances, tokenBalanceFor, tokenInfoFor, tokenBalancesUnsub } = useTokenBalances(radix, activeAccountSub)
     const nativeTokenLoaded: Ref<boolean> = ref(false)
 
     onBeforeRouteLeave(() => {

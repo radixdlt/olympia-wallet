@@ -1,17 +1,35 @@
 import { computed, ref, Ref } from 'vue'
-import { Radix, ResourceIdentifierT, Token } from '@radixdlt/application'
-import { mergeMap } from 'rxjs/operators'
+import { AccountT, Radix, ResourceIdentifierT, Token } from '@radixdlt/application'
+import { filter, mergeMap } from 'rxjs/operators'
 import { Observed } from '@/helpers/typeHelpers'
-import { firstValueFrom } from 'rxjs'
+import { firstValueFrom, Subject } from 'rxjs'
+import { getLatestAccountAddress } from '@/actions/vue/data-store'
 
 const relatedTokens: Ref<Token[]> = ref([])
 
-export default function useTokenBalances (radix: ReturnType<typeof Radix.create>) {
+export default function useTokenBalances (radix: ReturnType<typeof Radix.create>, accountSub: Subject<AccountT | null>) {
   const tokenBalances: Ref<Observed<ReturnType<typeof radix.ledger.tokenBalancesForAddress>> | null> = ref(null)
-  const tokenBalancesSub = radix.activeAccount
+  // @sam we're using activeAccount here, is it correctly defined?????
+
+  // firstValueFrom(radix.ledger.networkId()).then(
+  //   (network) => {
+  //     console.log('got network inside of useTokenBalances', network)
+  //     getLatestAccountAddress(network).then((acctAddress) => {
+  //       latestAddress.value = acctAddress
+  //     })
+  //   }
+  // )
+
+  function isNonNull<T> (value: T): value is NonNullable<T> {
+    return value != null
+  }
+
+  const tokenBalancesSub = accountSub.asObservable()
     .pipe(
+      filter(isNonNull),
       mergeMap((account) => radix.ledger.tokenBalancesForAddress(account.address))
-    ).subscribe((tokenBalancesRes) => {
+    )
+    .subscribe((tokenBalancesRes) => {
       tokenBalances.value = tokenBalancesRes
 
       // Get token info for tokens related to this account and save in memory
