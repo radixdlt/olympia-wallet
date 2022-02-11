@@ -271,7 +271,7 @@ const messages = {
       tabTitlePassword: 'Change Password',
       tabTitlePin: 'Change PIN',
       tabTitleMnemonic: 'Reveal Seed Phrase',
-      tabTitleTokens: 'Balances',
+      tabTitleTokens: 'Tokens',
       tabTitleGateway: 'Choose Gateway'
     },
     errors: {
