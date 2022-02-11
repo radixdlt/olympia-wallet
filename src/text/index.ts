@@ -203,6 +203,7 @@ const messages = {
       unstakeFromLabel: 'Your address',
       unstakeToLabel: 'Unstake from',
       transactionState: {
+        PENDING: 'Pending',
         INITIATED: 'Initiated',
         BUILT_FROM_INTENT: 'Built',
         ASKED_FOR_CONFIRMATION: 'Confirming',
