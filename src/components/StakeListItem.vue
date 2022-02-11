@@ -62,15 +62,30 @@
         <dl class="mt-1">
           <div v-if="validateGreaterThanZero(pendingStakeAmount)" class="flex items-center flex-wrap">
             <div class="mb-1 w-26 flex-grow-0 text-rGrayMed text-xs">{{ $t('staking.pendingStakeLabel') }}:</div>
-            <div class="mb-1 flex-1 text-rBlack"><big-amount :amount="pendingStakeAmount" /> <span class="text-rGrayDark ml-1 uppercase">{{ nativeToken.symbol }}</span></div>
+            <div class="mb-1 flex-1 text-rBlack">
+              <big-amount :amount="pendingStakeAmount" />
+              <a :href="nativeTokenRRIUrl" target="_blank">
+                <span class="text-rGrayDark ml-1 uppercase">{{ nativeToken.symbol }}</span>
+              </a>
+            </div>
           </div>
           <div class="flex items-center flex-wrap">
             <div class="mb-1 w-26 flex-grow-0 text-rGrayMed text-xs">{{ $t('staking.stakedLabel') }}:</div>
-            <div class="mb-1 flex-1 text-rBlack"><big-amount :amount="getActiveStakeAmountForValidator(validatorAddress)" /> <span class="text-rGrayDark ml-1 uppercase">{{ nativeToken.symbol }}</span></div>
+            <div class="mb-1 flex-1 text-rBlack">
+              <big-amount :amount="getActiveStakeAmountForValidator(validatorAddress)" />
+              <a :href="nativeTokenRRIUrl" target="_blank">
+                <span class="text-rGrayDark ml-1 uppercase">{{ nativeToken.symbol }}</span>
+              </a>
+            </div>
           </div>
           <div v-if="validateGreaterThanZero(unstakeAmount)" class="flex items-center flex-wrap">
             <div class="mb-1 w-26 flex-grow-0 text-rGrayMed text-xs">{{ $t('staking.unstakingLabel') }}:</div>
-            <div class="mb-1 flex-1 text-rBlack"><big-amount :amount="unstakeAmount" /> <span class="text-rGrayDark ml-1 uppercase">{{ nativeToken.symbol }}</span></div>
+            <div class="mb-1 flex-1 text-rBlack">
+              <big-amount :amount="unstakeAmount" />
+              <a :href="nativeTokenRRIUrl" target="_blank">
+                <span class="text-rGrayDark ml-1 uppercase">{{ nativeToken.symbol }}</span>
+              </a>
+            </div>
           </div>
         </dl>
       </div>
@@ -163,9 +178,14 @@ const StakeListItem = defineComponent({
     const unstakeAmount: ComputedRef<AmountT> = computed(() => getUnstakeAmountForValidator(props.validatorAddress))
     const pendingStakeAmount: ComputedRef<AmountT> = computed(() => getPendingStakeAmountForValidator(props.validatorAddress))
 
+    const nativeTokenRRIUrl: ComputedRef<string> = computed(() => {
+      return `${props.explorerUrlBase}/#/tokens/${props.nativeToken.rri.toString()}`
+    })
+
     return {
       explorerUrl,
       inTopOneHundred,
+      nativeTokenRRIUrl,
       pendingStakeAmount,
       unstakeAmount,
       validateGreaterThanZero,

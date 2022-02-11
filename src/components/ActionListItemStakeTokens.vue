@@ -5,7 +5,12 @@
         <img src="@/assets/stakeTokens.svg" alt="receive tokens" />
         <span class="ml-2 text-sm">{{ $t('history.stakeAction') }}</span>
       </div>
-      <div><big-amount :amount="action.amount" class="text-rBlack text-base"/> {{ nativeToken.symbol.toUpperCase() }}</div>
+      <div>
+        <big-amount :amount="action.amount" class="text-rBlack text-base"/>
+        <a :href="nativeRRIUrl" target="_blank">
+          {{ ` ${nativeToken.symbol.toUpperCase()}` }}
+        </a>
+      </div>
     </div>
     <div class="flex flex-col items-end">
       <div class="flex flex-row flex-1 min-w-0">
@@ -41,12 +46,19 @@ const ActionListItemStakeTokens = defineComponent({
     nativeToken: {
       type: Object as PropType<Token>,
       required: true
+    },
+    explorerUrlBase: {
+      type: String,
+      required: true
     }
   },
 
   computed: {
     displayAddress (): string {
       return formatValidatorAddressForDisplay(this.action.to_validator)
+    },
+    nativeRRIUrl (): string {
+      return `${this.explorerUrlBase}/#/tokens/${this.nativeToken.rri.toString()}`
     }
   }
 })

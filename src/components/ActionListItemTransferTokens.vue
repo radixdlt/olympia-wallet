@@ -9,7 +9,12 @@
         <img src="@/assets/sendTokens.svg" alt="send tokens" class="w-6 h-auto" />
         <span class="ml-2 text-sm">{{ $t('history.sentAction') }}</span>
       </div>
-      <div><big-amount :amount="action.amount" class="text-rBlack text-base"/> {{ this.action.rri.name.toUpperCase() }}</div>
+      <div>
+        <big-amount :amount="action.amount" class="text-rBlack text-base"/>
+        <a :href="tokenExplorerUrl" target="_blank">
+          {{ ` ${this.action.rri.name.toUpperCase()}` }}
+        </a>
+      </div>
     </div>
     <div class="flex flex-col items-end">
       <div v-if="!isRecipient" class="flex flex-row flex-1 min-w-0">
@@ -49,6 +54,10 @@ const ActionListItemTransferTokens = defineComponent({
     index: {
       type: Number,
       required: true
+    },
+    explorerUrlBase: {
+      type: String,
+      required: true
     }
   },
 
@@ -56,6 +65,9 @@ const ActionListItemTransferTokens = defineComponent({
     isRecipient (): boolean {
       if (!this.activeAddress) return false
       return this.action.to_account.equals(this.activeAddress)
+    },
+    tokenExplorerUrl (): string {
+      return `${this.explorerUrlBase}/#/tokens/${this.action.rri.toString()}`
     }
   },
 

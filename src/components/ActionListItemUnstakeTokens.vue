@@ -5,7 +5,12 @@
         <img src="@/assets/unstakeTokens.svg" alt="receive tokens" />
         <span class="ml-2 text-sm">{{ $t('history.unstakeAction') }}</span>
       </div>
-      <div v-if="action.amount && nativeToken"><big-amount :amount="action.amount" class="text-rBlack text-base"/> {{ nativeToken.symbol.toUpperCase() }}</div>
+      <div v-if="action.amount && nativeToken">
+        <big-amount :amount="action.amount" class="text-rBlack text-base"/>
+         <a :href="nativeRRIUrl" target="_blank">
+          {{ ` ${nativeToken.symbol.toUpperCase()}` }}
+        </a>
+      </div>
     </div>
     <div class="flex flex-col items-end">
       <div class="flex flex-row flex-1 min-w-0 items-center">
@@ -41,11 +46,18 @@ const ActionListItemUnstakeTokens = defineComponent({
     nativeToken: {
       type: Object as PropType<Token>,
       required: true
+    },
+    explorerUrlBase: {
+      type: String,
+      required: true
     }
   },
   computed: {
     displayAddress (): string {
       return formatValidatorAddressForDisplay(this.action.from_validator)
+    },
+    nativeRRIUrl (): string {
+      return `${this.explorerUrlBase}/#/tokens/${this.nativeToken.rri.toString()}`
     }
   }
 })
