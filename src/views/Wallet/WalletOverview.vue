@@ -22,7 +22,7 @@
           <div class="flex flex-row items-end">
             <div v-if="loading" class="text-2xl font-light mr-4 text-rGreen">--</div>
             <big-amount :amount="availablePlusStakedAndUnstakedXRD" class="text-2xl font-light mr-4 text-rGreen" v-else />
-            <token-symbol>{{ nativeToken && nativeToken.symbol }}</token-symbol>
+            <token-symbol :rriUrl="nativeTokenRRIUrl">{{ nativeToken && nativeToken.symbol }}</token-symbol>
           </div>
         </div>
         <div class="flex flex-col my-3 px-5 border-r border-rGray flex-1">
@@ -30,7 +30,7 @@
           <div class="flex flex-row items-end">
             <div v-if="loading" class="text-2xl font-light mr-4 text-rBlack">--</div>
             <big-amount :amount="totalXRD" class="text-2xl font-light mr-4 text-rBlack" v-else />
-            <token-symbol>{{ nativeToken && nativeToken.symbol }}</token-symbol>
+            <token-symbol :rriUrl="nativeTokenRRIUrl">{{ nativeToken && nativeToken.symbol }}</token-symbol>
           </div>
         </div>
         <div class="flex flex-col my-3 px-5 flex-1">
@@ -38,7 +38,7 @@
           <div class="flex flex-row items-end">
             <div v-if="loading" class="text-2xl font-light mr-4 text-rBlack">--</div>
             <big-amount :amount="totalStakedAndUnstaked" class="text-2xl font-light mr-4 text-rBlack" v-else />
-            <token-symbol>{{ nativeToken && nativeToken.symbol }}</token-symbol>
+            <token-symbol :rriUrl="nativeTokenRRIUrl">{{ nativeToken && nativeToken.symbol }}</token-symbol>
           </div>
         </div>
       </div>
@@ -215,6 +215,14 @@ const WalletOverview = defineComponent({
       })
     })
 
+    const nativeTokenRRIUrl: ComputedRef<string> = computed(() => {
+      if (nativeToken.value && explorerUrlBase) {
+        return `${explorerUrlBase.value}/#/tokens/${nativeToken.value.rri.toString()}`
+      } else {
+        return `${explorerUrlBase}/#/`
+      }
+    })
+
     return {
       activeAddress,
       activeStakes,
@@ -224,6 +232,7 @@ const WalletOverview = defineComponent({
       loading,
       loadingRelatedTokens,
       nativeToken,
+      nativeTokenRRIUrl,
       tokenBalances,
       tokenToHide,
       totalXRD,
