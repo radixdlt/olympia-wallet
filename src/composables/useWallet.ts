@@ -84,7 +84,6 @@ const setWallet = (newWallet: WalletT) => {
 const subs = new Subscription()
 
 watch((activeAccount), (a) => {
-  console.log('updating active account', a?.address.toString())
   activeAccountSub.next(a)
 })
 
@@ -233,7 +232,6 @@ const initWallet = (): void => {
     .pipe(switchMap(() => radix.ledger.networkId()))
     .subscribe((network: Network) => {
       activeNetwork.value = network
-      console.log('got network', network)
       fetchAccountsForNetwork(network)
       if (network === Network.MAINNET) explorerUrlBase.value = 'https://explorer.radixdlt.com/'
       else explorerUrlBase.value = 'https://stokenet-explorer.radixdlt.com/'

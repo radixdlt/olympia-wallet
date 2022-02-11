@@ -3,27 +3,18 @@ import { AccountT, Radix, ResourceIdentifierT, Token } from '@radixdlt/applicati
 import { filter, mergeMap } from 'rxjs/operators'
 import { Observed } from '@/helpers/typeHelpers'
 import { firstValueFrom, Subject } from 'rxjs'
-import { getLatestAccountAddress } from '@/actions/vue/data-store'
 
 const relatedTokens: Ref<Token[]> = ref([])
 
-export default function useTokenBalances (radix: ReturnType<typeof Radix.create>, accountSub: Subject<AccountT | null>) {
+// We're passing an optional arg accountSub since in some cases it's not necessary to have a Subject Account, but
+// cases where we need the latest account such as in WalletOverview we should take in a specific AccountSub as arg.
+export default function useTokenBalances (radix: ReturnType<typeof Radix.create>, accountSub: Subject<AccountT | null> = new Subject()) {
   const tokenBalances: Ref<Observed<ReturnType<typeof radix.ledger.tokenBalancesForAddress>> | null> = ref(null)
-  // @sam we're using activeAccount here, is it correctly defined?????
 
-  // firstValueFrom(radix.ledger.networkId()).then(
-  //   (network) => {
-  //     console.log('got network inside of useTokenBalances', network)
-  //     getLatestAccountAddress(network).then((acctAddress) => {
-  //       latestAddress.value = acctAddress
-  //     })
-  //   }
-  // )
-
+  // using isNonNull to specifically filter out every null value from tokenBalancesSub
   function isNonNull<T> (value: T): value is NonNullable<T> {
     return value != null
   }
-
   const tokenBalancesSub = accountSub.asObservable()
     .pipe(
       filter(isNonNull),
