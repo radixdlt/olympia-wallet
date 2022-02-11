@@ -145,10 +145,6 @@ export default defineComponent({
       `${props.explorerUrlBase}/#/transactions/${props.transaction.txID}`
     )
 
-    // const explorerTokenUrl: ComputedRef<string> = computed(() =>
-    //   props.explorerUrlBase.toString()
-    // )
-
     const relatedActions: ComputedRef<ExecutedAction[]> = computed(() => {
       return props.transaction.actions.filter((action: ExecutedAction) => {
         let related
@@ -180,7 +176,6 @@ export default defineComponent({
     return {
       customTxnDisplayType,
       explorerUrl,
-      // explorerUrlBase,
       relatedActions
     }
   },
