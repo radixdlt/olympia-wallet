@@ -116,7 +116,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, Ref, ref, ComputedRef, computed, watch } from 'vue'
+import { defineComponent, Ref, ref, ComputedRef, computed, watch, onMounted } from 'vue'
 import { useForm } from 'vee-validate'
 
 import { safelyUnwrapAddress, safelyUnwrapAmount, validateAmountOfType, validateGreaterThanZero } from '@/helpers/validateRadixTypes'
@@ -133,6 +133,7 @@ import { useRouter, onBeforeRouteLeave } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { Decoded } from '@radixdlt/application/dist/api/open-api/_types'
 import { Observed } from '@/helpers/typeHelpers'
+import { getHiddenTokens } from '@/actions/vue/data-store'
 
 interface TransactionForm {
   recipient: string;
@@ -187,6 +188,13 @@ const WalletTransaction = defineComponent({
 
     const currency: Ref<string | null> = ref(null)
     const tokenOptions: Ref<Decoded.TokenAmount[]> = ref([])
+    const hiddenTokens: Ref<string[]> = ref([])
+
+    onMounted(() => {
+      getHiddenTokens().then((res) => {
+        hiddenTokens.value = res
+      })
+    })
 
     // Set XRD as default and move to top of list of options. Ensure native token subscription has returned before doing so
     const setXRDByDefault = (nativeToken: Token) => {
@@ -197,7 +205,10 @@ const WalletTransaction = defineComponent({
       currency.value = nativeTokenBalance ? nativeTokenBalance.token_identifier.rri.name : balances[0].token_identifier.rri.name
 
       const nativeTb = balances.find((b) => b.token_identifier.rri.equals(nativeToken.rri))
-      const remainingTb = balances.filter((b) => !b.token_identifier.rri.equals(nativeToken.rri)) || []
+      const remainingTb = balances.filter((b) =>
+        !b.token_identifier.rri.equals(nativeToken.rri) &&
+        !hiddenTokens.value.find((ht) => b.token_identifier.rri.toString() === ht)
+      ) || []
       tokenOptions.value = nativeTb ? [nativeTb, ...remainingTb] : remainingTb
     }
 
