@@ -11,8 +11,11 @@
       </div>
       <div>
         <big-amount :amount="action.amount" class="text-rBlack text-base"/>
-        <a :href="tokenExplorerUrl" target="_blank">
+        <a :href="tokenExplorerUrl" target="_blank" class="group cursor-pointer relative">
           {{ ` ${this.action.rri.name.toUpperCase()}` }}
+          <div class="absolute invisible group-hover:visible -mt-full bg-rGrayLightest text-rBlack bottom-full text-xs p-1 left-0 rounded-sm shadow border border-solid border-rGrayLight">
+            {{ this.action.rri.toString() }}
+          </div>
         </a>
       </div>
     </div>

@@ -42,7 +42,8 @@
             v-if="token"
             :rriUrl="rriUrl"
           >
-            {{ token.symbol.toUpperCase() }}
+            <template v-slot:symbol>{{ token.symbol.toUpperCase() }}</template>
+            <template v-slot:hoverText>{{ token.rri.toString() }}</template>
           </token-symbol>
         </div>
       </div>

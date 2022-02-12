@@ -64,8 +64,11 @@
             <div class="mb-1 w-26 flex-grow-0 text-rGrayMed text-xs">{{ $t('staking.pendingStakeLabel') }}:</div>
             <div class="mb-1 flex-1 text-rBlack">
               <big-amount :amount="pendingStakeAmount" />
-              <a :href="nativeTokenRRIUrl" target="_blank">
+              <a :href="nativeTokenRRIUrl" target="_blank" class="group cursor-pointer relative">
                 <span class="text-rGrayDark ml-1 uppercase">{{ nativeToken.symbol }}</span>
+                <div class="absolute invisible group-hover:visible -mt-full bg-rGrayLightest text-rBlack bottom-full text-xs p-1 rounded-sm shadow border border-solid border-rGrayLight">
+                  <span>{{ nativeToken && nativeToken.rri.toString() }}</span>
+                </div>
               </a>
             </div>
           </div>
@@ -73,8 +76,11 @@
             <div class="mb-1 w-26 flex-grow-0 text-rGrayMed text-xs">{{ $t('staking.stakedLabel') }}:</div>
             <div class="mb-1 flex-1 text-rBlack">
               <big-amount :amount="getActiveStakeAmountForValidator(validatorAddress)" />
-              <a :href="nativeTokenRRIUrl" target="_blank">
+              <a :href="nativeTokenRRIUrl" target="_blank" class="group cursor-pointer relative">
                 <span class="text-rGrayDark ml-1 uppercase">{{ nativeToken.symbol }}</span>
+                <div class="absolute invisible group-hover:visible -mt-full bg-rGrayLightest text-rBlack bottom-full text-xs p-1 rounded-sm shadow border border-solid border-rGrayLight">
+                  <span>{{ nativeToken && nativeToken.rri.toString() }}</span>
+                </div>
               </a>
             </div>
           </div>
@@ -82,8 +88,11 @@
             <div class="mb-1 w-26 flex-grow-0 text-rGrayMed text-xs">{{ $t('staking.unstakingLabel') }}:</div>
             <div class="mb-1 flex-1 text-rBlack">
               <big-amount :amount="unstakeAmount" />
-              <a :href="nativeTokenRRIUrl" target="_blank">
+              <a :href="nativeTokenRRIUrl" target="_blank" class="group cursor-pointer relative">
                 <span class="text-rGrayDark ml-1 uppercase">{{ nativeToken.symbol }}</span>
+                <div class="absolute invisible group-hover:visible -mt-full bg-rGrayLightest text-rBlack bottom-full text-xs p-1 rounded-sm shadow border border-solid border-rGrayLight">
+                  <span>{{ nativeToken && nativeToken.rri.toString() }}</span>
+                </div>
               </a>
             </div>
           </div>
