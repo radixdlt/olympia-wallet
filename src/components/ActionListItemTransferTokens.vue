@@ -11,12 +11,12 @@
       </div>
       <div>
         <big-amount :amount="action.amount" class="text-rBlack text-base"/>
-        <a :href="tokenExplorerUrl" target="_blank" class="group cursor-pointer relative">
-          {{ ` ${this.action.rri.name.toUpperCase()}` }}
-          <div class="absolute invisible group-hover:visible -mt-full bg-rGrayLightest text-rBlack bottom-full text-xs p-1 left-0 rounded-sm shadow border border-solid border-rGrayLight">
-            {{ this.action.rri.toString() }}
-          </div>
-        </a>
+        <token-symbol
+          :symbol="this.action.rri.name.toUpperCase()"
+          :rri="this.action.rri.toString()"
+          :hasGreyBackground="false"
+        >
+        </token-symbol>
       </div>
     </div>
     <div class="flex flex-col items-end">
@@ -38,11 +38,13 @@ import { ExecutedTransferTokensAction, AccountAddressT } from '@radixdlt/applica
 import ClickToCopy from '@/components/ClickToCopy.vue'
 import { formatWalletAddressForDisplay } from '@/helpers/formatter'
 import BigAmount from '@/components/BigAmount.vue'
+import TokenSymbol from '@/components/TokenSymbol.vue'
 
 const ActionListItemTransferTokens = defineComponent({
   components: {
     BigAmount,
-    ClickToCopy
+    ClickToCopy,
+    TokenSymbol
   },
 
   props: {
@@ -57,10 +59,6 @@ const ActionListItemTransferTokens = defineComponent({
     index: {
       type: Number,
       required: true
-    },
-    explorerUrlBase: {
-      type: String,
-      required: true
     }
   },
 
@@ -68,9 +66,6 @@ const ActionListItemTransferTokens = defineComponent({
     isRecipient (): boolean {
       if (!this.activeAddress) return false
       return this.action.to_account.equals(this.activeAddress)
-    },
-    tokenExplorerUrl (): string {
-      return `${this.explorerUrlBase}/#/tokens/${this.action.rri.toString()}`
     }
   },
 

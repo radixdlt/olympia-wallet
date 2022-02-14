@@ -32,21 +32,18 @@
             :action="action"
             :index="i"
             :nativeToken="nativeToken"
-            :explorerUrlBase="explorerUrlBase"
           />
           <action-list-item-unstake-tokens
             v-else-if="action.type === 'UnstakeTokens'"
             :action="action"
             :index="i"
             :nativeToken="nativeToken"
-            :explorerUrlBase="explorerUrlBase"
           />
           <action-list-item-transfer-tokens
             v-else-if="action.type === 'TokenTransfer'"
             :action="action"
             :index="i"
             :activeAddress="activeAddress"
-            :explorerUrlBase="explorerUrlBase"
           />
           <action-list-item-other
             v-else

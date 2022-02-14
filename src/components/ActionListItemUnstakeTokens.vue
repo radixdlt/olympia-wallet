@@ -7,12 +7,12 @@
       </div>
       <div v-if="action.amount && nativeToken">
         <big-amount :amount="action.amount" class="text-rBlack text-base"/>
-         <a :href="nativeRRIUrl" target="_blank" class="group cursor-pointer relative">
-          {{ ` ${nativeToken.symbol.toUpperCase()}` }}
-          <div class="absolute invisible group-hover:visible -mt-full bg-rGrayLightest text-rBlack bottom-full text-xs p-1 left-0 rounded-sm shadow border border-solid border-rGrayLight">
-            {{ action.rri.toString() }}
-          </div>
-        </a>
+        <token-symbol
+          :symbol="nativeToken.symbol.toUpperCase()"
+          :rri="action.rri.toString()"
+          :hasGreyBackground="false"
+        >
+        </token-symbol>
       </div>
     </div>
     <div class="flex flex-col items-end">
@@ -30,11 +30,13 @@ import { ExecutedUnstakeTokensAction, Token } from '@radixdlt/application'
 import ClickToCopy from '@/components/ClickToCopy.vue'
 import { formatValidatorAddressForDisplay } from '@/helpers/formatter'
 import BigAmount from '@/components/BigAmount.vue'
+import TokenSymbol from '@/components/TokenSymbol.vue'
 
 const ActionListItemUnstakeTokens = defineComponent({
   components: {
     BigAmount,
-    ClickToCopy
+    ClickToCopy,
+    TokenSymbol
   },
 
   props: {
@@ -49,18 +51,11 @@ const ActionListItemUnstakeTokens = defineComponent({
     nativeToken: {
       type: Object as PropType<Token>,
       required: true
-    },
-    explorerUrlBase: {
-      type: String,
-      required: true
     }
   },
   computed: {
     displayAddress (): string {
       return formatValidatorAddressForDisplay(this.action.from_validator)
-    },
-    nativeRRIUrl (): string {
-      return `${this.explorerUrlBase}/#/tokens/${this.nativeToken.rri.toString()}`
     }
   }
 })

@@ -22,9 +22,12 @@
           <div class="flex flex-row items-end">
             <div v-if="loading" class="text-2xl font-light mr-4 text-rGreen">--</div>
             <big-amount :amount="availablePlusStakedAndUnstakedXRD" class="text-2xl font-light mr-4 text-rGreen" v-else />
-            <token-symbol :rriUrl="nativeTokenRRIUrl">
-              <template v-slot:symbol>{{ nativeToken && nativeToken.symbol }}</template>
-              <template v-slot:hoverText>{{ nativeToken && nativeToken.rri.toString() }}</template>
+            <token-symbol
+              v-if="nativeToken"
+              :symbol="nativeToken.symbol"
+              :rri="nativeToken.rri.toString()"
+              :hasGreyBackground="true"
+            >
             </token-symbol>
           </div>
         </div>
@@ -33,9 +36,12 @@
           <div class="flex flex-row items-end">
             <div v-if="loading" class="text-2xl font-light mr-4 text-rBlack">--</div>
             <big-amount :amount="totalXRD" class="text-2xl font-light mr-4 text-rBlack" v-else />
-            <token-symbol :rriUrl="nativeTokenRRIUrl">
-              <template v-slot:symbol>{{ nativeToken && nativeToken.symbol }}</template>
-              <template v-slot:hoverText>{{ nativeToken && nativeToken.rri.toString() }}</template>
+            <token-symbol
+              v-if="nativeToken"
+              :symbol="nativeToken.symbol"
+              :rri="nativeToken.rri.toString()"
+              :hasGreyBackground="true"
+            >
             </token-symbol>
           </div>
         </div>
@@ -44,9 +50,12 @@
           <div class="flex flex-row items-end">
             <div v-if="loading" class="text-2xl font-light mr-4 text-rBlack">--</div>
             <big-amount :amount="totalStakedAndUnstaked" class="text-2xl font-light mr-4 text-rBlack" v-else />
-            <token-symbol :rriUrl="nativeTokenRRIUrl">
-              <template v-slot:symbol>{{ nativeToken && nativeToken.symbol }}</template>
-              <template v-slot:hoverText>{{ nativeToken && nativeToken.rri.toString() }}</template>
+            <token-symbol
+              v-if="nativeToken"
+              :symbol="nativeToken.symbol"
+              :rri="nativeToken.rri.toString()"
+              :hasGreyBackground="true"
+            >
             </token-symbol>
           </div>
         </div>

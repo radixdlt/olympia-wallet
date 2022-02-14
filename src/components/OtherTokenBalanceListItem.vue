@@ -40,10 +40,10 @@
           <big-amount :amount="tokenBalance.value" class="text-2xl font-light mr-4 text-rBlack" />
           <token-symbol
             v-if="token"
-            :rriUrl="rriUrl"
+            :symbol="token.symbol.toUpperCase()"
+            :rri="token.rri.toString()"
+            :hasGreyBackground="true"
           >
-            <template v-slot:symbol>{{ token.symbol.toUpperCase() }}</template>
-            <template v-slot:hoverText>{{ token.rri.toString() }}</template>
           </token-symbol>
         </div>
       </div>
