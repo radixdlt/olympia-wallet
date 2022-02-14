@@ -8,9 +8,9 @@
       <div>
         <big-amount :amount="action.amount" class="text-rBlack text-base"/>
         <a :href="nativeRRIUrl" target="_blank" class="group cursor-pointer relative">
-          {{ ` ${nativeToken.symbol.toUpperCase()}` }}
+          {{ ` ${this.action.rri.name.toUpperCase()}` }}
           <div class="absolute invisible group-hover:visible -mt-full bg-rGrayLightest text-rBlack bottom-full text-xs p-1 left-0 rounded-sm shadow border border-solid border-rGrayLight">
-            {{ action.rri.toString() }}
+            {{ this.action.rri.toString() }}
           </div>
         </a>
       </div>
