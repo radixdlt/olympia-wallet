@@ -1,4 +1,5 @@
 <template>
+  <wallet-ledger-verify-decrypt-modal v-if="shouldShowDecryptModal" />
   <div class="flex flex-col flex-1 min-w-0 overflow-y-auto bg-white">
     <div class="bg-rGrayLightest py-6 px-8 bg-gray">
       <div class="flex justify-between">
@@ -88,18 +89,20 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, watch } from 'vue'
+import { computed, ComputedRef, defineComponent, onMounted, watch } from 'vue'
 import TransactionListItem from '@/components/TransactionListItem.vue'
 import LoadingIcon from '@/components/LoadingIcon.vue'
 import ClickToCopy from '@/components/ClickToCopy.vue'
 import { useNativeToken, useWallet, useHistory } from '@/composables'
 import { useRouter, onBeforeRouteLeave } from 'vue-router'
+import WalletLedgerVerifyDecryptModal from './WalletLedgerVerifyDecryptModal.vue'
 
 const WalletHistory = defineComponent({
   components: {
     LoadingIcon,
     ClickToCopy,
-    TransactionListItem
+    TransactionListItem,
+    WalletLedgerVerifyDecryptModal
   },
 
   setup () {
@@ -108,6 +111,7 @@ const WalletHistory = defineComponent({
       activeAddress,
       activeAccount,
       explorerUrlBase,
+      hardwareAccount,
       radix,
       verifyHardwareWalletAddress
     } = useWallet(router)
@@ -126,7 +130,8 @@ const WalletHistory = defineComponent({
       leavingHistory,
       nextPage,
       previousPage,
-      resetHistory
+      resetHistory,
+      isDecrypting
     } = useHistory(radix, activeAccount.value)
 
     const { nativeToken, nativeTokenUnsub } = useNativeToken(radix)
@@ -140,6 +145,11 @@ const WalletHistory = defineComponent({
         }
       })
     })
+
+    const shouldShowDecryptModal: ComputedRef<boolean> = computed(() =>
+      isDecrypting.value && activeAccount && hardwareAccount &&
+      activeAccount.value === hardwareAccount.value
+    )
 
     // Fetch new history when active account changes
     watch((activeAccount), () => { resetHistory() })
@@ -167,6 +177,7 @@ const WalletHistory = defineComponent({
       nextPage,
       previousPage,
       resetHistory,
+      shouldShowDecryptModal,
       transactionsWithMessages,
       verifyHardwareWalletAddress
     }
