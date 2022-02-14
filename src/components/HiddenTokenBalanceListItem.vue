@@ -51,7 +51,7 @@ export default defineComponent({
     const { radix, activeAccountSub } = useWallet(router)
     const tokenBalance = toRef(props, 'tokenBalance')
     const token: Ref<Token | null> = ref(null)
-    const { tokenInfoFor } = useTokenBalances(radix, activeAccountSub)
+    const { tokenInfoFor } = useTokenBalances(radix)
 
     token.value = tokenInfoFor(tokenBalance.value.token_identifier.rri)
 

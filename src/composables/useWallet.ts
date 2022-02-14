@@ -204,9 +204,7 @@ const reloadSubscriptions = () => reloadTrigger.next(Math.random())
 const initWallet = (): void => {
   subs.add(reloadTrigger.asObservable()
     .pipe(switchMap(() => radix.activeAccount))
-    .subscribe((account: AccountT) => {
-      activeAccount.value = account
-    }))
+    .subscribe((account: AccountT) => {activeAccount.value = account}))
 
   subs.add(reloadTrigger.asObservable()
     .pipe(switchMap(() => radix.accounts))
