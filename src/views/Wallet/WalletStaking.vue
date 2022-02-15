@@ -148,7 +148,6 @@ const WalletStaking = defineComponent({
     const {
       activeAddress,
       activeAccount,
-      activeAccountSub,
       explorerUrlBase,
       hardwareAccount,
       radix
@@ -156,7 +155,7 @@ const WalletStaking = defineComponent({
     const { activeForm, setActiveForm, activeStakes, activeUnstakes, loadingAnyStaking, stakingUnsub, validators } = useStaking(radix)
     const { stakeTokens, unstakeTokens, setActiveTransactionForm, transactionErrorMessage } = useTransactions(radix, router, activeAccount.value, hardwareAccount.value)
     const { nativeToken, nativeTokenUnsub } = useNativeToken(radix)
-    const { tokenBalances, tokenBalanceFor, tokenInfoFor, tokenBalancesUnsub } = useTokenBalances(radix, activeAccountSub)
+    const { tokenBalances, tokenBalanceFor, tokenInfoFor, tokenBalancesUnsub } = useTokenBalances(radix)
 
     onBeforeRouteLeave(() => {
       nativeTokenUnsub()

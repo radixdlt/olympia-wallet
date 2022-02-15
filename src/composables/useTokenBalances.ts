@@ -9,16 +9,16 @@ const tokenBalances: Ref<AccountBalancesEndpoint.DecodedResponse | null> = ref(n
 
 // We're passing an optional arg accountSub since in some cases it's not necessary to have a Subject Account, but
 // cases where we need the latest account such as in WalletOverview we should take in a specific AccountSub as arg.
-export default function useTokenBalances (radix: ReturnType<typeof Radix.create>, accountSub: Subject<AccountT | null> = new Subject()) {
+export default function useTokenBalances (radix: ReturnType<typeof Radix.create>) {
   // using isNonNull to specifically filter out every null value from tokenBalancesSub
   function isNonNull<T> (value: T): value is NonNullable<T> {
     return value != null
   }
-  const tokenBalancesSub = accountSub.asObservable()
-    .pipe(
-      filter(isNonNull),
-      mergeMap((account) => radix.ledger.tokenBalancesForAddress(account.address))
-    )
+
+  const tokenBalancesSub = radix.activeAccount.pipe(
+    filter(isNonNull),
+    mergeMap((account) => radix.ledger.tokenBalancesForAddress(account.address))
+  )
     .subscribe((tokenBalancesRes) => {
       tokenBalances.value = tokenBalancesRes
 

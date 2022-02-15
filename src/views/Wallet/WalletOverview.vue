@@ -116,13 +116,12 @@ const WalletOverview = defineComponent({
     const {
       activeAccount,
       activeAddress,
-      activeAccountSub,
       explorerUrlBase,
       radix,
       verifyHardwareWalletAddress,
       hasWallet
     } = useWallet(router)
-    const { tokenBalances, tokenBalanceFor, tokenBalancesUnsub, loadingRelatedTokens } = useTokenBalances(radix, activeAccountSub)
+    const { tokenBalances, tokenBalanceFor, tokenBalancesUnsub, loadingRelatedTokens } = useTokenBalances(radix)
 
     const subs = new Subscription()
 

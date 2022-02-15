@@ -176,13 +176,12 @@ const WalletConfirmTransactionModal = defineComponent({
     const {
       activeAddress,
       activeAccount,
-      activeAccountSub,
       hardwareAccount,
       radix,
       reset
     } = useWallet(router)
     const { nativeToken, nativeTokenUnsub } = useNativeToken(radix)
-    const { tokenBalances, tokenBalanceFor, tokenInfoFor, tokenBalancesUnsub } = useTokenBalances(radix, activeAccountSub)
+    const { tokenBalances, tokenBalanceFor, tokenInfoFor, tokenBalancesUnsub } = useTokenBalances(radix)
 
     const updateObservable = merge(
       radix.activeAccount,
