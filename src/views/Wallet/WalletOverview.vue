@@ -233,14 +233,6 @@ const WalletOverview = defineComponent({
       })
     })
 
-    const nativeTokenRRIUrl: ComputedRef<string> = computed(() => {
-      if (nativeToken.value && explorerUrlBase) {
-        return `${explorerUrlBase.value}/#/tokens/${nativeToken.value.rri.toString()}`
-      } else {
-        return `${explorerUrlBase}/#/`
-      }
-    })
-
     return {
       activeAddress,
       activeStakes,
@@ -250,7 +242,6 @@ const WalletOverview = defineComponent({
       loading,
       loadingRelatedTokens,
       nativeToken,
-      nativeTokenRRIUrl,
       tokenBalances,
       tokenToHide,
       totalXRD,

@@ -64,36 +64,36 @@
             <div class="mb-1 w-26 flex-grow-0 text-rGrayMed text-xs">{{ $t('staking.pendingStakeLabel') }}:</div>
             <div class="mb-1 flex-1 text-rBlack">
               <big-amount :amount="pendingStakeAmount" />
-              <a :href="nativeTokenRRIUrl" target="_blank" class="group cursor-pointer relative">
-                <span class="text-rGrayDark ml-1 uppercase">{{ nativeToken.symbol }}</span>
-                <div class="absolute invisible group-hover:visible -mt-full bg-rGrayLightest text-rBlack bottom-full text-xs p-1 rounded-sm shadow border border-solid border-rGrayLight">
-                  <span>{{ nativeToken && nativeToken.rri.toString() }}</span>
-                </div>
-              </a>
+              <token-symbol
+                :symbol="nativeToken.symbol"
+                :rri="nativeToken.rri.toString()"
+                :hasGreyBackground="false"
+              >
+              </token-symbol>
             </div>
           </div>
           <div class="flex items-center flex-wrap">
             <div class="mb-1 w-26 flex-grow-0 text-rGrayMed text-xs">{{ $t('staking.stakedLabel') }}:</div>
             <div class="mb-1 flex-1 text-rBlack">
               <big-amount :amount="getActiveStakeAmountForValidator(validatorAddress)" />
-              <a :href="nativeTokenRRIUrl" target="_blank" class="group cursor-pointer relative">
-                <span class="text-rGrayDark ml-1 uppercase">{{ nativeToken.symbol }}</span>
-                <div class="absolute invisible group-hover:visible -mt-full bg-rGrayLightest text-rBlack bottom-full text-xs p-1 rounded-sm shadow border border-solid border-rGrayLight">
-                  <span>{{ nativeToken && nativeToken.rri.toString() }}</span>
-                </div>
-              </a>
+              <token-symbol
+                :symbol="nativeToken.symbol"
+                :rri="nativeToken.rri.toString()"
+                :hasGreyBackground="false"
+              >
+              </token-symbol>
             </div>
           </div>
           <div v-if="validateGreaterThanZero(unstakeAmount)" class="flex items-center flex-wrap">
             <div class="mb-1 w-26 flex-grow-0 text-rGrayMed text-xs">{{ $t('staking.unstakingLabel') }}:</div>
             <div class="mb-1 flex-1 text-rBlack">
               <big-amount :amount="unstakeAmount" />
-              <a :href="nativeTokenRRIUrl" target="_blank" class="group cursor-pointer relative">
-                <span class="text-rGrayDark ml-1 uppercase">{{ nativeToken.symbol }}</span>
-                <div class="absolute invisible group-hover:visible -mt-full bg-rGrayLightest text-rBlack bottom-full text-xs p-1 rounded-sm shadow border border-solid border-rGrayLight">
-                  <span>{{ nativeToken && nativeToken.rri.toString() }}</span>
-                </div>
-              </a>
+              <token-symbol
+                :symbol="nativeToken.symbol"
+                :rri="nativeToken.rri.toString()"
+                :hasGreyBackground="false"
+              >
+              </token-symbol>
             </div>
           </div>
         </dl>
@@ -131,11 +131,13 @@ import { useStaking, useWallet } from '@/composables'
 import { useRouter } from 'vue-router'
 import { Observed } from '@/helpers/typeHelpers'
 import { validateGreaterThanZero } from '@/helpers/validateRadixTypes'
+import TokenSymbol from '@/components/TokenSymbol.vue'
 
 const StakeListItem = defineComponent({
   components: {
     BigAmount,
     ClickToCopy,
+    TokenSymbol,
     Tooltip
   },
 
@@ -187,14 +189,9 @@ const StakeListItem = defineComponent({
     const unstakeAmount: ComputedRef<AmountT> = computed(() => getUnstakeAmountForValidator(props.validatorAddress))
     const pendingStakeAmount: ComputedRef<AmountT> = computed(() => getPendingStakeAmountForValidator(props.validatorAddress))
 
-    const nativeTokenRRIUrl: ComputedRef<string> = computed(() => {
-      return `${props.explorerUrlBase}/#/tokens/${props.nativeToken.rri.toString()}`
-    })
-
     return {
       explorerUrl,
       inTopOneHundred,
-      nativeTokenRRIUrl,
       pendingStakeAmount,
       unstakeAmount,
       validateGreaterThanZero,
