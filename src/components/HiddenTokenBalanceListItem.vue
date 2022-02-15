@@ -2,7 +2,13 @@
   <div v-if="tokenBalance" class="border border-rGray rounded-md p-6 mb-5 flex flex-row items-center justify-between">
     <div class="flex flex-row items-center flex-1">
       <BigAmount :amount="tokenBalance.value" class="text-4xl font-light mr-4 text-rBlack" />
-      <TokenSymbol v-if="token">{{ token.symbol.toUpperCase() }}</TokenSymbol>
+      <token-symbol
+        v-if="token"
+        :symbol="token.symbol.toUpperCase()"
+        :rri="token.rri.toString()"
+        :hasGreyBackground="true"
+      >
+      </token-symbol>
     </div>
 
     <AppButtonIcon
