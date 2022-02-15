@@ -1,16 +1,15 @@
 import { computed, ref, Ref } from 'vue'
 import { AccountT, Radix, ResourceIdentifierT, Token } from '@radixdlt/application'
 import { filter, mergeMap } from 'rxjs/operators'
-import { Observed } from '@/helpers/typeHelpers'
 import { firstValueFrom, Subject } from 'rxjs'
+import { AccountBalancesEndpoint } from '@radixdlt/application/src/api/open-api/_types'
 
 const relatedTokens: Ref<Token[]> = ref([])
+const tokenBalances: Ref<AccountBalancesEndpoint.DecodedResponse | null> = ref(null)
 
 // We're passing an optional arg accountSub since in some cases it's not necessary to have a Subject Account, but
 // cases where we need the latest account such as in WalletOverview we should take in a specific AccountSub as arg.
 export default function useTokenBalances (radix: ReturnType<typeof Radix.create>, accountSub: Subject<AccountT | null> = new Subject()) {
-  const tokenBalances: Ref<Observed<ReturnType<typeof radix.ledger.tokenBalancesForAddress>> | null> = ref(null)
-
   // using isNonNull to specifically filter out every null value from tokenBalancesSub
   function isNonNull<T> (value: T): value is NonNullable<T> {
     return value != null
