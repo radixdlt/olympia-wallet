@@ -82,7 +82,7 @@
 <script lang="ts">
 import { defineComponent, computed, ComputedRef, ref, Ref, onMounted, onUnmounted } from 'vue'
 import { merge, forkJoin, interval, Subject, Subscription } from 'rxjs'
-import { switchMap, mergeMap } from 'rxjs/operators'
+import { delay, switchMap, mergeMap } from 'rxjs/operators'
 import { Amount, AmountT, Token } from '@radixdlt/application'
 import BigAmount from '@/components/BigAmount.vue'
 import TokenSymbol from '@/components/TokenSymbol.vue'
@@ -115,6 +115,7 @@ const WalletOverview = defineComponent({
     const router = useRouter()
     const {
       activeAddress,
+      activeAccount,
       explorerUrlBase,
       radix,
       verifyHardwareWalletAddress,
@@ -150,19 +151,21 @@ const WalletOverview = defineComponent({
       loading.value = true
     }))
 
-    const balanceSub = updateObservable.pipe(
+    const balanceObs = updateObservable.pipe(
       switchMap(() => radix.activeAccount),
       mergeMap((account: any) => forkJoin([
         radix.ledger.stakesForAddress(account.address),
         radix.ledger.unstakesForAddress(account.address)
       ]))
-    ).subscribe(([stakes, unstakes]) => {
+    )
+
+    const balanceSub = balanceObs.subscribe(([stakes, unstakes]) => {
       activeStakes.value = stakes
       activeUnstakes.value = unstakes
-      loading.value = false
     })
-    subs.add(balanceSub)
 
+    subs.add(balanceSub)
+    subs.add(balanceObs.pipe(delay(500)).subscribe(() => { loading.value = false }))
     onBeforeRouteLeave(() => {
       subs.unsubscribe()
     })
@@ -217,6 +220,7 @@ const WalletOverview = defineComponent({
 
     return {
       activeAddress,
+      activeAccount,
       activeStakes,
       activeUnstakes,
       explorerUrlBase,

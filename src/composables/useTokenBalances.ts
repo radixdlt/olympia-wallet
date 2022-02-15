@@ -1,13 +1,13 @@
 import { computed, ref, Ref } from 'vue'
 import { Radix, ResourceIdentifierT, Token } from '@radixdlt/application'
 import { mergeMap } from 'rxjs/operators'
-import { Observed } from '@/helpers/typeHelpers'
 import { firstValueFrom } from 'rxjs'
+import { AccountBalancesEndpoint } from '@radixdlt/application/src/api/open-api/_types'
 
 const relatedTokens: Ref<Token[]> = ref([])
+const tokenBalances: Ref<AccountBalancesEndpoint.DecodedResponse | null> = ref(null)
 
 export default function useTokenBalances (radix: ReturnType<typeof Radix.create>) {
-  const tokenBalances: Ref<Observed<ReturnType<typeof radix.ledger.tokenBalancesForAddress>> | null> = ref(null)
   const tokenBalancesSub = radix.activeAccount
     .pipe(
       mergeMap((account) => radix.ledger.tokenBalancesForAddress(account.address))

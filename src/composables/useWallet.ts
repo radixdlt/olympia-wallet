@@ -262,6 +262,7 @@ const switchAccount = (account: AccountT) => {
       saveLatestAccountAddress(newAddress, activeNetwork.value)
     }
     latestAddress.value = newAddress
+    activeAccount.value = account
     reloadSubscriptions()
   }
 }
