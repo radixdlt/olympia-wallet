@@ -163,17 +163,17 @@ const WalletTransaction = defineComponent({
 
     const { t } = useI18n({ useScope: 'global' })
     const { nativeToken, nativeTokenUnsub } = useNativeToken(radix)
-    const { tokenBalances, tokenBalanceFor, tokenInfoFor, tokenBalancesUnsub } = useTokenBalances(radix)
+    const { tokenBalances, tokenBalanceFor, fetchBalancesFor, tokenInfoFor } = useTokenBalances(radix)
     const nativeTokenLoaded: Ref<boolean> = ref(false)
 
     onBeforeRouteLeave(() => {
       nativeTokenUnsub()
-      tokenBalancesUnsub()
     })
 
     // Clear form input and validation errors when switching accounts
-    watch(activeAddress, () => {
+    watch([activeAddress, activeAccount], ([newAddress, newAccount]) => {
       resetForm()
+      if (newAccount) fetchBalancesFor(newAccount)
     })
 
     // reset currency when required state has loaded. Especially necessary when switching account

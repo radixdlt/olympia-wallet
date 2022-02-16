@@ -155,11 +155,14 @@ const WalletStaking = defineComponent({
     const { activeForm, setActiveForm, activeStakes, activeUnstakes, loadingAnyStaking, stakingUnsub, validators } = useStaking(radix)
     const { stakeTokens, unstakeTokens, setActiveTransactionForm, transactionErrorMessage } = useTransactions(radix, router, activeAccount.value, hardwareAccount.value)
     const { nativeToken, nativeTokenUnsub } = useNativeToken(radix)
-    const { tokenBalances, tokenBalanceFor, tokenInfoFor, tokenBalancesUnsub } = useTokenBalances(radix)
+    const { tokenBalances, tokenBalanceFor, fetchBalancesFor } = useTokenBalances(radix)
+
+    if (activeAccount.value) {
+      fetchBalancesFor(activeAccount.value)
+    }
 
     onBeforeRouteLeave(() => {
       nativeTokenUnsub()
-      tokenBalancesUnsub()
       stakingUnsub()
     })
 

@@ -181,12 +181,7 @@ const WalletConfirmTransactionModal = defineComponent({
       reset
     } = useWallet(router)
     const { nativeToken, nativeTokenUnsub } = useNativeToken(radix)
-    const { tokenBalances, tokenBalanceFor, tokenInfoFor, tokenBalancesUnsub } = useTokenBalances(radix)
-
-    const updateObservable = merge(
-      radix.activeAccount,
-      interval(15000)
-    )
+    const { tokenBalances, tokenBalanceFor, tokenInfoFor } = useTokenBalances(radix)
 
     const subs = new Subscription()
     const loading = ref(true)
@@ -197,7 +192,6 @@ const WalletConfirmTransactionModal = defineComponent({
 
     onUnmounted(() => {
       subs.unsubscribe()
-      tokenBalancesUnsub()
     })
 
     const {

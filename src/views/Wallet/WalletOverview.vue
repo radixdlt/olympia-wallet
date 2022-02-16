@@ -80,7 +80,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, ComputedRef, ref, Ref, onMounted, onUnmounted } from 'vue'
+import { defineComponent, computed, ComputedRef, ref, Ref, onMounted, onUnmounted, watch } from 'vue'
 import { merge, forkJoin, interval, Subject, Subscription } from 'rxjs'
 import { switchMap, mergeMap } from 'rxjs/operators'
 import { Amount, AmountT, Token } from '@radixdlt/application'
@@ -115,12 +115,15 @@ const WalletOverview = defineComponent({
     const router = useRouter()
     const {
       activeAddress,
+      activeAccount,
+      derivedAccountIndex,
       explorerUrlBase,
+      fullyLoaded,
       radix,
       verifyHardwareWalletAddress,
       hasWallet
     } = useWallet(router)
-    const { tokenBalances, tokenBalanceFor, tokenBalancesUnsub, loadingRelatedTokens } = useTokenBalances(radix)
+    const { tokenBalances, tokenBalanceFor, fetchBalancesFor, loadingRelatedTokens } = useTokenBalances(radix)
 
     const subs = new Subscription()
 
@@ -133,14 +136,11 @@ const WalletOverview = defineComponent({
       getHiddenTokens().then((res: string[]) => { hiddenTokens.value = res })
     })
 
-    onUnmounted(() => {
-      tokenBalancesUnsub()
-    })
-
     const { nativeToken } = useNativeToken(radix)
     const activeStakes: Ref<Observed<ReturnType<typeof radix.ledger.stakesForAddress>> | null> = ref(null)
     const activeUnstakes: Ref<Observed<ReturnType<typeof radix.ledger.unstakesForAddress>> | null> = ref(null)
     const tokenToHide: Ref<Token | null> = ref(null)
+
     const updateObservable = merge(
       radix.activeAccount,
       interval(15000)
@@ -153,10 +153,11 @@ const WalletOverview = defineComponent({
     const balanceSub = updateObservable.pipe(
       switchMap(() => radix.activeAccount),
       mergeMap((account: any) => forkJoin([
+        fetchBalancesFor(account),
         radix.ledger.stakesForAddress(account.address),
         radix.ledger.unstakesForAddress(account.address)
       ]))
-    ).subscribe(([stakes, unstakes]) => {
+    ).subscribe(([tokenBalances, stakes, unstakes]) => {
       activeStakes.value = stakes
       activeUnstakes.value = unstakes
       loading.value = false
@@ -217,9 +218,12 @@ const WalletOverview = defineComponent({
 
     return {
       activeAddress,
+      activeAccount,
       activeStakes,
       activeUnstakes,
+      derivedAccountIndex,
       explorerUrlBase,
+      fullyLoaded,
       hiddenTokens,
       loading,
       loadingRelatedTokens,

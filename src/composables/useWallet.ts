@@ -74,6 +74,7 @@ const updateAvailable: Ref<boolean> = ref(false)
 const versionNumber: Ref<string> = ref('')
 const wallet: Ref<WalletT | null> = ref(null)
 const latestAddress: Ref<string> = ref('')
+const fullyLoaded = ref(false)
 
 const setWallet = (newWallet: WalletT) => {
   wallet.value = newWallet
@@ -121,6 +122,7 @@ interface useWalletInterface {
   readonly updateAvailable: Ref<boolean>;
   readonly versionNumber: Ref<string>;
   readonly walletHasLoaded: ComputedRef<boolean>;
+  readonly fullyLoaded: Ref<boolean>;
 
   accountNameFor: (address: AccountAddressT) => string;
   accountRenamed: (newName: string) => void;
@@ -157,9 +159,9 @@ const tokenBalanceTrigger = merge(
 const walletLoaded = () => {
   radix.__wallet.subscribe((newWallet: WalletT) => { wallet.value = newWallet; hasWallet.value = true })
 
-  radix
-    .withTokenBalanceFetchTrigger(tokenBalanceTrigger)
-    .withStakingFetchTrigger(interval(15 * 1_000))
+  // radix
+  //   .withTokenBalanceFetchTrigger(tokenBalanceTrigger)
+  //   .withStakingFetchTrigger(interval(15 * 1_000))
 }
 const invalidPasswordError: Ref<WalletError | null> = ref(null)
 
@@ -213,7 +215,11 @@ const initWallet = (): void => {
         latestAddress.value === a.address.toString()
       )
 
-      if (foundLatest && !latestIsActive) switchAccount(foundLatest)
+      if (foundLatest && !latestIsActive) {
+        switchAccount(foundLatest)
+      } else {
+        fullyLoaded.value = true
+      }
     }))
 
   subs.add(reloadTrigger.asObservable()
@@ -262,6 +268,7 @@ const switchAccount = (account: AccountT) => {
       saveLatestAccountAddress(newAddress, activeNetwork.value)
     }
     latestAddress.value = newAddress
+    if (!fullyLoaded.value) fullyLoaded.value = true
     reloadSubscriptions()
   }
 }
@@ -390,6 +397,7 @@ export default function useWallet (router: Router): useWalletInterface {
     activeAddress,
     activeNetwork,
     allAccounts,
+    fullyLoaded,
     explorerUrlBase: computed(() => explorerUrlBase.value),
     derivedAccountIndex,
     hardwareAccount,

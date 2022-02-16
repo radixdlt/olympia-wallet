@@ -75,17 +75,20 @@ export default defineComponent({
     const tokenToUnhide: Ref<Token | null> = ref(null)
     const loading: Ref<boolean> = ref(true)
     const router = useRouter()
-    const { radix } = useWallet(router)
-    const { tokenBalances, tokenBalancesUnsub, tokenBalanceForByString } = useTokenBalances(radix)
+    const { radix, activeAccount } = useWallet(router)
+    const { tokenBalances, fetchBalancesFor, tokenBalanceForByString } = useTokenBalances(radix)
 
     onMounted(() => {
+      if (activeAccount.value) {
+        fetchBalancesFor(activeAccount.value)
+      }
       getHiddenTokens().then((res) => {
         hiddenTokens.value = res
         loading.value = false
       })
     })
 
-    onUnmounted(() => { tokenBalancesUnsub() })
+    // onUnmounted(() => { tokenBalancesUnsub() })
 
     const handleRequestUnhideToken = (token: Token) => {
       tokenToUnhide.value = token

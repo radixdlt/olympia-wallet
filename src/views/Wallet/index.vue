@@ -3,7 +3,7 @@
     <wallet-sidebar/>
 
     <div class="flex flex-col w-full">
-      <router-view v-if="walletLoaded"/>
+      <router-view v-if="hasWallet"/>
       <wallet-loading v-else />
       <div v-if="isTestNet" class="bg-white py-5 text-center flex flex-row items-center justify-center px-28 border-t border-rRed">
         <div>
