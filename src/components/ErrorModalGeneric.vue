@@ -15,8 +15,9 @@
         <div class="bg-rRed rounded-full inline-block px-2 py-0.5 m-2 text-white text-sm">{{ errorsCount }}</div>
       </div>
       <p class="whitespace-pre-line mb-5">{{ errorMessage }}</p>
+      <p v-if="isNetworkError" class="whitespace-pre-line mb-5 text-rRed">{{ $t('errors.networkErrorWarning') }}</p>
       <div class="flex flex-row space-x-5 justify-center">
-        <AppButtonCancel @click="handleClose" class="w-44">{{ $t('errors.closeModal') }}</AppButtonCancel>
+        <AppButtonCancel v-if="!isNetworkError" @click="handleClose" class="w-44">{{ $t('errors.closeModal') }}</AppButtonCancel>
         <AppButtonCancel @click="refreshApp" class="w-44">{{ $t('errors.refreshApp') }}</AppButtonCancel>
       </div>
     </template>
@@ -31,6 +32,7 @@ import { ErrorT } from '@radixdlt/application'
 import { useRouter } from 'vue-router'
 import { useWallet, useErrors } from '@/composables'
 import { refreshApp } from '@/actions/vue/general'
+import { useI18n } from 'vue-i18n'
 
 export default defineComponent({
   components: {
@@ -40,7 +42,7 @@ export default defineComponent({
 
   props: {
     error: {
-      type: Object as PropType<ErrorT<'wallet'>>,
+      type: Object as PropType<ErrorT<'wallet'> | Error>,
       required: true
     },
     errorsCount: {
@@ -50,6 +52,7 @@ export default defineComponent({
   },
 
   setup (props) {
+    const { t } = useI18n()
     const isVisible: Ref<boolean> = ref(true)
     const updateVisible = () => { isVisible.value = !isVisible.value }
     const error = toRef(props, 'error')
@@ -57,9 +60,13 @@ export default defineComponent({
     const router = useRouter()
     const { radix } = useWallet(router)
     const { clearLatestError } = useErrors(radix)
+    const isNetworkError = ref(false)
+
+    isNetworkError.value = error.value.message === t('errors.networkError')
 
     watch((error), (newErrorVal) => {
       if (newErrorVal) isVisible.value = true
+      isNetworkError.value = error.value.message === t('errors.networkError')
     })
 
     const handleClose = () => {
@@ -70,11 +77,14 @@ export default defineComponent({
     }
 
     return {
-      handleClose,
+      errorMessage,
+      isNetworkError,
       isVisible,
+
+      // methods
+      handleClose,
       refreshApp,
-      updateVisible,
-      errorMessage
+      updateVisible
     }
   }
 })
