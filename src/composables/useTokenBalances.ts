@@ -8,9 +8,9 @@ const relatedTokens: Ref<Token[]> = ref([])
 
 export default function useTokenBalances (radix: ReturnType<typeof Radix.create>) {
   const tokenBalances: Ref<Observed<ReturnType<typeof radix.ledger.tokenBalancesForAddress>> | null> = ref(null)
-  const tokenBalancesSub = radix.activeAccount
+  const tokenBalancesSub = radix.activeAddress
     .pipe(
-      mergeMap((account) => radix.ledger.tokenBalancesForAddress(account.address))
+      mergeMap((address) => radix.ledger.tokenBalancesForAddress(address))
     ).subscribe((tokenBalancesRes) => {
       tokenBalances.value = tokenBalancesRes
 
