@@ -302,6 +302,7 @@ const messages = {
       unableToPrepareUnstakingTransactionPointTwo: 'Attempting to unstake more than you currently have staked to the validator',
       unableToPrepareUnstakingTransactionPointThree: 'Insufficient XRD to pay the required transaction fee',
       networkError: 'Lost internet connection. Check internet connection before continuing.',
+      networkErrorWarning: 'Remember to check if any pending transactions were successful before re-attempting them',
       gatewayError: 'Cannot connect to your currently selected gateway: %{url}. \n \n You may select a different gateway, or refresh the app to try to connect again.'
     },
     apiErrors: {
