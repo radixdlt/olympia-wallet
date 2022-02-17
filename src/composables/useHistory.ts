@@ -16,8 +16,9 @@ const transactions: Ref<SimpleExecutedTransaction[]> = ref([])
 
 const isDecrypting: Ref<boolean> = ref(false)
 
-export default function useHistory (radix: ReturnType<typeof Radix.create>, activeAccount: AccountT) {
+export default function useHistory (radix: ReturnType<typeof Radix.create>, account: AccountT) {
   let transactionSub: Subscription | null
+  let activeAccount: AccountT = account
 
   const fetchTransactions = async (cursor?: string) => {
     const params = { size: PAGE_SIZE, address: activeAccount.address, cursor }
@@ -39,10 +40,17 @@ export default function useHistory (radix: ReturnType<typeof Radix.create>, acti
     fetchTransactions()
   }
 
+  const updateActiveAccount = (acct: AccountT) => {
+    activeAccount = acct
+  }
+
   const decryptMessage = (tx: ExecutedTransaction) => {
     isDecrypting.value = true
+    console.log(activeAccount.address.toString())
     firstValueFrom(radix.decryptTransaction(tx)).then((val) => {
       decryptedMessages.value.push({ id: tx.txID.toString(), message: val })
+    }).catch(err => {
+      console.log(err)
     }).finally(() => { isDecrypting.value = false })
   }
 
@@ -76,6 +84,7 @@ export default function useHistory (radix: ReturnType<typeof Radix.create>, acti
     nextPage,
     previousPage,
     resetHistory,
-    isDecrypting
+    isDecrypting,
+    updateActiveAccount
   }
 }
