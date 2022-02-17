@@ -18,10 +18,10 @@ const isDecrypting: Ref<boolean> = ref(false)
 
 export default function useHistory (radix: ReturnType<typeof Radix.create>, account: AccountT) {
   let transactionSub: Subscription | null
-  let activeAccount: AccountT = account
+  const activeAccount: Ref<AccountT> = ref(account)
 
   const fetchTransactions = async (cursor?: string) => {
-    const params = { size: PAGE_SIZE, address: activeAccount.address, cursor }
+    const params = { size: PAGE_SIZE, address: activeAccount.value.address, cursor }
     const data = await firstValueFrom(radix.ledger.transactionHistory(params))
     transactions.value = data.transactions
     loadingHistory.value = false
@@ -41,7 +41,7 @@ export default function useHistory (radix: ReturnType<typeof Radix.create>, acco
   }
 
   const updateActiveAccount = (acct: AccountT) => {
-    activeAccount = acct
+    activeAccount.value = acct
   }
 
   const decryptMessage = (tx: ExecutedTransaction) => {
