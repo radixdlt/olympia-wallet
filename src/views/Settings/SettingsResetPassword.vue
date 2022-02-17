@@ -52,8 +52,7 @@
 <script lang="ts">
 import { computed, ComputedRef, defineComponent, onUnmounted, Ref } from 'vue'
 import { useForm } from 'vee-validate'
-import { Keystore, KeystoreT, MnemomicT, Network } from '@radixdlt/application'
-import { Result } from 'neverthrow'
+import { MnemomicT, Network, SigningKeychain } from '@radixdlt/application'
 import { Subscription } from 'rxjs'
 import { ref } from '@nopr3d/vue-next-rx'
 import { touchKeystore, initWallet } from '@/actions/vue/create-wallet'
@@ -104,23 +103,22 @@ const SettingsResetPassword = defineComponent({
     }
 
     const handleSubmit = async () => {
+      updatedPassword.value = false
       isLoading.value = true
-      try {
-        const keystore = await touchKeystore()
-        const decryptedResult = await Keystore.decrypt({ keystore, password: values.password })
-        if (decryptedResult.isOk()) {
-          handleResetPassword(values.password)
-        } else {
-          isLoading.value = false
-          setErrors({
-            currentPassword: t('validations.incorrectPassword')
-          })
-        }
-      } catch {
-        isLoading.value = false
+
+      const signingKeychainResult = await SigningKeychain.byLoadingAndDecryptingKeystore({
+        password: values.currentPassword,
+        load: touchKeystore
+      })
+
+      isLoading.value = false
+
+      if (signingKeychainResult.isErr()) {
         setErrors({
           currentPassword: t('validations.incorrectPassword')
         })
+      } else {
+        handleResetPassword(values.password)
       }
     }
 
