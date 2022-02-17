@@ -1,6 +1,7 @@
 import { Radix, AccountT, SimpleExecutedTransaction, ExecutedTransaction } from '@radixdlt/application'
 import { computed, ComputedRef, Ref, ref } from 'vue'
 import { firstValueFrom, interval, Subscription } from 'rxjs'
+import { formatWalletAddressForDisplay } from '@/helpers/formatter'
 
 const PAGE_SIZE = 30
 
@@ -32,8 +33,15 @@ export default function useHistory (radix: ReturnType<typeof Radix.create>, acco
     }
   }
 
+  const cleanupHistorySub = () => {
+    if (transactionSub) {
+      transactionSub.unsubscribe()
+      transactionSub = null
+    }
+  }
+
   const resetHistory = () => {
-    if (transactionSub) transactionSub.unsubscribe()
+    cleanupHistorySub()
     loadingHistory.value = true
     cursorStack.value = []
     transactions.value = []
@@ -48,28 +56,25 @@ export default function useHistory (radix: ReturnType<typeof Radix.create>, acco
     isDecrypting.value = true
     firstValueFrom(radix.decryptTransaction(tx)).then((val) => {
       decryptedMessages.value.push({ id: tx.txID.toString(), message: val })
-    }).catch(err => {
-      // Maybe this can be surfaced to User with a new modal?
-      console.log(err)
     }).finally(() => { isDecrypting.value = false })
   }
 
   const previousPage = () => {
-    if (transactionSub) transactionSub.unsubscribe()
+    cleanupHistorySub()
     loadingHistory.value = true
     cursorStack.value.pop()
     fetchTransactions(cursorStack.value.length > 0 ? cursorStack.value[cursorStack.value.length - 1] : '')
   }
 
   const nextPage = () => {
-    if (transactionSub) transactionSub.unsubscribe()
+    cleanupHistorySub()
     loadingHistory.value = true
     cursorStack.value.push(activeCursor.value)
     fetchTransactions(activeCursor.value)
   }
 
   const leavingHistory = () => {
-    if (transactionSub) transactionSub.unsubscribe()
+    cleanupHistorySub()
   }
 
   return {
