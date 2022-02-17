@@ -46,10 +46,10 @@ export default function useHistory (radix: ReturnType<typeof Radix.create>, acco
 
   const decryptMessage = (tx: ExecutedTransaction) => {
     isDecrypting.value = true
-    console.log(activeAccount.address.toString())
     firstValueFrom(radix.decryptTransaction(tx)).then((val) => {
       decryptedMessages.value.push({ id: tx.txID.toString(), message: val })
     }).catch(err => {
+      // Maybe this can be surfaced to User with a new modal?
       console.log(err)
     }).finally(() => { isDecrypting.value = false })
   }
