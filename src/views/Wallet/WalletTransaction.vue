@@ -137,7 +137,7 @@ import { getHiddenTokens } from '@/actions/vue/data-store'
 
 interface TransactionForm {
   recipient: string;
-  amount: number;
+  amount: string;
   message: string;
   encrypt: boolean;
 }
@@ -289,7 +289,7 @@ const WalletTransaction = defineComponent({
     const handleSubmit = async () => {
       if (!meta.value.valid || !selectedCurrency.value) return false
       const safeAddress = safelyUnwrapAddress(values.recipient, networkPreamble.value)
-      const safeAmount = safelyUnwrapAmount(Number(values.amount))
+      const safeAmount = safelyUnwrapAmount(values.amount)
       const token = tokenInfoFor(selectedCurrency.value.token_identifier.rri)
       if (!token) return false
       const greaterThanZero = safeAmount && validateGreaterThanZero(safeAmount)
