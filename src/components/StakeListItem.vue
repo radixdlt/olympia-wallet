@@ -55,7 +55,7 @@
               class="mb-1 flex-1 text-rBlack"
               :class="{'text-rRed': Number(validator.uptimePercentage) <= 98}"
             >
-              {{validator.uptimePercentage}}%
+              {{ validatorUptimeContent }}
             </div>
           </div>
         </dl>
@@ -186,6 +186,10 @@ const StakeListItem = defineComponent({
       return checkValidatorUrlExploitable(validator.value.infoURL.toString())
     })
 
+    const validatorUptimeContent: ComputedRef<string> = computed(() => {
+      return inTopOneHundred.value && validator.value ? `${validator.value.uptimePercentage}%` : '-'
+    })
+
     const unstakeAmount: ComputedRef<AmountT> = computed(() => getUnstakeAmountForValidator(props.validatorAddress))
     const pendingStakeAmount: ComputedRef<AmountT> = computed(() => getPendingStakeAmountForValidator(props.validatorAddress))
 
@@ -195,6 +199,7 @@ const StakeListItem = defineComponent({
       pendingStakeAmount,
       unstakeAmount,
       validateGreaterThanZero,
+      validatorUptimeContent,
       validatedValidatorUrl,
       validator,
       validatorAddressForDisplay,
