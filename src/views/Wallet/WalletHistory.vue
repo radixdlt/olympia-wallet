@@ -131,6 +131,7 @@ const WalletHistory = defineComponent({
       nextPage,
       previousPage,
       resetHistory,
+      updateActiveAccount,
       isDecrypting
     } = useHistory(radix, activeAccount.value)
 
@@ -152,7 +153,12 @@ const WalletHistory = defineComponent({
     )
 
     // Fetch new history when active account changes
-    watch((activeAccount), () => { resetHistory() })
+    watch((activeAccount), () => {
+      if (activeAccount.value) {
+        updateActiveAccount(activeAccount.value)
+      }
+      resetHistory()
+    })
 
     // Fetch initial history on route load
     onMounted(() => {

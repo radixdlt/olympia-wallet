@@ -274,6 +274,7 @@ const accountNameFor = (accountAddress: AccountAddressT): string => {
 const connectHardwareWallet = () => {
   if (hardwareAccount.value) {
     switchAccount(hardwareAccount.value)
+    activeAccount.value = hardwareAccount.value
     return
   }
   hardwareError.value = null
