@@ -5,7 +5,15 @@
         <img src="@/assets/unstakeTokens.svg" alt="receive tokens" />
         <span class="ml-2 text-sm">{{ $t('history.unstakeAction') }}</span>
       </div>
-      <div v-if="action.amount && nativeToken"><big-amount :amount="action.amount" class="text-rBlack text-base"/> {{ nativeToken.symbol.toUpperCase() }}</div>
+      <div v-if="action.amount && nativeToken">
+        <big-amount :amount="action.amount" class="text-rBlack text-base"/>
+        <token-symbol
+          :symbol="nativeToken.symbol.toUpperCase()"
+          :rri="action.rri.toString()"
+          :hasGreyBackground="false"
+        >
+        </token-symbol>
+      </div>
     </div>
     <div class="flex flex-col items-end">
       <div class="flex flex-row flex-1 min-w-0 items-center">
@@ -22,11 +30,13 @@ import { ExecutedUnstakeTokensAction, Token } from '@radixdlt/application'
 import ClickToCopy from '@/components/ClickToCopy.vue'
 import { formatValidatorAddressForDisplay } from '@/helpers/formatter'
 import BigAmount from '@/components/BigAmount.vue'
+import TokenSymbol from '@/components/TokenSymbol.vue'
 
 const ActionListItemUnstakeTokens = defineComponent({
   components: {
     BigAmount,
-    ClickToCopy
+    ClickToCopy,
+    TokenSymbol
   },
 
   props: {

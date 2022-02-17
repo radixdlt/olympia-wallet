@@ -38,7 +38,13 @@
       <div class="flex flex-row py-1 mt-6">
         <div class="flex-1 flex flex-row items-center px-6 py-3">
           <big-amount :amount="tokenBalance.value" class="text-2xl font-light mr-4 text-rBlack" />
-          <token-symbol v-if="token">{{ token.symbol.toUpperCase() }}</token-symbol>
+          <token-symbol
+            v-if="token"
+            :symbol="token.symbol.toUpperCase()"
+            :rri="token.rri.toString()"
+            :hasGreyBackground="true"
+          >
+          </token-symbol>
         </div>
       </div>
     </div>

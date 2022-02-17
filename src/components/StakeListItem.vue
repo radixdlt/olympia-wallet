@@ -62,15 +62,39 @@
         <dl class="mt-1">
           <div v-if="validateGreaterThanZero(pendingStakeAmount)" class="flex items-center flex-wrap">
             <div class="mb-1 w-26 flex-grow-0 text-rGrayMed text-xs">{{ $t('staking.pendingStakeLabel') }}:</div>
-            <div class="mb-1 flex-1 text-rBlack"><big-amount :amount="pendingStakeAmount" /> <span class="text-rGrayDark ml-1 uppercase">{{ nativeToken.symbol }}</span></div>
+            <div class="mb-1 flex-1 text-rBlack">
+              <big-amount :amount="pendingStakeAmount" />
+              <token-symbol
+                :symbol="nativeToken.symbol"
+                :rri="nativeToken.rri.toString()"
+                :hasGreyBackground="false"
+              >
+              </token-symbol>
+            </div>
           </div>
           <div class="flex items-center flex-wrap">
             <div class="mb-1 w-26 flex-grow-0 text-rGrayMed text-xs">{{ $t('staking.stakedLabel') }}:</div>
-            <div class="mb-1 flex-1 text-rBlack"><big-amount :amount="getActiveStakeAmountForValidator(validatorAddress)" /> <span class="text-rGrayDark ml-1 uppercase">{{ nativeToken.symbol }}</span></div>
+            <div class="mb-1 flex-1 text-rBlack">
+              <big-amount :amount="getActiveStakeAmountForValidator(validatorAddress)" />
+              <token-symbol
+                :symbol="nativeToken.symbol"
+                :rri="nativeToken.rri.toString()"
+                :hasGreyBackground="false"
+              >
+              </token-symbol>
+            </div>
           </div>
           <div v-if="validateGreaterThanZero(unstakeAmount)" class="flex items-center flex-wrap">
             <div class="mb-1 w-26 flex-grow-0 text-rGrayMed text-xs">{{ $t('staking.unstakingLabel') }}:</div>
-            <div class="mb-1 flex-1 text-rBlack"><big-amount :amount="unstakeAmount" /> <span class="text-rGrayDark ml-1 uppercase">{{ nativeToken.symbol }}</span></div>
+            <div class="mb-1 flex-1 text-rBlack">
+              <big-amount :amount="unstakeAmount" />
+              <token-symbol
+                :symbol="nativeToken.symbol"
+                :rri="nativeToken.rri.toString()"
+                :hasGreyBackground="false"
+              >
+              </token-symbol>
+            </div>
           </div>
         </dl>
       </div>
@@ -107,11 +131,13 @@ import { useStaking, useWallet } from '@/composables'
 import { useRouter } from 'vue-router'
 import { Observed } from '@/helpers/typeHelpers'
 import { validateGreaterThanZero } from '@/helpers/validateRadixTypes'
+import TokenSymbol from '@/components/TokenSymbol.vue'
 
 const StakeListItem = defineComponent({
   components: {
     BigAmount,
     ClickToCopy,
+    TokenSymbol,
     Tooltip
   },
 

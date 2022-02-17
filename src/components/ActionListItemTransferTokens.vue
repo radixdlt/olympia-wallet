@@ -9,7 +9,15 @@
         <img src="@/assets/sendTokens.svg" alt="send tokens" class="w-6 h-auto" />
         <span class="ml-2 text-sm">{{ $t('history.sentAction') }}</span>
       </div>
-      <div><big-amount :amount="action.amount" class="text-rBlack text-base"/> {{ this.action.rri.name.toUpperCase() }}</div>
+      <div>
+        <big-amount :amount="action.amount" class="text-rBlack text-base"/>
+        <token-symbol
+          :symbol="this.action.rri.name.toUpperCase()"
+          :rri="this.action.rri.toString()"
+          :hasGreyBackground="false"
+        >
+        </token-symbol>
+      </div>
     </div>
     <div class="flex flex-col items-end">
       <div v-if="!isRecipient" class="flex flex-row flex-1 min-w-0">
@@ -30,11 +38,13 @@ import { ExecutedTransferTokensAction, AccountAddressT } from '@radixdlt/applica
 import ClickToCopy from '@/components/ClickToCopy.vue'
 import { formatWalletAddressForDisplay } from '@/helpers/formatter'
 import BigAmount from '@/components/BigAmount.vue'
+import TokenSymbol from '@/components/TokenSymbol.vue'
 
 const ActionListItemTransferTokens = defineComponent({
   components: {
     BigAmount,
-    ClickToCopy
+    ClickToCopy,
+    TokenSymbol
   },
 
   props: {
