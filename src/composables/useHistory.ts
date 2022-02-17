@@ -33,7 +33,7 @@ export default function useHistory (radix: ReturnType<typeof Radix.create>, acco
     }
   }
 
-  const cleanupHistorySub = () => {
+  const cleanupTransactionSub = () => {
     if (transactionSub) {
       transactionSub.unsubscribe()
       transactionSub = null
@@ -41,7 +41,7 @@ export default function useHistory (radix: ReturnType<typeof Radix.create>, acco
   }
 
   const resetHistory = () => {
-    cleanupHistorySub()
+    cleanupTransactionSub()
     loadingHistory.value = true
     cursorStack.value = []
     transactions.value = []
@@ -60,21 +60,21 @@ export default function useHistory (radix: ReturnType<typeof Radix.create>, acco
   }
 
   const previousPage = () => {
-    cleanupHistorySub()
+    cleanupTransactionSub()
     loadingHistory.value = true
     cursorStack.value.pop()
     fetchTransactions(cursorStack.value.length > 0 ? cursorStack.value[cursorStack.value.length - 1] : '')
   }
 
   const nextPage = () => {
-    cleanupHistorySub()
+    cleanupTransactionSub()
     loadingHistory.value = true
     cursorStack.value.push(activeCursor.value)
     fetchTransactions(activeCursor.value)
   }
 
   const leavingHistory = () => {
-    cleanupHistorySub()
+    cleanupTransactionSub()
   }
 
   return {
