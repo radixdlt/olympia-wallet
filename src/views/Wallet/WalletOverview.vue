@@ -170,6 +170,8 @@ const WalletOverview = defineComponent({
      */
     onMounted(() => {
       getHiddenTokens().then((res: string[]) => { hiddenTokens.value = res })
+      // fetch latest balances and begin polling
+      activeAddress.value && fetchBalancesForAddress(activeAddress.value)
     })
 
     onUnmounted(() => {
@@ -184,7 +186,7 @@ const WalletOverview = defineComponent({
      *  Side Effects
      */
     watch((activeAddress), (newActiveAddress) => {
-      // Update balances when active address changes and on initial render
+      // Update balances when active address change
       newActiveAddress && fetchBalancesForAddress(newActiveAddress)
     })
 

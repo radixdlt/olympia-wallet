@@ -176,6 +176,8 @@ const WalletTransaction = defineComponent({
         hiddenTokens.value = res
       })
       if (nativeToken.value) setXRDByDefault(nativeToken.value)
+      // fetch latest balances and begin polling
+      activeAddress.value && fetchBalancesForAddress(activeAddress.value)
     })
 
     onUnmounted(() => {
@@ -195,7 +197,7 @@ const WalletTransaction = defineComponent({
       // Clear form input and validation errors when switching accounts
       resetForm()
       if (nativeToken.value) setXRDByDefault(nativeToken.value)
-      // Update balances when active address changes and on initial render
+      // Update balances when active address changes
       newActiveAddress && fetchBalancesForAddress(newActiveAddress)
     })
 
