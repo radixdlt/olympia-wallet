@@ -98,7 +98,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, ComputedRef, ref, Ref, onMounted, onUnmounted } from 'vue'
+import { defineComponent, computed, ComputedRef, ref, Ref, onMounted, onUnmounted, watch } from 'vue'
 import { merge, forkJoin, interval, Subject, Subscription } from 'rxjs'
 import { switchMap, mergeMap } from 'rxjs/operators'
 import { Amount, AmountT, Token } from '@radixdlt/application'
@@ -138,16 +138,17 @@ const WalletOverview = defineComponent({
       verifyHardwareWalletAddress,
       hasWallet
     } = useWallet(router)
-    const { tokenBalances, tokenBalanceFor, tokenBalancesUnsub, loadingRelatedTokens } = useTokenBalances(radix)
+    const { tokenBalances, tokenBalanceFor, tokenBalancesUnsub, loadingRelatedTokens, fetchBalancesForAddress } = useTokenBalances(radix)
 
     const subs = new Subscription()
-
-    const pageTrigger = new Subject<number>()
     const loading = ref(true)
     const hiddenTokens: Ref<string[]> = ref([])
 
+    watch((activeAddress), (newActiveAddress) => {
+      newActiveAddress && fetchBalancesForAddress(newActiveAddress)
+    })
+
     onMounted(() => {
-      pageTrigger.next(Math.random())
       getHiddenTokens().then((res: string[]) => { hiddenTokens.value = res })
     })
 
