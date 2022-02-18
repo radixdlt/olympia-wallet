@@ -1,15 +1,24 @@
 import { computed, ref, Ref } from 'vue'
 import { AccountAddressT, Radix, ResourceIdentifierT, Token } from '@radixdlt/application'
-import { firstValueFrom } from 'rxjs'
+import { firstValueFrom, interval, Subscription } from 'rxjs'
 import { AccountBalancesEndpoint } from '@radixdlt/application/dist/api/open-api/_types'
 
 const relatedTokens: Ref<Token[]> = ref([])
 const tokenBalances: Ref<AccountBalancesEndpoint.DecodedResponse | null> = ref(null)
 
 export default function useTokenBalances (radix: ReturnType<typeof Radix.create>) {
+  let tokenBalancesSub: Subscription | null
+
   const fetchBalancesForAddress = async (address: AccountAddressT) => {
+    // Unsubscribe from previous tokenBalancesSub
+    tokenBalancesSub && tokenBalancesSub.unsubscribe()
+
+    // Fetch token balances for address
     const res = await firstValueFrom(radix.ledger.tokenBalancesForAddress(address))
     tokenBalances.value = res
+
+    // Initiate polling every 15 seconds for balance updates
+    tokenBalancesSub = interval(15 * 1_000).subscribe(() => fetchBalancesForAddress(address))
 
     // Get token info for tokens related to this account and save in memory
     // Don't save duplicates
@@ -36,7 +45,7 @@ export default function useTokenBalances (radix: ReturnType<typeof Radix.create>
     }),
 
     tokenBalancesUnsub: () => {
-      // tokenBalancesSub.unsubscribe()
+      tokenBalancesSub && tokenBalancesSub.unsubscribe()
     },
     tokenBalanceFor: (token: Token) => {
       if (!tokenBalances.value) return null

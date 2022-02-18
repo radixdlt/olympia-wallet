@@ -140,11 +140,11 @@ const WalletOverview = defineComponent({
       hasWallet
     } = useWallet(router)
     const {
+      fetchBalancesForAddress,
+      loadingRelatedTokens,
       tokenBalances,
       tokenBalanceFor,
-      tokenBalancesUnsub,
-      loadingRelatedTokens,
-      fetchBalancesForAddress
+      tokenBalancesUnsub
     } = useTokenBalances(radix)
     const { nativeToken } = useNativeToken(radix)
 
