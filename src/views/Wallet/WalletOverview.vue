@@ -99,7 +99,7 @@
 
 <script lang="ts">
 import { defineComponent, computed, ComputedRef, ref, Ref, onMounted, onUnmounted, watch } from 'vue'
-import { merge, forkJoin, interval, Subject, Subscription } from 'rxjs'
+import { merge, forkJoin, interval, Subscription } from 'rxjs'
 import { switchMap, mergeMap } from 'rxjs/operators'
 import { Amount, AmountT, Token } from '@radixdlt/application'
 import BigAmount from '@/components/BigAmount.vue'
@@ -134,20 +134,40 @@ const WalletOverview = defineComponent({
     const {
       activeAddress,
       explorerUrlBase,
+      loadingLatestAddress,
       radix,
       verifyHardwareWalletAddress,
       hasWallet
     } = useWallet(router)
-    const { tokenBalances, tokenBalanceFor, tokenBalancesUnsub, loadingRelatedTokens, fetchBalancesForAddress } = useTokenBalances(radix)
+    const {
+      tokenBalances,
+      tokenBalanceFor,
+      tokenBalancesUnsub,
+      loadingRelatedTokens,
+      fetchBalancesForAddress
+    } = useTokenBalances(radix)
+    const { nativeToken } = useNativeToken(radix)
 
+    const zero = Amount.fromUnsafe(0)._unsafeUnwrap()
+    const activeStakes: Ref<Observed<ReturnType<typeof radix.ledger.stakesForAddress>> | null> = ref(null)
+    const activeUnstakes: Ref<Observed<ReturnType<typeof radix.ledger.unstakesForAddress>> | null> = ref(null)
+    const tokenToHide: Ref<Token | null> = ref(null)
     const subs = new Subscription()
-    const loading = ref(true)
+    const loadingStakes = ref(true)
     const hiddenTokens: Ref<string[]> = ref([])
+    const updateObservable = merge(
+      radix.activeAccount,
+      interval(15000)
+    )
 
-    watch((activeAddress), (newActiveAddress) => {
-      newActiveAddress && fetchBalancesForAddress(newActiveAddress)
-    })
+    if (!hasWallet) {
+      router.push('/')
+      return {}
+    }
 
+    /* ------
+     *  Lifecycle Events
+     */
     onMounted(() => {
       getHiddenTokens().then((res: string[]) => { hiddenTokens.value = res })
     })
@@ -156,18 +176,19 @@ const WalletOverview = defineComponent({
       tokenBalancesUnsub()
     })
 
-    const { nativeToken } = useNativeToken(radix)
-    const activeStakes: Ref<Observed<ReturnType<typeof radix.ledger.stakesForAddress>> | null> = ref(null)
-    const activeUnstakes: Ref<Observed<ReturnType<typeof radix.ledger.unstakesForAddress>> | null> = ref(null)
-    const tokenToHide: Ref<Token | null> = ref(null)
-    const updateObservable = merge(
-      radix.activeAccount,
-      interval(15000)
-    )
+    onBeforeRouteLeave(() => {
+      subs.unsubscribe()
+    })
 
-    subs.add(radix.activeAddress.subscribe(() => {
-      loading.value = true
-    }))
+    /* ------
+     *  Side Effects
+     */
+    watch((activeAddress), (newActiveAddress) => {
+      // Update balances when active address changes and on initial render
+      newActiveAddress && fetchBalancesForAddress(newActiveAddress)
+    })
+
+    subs.add(radix.activeAddress.subscribe(() => { loadingStakes.value = true }))
 
     const balanceSub = updateObservable.pipe(
       switchMap(() => radix.activeAccount),
@@ -178,20 +199,16 @@ const WalletOverview = defineComponent({
     ).subscribe(([stakes, unstakes]) => {
       activeStakes.value = stakes
       activeUnstakes.value = unstakes
-      loading.value = false
+      loadingStakes.value = false
     })
     subs.add(balanceSub)
 
-    onBeforeRouteLeave(() => {
-      subs.unsubscribe()
-    })
+    /* ------
+     *  Computed Values
+     */
 
-    if (!hasWallet) {
-      router.push('/')
-      return {}
-    }
-
-    const zero = Amount.fromUnsafe(0)._unsafeUnwrap()
+    // View is loading while latest account is resolving and stakes are returning
+    const loading: ComputedRef<boolean> = computed(() => loadingLatestAddress.value || loadingStakes.value)
 
     const totalXRD: ComputedRef<AmountT> = computed(() => {
       if (!tokenBalances.value || !nativeToken.value) return zero
@@ -209,14 +226,25 @@ const WalletOverview = defineComponent({
       return add(totalXRD.value, totalStakedAndUnstaked.value)
     })
 
+    const otherTokenBalances: ComputedRef<Decoded.TokenAmount[]> = computed(() => {
+      if (!tokenBalances.value || !nativeToken.value) return []
+      return tokenBalances.value.account_balances.liquid_balances.filter((tb) => {
+        return !tb.token_identifier.rri.equals(nativeToken.value!.rri) && !isTokenHidden(hiddenTokens.value, tb)
+      })
+    })
+
+    /* ------
+     *  Functions
+     */
+
     // Check if token RRI is present in list of hidden tokens
     const isTokenHidden = (ht: string[], tb: Decoded.TokenAmount): boolean =>
       ht.find((hiddenT: string) => { return tb.token_identifier.rri.toString() === hiddenT }) !== undefined
 
-    const handleRequestHideToken = (token: Token) => {
-      tokenToHide.value = token
-    }
+    // Open hide token modal
+    const handleRequestHideToken = (token: Token) => { tokenToHide.value = token }
 
+    // Confirm hide token from the modal
     const handleHideToken = () => {
       if (tokenToHide.value) {
         hideTokenType(tokenToHide.value.rri)
@@ -226,13 +254,6 @@ const WalletOverview = defineComponent({
       }
       tokenToHide.value = null
     }
-
-    const otherTokenBalances: ComputedRef<Decoded.TokenAmount[]> = computed(() => {
-      if (!tokenBalances.value || !nativeToken.value) return []
-      return tokenBalances.value.account_balances.liquid_balances.filter((tb) => {
-        return !tb.token_identifier.rri.equals(nativeToken.value!.rri) && !isTokenHidden(hiddenTokens.value, tb)
-      })
-    })
 
     return {
       activeAddress,
