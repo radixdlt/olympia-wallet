@@ -22,16 +22,23 @@ export default function useTokenBalances (radix: ReturnType<typeof Radix.create>
 
     // Get token info for tokens related to this account and save in memory
     // Don't save duplicates
+    const relatedTokenPromises: Promise<any>[] = []
     res.account_balances.liquid_balances.map((balance) => {
       if (!relatedTokens.value.find((t) => t.rri.equals(balance.token_identifier.rri))) {
-        firstValueFrom(radix.ledger.tokenInfo(balance.token_identifier.rri))
-          .then((t) => {
-            if (!relatedTokens.value.find((t) => t.rri.equals(balance.token_identifier.rri))) {
-              relatedTokens.value = [...relatedTokens.value, t]
-            }
-          })
+        relatedTokenPromises.push(
+          firstValueFrom(radix.ledger.tokenInfo(balance.token_identifier.rri))
+            .then((t) => {
+              if (!relatedTokens.value.find((t) => t.rri.equals(balance.token_identifier.rri))) {
+                relatedTokens.value = [...relatedTokens.value, t]
+              }
+            })
+        )
       }
     })
+
+    // Wait until missing related tokens have been fetched before returning so all token info is present
+    // for account balances
+    await Promise.all(relatedTokenPromises)
   }
 
   return {
