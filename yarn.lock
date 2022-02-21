@@ -1531,10 +1531,10 @@
     prelude-ts "^1.0.2"
     rxjs "7.0.0"
 
-"@radixdlt/application@4.0.14":
-  version "4.0.14"
-  resolved "https://registry.yarnpkg.com/@radixdlt/application/-/application-4.0.14.tgz#ce3dce62dc097b447fc3b0e99e8a59ae7e6edbdd"
-  integrity sha512-WAm6QuCJVsWfcdf74h8yr3NKWkWg0y8aknQmjWD/vvCqr58/r0Na6G416xuQ/MgjwYH8vUiv4k3bQhc2qvmCXw==
+"@radixdlt/application@4.0.16":
+  version "4.0.16"
+  resolved "https://registry.yarnpkg.com/@radixdlt/application/-/application-4.0.16.tgz#b7ee7be4effb1788339b36fd09cd5529f82aeee7"
+  integrity sha512-waVxP/9vqnjQbajxulOTPlKQg30T6iQbUI768c1dKkPsSc0lMQwB5nt4bA2Ex2V5+rI9G72p3nCwf6biQIuNvw==
   dependencies:
     "@open-rpc/mock-server" "1.7.2"
     "@open-rpc/schema-utils-js" "1.14.3"
@@ -1570,10 +1570,10 @@
     neverthrow "^4.0.1"
     ramda "^0.27.1"
 
-"@radixdlt/hardware-ledger@^2.1.31":
-  version "2.1.31"
-  resolved "https://registry.yarnpkg.com/@radixdlt/hardware-ledger/-/hardware-ledger-2.1.31.tgz#a2a4fdbe3d9d15691ea2b5a7c005dddfd69c0f08"
-  integrity sha512-R9xWZFyUzPVR+jOQ58REkCNo6mDmd0I36IqNKnYMVrgQEv2HVwjUT/aKvjMhNtKtNVI3zKbaNNKQgKyb8jTJOg==
+"@radixdlt/hardware-ledger@^2.1.32":
+  version "2.1.32"
+  resolved "https://registry.yarnpkg.com/@radixdlt/hardware-ledger/-/hardware-ledger-2.1.32.tgz#dff5e4ca8ee45ee01af83e595400ad7781d7d7eb"
+  integrity sha512-kteddtb4vR+xVbKHZf/pvBuFWF5agH1BnxrsFQxUfkrsA76LvqMRS+QOz7OkpLwsCPyEj4vPSO+aNsGHmtEZAQ==
   dependencies:
     "@ledgerhq/hw-transport-node-hid" "^6.2.0"
     "@radixdlt/crypto" "^2.1.12"

@@ -162,9 +162,10 @@ export default function useTransactions (radix: ReturnType<typeof Radix.create>,
   }
 
   const errorHandler = (err: any) => {
+    const errorMessage = err.toString()
     // To Do: Nicely handle hardware device error when full error is returned from API
     // For now: pattern match on transaction errors that return a "No device found" string or "DisconnectedDevice"
-    if (err.toString().indexOf('Error: No device found') >= 0 || err.toString().indexOf('DisconnectedDevice') >= 0) {
+    if (errorMessage.includes('Error: No device found') || errorMessage.includes('DisconnectedDevice')) {
       setError({
         ...err,
         type: 'HARDWARE',
@@ -173,7 +174,7 @@ export default function useTransactions (radix: ReturnType<typeof Radix.create>,
         }
       })
     // Catch encypted message is too long error
-    } else if (err.toString().indexOf('Plaintext is too long') >= 0) {
+    } else if (errorMessage.includes('Plaintext is too long')) {
       setError({
         ...err,
         type: 'api',
@@ -183,23 +184,27 @@ export default function useTransactions (radix: ReturnType<typeof Radix.create>,
           }
         }
       })
-    } else if (err.toString().indexOf('Error: Failed to sign tx with Ledger') >= 0 && err.toString().includes('(0x6985')) {
-      setError({
-        ...err,
-        type: 'HARDWARE',
-        error: {
-          category: 'UserRejectedSignature'
-        }
-      })
-    } else if (err.toString().indexOf('Error: Failed to sign tx with Ledger') >= 0 && err.toString().includes('(0x530c')) {
-      setError({
-        ...err,
-        type: 'HARDWARE',
-        error: {
-          category: 'SignatureTimedOut'
-        }
-      })
-    } else if (err.toString().indexOf('(denied by the user') >= 0) {
+    } else if (errorMessage.includes('HARDWARE')) {
+      if (errorMessage.includes('(0x6985')) {
+        setError({
+          ...err,
+          type: 'HARDWARE',
+          error: {
+            category: 'UserRejectedSignature'
+          }
+        })
+      } else if (errorMessage.includes('(0x530c')) {
+        setError({
+          ...err,
+          type: 'HARDWARE',
+          error: {
+            category: 'SignatureTimedOut'
+          }
+        })
+      } else {
+        // TODO: Add a fallback hardware error
+      }
+    } else if (errorMessage.includes('(denied by the user')) {
       cancelTransaction()
     } else {
       const apiError = { ...err, type: 'api' }
