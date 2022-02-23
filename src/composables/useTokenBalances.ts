@@ -60,12 +60,6 @@ export default function useTokenBalances (radix: ReturnType<typeof Radix.create>
       if (!relatedTokens.value) return null
       return relatedTokens.value.find((rt) => rt.rri.equals(rri)) || null
     },
-    filterHiddenTokens: (hiddenTokens: string[]) => {
-      if (!tokenBalances.value) return hiddenTokens
-      const listOfLiquidBalanceRRIs: Array<string> = tokenBalances.value.account_balances.liquid_balances.map((lb) => lb.token_identifier.rri.toString())
-      const newList = hiddenTokens.filter(rri => listOfLiquidBalanceRRIs.includes(rri))
-      return newList
-    },
 
     fetchBalancesForAddress
   }

@@ -76,7 +76,7 @@ export default defineComponent({
     const loading: Ref<boolean> = ref(true)
     const router = useRouter()
     const { activeAddress, activeAccount, radix } = useWallet(router)
-    const { fetchBalancesForAddress, tokenBalances, tokenBalancesUnsub, tokenBalanceForByString, filterHiddenTokens } = useTokenBalances(radix)
+    const { fetchBalancesForAddress, tokenBalances, tokenBalancesUnsub, tokenBalanceForByString } = useTokenBalances(radix)
     if (!activeAccount.value) {
       return
     }
@@ -89,16 +89,7 @@ export default defineComponent({
     })
 
     watch((activeAddress), (newActiveAddress) => {
-      // Update balances when active address changes
       newActiveAddress && fetchBalancesForAddress(newActiveAddress)
-    })
-
-    watch((tokenBalances), () => {
-      getHiddenTokens().then((res) => {
-        loading.value = true
-        hiddenTokens.value = res
-        loading.value = false
-      })
     })
 
     onUnmounted(() => { tokenBalancesUnsub() })
@@ -116,8 +107,7 @@ export default defineComponent({
 
     const tokenBalanceOfHidden: ComputedRef<Decoded.TokenAmount[] | null> = computed(() => {
       if (!tokenBalances.value) return null
-      const x = tokenBalances.value.account_balances.liquid_balances.filter(lb => hiddenTokens.value.includes(lb.token_identifier.rri.toString()))
-      return x
+      return tokenBalances.value.account_balances.liquid_balances.filter(lb => hiddenTokens.value.includes(lb.token_identifier.rri.toString()))
     })
 
     return {
