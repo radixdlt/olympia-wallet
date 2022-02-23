@@ -7,10 +7,10 @@
       <div class="text-rGrayDark text-sm max-w-lg mb-8">{{ $t('settings.tokensDescription') }}</div>
 
       <HiddenTokenBalanceListItem
-        v-for="token in hiddenTokens"
-        :key="token"
-        :tokenRRI="token"
-        :tokenBalance="tokenBalanceForByString(token)"
+        v-for="token in tokenBalanceOfHidden"
+        :key="token.token_identifier.rri.toString()"
+        :tokenRRI="token.token_identifier.rri.toString()"
+        :tokenBalance="tokenBalanceForByString(token.token_identifier.rri.toString())"
         @select="handleRequestUnhideToken"
       />
     </template>
@@ -43,16 +43,16 @@
 
 <script lang="ts">
 import { getHiddenTokens, unhideTokenType } from '@/actions/vue/data-store'
-import { defineComponent, onMounted, onUnmounted, Ref, ref, PropType } from 'vue'
+import { defineComponent, onMounted, onUnmounted, Ref, computed, ComputedRef, ref, PropType, watch } from 'vue'
 import AppModal from '@/components/AppModal.vue'
 import AppButtonCancel from '@/components/AppButtonCancel.vue'
 import AppButtonSubmit from '@/components/AppButtonSubmit.vue'
 import LoadingIcon from '@/components/LoadingIcon.vue'
 import HiddenTokenBalanceListItem from '@/components/HiddenTokenBalanceListItem.vue'
-import { Subscription } from 'rxjs'
 import { useRouter } from 'vue-router'
-import { useTokenBalances, useWallet } from '@/composables'
-import { AccountT, SimpleTokenBalance, Token } from '@radixdlt/application'
+import { useTokenBalances, useWallet, useHistory } from '@/composables'
+import { AccountT, Token } from '@radixdlt/application'
+import { Decoded } from '@radixdlt/application/dist/api/open-api/_types'
 
 export default defineComponent({
   components: {
@@ -75,11 +75,27 @@ export default defineComponent({
     const tokenToUnhide: Ref<Token | null> = ref(null)
     const loading: Ref<boolean> = ref(true)
     const router = useRouter()
-    const { radix } = useWallet(router)
-    const { tokenBalances, tokenBalancesUnsub, tokenBalanceForByString } = useTokenBalances(radix)
+    const { activeAddress, activeAccount, radix } = useWallet(router)
+    const { fetchBalancesForAddress, tokenBalances, tokenBalancesUnsub, tokenBalanceForByString, filterHiddenTokens } = useTokenBalances(radix)
+    if (!activeAccount.value) {
+      return
+    }
 
     onMounted(() => {
       getHiddenTokens().then((res) => {
+        hiddenTokens.value = res
+        loading.value = false
+      })
+    })
+
+    watch((activeAddress), (newActiveAddress) => {
+      // Update balances when active address changes
+      newActiveAddress && fetchBalancesForAddress(newActiveAddress)
+    })
+
+    watch((tokenBalances), () => {
+      getHiddenTokens().then((res) => {
+        loading.value = true
         hiddenTokens.value = res
         loading.value = false
       })
@@ -98,11 +114,18 @@ export default defineComponent({
       }
     }
 
+    const tokenBalanceOfHidden: ComputedRef<Decoded.TokenAmount[] | null> = computed(() => {
+      if (!tokenBalances.value) return null
+      const x = tokenBalances.value.account_balances.liquid_balances.filter(lb => hiddenTokens.value.includes(lb.token_identifier.rri.toString()))
+      return x
+    })
+
     return {
       hiddenTokens,
       loading,
       tokenBalances,
       tokenToUnhide,
+      tokenBalanceOfHidden,
 
       // methods
       handleRequestUnhideToken,

@@ -12,6 +12,7 @@
     </div>
 
     <AppButtonIcon
+      v-if="token"
       @click="$emit('select', token)"
     >
       <svg width="18" height="14" viewBox="0 0 18 14" fill="none" xmlns="http://www.w3.org/2000/svg" class="pointer-events-none mr-1.5 w-5">
@@ -47,7 +48,7 @@ export default defineComponent({
       required: true
     },
     tokenBalance: {
-      type: Object as PropType<Decoded.TokenAmount>,
+      type: Object as PropType<Decoded.TokenAmount | null>,
       required: true
     }
   },
@@ -59,7 +60,9 @@ export default defineComponent({
     const token: Ref<Token | null> = ref(null)
     const { tokenInfoFor } = useTokenBalances(radix)
 
-    token.value = tokenInfoFor(tokenBalance.value.token_identifier.rri)
+    if (tokenBalance.value) {
+      token.value = tokenInfoFor(tokenBalance.value.token_identifier.rri)
+    }
 
     return {
       token
