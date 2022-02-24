@@ -64,6 +64,7 @@
                   class="w-full text-sm"
                   :placeholder="amountPlaceholder"
                   rules="required|validAmount"
+                  :validateOnInput="true"
                 />
                 <FormErrorMessage name="amount" class="text-sm text-red-400" errorClass="w-120" />
               </div>
