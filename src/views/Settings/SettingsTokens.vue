@@ -43,16 +43,15 @@
 
 <script lang="ts">
 import { getHiddenTokens, unhideTokenType } from '@/actions/vue/data-store'
-import { defineComponent, onMounted, onUnmounted, Ref, ref, PropType } from 'vue'
+import { defineComponent, onMounted, onUnmounted, Ref, ref, PropType, watch } from 'vue'
 import AppModal from '@/components/AppModal.vue'
 import AppButtonCancel from '@/components/AppButtonCancel.vue'
 import AppButtonSubmit from '@/components/AppButtonSubmit.vue'
 import LoadingIcon from '@/components/LoadingIcon.vue'
 import HiddenTokenBalanceListItem from '@/components/HiddenTokenBalanceListItem.vue'
-import { Subscription } from 'rxjs'
 import { useRouter } from 'vue-router'
 import { useTokenBalances, useWallet } from '@/composables'
-import { AccountT, SimpleTokenBalance, Token } from '@radixdlt/application'
+import { AccountAddressT, AccountT, Token } from '@radixdlt/application'
 
 export default defineComponent({
   components: {
@@ -75,17 +74,41 @@ export default defineComponent({
     const tokenToUnhide: Ref<Token | null> = ref(null)
     const loading: Ref<boolean> = ref(true)
     const router = useRouter()
-    const { radix } = useWallet(router)
-    const { tokenBalances, tokenBalancesUnsub, tokenBalanceForByString } = useTokenBalances(radix)
+    const { radix, activeAddress } = useWallet(router)
+    const { fetchBalancesForAddress, tokenBalances, tokenBalancesUnsub, tokenBalanceForByString } = useTokenBalances(radix)
 
+    /* ------
+     *  Lifecycle Events
+     */
     onMounted(() => {
-      getHiddenTokens().then((res) => {
-        hiddenTokens.value = res
-        loading.value = false
-      })
+      // fetch latest balances and begin polling
+      activeAddress.value && computeListOfHiddenTokens(activeAddress.value)
     })
 
     onUnmounted(() => { tokenBalancesUnsub() })
+
+    /* ------
+     *  Side Effects
+     */
+    watch((activeAddress), (newActiveAddress) => {
+      // Update balances when active address change
+      newActiveAddress && computeListOfHiddenTokens(newActiveAddress)
+    })
+
+    /* ------
+     *  Functions
+     */
+    const computeListOfHiddenTokens = (newActiveAddress: AccountAddressT) => {
+      loading.value = true
+      fetchBalancesForAddress(newActiveAddress)
+        .then(getHiddenTokens)
+        .then((res) => {
+          // Update hidden tokens when active address change
+          const hiddenTokensForActiveAccount = res.filter((token) => tokenBalanceForByString(token) !== null)
+          hiddenTokens.value = hiddenTokensForActiveAccount
+          loading.value = false
+        })
+    }
 
     const handleRequestUnhideToken = (token: Token) => {
       tokenToUnhide.value = token
@@ -93,8 +116,10 @@ export default defineComponent({
 
     const handleUnhideToken = () => {
       if (tokenToUnhide.value) {
-        unhideTokenType(tokenToUnhide.value.rri.toString()).then((res: string[]) => { hiddenTokens.value = res })
-        tokenToUnhide.value = null
+        loading.value = true
+        unhideTokenType(tokenToUnhide.value.rri.toString())
+          .then(() => activeAddress.value && computeListOfHiddenTokens(activeAddress.value))
+          .then(() => { tokenToUnhide.value = null })
       }
     }
 

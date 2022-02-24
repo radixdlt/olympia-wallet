@@ -1,32 +1,45 @@
 import { computed, ref, Ref } from 'vue'
-import { Radix, ResourceIdentifierT, Token } from '@radixdlt/application'
-import { mergeMap } from 'rxjs/operators'
-import { Observed } from '@/helpers/typeHelpers'
-import { firstValueFrom } from 'rxjs'
+import { AccountAddressT, Radix, ResourceIdentifierT, Token } from '@radixdlt/application'
+import { firstValueFrom, interval, Subscription } from 'rxjs'
+import { AccountBalancesEndpoint } from '@radixdlt/application/dist/api/open-api/_types'
 
 const relatedTokens: Ref<Token[]> = ref([])
+const tokenBalances: Ref<AccountBalancesEndpoint.DecodedResponse | null> = ref(null)
 
 export default function useTokenBalances (radix: ReturnType<typeof Radix.create>) {
-  const tokenBalances: Ref<Observed<ReturnType<typeof radix.ledger.tokenBalancesForAddress>> | null> = ref(null)
-  const tokenBalancesSub = radix.activeAccount
-    .pipe(
-      mergeMap((account) => radix.ledger.tokenBalancesForAddress(account.address))
-    ).subscribe((tokenBalancesRes) => {
-      tokenBalances.value = tokenBalancesRes
+  let tokenBalancesSub: Subscription | null
 
-      // Get token info for tokens related to this account and save in memory
-      // Don't save duplicates
-      tokenBalancesRes.account_balances.liquid_balances.map((balance) => {
-        if (!relatedTokens.value.find((t) => t.rri.equals(balance.token_identifier.rri))) {
+  const fetchBalancesForAddress = async (address: AccountAddressT) => {
+    // Unsubscribe from previous tokenBalancesSub
+    tokenBalancesSub && tokenBalancesSub.unsubscribe()
+
+    // Fetch token balances for address
+    const res = await firstValueFrom(radix.ledger.tokenBalancesForAddress(address))
+    tokenBalances.value = res
+
+    // Initiate polling every 15 seconds for balance updates
+    tokenBalancesSub = interval(15 * 1_000).subscribe(() => fetchBalancesForAddress(address))
+
+    // Get token info for tokens related to this account and save in memory
+    // Don't save duplicates
+    const relatedTokenPromises: Promise<any>[] = []
+    res.account_balances.liquid_balances.map((balance) => {
+      if (!relatedTokens.value.find((t) => t.rri.equals(balance.token_identifier.rri))) {
+        relatedTokenPromises.push(
           firstValueFrom(radix.ledger.tokenInfo(balance.token_identifier.rri))
             .then((t) => {
               if (!relatedTokens.value.find((t) => t.rri.equals(balance.token_identifier.rri))) {
                 relatedTokens.value = [...relatedTokens.value, t]
               }
             })
-        }
-      })
+        )
+      }
     })
+
+    // Wait until missing related tokens have been fetched before returning so all token info is present
+    // for account balances
+    await Promise.all(relatedTokenPromises)
+  }
 
   return {
     tokenBalances: computed(() => tokenBalances.value),
@@ -39,7 +52,7 @@ export default function useTokenBalances (radix: ReturnType<typeof Radix.create>
     }),
 
     tokenBalancesUnsub: () => {
-      tokenBalancesSub.unsubscribe()
+      tokenBalancesSub && tokenBalancesSub.unsubscribe()
     },
     tokenBalanceFor: (token: Token) => {
       if (!tokenBalances.value) return null
@@ -52,6 +65,8 @@ export default function useTokenBalances (radix: ReturnType<typeof Radix.create>
     tokenInfoFor: (rri: ResourceIdentifierT) => {
       if (!relatedTokens.value) return null
       return relatedTokens.value.find((rt) => rt.rri.equals(rri)) || null
-    }
+    },
+
+    fetchBalancesForAddress
   }
 }

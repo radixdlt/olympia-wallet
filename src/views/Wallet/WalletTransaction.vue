@@ -116,7 +116,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, Ref, ref, ComputedRef, computed, watch, onMounted } from 'vue'
+import { defineComponent, Ref, ref, ComputedRef, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useForm } from 'vee-validate'
 
 import { safelyUnwrapAddress, safelyUnwrapAmount, validateAmountOfType, validateGreaterThanZero } from '@/helpers/validateRadixTypes'
@@ -153,27 +153,52 @@ const WalletTransaction = defineComponent({
   },
 
   setup () {
-    const { errors, values, meta, setErrors, resetForm } = useForm<TransactionForm>()
     const router = useRouter()
-    const { activeAddress, activeAccount, hardwareAccount, networkPreamble, radix, verifyHardwareWalletAddress } = useWallet(router)
-
+    const { errors, values, meta, setErrors, resetForm } = useForm<TransactionForm>()
+    const { activeAddress, activeAccount, hardwareAccount, loadingLatestAddress, networkPreamble, radix, verifyHardwareWalletAddress } = useWallet(router)
     const { setActiveTransactionForm, transferTokens } = useTransactions(radix, router, activeAccount.value, hardwareAccount.value)
+    const { t } = useI18n({ useScope: 'global' })
+    const { nativeToken, nativeTokenUnsub } = useNativeToken(radix)
+    const { fetchBalancesForAddress, tokenBalances, tokenBalanceFor, tokenInfoFor, tokenBalancesUnsub } = useTokenBalances(radix)
+
+    const nativeTokenLoaded: Ref<boolean> = ref(false)
+    const currency: Ref<string | null> = ref(null)
+    const tokenOptions: Ref<Decoded.TokenAmount[]> = ref([])
+    const hiddenTokens: Ref<string[]> = ref([])
 
     setActiveTransactionForm('transaction')
 
-    const { t } = useI18n({ useScope: 'global' })
-    const { nativeToken, nativeTokenUnsub } = useNativeToken(radix)
-    const { tokenBalances, tokenBalanceFor, tokenInfoFor, tokenBalancesUnsub } = useTokenBalances(radix)
-    const nativeTokenLoaded: Ref<boolean> = ref(false)
+    /* ------
+     *  Lifecycle Events
+     */
+    onMounted(() => {
+      getHiddenTokens().then((res) => {
+        hiddenTokens.value = res
+      })
+      if (nativeToken.value) setXRDByDefault(nativeToken.value)
+      // fetch latest balances and begin polling
+      activeAddress.value && fetchBalancesForAddress(activeAddress.value)
+    })
+
+    onUnmounted(() => {
+      tokenBalancesUnsub()
+    })
 
     onBeforeRouteLeave(() => {
       nativeTokenUnsub()
       tokenBalancesUnsub()
     })
 
-    // Clear form input and validation errors when switching accounts
-    watch(activeAddress, () => {
+    /* ------
+     *  Side Effects
+     */
+
+    watch((activeAddress), (newActiveAddress) => {
+      // Clear form input and validation errors when switching accounts
       resetForm()
+      if (nativeToken.value) setXRDByDefault(nativeToken.value)
+      // Update balances when active address changes
+      newActiveAddress && fetchBalancesForAddress(newActiveAddress)
     })
 
     // reset currency when required state has loaded. Especially necessary when switching account
@@ -184,37 +209,10 @@ const WalletTransaction = defineComponent({
       }
     })
 
-    type tokenAmountT = Observed<ReturnType<typeof radix.ledger.tokenBalancesForAddress>>;
-
-    const currency: Ref<string | null> = ref(null)
-    const tokenOptions: Ref<Decoded.TokenAmount[]> = ref([])
-    const hiddenTokens: Ref<string[]> = ref([])
-
-    onMounted(() => {
-      getHiddenTokens().then((res) => {
-        hiddenTokens.value = res
-      })
-    })
-
-    // Set XRD as default and move to top of list of options. Ensure native token subscription has returned before doing so
-    const setXRDByDefault = (nativeToken: Token) => {
-      if (!tokenBalances.value || tokenBalances.value.account_balances.liquid_balances.length === 0) return
-      const nativeTokenBalance = tokenBalanceFor(nativeToken)
-      const balances = tokenBalances.value ? tokenBalances.value.account_balances.liquid_balances : []
-
-      currency.value = nativeTokenBalance ? nativeTokenBalance.token_identifier.rri.name : balances[0].token_identifier.rri.name
-
-      const nativeTb = balances.find((b) => b.token_identifier.rri.equals(nativeToken.rri))
-      const remainingTb = balances.filter((b) =>
-        !b.token_identifier.rri.equals(nativeToken.rri) &&
-        !hiddenTokens.value.find((ht) => b.token_identifier.rri.toString() === ht)
-      ) || []
-      tokenOptions.value = nativeTb ? [nativeTb, ...remainingTb] : remainingTb
-    }
-
-    if (nativeToken.value) setXRDByDefault(nativeToken.value)
-
-    const hasTokenBalances = computed(() => {
+    /* ------
+     *  Computed Values
+     */
+    const hasTokenBalances: ComputedRef<boolean> = computed(() => {
       if (!tokenBalances.value?.account_balances.liquid_balances) return false
       return tokenBalances.value?.account_balances.liquid_balances.length > 0
     })
@@ -236,70 +234,94 @@ const WalletTransaction = defineComponent({
     })
 
     const loadedAllData: ComputedRef<boolean> = computed(() => {
-      if (activeAddress && activeAddress.value && nativeToken.value && tokenBalances.value) return true
+      if (activeAddress && activeAddress.value && nativeToken.value && tokenBalances.value && !loadingLatestAddress.value) return true
       return false
     })
 
+    /* ------
+     *  Functions
+     */
+
+    // Set XRD as default and move to top of list of options. Ensure native token subscription has returned before doing so
+    const setXRDByDefault = (nativeToken: Token) => {
+      if (!tokenBalances.value || tokenBalances.value.account_balances.liquid_balances.length === 0) return
+      const nativeTokenBalance = tokenBalanceFor(nativeToken)
+      const balances = tokenBalances.value ? tokenBalances.value.account_balances.liquid_balances : []
+
+      currency.value = nativeTokenBalance ? nativeTokenBalance.token_identifier.rri.name : balances[0].token_identifier.rri.name
+
+      const nativeTb = balances.find((b) => b.token_identifier.rri.equals(nativeToken.rri))
+      const remainingTb = balances.filter((b) =>
+        !b.token_identifier.rri.equals(nativeToken.rri) &&
+        !hiddenTokens.value.find((ht) => b.token_identifier.rri.toString() === ht)
+      ) || []
+      tokenOptions.value = nativeTb ? [nativeTb, ...remainingTb] : remainingTb
+    }
+
+    const handleSubmit = () => {
+      if (!meta.value.valid || !selectedCurrency.value) return false
+      const safeAddress = safelyUnwrapAddress(values.recipient, networkPreamble.value)
+      const safeAmount = safelyUnwrapAmount(Number(values.amount))
+      const token = tokenInfoFor(selectedCurrency.value.token_identifier.rri)
+      if (!token) return false
+      const greaterThanZero = safeAmount && validateGreaterThanZero(safeAmount)
+      // to do: we need to get full token info before we can validate
+      const validAmount = safeAmount && validateAmountOfType(safeAmount, token) && validateGreaterThanZero(safeAmount)
+      if (!greaterThanZero) {
+        setErrors({ amount: t('validations.greaterThanZero') })
+        return
+      }
+      if (!validAmount) {
+        setErrors({
+          amount: t('validations.amountOfType', { granularity: token.granularity.toString() })
+        })
+        return
+      }
+
+      if (!safeAddress) {
+        setErrors({
+          recipient: t('validations.validAddress')
+        })
+        return
+      }
+
+      if (safeAddress && safeAmount) {
+        transferTokens(
+          {
+            to_account: safeAddress,
+            amount: safeAmount,
+            tokenIdentifier: token.rri.toString()
+          },
+          {
+            plaintext: values.message,
+            encrypt: values.encrypt
+          },
+          selectedCurrency.value
+        )
+      }
+    }
+
     return {
-      tokenBalances,
-      errors,
-      values,
-      meta,
-      hasTokenBalances,
-      setErrors,
+      activeAddress,
+      amountPlaceholder,
       currency,
-      tokenOptions,
-      selectedCurrency,
+      errors,
+      hasTokenBalances,
+      meta,
       nativeToken,
       networkPreamble,
-      amountPlaceholder,
-      activeAddress,
+      selectedCurrency,
+      tokenBalances,
+      tokenOptions,
+      values,
+
+      // Functions
       disableSubmit,
+      handleSubmit,
       loadedAllData,
-      verifyHardwareWalletAddress,
+      setErrors,
       tokenInfoFor,
-      handleSubmit () {
-        if (!meta.value.valid || !selectedCurrency.value) return false
-        const safeAddress = safelyUnwrapAddress(values.recipient, networkPreamble.value)
-        const safeAmount = safelyUnwrapAmount(Number(values.amount))
-        const token = tokenInfoFor(selectedCurrency.value.token_identifier.rri)
-        if (!token) return false
-        const greaterThanZero = safeAmount && validateGreaterThanZero(safeAmount)
-        // to do: we need to get full token info before we can validate
-        const validAmount = safeAmount && validateAmountOfType(safeAmount, token) && validateGreaterThanZero(safeAmount)
-        if (!greaterThanZero) {
-          setErrors({ amount: t('validations.greaterThanZero') })
-          return
-        }
-        if (!validAmount) {
-          setErrors({
-            amount: t('validations.amountOfType', { granularity: token.granularity.toString() })
-          })
-          return
-        }
-
-        if (!safeAddress) {
-          setErrors({
-            recipient: t('validations.validAddress')
-          })
-          return
-        }
-
-        if (safeAddress && safeAmount) {
-          transferTokens(
-            {
-              to_account: safeAddress,
-              amount: safeAmount,
-              tokenIdentifier: token.rri.toString()
-            },
-            {
-              plaintext: values.message,
-              encrypt: values.encrypt
-            },
-            selectedCurrency.value
-          )
-        }
-      }
+      verifyHardwareWalletAddress
     }
   }
 })

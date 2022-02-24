@@ -108,8 +108,8 @@
 </template>
 
 <script lang="ts">
-import { StakePosition, AccountAddressT, Amount, AmountT, Validator, ValidatorAddressT } from '@radixdlt/application'
-import { computed, defineComponent, ComputedRef } from 'vue'
+import { Amount, AmountT, ValidatorAddressT } from '@radixdlt/application'
+import { computed, defineComponent, ComputedRef, onMounted, onUnmounted, watch } from 'vue'
 import { useForm } from 'vee-validate'
 import StakeListItem from '@/components/StakeListItem.vue'
 import { safelyUnwrapAmount, safelyUnwrapValidator, validateAmountOfType, validateGreaterThanZero } from '@/helpers/validateRadixTypes'
@@ -120,7 +120,6 @@ import FormField from '@/components/FormField.vue'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
 import { asBigNumber } from '@/components/BigAmount.vue'
 import LoadingIcon from '@/components/LoadingIcon.vue'
-import { Position } from '@/services/_types'
 import { useNativeToken, useStaking, useTransactions, useTokenBalances, useWallet } from '@/composables'
 import { useRouter, onBeforeRouteLeave } from 'vue-router'
 import { useI18n } from 'vue-i18n'
@@ -142,20 +141,36 @@ const WalletStaking = defineComponent({
   },
 
   setup () {
+    const router = useRouter()
     const { t } = useI18n({ useScope: 'global' })
     const { errors, values, meta, setErrors, resetForm, validate } = useForm<StakeForm>()
-    const router = useRouter()
     const {
       activeAddress,
       activeAccount,
       explorerUrlBase,
       hardwareAccount,
+      loadingLatestAddress,
       radix
     } = useWallet(router)
-    const { activeForm, setActiveForm, activeStakes, activeUnstakes, loadingAnyStaking, stakingUnsub, validators } = useStaking(radix)
-    const { stakeTokens, unstakeTokens, setActiveTransactionForm, transactionErrorMessage } = useTransactions(radix, router, activeAccount.value, hardwareAccount.value)
+    const { activeForm, setActiveForm, activeStakes, activeUnstakes, loadingAnyStaking, stakingUnsub } = useStaking(radix)
+    const { stakeTokens, unstakeTokens, setActiveTransactionForm } = useTransactions(radix, router, activeAccount.value, hardwareAccount.value)
     const { nativeToken, nativeTokenUnsub } = useNativeToken(radix)
-    const { tokenBalances, tokenBalanceFor, tokenInfoFor, tokenBalancesUnsub } = useTokenBalances(radix)
+    const { fetchBalancesForAddress, tokenBalances, tokenBalanceFor, tokenBalancesUnsub } = useTokenBalances(radix)
+    const zero = Amount.fromUnsafe(0)._unsafeUnwrap()
+
+    /* ------
+     *  Lifecycle Events
+     */
+    onMounted(() => {
+      // default active form is stake
+      setActiveTransactionForm('stake')
+      // fetch latest balances and begin polling
+      activeAddress.value && fetchBalancesForAddress(activeAddress.value)
+    })
+
+    onUnmounted(() => {
+      tokenBalancesUnsub()
+    })
 
     onBeforeRouteLeave(() => {
       nativeTokenUnsub()
@@ -163,18 +178,19 @@ const WalletStaking = defineComponent({
       stakingUnsub()
     })
 
-    // default active form is stake
-    setActiveTransactionForm('stake')
+    /* ------
+     *  Side Effects
+     */
 
-    const setForm = (form: 'STAKING'|'UNSTAKING') => {
-      setActiveForm(form)
-      setActiveTransactionForm(form)
-      resetForm()
-    }
+    watch((activeAddress), (newActiveAddress) => {
+      // Update balances when active address changes
+      newActiveAddress && fetchBalancesForAddress(newActiveAddress)
+    })
 
-    const zero = Amount.fromUnsafe(0)._unsafeUnwrap()
+    /* ------
+     *  Computed Values
+     */
 
-    // Computed Values
     const xrdBalance: ComputedRef<AmountT> = computed(() => {
       if (!tokenBalances.value || !nativeToken.value) return zero
       const nativeTokenBalance = tokenBalanceFor(nativeToken.value)
@@ -216,17 +232,26 @@ const WalletStaking = defineComponent({
 
     const explorerUrl: ComputedRef<string> = computed(() => `${explorerUrlBase.value}/#/validators`)
 
-    const hasTokenBalances = computed(() => {
+    const hasTokenBalances: ComputedRef<boolean> = computed(() => {
       if (!tokenBalances.value?.account_balances.liquid_balances) return false
       return tokenBalances.value?.account_balances.liquid_balances.length > 0
     })
 
     const loadedAllData: ComputedRef<boolean> = computed(() => {
-      if (activeAddress && activeAddress.value && nativeToken.value && tokenBalances.value) return true
+      if (activeAddress && activeAddress.value && nativeToken.value && tokenBalances.value && !loadingLatestAddress.value) return true
       return false
     })
 
-    // Methods
+    /* ------
+     *  Functions
+     */
+
+    const setForm = (form: 'STAKING'|'UNSTAKING') => {
+      setActiveForm(form)
+      setActiveTransactionForm(form)
+      resetForm()
+    }
+
     const handleAddToValidator = (validator: ValidatorAddressT) => {
       setActiveForm('STAKING')
       setActiveTransactionForm('stake')
@@ -273,7 +298,6 @@ const WalletStaking = defineComponent({
     }
 
     return {
-      stakeUrl: 'https://learn.radixdlt.com',
       activeForm,
       activeAddress,
       amountPlaceholder,
@@ -287,10 +311,13 @@ const WalletStaking = defineComponent({
       nativeToken,
       relatedValidators,
       stakeButtonCopy,
+      stakeUrl: 'https://learn.radixdlt.com',
       stakingDisclaimer,
       tokenBalances,
       values,
       xrdBalance,
+
+      // methods
       disableSubmit,
       handleAddToValidator,
       handleReduceFromValidator,

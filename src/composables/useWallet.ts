@@ -74,6 +74,7 @@ const updateAvailable: Ref<boolean> = ref(false)
 const versionNumber: Ref<string> = ref('')
 const wallet: Ref<WalletT | null> = ref(null)
 const latestAddress: Ref<string> = ref('')
+const loadingLatestAddress: Ref<boolean> = ref(true)
 
 const setWallet = (newWallet: WalletT) => {
   wallet.value = newWallet
@@ -121,6 +122,7 @@ interface useWalletInterface {
   readonly updateAvailable: Ref<boolean>;
   readonly versionNumber: Ref<string>;
   readonly walletHasLoaded: ComputedRef<boolean>;
+  readonly loadingLatestAddress: ComputedRef<boolean>;
 
   accountNameFor: (address: AccountAddressT) => string;
   accountRenamed: (newName: string) => void;
@@ -214,6 +216,7 @@ const initWallet = (): void => {
       )
 
       if (foundLatest && !latestIsActive) switchAccount(foundLatest)
+      else loadingLatestAddress.value = false
     }))
 
   subs.add(reloadTrigger.asObservable()
@@ -262,6 +265,7 @@ const switchAccount = (account: AccountT) => {
       saveLatestAccountAddress(newAddress, activeNetwork.value)
     }
     latestAddress.value = newAddress
+    if (loadingLatestAddress.value) loadingLatestAddress.value = false
     reloadSubscriptions()
   }
 }
@@ -399,6 +403,7 @@ export default function useWallet (router: Router): useWalletInterface {
     hardwareInteractionState,
     hasWallet,
     ledgerVerifyError,
+    loadingLatestAddress: computed(() => loadingLatestAddress.value),
     nodeUrl: computed(() => nodeUrl.value),
     showDeleteHWWalletPrompt,
     showLedgerVerify,
