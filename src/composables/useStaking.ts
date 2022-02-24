@@ -29,7 +29,7 @@ export default function useStaking (radix: ReturnType<typeof Radix.create>) {
     })
 
   const validatorsTopOneHundred: ComputedRef<Array<Validator>> = computed(() => {
-    if (validators.value && validators.value.validators) return validators.value.validators.slice(0, 100)
+    if (validators.value && validators.value.validators) return validators.value.validators.filter(validator => validator.registered).slice(0, 100)
     return []
   })
 
