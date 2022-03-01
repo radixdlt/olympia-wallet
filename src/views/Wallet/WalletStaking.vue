@@ -257,16 +257,14 @@ const WalletStaking = defineComponent({
       setActiveForm('STAKING')
       setActiveTransactionForm('stake')
       values.validator = validator.toString()
-      if (values.amount === undefined) return
-      validate()
+      if (values.amount) validate()
     }
 
     const handleReduceFromValidator = (validator: ValidatorAddressT) => {
       setActiveForm('UNSTAKING')
       setActiveTransactionForm('unstake')
       values.validator = validator.toString()
-      if (values.amount === undefined) return
-      validate()
+      if (values.amount) validate()
     }
 
     const handleSubmitStake = () => {
