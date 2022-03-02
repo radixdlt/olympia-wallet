@@ -50,6 +50,8 @@
               class="w-full text-sm font-mono placeholder-sans"
               :placeholder="$t('staking.validatorPlaceholder')"
               rules="required|validValidator"
+              :validateOnInput="true"
+              :validateOnBlur="false"
             />
             <FormErrorMessage name="validator" class="text-sm text-red-400" />
           </div>
@@ -65,6 +67,7 @@
                   :placeholder="amountPlaceholder"
                   rules="required|validAmount"
                   :validateOnInput="true"
+                  :validateOnBlur="false"
                 />
                 <FormErrorMessage name="amount" class="text-sm text-red-400" errorClass="w-120" />
               </div>
