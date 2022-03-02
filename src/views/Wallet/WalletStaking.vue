@@ -93,6 +93,14 @@
       </div>
       <template v-else>
         <stake-list-item
+          v-if="customAddress"
+          :validatorAddress="customAddress"
+          :nativeToken="nativeToken"
+          :explorerUrlBase="explorerUrlBase"
+          @addToValidator="handleAddToValidator"
+          @reduceFromValidator="handleReduceFromValidator"
+        />
+        <stake-list-item
           v-for="(v) in relatedValidators"
           :key="v.toString()"
           :validatorAddress="v"
@@ -108,8 +116,8 @@
 </template>
 
 <script lang="ts">
-import { Amount, AmountT, ValidatorAddressT } from '@radixdlt/application'
-import { computed, defineComponent, ComputedRef, onMounted, onUnmounted, watch } from 'vue'
+import { Amount, AmountT, ValidatorAddress, ValidatorAddressT } from '@radixdlt/application'
+import { computed, defineComponent, ComputedRef, onMounted, onUnmounted, watch, ref, Ref } from 'vue'
 import { useForm } from 'vee-validate'
 import StakeListItem from '@/components/StakeListItem.vue'
 import { safelyUnwrapAmount, safelyUnwrapValidator, validateAmountOfType, validateGreaterThanZero } from '@/helpers/validateRadixTypes'
@@ -123,6 +131,7 @@ import LoadingIcon from '@/components/LoadingIcon.vue'
 import { useNativeToken, useStaking, useTransactions, useTokenBalances, useWallet } from '@/composables'
 import { useRouter, onBeforeRouteLeave } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import { firstValueFrom } from 'rxjs'
 
 interface StakeForm {
   validator: string;
@@ -157,6 +166,22 @@ const WalletStaking = defineComponent({
     const { nativeToken, nativeTokenUnsub } = useNativeToken(radix)
     const { fetchBalancesForAddress, tokenBalances, tokenBalanceFor, tokenBalancesUnsub } = useTokenBalances(radix)
     const zero = Amount.fromUnsafe(0)._unsafeUnwrap()
+
+    const customAddress: Ref<ValidatorAddressT | null> = ref(null)
+
+    const fetchData = async (validatorId: string) => {
+      const initialAddress = ValidatorAddress.fromUnsafe(validatorId)
+      if (initialAddress.isErr()) {
+        throw Error('Invalid Address')
+      }
+
+      const validatorRes = await firstValueFrom(radix.ledger.lookupValidator(initialAddress.value))
+      console.log('res', validatorRes)
+      customAddress.value = validatorRes.address
+    }
+
+    // Fetch StakeNordic validator for testing
+    fetchData('rv1qvq5dpfrte49l3hdzzarftmsqejqzf3d8dxnrx2tzdc0ljcrg88uvnlvpau')
 
     /* ------
      *  Lifecycle Events
@@ -325,7 +350,9 @@ const WalletStaking = defineComponent({
       resetForm,
       setActiveForm,
       setErrors,
-      setForm
+      setForm,
+
+      customAddress
     }
   }
 })
