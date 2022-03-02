@@ -76,8 +76,8 @@
                 >
                   <option
                     v-for="token in tokenOptions"
-                    :key="token.token_identifier.rri.name"
-                    :value="token.token_identifier.rri.name"
+                    :key="token.token_identifier.rri.toString()"
+                    :value="token.token_identifier.rri.toString()"
                   >
                     {{ tokenInfoFor(token.token_identifier.rri).symbol.toUpperCase() }}
                   </option>
