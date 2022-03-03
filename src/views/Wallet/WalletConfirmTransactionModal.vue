@@ -53,7 +53,8 @@
           <div class="border-b border-rGray py-3.5 flex items-center">
             <div class="w-26 text-right text-rGrayDark mr-6">{{ $t('transaction.amountLabel') }}</div>
             <div class="flex-1 flex flex-row items-center">
-              <big-amount :amount="amount" class="mr-1" />
+              <big-amount v-if="!shouldShowMaxUnstakeConfirmation" :amount="amount" class="mr-1" />
+              <span v-else class="mr-1">MAX</span>
               <span class="uppercase" v-if="(stakeInput || unstakeInput) && nativeToken">{{ nativeToken.symbol }}</span>
               <span class="uppercase" v-else-if="selectedCurrencyToken">{{ selectedCurrencyToken.symbol }}</span>
             </div>
@@ -79,7 +80,7 @@
 
           <div class="py-4 flex items-center">
             <div class="w-26 text-right text-rGrayDark mr-8">{{ $t('transaction.feeLabel') }}</div>
-            <div class="flex-1 flex flex-row items-center" v-if="transactionFee">
+            <div class="flex-1 flex flex-row items-center" v-if="transactionFee && !shouldShowMaxUnstakeConfirmation">
               <big-amount :amount="transactionFee"  class="mr-1" />
               <span class="uppercase" v-if="nativeToken">{{ nativeToken.symbol }}</span>
             </div>
@@ -207,6 +208,7 @@ const WalletConfirmTransactionModal = defineComponent({
       confirmTransaction,
       ledgerState,
       stakeInput,
+      shouldShowMaxUnstakeConfirmation,
       unstakeInput,
       transactionFee,
       transactionState,
@@ -252,7 +254,7 @@ const WalletConfirmTransactionModal = defineComponent({
       return ''
     })
 
-    const amount: ComputedRef<AmountOrUnsafeInput> = computed(() => {
+    const amount: ComputedRef<AmountOrUnsafeInput | undefined> = computed(() => {
       if (stakeInput.value) {
         return stakeInput.value.amount
       } else if (unstakeInput.value) {
@@ -367,6 +369,7 @@ const WalletConfirmTransactionModal = defineComponent({
       setErrors,
       shouldShowBuildingModal,
       shouldShowLedgerModal,
+      shouldShowMaxUnstakeConfirmation,
       stakeInput,
       unstakeInput,
       toContent,
