@@ -62,7 +62,7 @@
                   class="border"
                 >
                   <div class="rounded border border-rGreen bg-rGray h-full flex justify-between py-1">
-                    <div class="ml-2 mt-1">You're unstaking all tokens from validator name</div>
+                    <div class="ml-2 mt-1">{{ $t('staking.unstakeMaxDisclaimer') }} {{ formValidatorName }}</div>
                     <div class="mr-2 mt-2">
                       <button @click="setMaxUnstakeOff">
                         <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -90,7 +90,7 @@
                     v-if="activeForm == 'UNSTAKING'"
                     class="rounded border border-rGreen text-rGreen w-2/12 h-full ml-6"
                   >
-                    max
+                    {{ $t('staking.maxUnstakeButton') }}
                   </button>
                 </div>
                 <FormErrorMessage name="amount" class="text-sm text-red-400" errorClass="w-120" />
@@ -151,6 +151,7 @@ import LoadingIcon from '@/components/LoadingIcon.vue'
 import { useNativeToken, useStaking, useTransactions, useTokenBalances, useWallet } from '@/composables'
 import { useRouter, onBeforeRouteLeave } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import { firstValueFrom } from 'rxjs'
 
 interface StakeForm {
   validator: string;
@@ -180,7 +181,7 @@ const WalletStaking = defineComponent({
       loadingLatestAddress,
       radix
     } = useWallet(router)
-    const { activeForm, setActiveForm, activeStakes, activeUnstakes, loadingAnyStaking, stakingUnsub } = useStaking(radix)
+    const { activeForm, setActiveForm, activeStakes, activeUnstakes, loadingAnyStaking, maybeGetValidator, stakingUnsub } = useStaking(radix)
     const { stakeTokens, unstakeTokens, setActiveTransactionForm } = useTransactions(radix, router, activeAccount.value, hardwareAccount.value)
     const { nativeToken, nativeTokenUnsub } = useNativeToken(radix)
     const { fetchBalancesForAddress, tokenBalances, tokenBalanceFor, tokenBalancesUnsub } = useTokenBalances(radix)
@@ -253,7 +254,7 @@ const WalletStaking = defineComponent({
       activeForm.value === 'STAKING' ? t('staking.stakeButton') : t('staking.unstakeButton'))
 
     const disableSubmit: ComputedRef<boolean> = computed(() => {
-      if (maxUnstakeMode.value) return false
+      if (maxUnstakeMode.value && !meta.value.valid) return false
       return meta.value.dirty ? !meta.value.valid : true
     })
 
@@ -360,6 +361,14 @@ const WalletStaking = defineComponent({
       }
     }
 
+    const formValidatorName: ComputedRef<string | undefined> = computed(() => {
+      if (!values.validator) return ''
+      const safeAddress = safelyUnwrapValidator(values.validator)
+      if (!safeAddress) return ''
+      const v = maybeGetValidator(safeAddress)
+      return v ? v.name : ''
+    })
+
     return {
       activeForm,
       activeAddress,
@@ -367,6 +376,7 @@ const WalletStaking = defineComponent({
       errors,
       explorerUrl,
       explorerUrlBase,
+      formValidatorName,
       hasTokenBalances,
       loadedAllData,
       loadingAnyStaking,
