@@ -194,7 +194,9 @@ const messages = {
       validatorFeeLabel: 'Validator Fee',
       recentUptimeLabel: 'Recent Uptime',
       unregistered: 'Unregistered',
-      notTopOneHundred: 'Not in top 100 validators'
+      notTopOneHundred: 'Not in top 100 validators',
+      unstakeMaxDisclaimer: "You're unstaking all tokens from",
+      maxUnstakeButton: 'max'
     },
     confirmation: {
       transferFromLabel: 'Your address',
