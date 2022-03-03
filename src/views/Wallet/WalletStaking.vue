@@ -12,7 +12,7 @@
         <tabs-tab :isActive="activeForm == 'UNSTAKING'" @click="() => setForm('UNSTAKING')">{{ $t('staking.unstakeTab') }}</tabs-tab>
       </div>
       <form
-        @submit.prevent="handleSubmitStake"
+        @submit.prevent="chooseRightSubmitStake"
         class="flex flex-col flex-1 mr-6"
       >
         <tabs-content :leftTabIsActive="activeForm == 'stake'">
@@ -57,15 +57,42 @@
             <div class="flex flex-row">
               <div class="flex flex-col mr-3 flex-1">
                 <div class="text-rGrayDark mb-3">{{ $t('staking.amountLabel')}}</div>
-                <FormField
-                  name="amount"
-                  type="number"
-                  step="any"
-                  class="w-full text-sm"
-                  :placeholder="amountPlaceholder"
-                  rules="required|validAmount"
-                  :validateOnInput="true"
-                />
+                <div
+                  v-if="maxUnstakeMode"
+                  class="border"
+                >
+                  <div class="rounded border border-rGreen bg-rGray h-full flex justify-between py-1">
+                    <div class="ml-2 mt-1">You're unstaking all tokens from validator name</div>
+                    <div class="mr-2 mt-2">
+                      <button @click="setMaxUnstakeOff">
+                        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <circle cx="7" cy="7" r="6.5" transform="rotate(90 7 7)" fill="#7A99AC" stroke="#7A99AC"/>
+                          <rect x="4" y="5" width="1" height="7" transform="rotate(-45 4 5)" fill="white"/>
+                          <rect x="8.94971" y="4.29291" width="1" height="7" transform="rotate(45 8.94971 4.29291)" fill="white"/>
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <div v-else>
+                  <FormField
+                    name="amount"
+                    type="number"
+                    step="any"
+                    class="w-9/12 text-sm justify-items-start"
+                    :class="{'w-full': activeForm !== 'UNSTAKING'}"
+                    :placeholder="amountPlaceholder"
+                    rules="required|validAmount"
+                    :validateOnInput="true"
+                  />
+                  <button
+                    @click.prevent="setMaxUnstakeOn"
+                    v-if="activeForm == 'UNSTAKING'"
+                    class="rounded border border-rGreen text-rGreen w-2/12 h-full ml-6"
+                  >
+                    max
+                  </button>
+                </div>
                 <FormErrorMessage name="amount" class="text-sm text-red-400" errorClass="w-120" />
               </div>
             </div>
@@ -110,7 +137,7 @@
 
 <script lang="ts">
 import { Amount, AmountT, ValidatorAddressT } from '@radixdlt/application'
-import { computed, defineComponent, ComputedRef, onMounted, onUnmounted, watch } from 'vue'
+import { computed, defineComponent, ComputedRef, onMounted, onUnmounted, watch, Ref, ref } from 'vue'
 import { useForm } from 'vee-validate'
 import StakeListItem from '@/components/StakeListItem.vue'
 import { safelyUnwrapAmount, safelyUnwrapValidator, validateAmountOfType, validateGreaterThanZero } from '@/helpers/validateRadixTypes'
@@ -158,6 +185,7 @@ const WalletStaking = defineComponent({
     const { nativeToken, nativeTokenUnsub } = useNativeToken(radix)
     const { fetchBalancesForAddress, tokenBalances, tokenBalanceFor, tokenBalancesUnsub } = useTokenBalances(radix)
     const zero = Amount.fromUnsafe(0)._unsafeUnwrap()
+    const maxUnstakeMode: Ref<boolean> = ref(false)
 
     /* ------
      *  Lifecycle Events
@@ -224,7 +252,10 @@ const WalletStaking = defineComponent({
     const stakeButtonCopy: ComputedRef<string> = computed(() =>
       activeForm.value === 'STAKING' ? t('staking.stakeButton') : t('staking.unstakeButton'))
 
-    const disableSubmit: ComputedRef<boolean> = computed(() => meta.value.dirty ? !meta.value.valid : true)
+    const disableSubmit: ComputedRef<boolean> = computed(() => {
+      if (maxUnstakeMode.value) return false
+      return meta.value.dirty ? !meta.value.valid : true
+    })
 
     const amountPlaceholder: ComputedRef<string> = computed(() =>
       (xrdBalance.value && activeForm.value === 'STAKING')
@@ -298,6 +329,37 @@ const WalletStaking = defineComponent({
         })
     }
 
+    const handleMaxSubmitStake = () => {
+      if (!nativeToken.value) return
+      const safeAddress = safelyUnwrapValidator(values.validator)
+      if (!safeAddress) return
+      // const safeAmount = safelyUnwrapAmount(Number(0.0000000000000001))
+      const safeAmount = safelyUnwrapAmount(Number('0.0000000000000001'))
+      if (!safeAmount) return
+
+      unstakeTokens({
+        from_validator: safeAddress,
+        unstake_percentage: safeAmount,
+        tokenIdentifier: nativeToken.value.rri
+      })
+    }
+
+    const setMaxUnstakeOn = () => {
+      maxUnstakeMode.value = true
+    }
+
+    const setMaxUnstakeOff = () => {
+      maxUnstakeMode.value = false
+    }
+
+    const chooseRightSubmitStake = () => {
+      if (maxUnstakeMode.value) {
+        handleMaxSubmitStake()
+      } else {
+        handleSubmitStake()
+      }
+    }
+
     return {
       activeForm,
       activeAddress,
@@ -308,6 +370,7 @@ const WalletStaking = defineComponent({
       hasTokenBalances,
       loadedAllData,
       loadingAnyStaking,
+      maxUnstakeMode,
       meta,
       nativeToken,
       relatedValidators,
@@ -319,6 +382,7 @@ const WalletStaking = defineComponent({
       xrdBalance,
 
       // methods
+      chooseRightSubmitStake,
       disableSubmit,
       handleAddToValidator,
       handleReduceFromValidator,
@@ -326,7 +390,9 @@ const WalletStaking = defineComponent({
       resetForm,
       setActiveForm,
       setErrors,
-      setForm
+      setForm,
+      setMaxUnstakeOff,
+      setMaxUnstakeOn
     }
   }
 })
