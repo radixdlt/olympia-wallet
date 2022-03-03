@@ -22,23 +22,29 @@
     <wallet-ledger-verify-address-modal v-if="showLedgerVerify" />
     <wallet-ledger-interaction-modal v-if="hardwareInteractionState && hardwareInteractionState.length > 0" />
     <wallet-ledger-delete-modal v-if="showDeleteHWWalletPrompt" />
+    <wallet-ledger-disconnected-modal
+      :shouldShow="shouldShowLedgerDisconnectedModal"
+      :handleClose="handleCloseLedgerModal"
+    />
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, computed } from 'vue'
-
+import { defineComponent, computed, ComputedRef, ref, Ref, watch } from 'vue'
 import WalletConfirmTransactionModal from './WalletConfirmTransactionModal.vue'
 import WalletSidebar from './WalletSidebar.vue'
 import WalletLedgerInteractionModal from '@/views/Wallet/WalletLedgerInteractionModal.vue'
 import WalletLoading from './WalletLoading.vue'
 import WalletLedgerVerifyAddressModal from '@/views/Wallet/WalletLedgerVerifyAddressModal.vue'
 import WalletLedgerDeleteModal from '@/views/Wallet/WalletLedgerDeleteModal.vue'
+import WalletLedgerDisconnectedModal from '@/views/Wallet/WalletLedgerDisconnectedModal.vue'
 import { useRouter, onBeforeRouteUpdate, onBeforeRouteLeave } from 'vue-router'
-import { useTransactions, useWallet } from '@/composables'
+import { useLedger, useTransactions, useWallet } from '@/composables'
+import { AccountT } from '@radixdlt/application'
 
 const WalletIndex = defineComponent({
   components: {
+    WalletLedgerDisconnectedModal,
     WalletConfirmTransactionModal,
     WalletSidebar,
     WalletLedgerInteractionModal,
@@ -49,26 +55,50 @@ const WalletIndex = defineComponent({
 
   setup () {
     const router = useRouter()
-
     const {
       activeAccount,
       activeNetwork,
+      allAccounts,
       hardwareAccount,
+      hardwareAddress,
       hardwareInteractionState,
       hasWallet,
       radix,
       showDeleteHWWalletPrompt,
       showLedgerVerify,
+      switchAccount,
       walletLoaded,
       waitUntilAllLoaded
     } = useWallet(router)
-
+    const { isConnected } = useLedger()
     const { shouldShowConfirmation } = useTransactions(radix, router, activeAccount.value, hardwareAccount.value)
+    const shouldShowLedgerDisconnectedModal: Ref<boolean> = ref(false)
 
     onBeforeRouteUpdate(async () => {
       await waitUntilAllLoaded()
       return true
     })
+
+    const localAccounts: ComputedRef<AccountT[]> = computed(() => {
+      if (!allAccounts.value) return []
+      return allAccounts.value.filter((account: AccountT) => {
+        return account.signingKey.isLocalHDSigningKey
+      })
+    })
+
+    const isHardwareWalletActive: ComputedRef<boolean> = computed(() => {
+      if (!hardwareAddress.value) { return false }
+      return activeAccount.value?.address.toString() === hardwareAddress.value
+    })
+
+    watch((isConnected), (newIsConnected) => {
+      if (!newIsConnected && isHardwareWalletActive.value) shouldShowLedgerDisconnectedModal.value = true
+    })
+
+    const handleCloseLedgerModal = () => {
+      switchAccount(localAccounts.value[0])
+      shouldShowLedgerDisconnectedModal.value = false
+    }
 
     // Return home if wallet is undefined
     if (!hasWallet.value) router.push('/')
@@ -90,7 +120,9 @@ const WalletIndex = defineComponent({
       showDeleteHWWalletPrompt,
       showLedgerVerify,
       isTestNet,
-      walletLoaded
+      walletLoaded,
+      shouldShowLedgerDisconnectedModal,
+      handleCloseLedgerModal
     }
   }
 })

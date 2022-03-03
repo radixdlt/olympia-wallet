@@ -114,7 +114,12 @@ const messages = {
       disconnected: 'Disconnected',
       hideBalanceModalTitle: 'Hide Balance',
       hideBalanceModalContent: 'Are you sure you want to hide this %{tokenName} balance? This balance can be unhidden in settings.',
-      hideBalanceModalSubmit: 'Hide Balance'
+      hideBalanceModalSubmit: 'Hide Balance',
+      ledgerModal: {
+        title: 'Ledger Device Disconnected',
+        content: 'Your ledger device has been disconnected. Please switch to your first derived account to continue.',
+        buttonText: 'Switch Account'
+      }
     },
     hardware: {
       disclaimer: 'Whenever copying a hardware wallet address, it is strongly recommended to verify it on the hardware device. To copy and verify this address, please switch to the hardware address first by selecting it in the account picker.',
