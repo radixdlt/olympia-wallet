@@ -220,7 +220,7 @@ const WalletTransaction = defineComponent({
     const selectedCurrency: ComputedRef<Decoded.TokenAmount | null> = computed(() => {
       if (!tokenBalances.value || tokenBalances.value.account_balances.liquid_balances.length <= 0) return null
 
-      const selectedCurrency = tokenBalances.value.account_balances.liquid_balances.find((tokenBalance) => tokenBalance.token_identifier.rri.name === currency.value)
+      const selectedCurrency = tokenBalances.value.account_balances.liquid_balances.find((tokenBalance) => tokenBalance.token_identifier.rri.toString() === currency.value)
       return selectedCurrency || null
     })
 
@@ -248,7 +248,7 @@ const WalletTransaction = defineComponent({
       const nativeTokenBalance = tokenBalanceFor(nativeToken)
       const balances = tokenBalances.value ? tokenBalances.value.account_balances.liquid_balances : []
 
-      currency.value = nativeTokenBalance ? nativeTokenBalance.token_identifier.rri.name : balances[0].token_identifier.rri.name
+      currency.value = nativeTokenBalance ? nativeTokenBalance.token_identifier.rri.toString() : balances[0].token_identifier.rri.toString()
 
       const nativeTb = balances.find((b) => b.token_identifier.rri.equals(nativeToken.rri))
       const remainingTb = balances.filter((b) =>
