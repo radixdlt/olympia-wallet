@@ -14,5 +14,8 @@ contextBridge.exposeInMainWorld('ipcRenderer', {
     ipcRenderer.on(channel, listener)
   },
   invoke: (channel: string, args: string[]) =>
-    ipcRenderer.invoke(channel, args)
+    ipcRenderer.invoke(channel, args),
+  subscribe: () => {
+    console.log('test me')
+  }
 })

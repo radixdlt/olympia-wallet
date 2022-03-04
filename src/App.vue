@@ -35,9 +35,9 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, onUnmounted } from 'vue'
+import { computed, ComputedRef, defineComponent, onUnmounted, Ref, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import { useWallet, useErrors } from './composables'
+import { useWallet, useErrors, useLedger } from '@/composables'
 import ErrorModalGeneric from '@/components/ErrorModalGeneric.vue'
 import ErrorModalHardware from '@/components/ErrorModalHardware.vue'
 import ErrorModalApi from '@/components/ErrorModalApi.vue'
@@ -60,7 +60,14 @@ const App = defineComponent({
 
   setup () {
     const router = useRouter()
-    const { radix, activeNetwork, connected, setConnected, setNetwork, reloadSubscriptions } = useWallet(router)
+    const {
+      activeNetwork,
+      connected,
+      radix,
+      reloadSubscriptions,
+      setConnected,
+      setNetwork
+    } = useWallet(router)
     const { appErrors, setError } = useErrors(radix)
     const { t } = useI18n()
 

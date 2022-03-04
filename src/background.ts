@@ -1,6 +1,6 @@
 'use strict'
 
-import electron, { app, ipcMain, protocol, BrowserWindow } from 'electron'
+import electron, { app, ipcMain, protocol, BrowserWindow, ipcRenderer } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 import path from 'path'
@@ -29,7 +29,7 @@ import {
   unhideTokenType,
 } from './actions/electron/data-store'
 import { getIsUpdateAvailable } from './actions/electron/general'
-import { sendAPDU } from './actions/electron/hardware-wallet'
+import { sendAPDU, listenForLedger, setLedgerConnectionStatus } from './actions/electron/hardware-wallet'
 import { checkForUpdates, downloadUpdate } from './updater'
 
 const pkg = require('../package.json')
@@ -132,6 +132,7 @@ ipcMain.handle('save-hw-address', saveHardwareAddress)
 ipcMain.handle('get-hw-address', getHardwareAddress)
 ipcMain.handle('delete-hw-address', deleteHardwareAddress)
 ipcMain.handle('send-apdu', sendAPDU)
+ipcMain.handle('listen-for-ledger', listenForLedger)
 ipcMain.handle('reset-store', resetStore)
 ipcMain.handle('persist-node-selection', persistNodeSelection)
 ipcMain.handle('fetch-selected-node', fetchSelectedNode)

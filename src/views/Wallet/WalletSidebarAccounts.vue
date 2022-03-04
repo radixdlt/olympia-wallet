@@ -83,12 +83,13 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed, ComputedRef } from 'vue'
+import { defineComponent, ref, computed, ComputedRef, watch, Ref } from 'vue'
 import { AccountT } from '@radixdlt/application'
 import AccountListItem from '@/components/AccountListItem.vue'
 import ClickToCopy from '@/components/ClickToCopy.vue'
-import { useWallet, useSidebar } from '@/composables'
+import { useWallet, useSidebar, useLedger } from '@/composables'
 import { useRouter } from 'vue-router'
+import { listenForLedger } from '@/actions/vue/hardware-wallet'
 
 const WalletSidebarAccounts = defineComponent({
   components: {
@@ -112,7 +113,21 @@ const WalletSidebarAccounts = defineComponent({
       verifyHardwareWalletAddress
     } = useWallet(router)
     const { setState } = useSidebar()
-    const showHardwareHelper = ref(false)
+    const showHardwareHelper: Ref<boolean> = ref(false)
+
+    const args = {
+      next: async (obj: any) => {
+        switch (obj.type) {
+          case 'add':
+            console.log('true')
+            break
+          case 'remove':
+            console.log('false')
+            break
+        }
+      }
+    } as any
+    listenForLedger(args)
 
     const displayHardwareAddress: ComputedRef<string> = computed(() => {
       if (!hardwareAddress.value) return ''
