@@ -51,7 +51,6 @@
               :placeholder="$t('staking.validatorPlaceholder')"
               rules="required|validValidator"
               :validateOnInput="true"
-              :validateOnBlur="false"
             />
             <FormErrorMessage name="validator" class="text-sm text-red-400" />
           </div>
@@ -67,7 +66,6 @@
                   :placeholder="amountPlaceholder"
                   rules="required|validAmount"
                   :validateOnInput="true"
-                  :validateOnBlur="false"
                 />
                 <FormErrorMessage name="amount" class="text-sm text-red-400" errorClass="w-120" />
               </div>
@@ -147,7 +145,7 @@ const WalletStaking = defineComponent({
   setup () {
     const router = useRouter()
     const { t } = useI18n({ useScope: 'global' })
-    const { errors, values, meta, setErrors, resetForm, validate } = useForm<StakeForm>()
+    const { errors, values, meta, setErrors, resetForm, validateField } = useForm<StakeForm>()
     const {
       activeAddress,
       activeAccount,
@@ -259,15 +257,17 @@ const WalletStaking = defineComponent({
     const handleAddToValidator = (validator: ValidatorAddressT) => {
       setActiveForm('STAKING')
       setActiveTransactionForm('stake')
+      resetForm()
       values.validator = validator.toString()
-      if (values.amount) validate()
+      validateField('validator')
     }
 
     const handleReduceFromValidator = (validator: ValidatorAddressT) => {
       setActiveForm('UNSTAKING')
       setActiveTransactionForm('unstake')
+      resetForm()
       values.validator = validator.toString()
-      if (values.amount) validate()
+      validateField('validator')
     }
 
     const handleSubmitStake = () => {
