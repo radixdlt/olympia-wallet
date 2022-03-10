@@ -334,12 +334,12 @@ const WalletStaking = defineComponent({
       if (!nativeToken.value) return
       const safeAddress = safelyUnwrapValidator(values.validator)
       if (!safeAddress) return
-      const safeAmount = safelyUnwrapAmount(Number('0.0000000000000001'))
-      if (!safeAmount) return
+      const safeOneHundredPercent = safelyUnwrapAmount(Number('0.0000000000000001'))
+      if (!safeOneHundredPercent) return
 
       unstakeTokens({
         from_validator: safeAddress,
-        unstake_percentage: safeAmount,
+        unstake_percentage: safeOneHundredPercent,
         tokenIdentifier: nativeToken.value.rri
       })
     }
