@@ -334,7 +334,6 @@ const WalletStaking = defineComponent({
       if (!nativeToken.value) return
       const safeAddress = safelyUnwrapValidator(values.validator)
       if (!safeAddress) return
-      // const safeAmount = safelyUnwrapAmount(Number(0.0000000000000001))
       const safeAmount = safelyUnwrapAmount(Number('0.0000000000000001'))
       if (!safeAmount) return
 
