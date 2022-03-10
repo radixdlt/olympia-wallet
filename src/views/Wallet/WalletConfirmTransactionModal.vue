@@ -254,10 +254,10 @@ const WalletConfirmTransactionModal = defineComponent({
       return ''
     })
 
-    const amount: ComputedRef<AmountOrUnsafeInput | undefined> = computed(() => {
+    const amount: ComputedRef<AmountOrUnsafeInput> = computed(() => {
       if (stakeInput.value) {
         return stakeInput.value.amount
-      } else if (unstakeInput.value) {
+      } else if (unstakeInput.value && unstakeInput.value.amount) {
         return unstakeInput.value.amount
       } else if (transferInput.value) {
         return transferInput.value.amount
