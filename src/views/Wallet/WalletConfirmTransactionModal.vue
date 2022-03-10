@@ -53,8 +53,17 @@
           <div class="border-b border-rGray py-3.5 flex items-center">
             <div class="w-26 text-right text-rGrayDark mr-6">{{ $t('transaction.amountLabel') }}</div>
             <div class="flex-1 flex flex-row items-center">
-              <span v-if="shouldShowMaxUnstakeConfirmation" class="mr-1">MAX</span>
-              <big-amount v-else :amount="amount" class="mr-1"/>
+              <span
+                v-if="shouldShowMaxUnstakeConfirmation"
+                class="mr-1"
+              >
+                {{ $t('confirmation.maxUnstakeDisclaimer') }}
+              </span>
+              <big-amount
+                v-else
+                :amount="amount"
+                class="mr-1"
+              />
               <span class="uppercase" v-if="(stakeInput || unstakeInput) && nativeToken">{{ nativeToken.symbol }}</span>
               <span class="uppercase" v-else-if="selectedCurrencyToken">{{ selectedCurrencyToken.symbol }}</span>
             </div>

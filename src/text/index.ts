@@ -196,7 +196,8 @@ const messages = {
       unregistered: 'Unregistered',
       notTopOneHundred: 'Not in top 100 validators',
       unstakeMaxDisclaimer: "You're unstaking all tokens from",
-      maxUnstakeButton: 'max'
+      maxUnstakeButton: 'max',
+      maxUnstakeCapitalized: 'MAX'
     },
     confirmation: {
       transferFromLabel: 'Your address',
@@ -205,6 +206,7 @@ const messages = {
       stakeToLabel: 'Stake to',
       unstakeFromLabel: 'Your address',
       unstakeToLabel: 'Unstake from',
+      maxUnstakeDisclaimer: 'MAX AMOUNT',
       transactionState: {
         PENDING: 'Pending',
         INITIATED: 'Initiated',

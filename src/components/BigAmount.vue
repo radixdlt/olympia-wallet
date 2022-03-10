@@ -1,6 +1,6 @@
 <template>
   <span v-if="showMaxUnstakeText">
-    <span>MAX</span>
+    {{ $t('staking.maxUnstakeCapitalized') }}
   </span>
   <span v-else class="relative inline-flex flex-col items-center group cursor-pointer" @click.stop="copyText">
     <span>{{numberForDisplay}}</span>
@@ -16,6 +16,7 @@ import { defineComponent, PropType } from 'vue'
 import { AmountT } from '@radixdlt/application'
 import BigNumber from 'bignumber.js'
 import { useToast } from 'vue-toastification'
+import { useI18n } from 'vue-i18n'
 
 BigNumber.set({
   ROUNDING_MODE: BigNumber.ROUND_HALF_UP,
@@ -118,6 +119,7 @@ const BigAmount = defineComponent({
 
   setup () {
     const toast = useToast()
+    const { t } = useI18n({ useScope: 'global' })
     return { toast }
   },
 
