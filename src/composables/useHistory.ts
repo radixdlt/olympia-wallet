@@ -6,6 +6,7 @@ import { formatWalletAddressForDisplay } from '@/helpers/formatter'
 const PAGE_SIZE = 30
 
 const decryptedMessages: Ref<{id: string, message: string}[]> = ref([])
+const displayLedgerErrorModal: Ref<boolean> = ref(false)
 const cursorStack: Ref<string[]> = ref([])
 const canGoBack: ComputedRef<boolean> = computed(() => cursorStack.value.length > 0)
 const canGoNext: Ref<boolean> = ref(false)
@@ -54,9 +55,18 @@ export default function useHistory (radix: ReturnType<typeof Radix.create>, acco
 
   const decryptMessage = (tx: ExecutedTransaction) => {
     isDecrypting.value = true
-    firstValueFrom(radix.decryptTransaction(tx)).then((val) => {
-      decryptedMessages.value.push({ id: tx.txID.toString(), message: val })
-    }).finally(() => { isDecrypting.value = false })
+    firstValueFrom(radix.decryptTransaction(tx))
+      .then((val) => {
+        decryptedMessages.value.push({ id: tx.txID.toString(), message: val })
+      })
+      .catch(() => {
+        displayHardwareError()
+      })
+      .finally(() => { isDecrypting.value = false })
+  }
+
+  const displayHardwareError = () => {
+    displayLedgerErrorModal.value = true
   }
 
   const previousPage = () => {
@@ -81,6 +91,7 @@ export default function useHistory (radix: ReturnType<typeof Radix.create>, acco
     canGoBack,
     canGoNext,
     decryptedMessages,
+    displayLedgerErrorModal,
     loadingHistory,
     transactions,
     decryptMessage,
