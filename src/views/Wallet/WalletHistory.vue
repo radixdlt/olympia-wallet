@@ -16,7 +16,10 @@
         </div>
       </div>
     </div>
-
+    <wallet-ledger-disconnected-modal
+      :shouldShow="displayLedgerErrorModal"
+      :handleClose="closeLedgerErrorModal"
+    />
     <div class="text-rBlack py-6 min-h-full text-sm">
       <div v-if="loadingHistory || !nativeToken" class="p-4 flex items-center justify-center">
         <loading-icon class="text-rGrayDark" />
@@ -93,6 +96,7 @@ import { computed, ComputedRef, defineComponent, onMounted, watch } from 'vue'
 import TransactionListItem from '@/components/TransactionListItem.vue'
 import LoadingIcon from '@/components/LoadingIcon.vue'
 import ClickToCopy from '@/components/ClickToCopy.vue'
+import WalletLedgerDisconnectedModal from '@/views/Wallet/WalletLedgerDisconnectedModal.vue'
 import { useNativeToken, useWallet, useHistory } from '@/composables'
 import { useRouter, onBeforeRouteLeave } from 'vue-router'
 import WalletLedgerVerifyDecryptModal from './WalletLedgerVerifyDecryptModal.vue'
@@ -102,6 +106,7 @@ const WalletHistory = defineComponent({
     LoadingIcon,
     ClickToCopy,
     TransactionListItem,
+    WalletLedgerDisconnectedModal,
     WalletLedgerVerifyDecryptModal
   },
 
@@ -124,6 +129,7 @@ const WalletHistory = defineComponent({
       canGoBack,
       canGoNext,
       decryptedMessages,
+      displayLedgerErrorModal,
       loadingHistory,
       transactions,
       decryptMessage,
@@ -152,6 +158,11 @@ const WalletHistory = defineComponent({
       activeAccount.value === hardwareAccount.value
     )
 
+    const closeLedgerErrorModal = () => {
+      // switchAccount(localAccounts.value[0])
+      displayLedgerErrorModal.value = false
+    }
+
     // Fetch new history when active account changes
     watch((activeAccount), () => {
       if (activeAccount.value) {
@@ -176,8 +187,10 @@ const WalletHistory = defineComponent({
       canGoBack,
       canGoNext,
       decryptMessage,
+      displayLedgerErrorModal,
       explorerUrlBase,
       decryptedMessages,
+      closeLedgerErrorModal,
       loadingHistory,
       nativeToken,
       nextPage,
