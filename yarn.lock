@@ -2226,10 +2226,10 @@
     "@typescript-eslint/types" "4.23.0"
     eslint-visitor-keys "^2.0.0"
 
-"@vee-validate/rules@^4.4.5":
-  version "4.4.5"
-  resolved "https://registry.yarnpkg.com/@vee-validate/rules/-/rules-4.4.5.tgz#03e3223145a95dc1d009f416a932da89bb4f7b09"
-  integrity sha512-hjF7hjmOEOWab1N1+pvxEfpBs1UQ1X9Jp4Uqp25IStqlxMivrb2KD+aROfd0XQv6DEilIJr/1IOu1k4uMXvVrg==
+"@vee-validate/rules@^4.5.9":
+  version "4.5.10"
+  resolved "https://registry.yarnpkg.com/@vee-validate/rules/-/rules-4.5.10.tgz#c2d1ae539ef105622388f6061c11f9f395a99e17"
+  integrity sha512-8kFsXvCzP1JHuyzXyH7cIhLQOJnba6ySG5GzaKnWGIJnbT1itNJ6dACdedjW3bWWpYiOkxi76Nqj14UL0ukMFQ==
 
 "@vue/babel-helper-vue-jsx-merge-props@^1.2.1":
   version "1.2.1"
@@ -2570,6 +2570,11 @@
     vue-template-es2015-compiler "^1.9.0"
   optionalDependencies:
     prettier "^1.18.2"
+
+"@vue/devtools-api@^6.0.0-beta.15":
+  version "6.1.3"
+  resolved "https://registry.yarnpkg.com/@vue/devtools-api/-/devtools-api-6.1.3.tgz#a44c52e8fa6d22f84db3abdcdd0be5135b7dd7cf"
+  integrity sha512-79InfO2xHv+WHIrH1bHXQUiQD/wMls9qBk6WVwGCbdwP7/3zINtvqPNMtmSHXsIKjvUAHc8L0ouOj6ZQQRmcXg==
 
 "@vue/devtools-api@^6.0.0-beta.5":
   version "6.0.0-beta.7"
@@ -10115,9 +10120,9 @@ nan@^2.12.1:
   integrity sha512-M2ufzIiINKCuDfBSAUr1vWQ+vuVcA9kqx8JJUsbQi6yf1uGRyb7HfpdfUr5qLXf3B/t8dPvcjhKMmlfnP47EzQ==
 
 nanoid@^3.1.22:
-  version "3.1.22"
-  resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-3.1.22.tgz#b35f8fb7d151990a8aebd5aa5015c03cf726f844"
-  integrity sha512-/2ZUaJX2ANuLtTvqTlgqBQNJoQO398KyJgZloL0PZkC0dpysjncRUPsFe3DUPzz/y3h+u7C46np8RMuvF3jsSQ==
+  version "3.3.1"
+  resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-3.3.1.tgz#6347a18cac88af88f58af0b3594b723d5e99bb35"
+  integrity sha512-n6Vs/3KGyxPQd6uO0eH4Bv0ojGSUvuLlIHtC3Y0kEO23YRge8H9x1GCzLn28YX0H66pMkxuaeESFq4tKISKwdw==
 
 nanomatch@^1.2.9:
   version "1.2.13"
@@ -14210,10 +14215,12 @@ vary@^1, vary@~1.1.2:
   resolved "https://registry.yarnpkg.com/vary/-/vary-1.1.2.tgz#2299f02c6ded30d4a5961b0b9f74524a18f634fc"
   integrity sha1-IpnwLG3tMNSllhsLn3RSShj2NPw=
 
-vee-validate@^4.4.5:
-  version "4.4.5"
-  resolved "https://registry.yarnpkg.com/vee-validate/-/vee-validate-4.4.5.tgz#6e3db8266620d085835b8003ec088677fd3accf8"
-  integrity sha512-rewjEOZEPmUGWOnAKW3/HzRWLl9AHz4ESdcPoWLtA5RW0mnKOLfXlLre1Wrw0FopJlzN1Hc93GU4ji/3Kx1RPw==
+vee-validate@^4.5.9:
+  version "4.5.10"
+  resolved "https://registry.yarnpkg.com/vee-validate/-/vee-validate-4.5.10.tgz#425d4ca1e317361b86f7deb6600daec8942e9b90"
+  integrity sha512-7dZE0PZTNY3Ztp6Gz8iw+QS7Fz59vU1qkD0rBJkldkf9Faw2lFjWgE0tiCist5RQkLgt7/HaVbojzb/SCdutfA==
+  dependencies:
+    "@vue/devtools-api" "^6.0.0-beta.15"
 
 vendors@^1.0.0:
   version "1.0.4"
