@@ -46,6 +46,7 @@ interface useTransactionsInterface {
   readonly transactionFee: Ref<AmountT | null>;
   readonly transactionErrorMessage: Ref<string | null>;
   readonly pendingTransactions: Ref<Array<TransactionIntent>>;
+  readonly shouldShowMaxUnstakeConfirmation: Ref<boolean>;
 
   cancelTransaction: () => void;
   confirmTransaction: () => void;
@@ -64,6 +65,7 @@ const activeTransactionForm: Ref<string | null> = ref(null)
 
 const selectedCurrency: Ref<Decoded.TokenAmount | null> = ref(null)
 const shouldShowConfirmation: Ref<boolean> = ref(false)
+const shouldShowMaxUnstakeConfirmation: Ref<boolean> = ref(false)
 const confirmationMode: Ref<string | null> = ref(null)
 const pendingTransactions: Ref<PendingTransaction[]> = ref([])
 const stakeInput: Ref<StakeTokensInput | null> = ref(null)
@@ -106,6 +108,7 @@ export default function useTransactions (radix: ReturnType<typeof Radix.create>,
     if (didCancel) {
       cleanupTransactionSubs()
       shouldShowConfirmation.value = false
+      shouldShowMaxUnstakeConfirmation.value = false
       activeMessage.value = ''
       ledgerState.value = ''
       transactionState.value = 'PENDING'
@@ -137,6 +140,7 @@ export default function useTransactions (radix: ReturnType<typeof Radix.create>,
   // Navigate user to history view
   const handleTransactionCompleted = () => {
     shouldShowConfirmation.value = false
+    shouldShowMaxUnstakeConfirmation.value = false
     cleanupTransactionSubs()
     activeMessage.value = ''
     ledgerState.value = ''
@@ -246,6 +250,9 @@ export default function useTransactions (radix: ReturnType<typeof Radix.create>,
     })
 
     shouldShowConfirmation.value = true
+    if (unstakeInput.value.unstake_percentage) {
+      shouldShowMaxUnstakeConfirmation.value = true
+    }
 
     transactionSubs.add(
       completion.subscribe(handleTransactionCompleted, errorHandler)
@@ -285,6 +292,7 @@ export default function useTransactions (radix: ReturnType<typeof Radix.create>,
     ledgerState,
     selectedCurrency,
     shouldShowConfirmation,
+    shouldShowMaxUnstakeConfirmation,
     stakeInput,
     unstakeInput,
     transactionError,

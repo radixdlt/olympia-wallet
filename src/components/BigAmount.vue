@@ -1,5 +1,8 @@
 <template>
-  <span class="relative inline-flex flex-col items-center group cursor-pointer" @click.stop="copyText">
+  <span v-if="showMaxUnstakeText">
+    {{ $t('staking.maxUnstakeCapitalized') }}
+  </span>
+  <span v-else class="relative inline-flex flex-col items-center group cursor-pointer" @click.stop="copyText">
     <span>{{numberForDisplay}}</span>
     <div class="absolute invisible group-hover:visible -mt-full bg-rGrayLightest text-rBlack bottom-full text-xs p-1 left-0 rounded-sm shadow border border-solid border-rGrayLight">
       {{fullNumber}}
@@ -13,6 +16,7 @@ import { defineComponent, PropType } from 'vue'
 import { AmountT } from '@radixdlt/application'
 import BigNumber from 'bignumber.js'
 import { useToast } from 'vue-toastification'
+import { useI18n } from 'vue-i18n'
 
 BigNumber.set({
   ROUNDING_MODE: BigNumber.ROUND_HALF_UP,
@@ -105,11 +109,17 @@ const BigAmount = defineComponent({
     amount: {
       type: Object as PropType<AmountT>,
       required: true
+    },
+    showMaxUnstakeText: {
+      type: Boolean,
+      required: false,
+      default: false
     }
   },
 
   setup () {
     const toast = useToast()
+    const { t } = useI18n({ useScope: 'global' })
     return { toast }
   },
 

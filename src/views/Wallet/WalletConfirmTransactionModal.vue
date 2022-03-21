@@ -53,7 +53,17 @@
           <div class="border-b border-rGray py-3.5 flex items-center">
             <div class="w-26 text-right text-rGrayDark mr-6">{{ $t('transaction.amountLabel') }}</div>
             <div class="flex-1 flex flex-row items-center">
-              <big-amount :amount="amount" class="mr-1" />
+              <span
+                v-if="shouldShowMaxUnstakeConfirmation"
+                class="mr-1"
+              >
+                {{ $t('confirmation.maxUnstakeDisclaimer') }}
+              </span>
+              <big-amount
+                v-else
+                :amount="amount"
+                class="mr-1"
+              />
               <span class="uppercase" v-if="(stakeInput || unstakeInput) && nativeToken">{{ nativeToken.symbol }}</span>
               <span class="uppercase" v-else-if="selectedCurrencyToken">{{ selectedCurrencyToken.symbol }}</span>
             </div>
@@ -207,6 +217,7 @@ const WalletConfirmTransactionModal = defineComponent({
       confirmTransaction,
       ledgerState,
       stakeInput,
+      shouldShowMaxUnstakeConfirmation,
       unstakeInput,
       transactionFee,
       transactionState,
@@ -255,7 +266,7 @@ const WalletConfirmTransactionModal = defineComponent({
     const amount: ComputedRef<AmountOrUnsafeInput> = computed(() => {
       if (stakeInput.value) {
         return stakeInput.value.amount
-      } else if (unstakeInput.value) {
+      } else if (unstakeInput.value?.amount) {
         return unstakeInput.value.amount
       } else if (transferInput.value) {
         return transferInput.value.amount
@@ -367,6 +378,7 @@ const WalletConfirmTransactionModal = defineComponent({
       setErrors,
       shouldShowBuildingModal,
       shouldShowLedgerModal,
+      shouldShowMaxUnstakeConfirmation,
       stakeInput,
       unstakeInput,
       toContent,
