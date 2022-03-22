@@ -1,6 +1,6 @@
 'use strict'
 
-import electron, { app, ipcMain, protocol, BrowserWindow } from 'electron'
+import electron, { app, ipcMain, protocol, BrowserWindow, webContents } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 import path from 'path'
@@ -113,6 +113,29 @@ app.on('ready', async () => {
     }
   }
   createWindow()
+
+  // Count key press & cursor movement as interactions
+  let interactionCounter = 0;
+  win.webContents.on('before-input-event', (_, input) => {
+    if(input.type === 'keyDown') {
+      interactionCounter += 1;
+    }
+  })
+
+  win.webContents.on('cursor-changed', (_, type) => {
+    if(type) {
+      interactionCounter += 1
+    }
+  })
+
+  // Window refreshes if no interaction & 1hr passed
+  setInterval(() => {
+    if(interactionCounter === 0) {
+      win.reload()
+    }
+    interactionCounter = 0
+  }, 3600000)
+
   checkForUpdates()
 })
 
