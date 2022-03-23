@@ -79,6 +79,11 @@ async function createWindow () {
   }
 }
 
+function resetInteractionTimer(interval: NodeJS.Timeout) {
+  clearInterval(interval)
+  return setInterval(() => { win.reload() }, 3600000)
+}
+
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
   // On macOS it is common for applications and their menu bar
@@ -114,27 +119,21 @@ app.on('ready', async () => {
   }
   createWindow()
 
-  // Count key press & cursor movement as interactions
-  let interactionCounter = 0;
+  // Set interaction detection time period to 1hr. If user does not move mouse or
+  // interact with keyboard, refresh app and have User log in again.
+  let idleInterval = setInterval(() => { win.reload()}, 3600000)
+
   win.webContents.on('before-input-event', (_, input) => {
     if(input.type === 'keyDown') {
-      interactionCounter += 1;
+      idleInterval = resetInteractionTimer(idleInterval)
     }
   })
 
   win.webContents.on('cursor-changed', (_, type) => {
     if(type) {
-      interactionCounter += 1
+      idleInterval = resetInteractionTimer(idleInterval)
     }
   })
-
-  // Window refreshes if no interaction & 1hr passed
-  setInterval(() => {
-    if(interactionCounter === 0) {
-      win.reload()
-    }
-    interactionCounter = 0
-  }, 3600000)
 
   checkForUpdates()
 })
