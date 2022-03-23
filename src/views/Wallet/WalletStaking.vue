@@ -12,7 +12,7 @@
         <tabs-tab :isActive="activeForm == 'UNSTAKING'" @click="() => setForm('UNSTAKING')">{{ $t('staking.unstakeTab') }}</tabs-tab>
       </div>
       <form
-        @submit.prevent="chooseRightSubmitStake"
+        @submit.prevent="handleSubmitStakeForm"
         class="flex flex-col flex-1 mr-6"
       >
         <tabs-content :leftTabIsActive="activeForm == 'stake'">
@@ -284,12 +284,14 @@ const WalletStaking = defineComponent({
       setActiveForm(form)
       setActiveTransactionForm(form)
       resetForm()
+      setMaxUnstakeOff()
     }
 
     const handleAddToValidator = (validator: ValidatorAddressT) => {
       setActiveForm('STAKING')
       setActiveTransactionForm('stake')
       resetForm()
+      setMaxUnstakeOff()
       values.validator = validator.toString()
       validateField('validator')
     }
@@ -298,6 +300,7 @@ const WalletStaking = defineComponent({
       setActiveForm('UNSTAKING')
       setActiveTransactionForm('unstake')
       resetForm()
+      setMaxUnstakeOff()
       values.validator = validator.toString()
       validateField('validator')
     }
@@ -333,7 +336,7 @@ const WalletStaking = defineComponent({
         })
     }
 
-    const handleMaxSubmitStake = () => {
+    const handleMaxSubmitUnstake = () => {
       if (!nativeToken.value) return
       const safeAddress = safelyUnwrapValidator(values.validator)
       if (!safeAddress) return
@@ -355,9 +358,9 @@ const WalletStaking = defineComponent({
       maxUnstakeMode.value = false
     }
 
-    const chooseRightSubmitStake = () => {
-      if (maxUnstakeMode.value) {
-        handleMaxSubmitStake()
+    const handleSubmitStakeForm = () => {
+      if (maxUnstakeMode.value && activeForm.value === 'UNSTAKING') {
+        handleMaxSubmitUnstake()
       } else {
         handleSubmitStake()
       }
@@ -394,7 +397,7 @@ const WalletStaking = defineComponent({
       xrdBalance,
 
       // methods
-      chooseRightSubmitStake,
+      handleSubmitStakeForm,
       disableSubmit,
       handleAddToValidator,
       handleReduceFromValidator,
