@@ -1,5 +1,35 @@
 # Changelog
 
+## [1.3.3](https://www.github.com/radixdlt/olympia-wallet/compare/v1.3.2...v1.3.3) (2022-03-25)
+
+### What's Changed
+* feat: Handle incomplete hardware wallet signature  by @SK-Sam in https://github.com/radixdlt/olympia-wallet/pull/438
+* feat: Add disclaimer to wallet recovery by @SK-Sam in https://github.com/radixdlt/olympia-wallet/pull/442
+* Only show hardware modal when in hardware transaction flow by @alexandreaco in https://github.com/radixdlt/olympia-wallet/pull/437
+* chore: hide hidden tokens from send dropdown by @saminakh in https://github.com/radixdlt/olympia-wallet/pull/446
+* chore: add ledger decrypt message modal by @saminakh in https://github.com/radixdlt/olympia-wallet/pull/443
+* fix: Update disconnect hardware device error shape for new component by @alexandreaco in https://github.com/radixdlt/olympia-wallet/pull/452
+* fix: have all token symbols clickable and redirects to Explorer token page by @SK-Sam in https://github.com/radixdlt/olympia-wallet/pull/447
+* chore: Present users with a better error experience if they loose network connectivity by @alexandreaco in https://github.com/radixdlt/olympia-wallet/pull/453
+* chore: Don’t show validator uptime for validators below top 100 by @alexandreaco in https://github.com/radixdlt/olympia-wallet/pull/457
+* fix: decrypt errors while switching accounts on history page by @SK-Sam in https://github.com/radixdlt/olympia-wallet/pull/456
+* fix: Use latest SDK function to verify password by @alexandreaco in https://github.com/radixdlt/olympia-wallet/pull/458
+* fix: Correctly load token balances when switching active account by @alexandreaco in https://github.com/radixdlt/olympia-wallet/pull/459
+* fix: filter unregisterd validators from top 100 by @xstelea in https://github.com/radixdlt/olympia-wallet/pull/463
+* fix: transaction form prematurely showing amount error  by @P-v-R in https://github.com/radixdlt/olympia-wallet/pull/464
+* fix: staking amount error prematurely displays by @P-v-R in https://github.com/radixdlt/olympia-wallet/pull/466
+* fix: staking prematurely displays error by @P-v-R in https://github.com/radixdlt/olympia-wallet/pull/468
+* fix: display error modal on failed hardware decryption by @P-v-R in https://github.com/radixdlt/olympia-wallet/pull/472
+* fix: bug tokens with same symbols are incorrectly grouping  by @P-v-R in https://github.com/radixdlt/olympia-wallet/pull/471
+* chore: Add max button for unstaking by @SK-Sam in https://github.com/radixdlt/olympia-wallet/pull/469
+* fix: Max Unstaking button should only fire for when unstake form is active by @alexandreaco in https://github.com/radixdlt/olympia-wallet/pull/475
+
+### New Contributors
+* @xstelea made their first contribution in https://github.com/radixdlt/olympia-wallet/pull/463
+* @P-v-R made their first contribution in https://github.com/radixdlt/olympia-wallet/pull/464
+
+**Full Changelog**: https://github.com/radixdlt/olympia-wallet/compare/v1.3.2...v1.3.3
+
 ## [1.3.2](https://www.github.com/radixdlt/olympia-wallet/compare/v1.3.1...v1.3.2) (2022-02-08)
 
 ### Bug Fixes
