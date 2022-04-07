@@ -84,7 +84,6 @@ const HomeEnterPasscode = defineComponent({
         )
         return firstValueFrom(sub)
       }).then((network) => {
-        router.push('/wallet')
         setNetwork(network)
         walletLoaded()
       }).catch((error) => {

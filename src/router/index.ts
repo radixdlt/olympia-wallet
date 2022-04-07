@@ -20,7 +20,7 @@ const routes: Array<RouteRecordRaw> = [
     })
   },
   {
-    path: '/wallet',
+    path: '/wallet/:activeAccountId',
     name: 'Wallet',
     component: Wallet,
     children: [
@@ -43,12 +43,13 @@ const routes: Array<RouteRecordRaw> = [
       {
         path: 'account-edit-name',
         component: AccountEditName
-      },
-      {
-        path: 'settings',
-        component: SettingsIndex
       }
     ]
+  },
+  {
+    path: '/settings',
+    name: 'Settings',
+    component: SettingsIndex
   },
   {
     path: '/create-wallet',

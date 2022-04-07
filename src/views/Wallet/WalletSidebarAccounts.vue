@@ -147,12 +147,12 @@ const WalletSidebarAccounts = defineComponent({
       switchAccount,
       isHardwareWalletActive,
       debugSwitch (account: AccountT) {
-        switchAccount(account)
+        switchAccount(router, account)
       },
       editName (account: AccountT) {
         setState(false)
         router.push('/wallet/account-edit-name')
-        switchAccount(account)
+        switchAccount(router, account)
       },
       connectHardwareWallet,
       verifyHardwareWalletAddress,
