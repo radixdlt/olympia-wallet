@@ -26,15 +26,15 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed } from 'vue'
-
+import { defineComponent, computed, watch } from 'vue'
+import { AccountAddress } from '@radixdlt/account'
 import WalletConfirmTransactionModal from './WalletConfirmTransactionModal.vue'
 import WalletSidebar from './WalletSidebar.vue'
 import WalletLedgerInteractionModal from '@/views/Wallet/WalletLedgerInteractionModal.vue'
 import WalletLoading from './WalletLoading.vue'
 import WalletLedgerVerifyAddressModal from '@/views/Wallet/WalletLedgerVerifyAddressModal.vue'
 import WalletLedgerDeleteModal from '@/views/Wallet/WalletLedgerDeleteModal.vue'
-import { useRouter, onBeforeRouteUpdate, onBeforeRouteLeave } from 'vue-router'
+import { useRouter, onBeforeRouteUpdate, onBeforeRouteLeave, useRoute } from 'vue-router'
 import { useTransactions, useWallet } from '@/composables'
 
 const WalletIndex = defineComponent({
@@ -49,6 +49,7 @@ const WalletIndex = defineComponent({
 
   setup () {
     const router = useRouter()
+    const route = useRoute()
 
     const {
       activeAccount,
@@ -59,10 +60,21 @@ const WalletIndex = defineComponent({
       radix,
       showDeleteHWWalletPrompt,
       showLedgerVerify,
+      switchAccount,
+      setActiveAccount,
       walletLoaded,
       waitUntilAllLoaded
     } = useWallet(router)
 
+    watch(
+      () => route.params.activeAccountId,
+      (accountId) => {
+        const id = Array.isArray(accountId) ? accountId[0] : accountId
+        setActiveAccount(id)
+        // await switchAccount(newId, router)
+      },
+      { immediate: true }
+    )
     const { shouldShowConfirmation } = useTransactions(radix, router, activeAccount.value, hardwareAccount.value)
 
     onBeforeRouteUpdate(async () => {

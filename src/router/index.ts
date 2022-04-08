@@ -26,19 +26,23 @@ const routes: Array<RouteRecordRaw> = [
     children: [
       {
         path: '',
-        component: WalletOverview
+        component: WalletOverview,
+        name: 'WalletOverview'
       },
       {
         path: 'transaction',
-        component: WalletTransaction
+        component: WalletTransaction,
+        name: 'WalletTransaction'
       },
       {
         path: 'staking',
-        component: WalletStaking
+        component: WalletStaking,
+        name: 'WalletStaking'
       },
       {
         path: 'history',
-        component: WalletHistory
+        component: WalletHistory,
+        name: 'WalletHistory'
       },
       {
         path: 'account-edit-name',

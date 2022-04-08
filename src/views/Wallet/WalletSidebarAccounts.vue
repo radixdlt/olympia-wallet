@@ -99,8 +99,8 @@ const WalletSidebarAccounts = defineComponent({
   setup () {
     const router = useRouter()
     const {
+      accounts,
       activeAccount,
-      allAccounts,
       addAccount,
       switchAccount,
       connectHardwareWallet,
@@ -111,6 +111,7 @@ const WalletSidebarAccounts = defineComponent({
       activeNetwork,
       verifyHardwareWalletAddress
     } = useWallet(router)
+
     const { setState } = useSidebar()
     const showHardwareHelper = ref(false)
 
@@ -121,8 +122,8 @@ const WalletSidebarAccounts = defineComponent({
     })
 
     const localAccounts: ComputedRef<AccountT[]> = computed(() => {
-      if (!allAccounts.value) return []
-      return allAccounts.value.filter((account: AccountT) => {
+      if (!accounts.value) return []
+      return accounts.value.all.filter((account: AccountT) => {
         return account.signingKey.isLocalHDSigningKey
       })
     })
@@ -133,7 +134,6 @@ const WalletSidebarAccounts = defineComponent({
     })
 
     return {
-      allAccounts,
       activeAccount,
       derivedAccountIndex,
       activeNetwork,
@@ -147,12 +147,13 @@ const WalletSidebarAccounts = defineComponent({
       switchAccount,
       isHardwareWalletActive,
       debugSwitch (account: AccountT) {
-        switchAccount(router, account)
+        const name = router.currentRoute.value.name || 'WalletOverview'
+        router.push({ name, params: { activeAccountId: account.address.toString() } })
       },
       editName (account: AccountT) {
         setState(false)
         router.push('/wallet/account-edit-name')
-        switchAccount(router, account)
+        switchAccount(account)
       },
       connectHardwareWallet,
       verifyHardwareWalletAddress,

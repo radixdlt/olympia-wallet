@@ -67,7 +67,7 @@ const AccountListItem = defineComponent({
 
     const editName = () => {
       setState(false)
-      switchAccount(router, account.value)
+      switchAccount(account.value)
       router.push('/wallet/account-edit-name')
     }
 
