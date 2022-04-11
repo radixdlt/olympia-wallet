@@ -35,6 +35,28 @@ const migrations = {
 
     if (!store.get('wallets.MAINNET.latestAddress')) store.set('wallets.MAINNET.latestAddress', '')
     if (!store.get('wallets.STOKENET.latestAddress')) store.set('wallets.STOKENET.latestAddress', '')
+  },
+  '1.3.4': (store: Record<string, any>) => {
+    const existingMainnetHardwareAddress = store.get('wallets.mainnet.hardwareAddress')
+    if (!store.get('wallets.mainnet.hardwareDevices')) store.set('wallets.mainnet.hardwareDevices', [])
+
+    if (existingMainnetHardwareAddress) {
+      const primaryStokenetAccount: any = {}
+      primaryStokenetAccount["name"] = existingMainnetHardwareAddress
+      primaryStokenetAccount["addresses"] = [{"name": existingMainnetHardwareAddress, "address": existingMainnetHardwareAddress}]
+      store.set(`wallets.mainnet.hardwareDevices`, [primaryStokenetAccount])
+    }
+
+    // ------------------------------------------------------------------------------------------------------------
+    const existingStokenetHardwareAddress = store.get('wallets.stokenet.hardwareAddress')
+    if (!store.get('wallets.stokenet.hardwareDevices')) store.set('wallets.stokenet.hardwareDevices', [])
+
+    if (existingStokenetHardwareAddress) {
+      const primaryStokenetAccount: any = {}
+      primaryStokenetAccount["name"] = existingStokenetHardwareAddress
+      primaryStokenetAccount["addresses"] = [{"name": existingStokenetHardwareAddress, "address": existingStokenetHardwareAddress}]
+      store.set(`wallets.stokenet.hardwareDevices`, [primaryStokenetAccount])
+    }
   }
 }
 

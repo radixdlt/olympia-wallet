@@ -119,7 +119,8 @@ const messages = {
         title: 'Ledger Device Disconnected',
         content: 'Unable to decrypt message. Ensure your device is connected or switch accounts to continue.',
         buttonText: 'Dismiss'
-      }
+      },
+      hardwareWalletAccounts: 'Hardware Wallet Accounts:'
     },
     hardware: {
       disclaimer: 'Whenever copying a hardware wallet address, it is strongly recommended to verify it on the hardware device. To copy and verify this address, please switch to the hardware address first by selecting it in the account picker.',

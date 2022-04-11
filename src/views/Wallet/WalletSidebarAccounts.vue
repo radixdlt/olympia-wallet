@@ -30,8 +30,8 @@
 
     <div class="border-t border-rGray border-opacity-50 pt-4">
       <div v-if="hardwareAddress" class="mt-2">
-        <div class="flex justify-between">
-
+          <span class="mt-3 mb-6 font-semibold">{{ $t('wallet.hardwareWalletAccounts') }}</span>
+        <div class="flex justify-between mt-4">
           <a class="flex cursor-pointer"
             @click="hardwareSwitch(hardwareAddress)">
             <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-rGreen" :class="{'fill-current': isHardwareWalletActive}">
@@ -53,9 +53,13 @@
         </div>
 
         <div class="text-xs text-white relative z-20 flex justify-between mt-4">
-          <span class="mr-2">{{ $t('wallet.addressLabel') }}</span>
-          <span class="flex-1 w-full truncate font-mono">{{ displayHardwareAddress }}</span>
-          <click-to-copy :address="hardwareAddress" />
+          <!-- <span class="mr-2">{{ $t('wallet.addressLabel') }}</span> -->
+          <span class="flex-1 w-full font-mono">{{ displayHardwareAddress }}</span>
+          <click-to-copy
+              :address="hardwareAddress"
+              :checkForHardwareAddress=true
+              @verifyHardwareAddress="verifyHardwareWalletAddress"
+            />
         </div>
       </div>
 
@@ -71,6 +75,9 @@
           <p class="w-48">Please ensure your Ledger is connected and the Radix application is selected.</p>
         </div>
       </div>
+        <div @click="addHardwareAccount" class="mt-3 mb-4 inline-flex flex-row items-center cursor-pointer hover:text-rGreen transition-colors">
+         {{ $t('wallet.addAccount') }}
+        </div>
     </div>
   </div>
 </template>
@@ -96,6 +103,7 @@ const WalletSidebarAccounts = defineComponent({
       activeAddress,
       addAccount,
       switchAddress,
+      addHardwareAccount,
       connectHardwareWallet,
       setDeleteHWWalletPrompt,
       hardwareAccount,
@@ -144,6 +152,7 @@ const WalletSidebarAccounts = defineComponent({
         })
       },
       switchAddress,
+      addHardwareAccount,
       isHardwareWalletActive,
       debugSwitch (account: AccountT) {
         const name = router.currentRoute.value.name || 'WalletOverview'

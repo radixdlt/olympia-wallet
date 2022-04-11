@@ -1,6 +1,7 @@
 import { IpcMainInvokeEvent } from 'electron/main'
 import Store from 'electron-store'
 import migrations from '@/electron-store/migrations'
+import { isObject } from '@radixdlt/application';
 
 type MaybeString = string | null;
 export type AccountName = { address: string; name: string; }
@@ -39,6 +40,20 @@ export const saveDerivedAccountsIndex = (event: IpcMainInvokeEvent, data: string
   store.set(`wallets.${network}.derivedAccountsIndex`, num)
 }
 
+export const saveDerivedHardwareAccountsIndex = (event: IpcMainInvokeEvent, data: string): void => {
+  const { num, network, deviceId } = JSON.parse(data) // instead of num, need this to be the new account address
+  const devices: any = store.get(`wallets.${network}.hardwareDevices`, []) 
+  
+  // deviceId should be the new account address
+  const newAddressStruct = {'name': deviceId, 'account': deviceId}  
+  
+  // copy/destructure existing hardwareDevices struct and append new address to end
+  const newAddresses = [{'name': deviceId, addresses: [...devices[0].addresses, newAddressStruct]}] 
+  console.log(newAddresses)
+
+  store.set(`wallets.${network}.hardwareDevices`, newAddresses)
+}
+
 export const getDerivedAccountsIndex = (event: IpcMainInvokeEvent, network: string) => {
   return store.get(`wallets.${network}.derivedAccountsIndex`)
 }
@@ -50,6 +65,22 @@ export const saveHardwareAddress = (event: IpcMainInvokeEvent, data: string) => 
 
 export const getHardwareAddress = (event: IpcMainInvokeEvent, network: string) => {
   return store.get(`wallets.${network}.hardwareAddress`)
+}
+
+export const getHardwareDevices = (event: IpcMainInvokeEvent, network: string) => {
+  const hardwareStoreList: any = store.get(`wallets.${network}.hardwareDevices`)
+  return hardwareStoreList.map((device: { name: string; }) => { return device.name})
+}
+
+export const getHardwareDeviceAccounts = (event: IpcMainInvokeEvent, network: string, deviceId: string) => {
+  const hardwareStoreList: any = store.get(`wallets.${network}.hardwareDevices`)
+  // return hardwareStoreList.map((device: { name: string; addresses: any; }) => {
+  //   if (device.name == deviceId){
+  //     // console.log('----->>>', device.addresses)
+  //     return device.addresses
+  //   }
+  // })
+  return hardwareStoreList
 }
 
 export const deleteHardwareAddress = (event: IpcMainInvokeEvent, network: string) => {

@@ -20,6 +20,10 @@ export const saveDerivedAccountsIndex = (num: number, network: Network): Promise
   resolve(window.ipcRenderer.invoke('save-num-accounts', JSON.stringify({ num, network })))
 })
 
+export const saveDerivedHardwareAccountsIndex = (num: number, network: Network, deviceId: string): Promise<string> => new Promise((resolve) => {
+  resolve(window.ipcRenderer.invoke('save-hw-num-accounts', JSON.stringify({ num, network, deviceId })))
+})
+
 export const getDerivedAccountsIndex = (network: Network): Promise<string> => new Promise((resolve) => {
   resolve(window.ipcRenderer.invoke('get-num-accounts', String(network)))
 })
@@ -30,6 +34,14 @@ export const saveHardwareWalletAddress = (address: string, network: Network): Pr
 
 export const getHardwareWalletAddress = (network: Network): Promise<string> => new Promise((resolve) => {
   resolve(window.ipcRenderer.invoke('get-hw-address', String(network)))
+})
+
+export const getHardwareDevices = (network: Network): Promise<string> => new Promise((resolve) => {
+  resolve(window.ipcRenderer.invoke('get-hw-devices', String(network)))
+})
+
+export const getHardwareDeviceAccounts = (network: Network, deviceId: string): Promise<any> => new Promise((resolve) => {
+  resolve(window.ipcRenderer.invoke('get-hw-device-accounts', String(network), deviceId))
 })
 
 export const deleteHardwareWalletAddress = (network: Network): Promise<string> => new Promise((resolve) => {
