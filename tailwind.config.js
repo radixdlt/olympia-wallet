@@ -23,7 +23,7 @@ module.exports = {
           gray: 'rgba(242, 242, 252, 0.3)',
           greenLighter: 'rgba(0, 195, 137, 0.2)',
           greenLight: 'rgba(0, 195, 137, 0.4)'
-        }
+        },
       },
       fontSize: {
         xxs: '10px'
@@ -67,7 +67,8 @@ module.exports = {
       padding: ['odd', 'even'],
       margin: ['odd', 'even'],
       visibility: ['group-hover'],
-      display: ['group-hover']
+      display: ['group-hover'],
+      borderWidth: ['hover']
     }
   },
   plugins: [

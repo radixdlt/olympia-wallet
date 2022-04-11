@@ -27,7 +27,6 @@
 
 <script lang="ts">
 import { defineComponent, computed, watch } from 'vue'
-import { AccountAddress } from '@radixdlt/account'
 import WalletConfirmTransactionModal from './WalletConfirmTransactionModal.vue'
 import WalletSidebar from './WalletSidebar.vue'
 import WalletLedgerInteractionModal from '@/views/Wallet/WalletLedgerInteractionModal.vue'
