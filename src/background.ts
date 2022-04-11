@@ -12,12 +12,15 @@ import {
   saveAccountName,
   getDerivedAccountsIndex,
   saveDerivedAccountsIndex,
+  saveDerivedHardwareAccountsIndex,
   saveHardwareAddress,
   saveLatestAccountAddress,
   getAcceptedTos,
   setAcceptedTos,
   getHardwareAddress,
   deleteHardwareAddress,
+  getHardwareDevices,
+  getHardwareDeviceAccounts,
   resetStore,
   persistNodeSelection,
   fetchSelectedNode,
@@ -126,11 +129,14 @@ ipcMain.handle('get-account-names', getAccountNames)
 ipcMain.handle('get-latest-account-address', getLatestAccountAddress)
 ipcMain.handle('save-latest-account-address', saveLatestAccountAddress)
 ipcMain.handle('save-num-accounts', saveDerivedAccountsIndex)
+ipcMain.handle('save-hw-num-accounts', saveDerivedHardwareAccountsIndex)
 ipcMain.handle('get-num-accounts', getDerivedAccountsIndex)
 ipcMain.handle('validate-pin-message', validatePin)
 ipcMain.handle('save-hw-address', saveHardwareAddress)
 ipcMain.handle('get-hw-address', getHardwareAddress)
 ipcMain.handle('delete-hw-address', deleteHardwareAddress)
+ipcMain.handle('get-hw-devices', getHardwareDevices)
+ipcMain.handle('get-hw-device-accounts', getHardwareDeviceAccounts)
 ipcMain.handle('send-apdu', sendAPDU)
 ipcMain.handle('reset-store', resetStore)
 ipcMain.handle('persist-node-selection', persistNodeSelection)

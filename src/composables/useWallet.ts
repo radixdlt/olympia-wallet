@@ -26,9 +26,12 @@ import {
   deleteHardwareWalletAddress,
   getDerivedAccountsIndex,
   getHardwareWalletAddress,
+  getHardwareDevices,
+  getHardwareDeviceAccounts,
   resetStore,
   saveAccountName,
   saveDerivedAccountsIndex,
+  saveDerivedHardwareAccountsIndex,
   saveHardwareWalletAddress,
   saveLatestAccountAddress,
   getAccountNames,
@@ -125,6 +128,7 @@ interface useWalletInterface {
   accountNameFor: (address: AccountAddressT) => string;
   accountRenamed: (newName: string) => void;
   addAccount: () => Promise<AccountT | false>;
+  addHardwareAccount: () => void;
   connectHardwareWallet: () => void;
   createWallet: (mnemonic: MnemomicT, pass: string, network: Network) => Promise<WalletT>;
   deleteLocalHardwareAddress: () => void;
@@ -227,6 +231,24 @@ const addAccount = async () : Promise<AccountT | false> => {
   fetchAccountsForNetwork(activeNetwork.value)
   accounts.value = await firstValueFrom(radix.accounts)
   return newAccount
+}
+
+const addHardwareAccount = async () => {
+  if (!activeNetwork.value) return
+  getDerivedAccountsIndex(activeNetwork.value)
+    .then((index: string) => {
+      if (!activeNetwork.value) return
+      saveDerivedHardwareAccountsIndex(Number(index) + 1, activeNetwork.value, 'tdx1qsps3cs7dkhhpgrvulm32222cgrekn99d9sqke48e0vw0echs9w2hysn46mcy')
+
+      // radix.deriveNextAccount({ alsoSwitchTo: true })
+    })
+  console.log('add a hw account!')
+  const network = await firstValueFrom(radix.ledger.networkId())
+  const devices = await getHardwareDevices(network)
+  const firstHwDeviceId = devices[0]
+  const ledgerAccounts = await getHardwareDeviceAccounts(network, firstHwDeviceId)
+  console.log('-ledgerId->', devices, firstHwDeviceId)
+  console.log('-accounts->', ledgerAccounts[0].addresses)
 }
 
 const switchAddress = (address: AccountAddressT) => {
@@ -428,6 +450,7 @@ export default function useWallet (router: Router): useWalletInterface {
     accountNameFor,
     accountRenamed,
     addAccount,
+    addHardwareAccount,
     connectHardwareWallet,
     createWallet,
     deleteLocalHardwareAddress,
