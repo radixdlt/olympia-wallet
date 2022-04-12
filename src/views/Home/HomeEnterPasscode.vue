@@ -90,11 +90,11 @@ const HomeEnterPasscode = defineComponent({
         setConnected(false)
         if (error.message === 'network timeout') {
           setTab('nodes')
-          router.push('/wallet/settings')
+          router.push('/settings')
         } else if (error.cause === 'NETWORK_ID_FAILED') {
           setError(new Error(t('errors.gatewayError', { url: nodeUrl.value })))
           setTab('nodes')
-          router.push('/wallet/settings')
+          router.push('/settings')
         }
         setErrors({
           password: t('validations.incorrectPassword')

@@ -20,8 +20,8 @@
 </template>
 <script lang="ts">
 import { defineComponent, computed } from 'vue'
-import WalletSidebar from './WalletSidebar.vue'
-import WalletLoading from './WalletLoading.vue'
+import WalletSidebar from '@/views/Wallet/WalletSidebar.vue'
+import WalletLoading from '@/views/Wallet/WalletLoading.vue'
 import { useWallet } from '@/composables'
 import { useRouter } from 'vue-router'
 const WalletIndex = defineComponent({
@@ -36,9 +36,8 @@ const WalletIndex = defineComponent({
       activeNetwork,
       hasWallet,
       radix,
-      walletLoaded,
+      walletLoaded
     } = useWallet(router)
-
 
     window.ipcRenderer.on('resetToHome', () => {
       radix.__reset()

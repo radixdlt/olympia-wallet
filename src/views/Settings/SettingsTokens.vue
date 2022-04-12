@@ -62,13 +62,6 @@ export default defineComponent({
     LoadingIcon
   },
 
-  props: {
-    activeAccount: {
-      type: Object as PropType<AccountT>,
-      required: true
-    }
-  },
-
   setup () {
     const hiddenTokens: Ref<string[]> = ref([])
     const tokenToUnhide: Ref<Token | null> = ref(null)

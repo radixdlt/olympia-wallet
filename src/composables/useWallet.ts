@@ -124,7 +124,7 @@ interface useWalletInterface {
 
   accountNameFor: (address: AccountAddressT) => string;
   accountRenamed: (newName: string) => void;
-  addAccount: () => void;
+  addAccount: () => Promise<AccountT | false>;
   connectHardwareWallet: () => void;
   createWallet: (mnemonic: MnemomicT, pass: string, network: Network) => Promise<WalletT>;
   deleteLocalHardwareAddress: () => void;
@@ -182,6 +182,7 @@ const fetchAccountsForNetwork = async (network: Network) => {
   } else {
     saveDerivedAccountsIndex(0, network)
   }
+  return accounts.value
 }
 
 const waitUntilAllLoaded = async () => firstValueFrom(allLoadedObservable)
@@ -191,13 +192,12 @@ const reloadSubscriptions = () => reloadTrigger.next(Math.random())
 
 const initWallet = async (router: Router) => {
   const account = await firstValueFrom(radix.activeAccount)
-  const accountsRes = await firstValueFrom(radix.accounts)
   const networkRes = await firstValueFrom(radix.ledger.networkId())
   latestAddress.value = await getLatestAccountAddress(networkRes)
   accountNames.value = await getAccountNames()
   versionNumber.value = await getVersionNumber()
   updateAvailable.value = await getIsUpdateAvailable()
-  fetchAccountsForNetwork(networkRes)
+  await fetchAccountsForNetwork(networkRes)
 
   activeAccount.value = account
   activeAddress.value = account.address
@@ -217,14 +217,16 @@ const initWallet = async (router: Router) => {
   }
 }
 
-const addAccount = () => {
-  if (!activeNetwork.value) return
-  getDerivedAccountsIndex(activeNetwork.value)
-    .then((index: string) => {
-      if (!activeNetwork.value) return
-      saveDerivedAccountsIndex(Number(index) + 1, activeNetwork.value)
-      radix.deriveNextAccount({ alsoSwitchTo: true })
-    })
+const addAccount = async () : Promise<AccountT | false> => {
+  if (!activeNetwork.value) return false
+  const index = await getDerivedAccountsIndex(activeNetwork.value)
+  await saveDerivedAccountsIndex(Number(index) + 1, activeNetwork.value)
+  radix.deriveNextAccount({ alsoSwitchTo: true })
+  const newAccount = await firstValueFrom(radix.activeAccount)
+  setActiveAddress(newAccount.address.toString())
+  fetchAccountsForNetwork(activeNetwork.value)
+  accounts.value = await firstValueFrom(radix.accounts)
+  return newAccount
 }
 
 const switchAddress = (address: AccountAddressT) => {
@@ -240,7 +242,6 @@ const switchAddress = (address: AccountAddressT) => {
 }
 
 const setActiveAddress = (accountAddressValue: string) => {
-  console.log(accountAddressValue)
   const address = AccountAddress.fromUnsafe(accountAddressValue)
   if (address.isErr()) {
     throw Error('Invalid Address')
