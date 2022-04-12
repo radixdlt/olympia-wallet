@@ -114,14 +114,13 @@ const WalletHistory = defineComponent({
     const router = useRouter()
     const {
       activeAddress,
-      activeAccount,
       explorerUrlBase,
       hardwareAccount,
       radix,
       verifyHardwareWalletAddress
     } = useWallet(router)
 
-    if (!activeAccount.value) {
+    if (!activeAddress.value) {
       return
     }
 
@@ -139,7 +138,7 @@ const WalletHistory = defineComponent({
       resetHistory,
       updateActiveAccount,
       isDecrypting
-    } = useHistory(radix, activeAccount.value)
+    } = useHistory(radix, activeAddress.value)
 
     const { nativeToken, nativeTokenUnsub } = useNativeToken(radix)
 
@@ -154,8 +153,7 @@ const WalletHistory = defineComponent({
     })
 
     const shouldShowDecryptModal: ComputedRef<boolean> = computed(() =>
-      isDecrypting.value && activeAccount && hardwareAccount &&
-      activeAccount.value === hardwareAccount.value
+      isDecrypting.value && !!activeAddress.value && !!hardwareAccount.value && activeAddress.value === hardwareAccount.value.address
     )
 
     const closeLedgerErrorModal = () => {
@@ -164,9 +162,9 @@ const WalletHistory = defineComponent({
     }
 
     // Fetch new history when active account changes
-    watch((activeAccount), () => {
-      if (activeAccount.value) {
-        updateActiveAccount(activeAccount.value)
+    watch((activeAddress), () => {
+      if (activeAddress.value) {
+        updateActiveAccount(activeAddress.value)
       }
       resetHistory()
     })
@@ -182,7 +180,6 @@ const WalletHistory = defineComponent({
     })
 
     return {
-      activeAccount,
       activeAddress,
       canGoBack,
       canGoNext,

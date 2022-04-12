@@ -73,10 +73,10 @@ const SettingsIndex = defineComponent({
     const mnemonic: Ref<MnemomicT | null> = ref(null)
     const userRequestedMnemonic = new Subject<boolean>()
     const router = useRouter()
-    const { connected, radix, activeAccount } = useWallet(router)
+    const { connected, radix, activeAddress } = useWallet(router)
     const { activeTab, setTab } = useSettingsTab()
 
-    const activeAccountIsLoading: ComputedRef<boolean> = computed(() => !activeAccount.value)
+    const activeAccountIsLoading: ComputedRef<boolean> = computed(() => !activeAddress.value)
 
     // Only fetch mnemonic if user confirms pin
     const watchUserDidRequstMnemonic = combineLatest<[MnemomicT, boolean]>([radix.revealMnemonic(), userRequestedMnemonic])
@@ -100,7 +100,7 @@ const SettingsIndex = defineComponent({
     onUnmounted(() => subs.unsubscribe())
 
     return {
-      activeAccount,
+      activeAddress,
       activeAccountIsLoading,
       connected,
       mnemonic,

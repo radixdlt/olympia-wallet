@@ -1,7 +1,6 @@
-import { Radix, AccountT, SimpleExecutedTransaction, ExecutedTransaction } from '@radixdlt/application'
+import { Radix, AccountAddressT, SimpleExecutedTransaction, ExecutedTransaction } from '@radixdlt/application'
 import { computed, ComputedRef, Ref, ref } from 'vue'
 import { firstValueFrom, interval, Subscription } from 'rxjs'
-import { formatWalletAddressForDisplay } from '@/helpers/formatter'
 
 const PAGE_SIZE = 30
 
@@ -18,12 +17,12 @@ const transactions: Ref<SimpleExecutedTransaction[]> = ref([])
 
 const isDecrypting: Ref<boolean> = ref(false)
 
-export default function useHistory (radix: ReturnType<typeof Radix.create>, account: AccountT) {
+export default function useHistory (radix: ReturnType<typeof Radix.create>, address: AccountAddressT) {
   let transactionSub: Subscription | null
-  const activeAccount: Ref<AccountT> = ref(account)
+  const activeAddress: Ref<AccountAddressT> = ref(address)
 
   const fetchTransactions = async (cursor?: string) => {
-    const params = { size: PAGE_SIZE, address: activeAccount.value.address, cursor }
+    const params = { size: PAGE_SIZE, address: address, cursor }
     const data = await firstValueFrom(radix.ledger.transactionHistory(params))
     transactions.value = data.transactions
     loadingHistory.value = false
@@ -49,8 +48,8 @@ export default function useHistory (radix: ReturnType<typeof Radix.create>, acco
     fetchTransactions()
   }
 
-  const updateActiveAccount = (acct: AccountT) => {
-    activeAccount.value = acct
+  const updateActiveAccount = (addr: AccountAddressT) => {
+    activeAddress.value = addr
   }
 
   const decryptMessage = (tx: ExecutedTransaction) => {

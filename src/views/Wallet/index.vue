@@ -52,7 +52,7 @@ const WalletIndex = defineComponent({
     const route = useRoute()
 
     const {
-      activeAccount,
+      activeAddress,
       activeNetwork,
       hardwareAccount,
       hardwareInteractionState,
@@ -60,27 +60,27 @@ const WalletIndex = defineComponent({
       radix,
       showDeleteHWWalletPrompt,
       showLedgerVerify,
-      switchAccount,
-      setActiveAccount,
+      setActiveAddress,
       walletLoaded,
       waitUntilAllLoaded
     } = useWallet(router)
 
     watch(
-      () => route.params.activeAccountId,
+      () => route.params.activeAddress,
       (accountId) => {
         const id = Array.isArray(accountId) ? accountId[0] : accountId
-        setActiveAccount(id)
+        setActiveAddress(id)
         // await switchAccount(newId, router)
       },
       { immediate: true }
     )
-    const { shouldShowConfirmation } = useTransactions(radix, router, activeAccount.value, hardwareAccount.value)
 
     onBeforeRouteUpdate(async () => {
       await waitUntilAllLoaded()
       return true
     })
+    if (!activeAddress.value) return
+    const { shouldShowConfirmation } = useTransactions(radix, router, activeAddress.value, hardwareAccount.value)
 
     // Return home if wallet is undefined
     if (!hasWallet.value) router.push('/')

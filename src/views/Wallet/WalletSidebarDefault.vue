@@ -9,14 +9,14 @@
       @click="setState(true)"
     >
       <div class="relative py-3">
-        <account-list-item :account="activeAccount" v-if="activeAccount"/>
+        <account-list-item :address="activeAddress" v-if="activeAddress"/>
         <div class="absolute bg-gradient-to-r from-blueEnd to-transparent inset-0 w-full h-full z-10 -mx-8 opacity-40">
         </div>
       </div>
     </div>
 
-    <div class="flex flex-col flex-1 px-5" v-if="activeAccount">
-      <router-link to="/wallet/${activeAddress}" custom v-slot="{ href, navigate, isExactActive }">
+    <div class="flex flex-col flex-1 px-5" v-if="activeAddress">
+      <router-link :to="{ name: 'WalletOverview', params: { activeAddress: activeAddress?.toString() }}" custom v-slot="{ href, navigate, isExactActive }">
         <wallet-nav-link :href="href" :navigate="navigate" :isActive="isExactActive" :title="$t('wallet.navBalances')">
           <svg width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr-3">
             <path d="M6.47435 13.5559L6.73728 14.4765C6.73736 16.057 5.45613 17.3382 3.87565 17.3382C2.29524 17.3382 1.01401 16.0569 1.01401 14.4765L1.24602 13.604" stroke="#00C389" stroke-width="1.5" stroke-miterlimit="10"/>
@@ -31,7 +31,7 @@
         </wallet-nav-link>
       </router-link>
 
-      <router-link to="/wallet/${activeAddress}/transaction" custom v-slot="{ href, navigate, isActive }">
+      <router-link :to="{ name: 'WalletTransaction', params: { activeAddress: activeAddress?.toString() }}" custom v-slot="{ href, navigate, isActive }">
         <wallet-nav-link :href="href" :navigate="navigate" :isActive="isActive" :title="$t('wallet.navTransaction')">
           <svg width="28" height="20" viewBox="0 0 28 20" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr-3">
             <path d="M27 9.8871L14.4194 1.5V9.8871" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -41,7 +41,7 @@
         </wallet-nav-link>
       </router-link>
 
-      <router-link to="/wallet/${activeAddress}/staking" custom v-slot="{ href, navigate, isActive }">
+      <router-link :to="{ name: 'WalletStaking', params: { activeAddress: activeAddress?.toString() }}" custom v-slot="{ href, navigate, isActive }">
         <wallet-nav-link :href="href" :navigate="navigate" :isActive="isActive" :title="$t('wallet.navStake')">
           <svg width="19" height="24" viewBox="0 0 19 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr-3">
             <path d="M3.27832 9.8159V7.35169C3.27832 3.99519 5.99934 1.27417 9.35584 1.27417C12.7123 1.27417 15.4334 3.99519 15.4334 7.35169V9.8159" stroke="white" stroke-width="1.5" stroke-miterlimit="10"/>
@@ -50,7 +50,7 @@
         </wallet-nav-link>
       </router-link>
 
-      <router-link to="/wallet/${activeAddress}/history" custom v-slot="{ href, navigate, isActive }">
+      <router-link :to="{ name: 'WalletHistory', params: { activeAddress: activeAddress?.toString() }}" custom v-slot="{ href, navigate, isActive }">
         <wallet-nav-link :href="href" :navigate="navigate" :isActive="isActive" :title="$t('wallet.navHistory')">
           <svg width="20" height="24" viewBox="0 0 20 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr-3">
             <path d="M1 13.3484V9.84839L19 9.84839V16.3484H1V22.8484H19V18.8484" stroke="white" stroke-width="1.5"/>
@@ -106,24 +106,18 @@ const WalletSidebarDefault = defineComponent({
 
   setup () {
     const router = useRouter()
-    const { activeAccount } = useWallet(router)
+    const { activeAddress } = useWallet(router)
     const { open, setState } = useSidebar()
     const route = useRoute()
 
-    const activeAddress = computed(() => activeAccount.value?.address.toString())
+    const isOverview = computed(() => route.name === 'WalletOverview')
 
     return {
-      activeAccount,
       activeAddress,
+      isOverview,
       open,
       route,
       setState
-    }
-  },
-
-  computed: {
-    isOverview: function (): boolean {
-      return this.route.path === '/wallet'
     }
   }
 })
