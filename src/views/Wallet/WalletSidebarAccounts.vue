@@ -23,7 +23,7 @@
     >
     </account-list-item>
 
-    <div @click="addAccount" class="mt-3 mb-4 inline-flex flex-row items-center cursor-pointer hover:text-rGreen transition-colors">
+    <div @click="addSoftwareAccount" class="mt-3 mb-4 inline-flex flex-row items-center cursor-pointer hover:text-rGreen transition-colors">
       {{ $t('wallet.addAccount') }}
     </div>
     <br />
@@ -136,7 +136,13 @@ const WalletSidebarAccounts = defineComponent({
       displayHardwareAddress,
       localAccounts,
       setState,
-      addAccount,
+      addSoftwareAccount () {
+        addAccount().then((account: AccountT | false) => {
+          if (!account) return
+          const name = router.currentRoute.value.name || 'WalletOverview'
+          router.push({ name, params: { activeAddress: account.address.toString() } })
+        })
+      },
       switchAddress,
       isHardwareWalletActive,
       debugSwitch (account: AccountT) {
