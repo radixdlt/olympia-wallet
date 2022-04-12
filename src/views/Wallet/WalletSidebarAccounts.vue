@@ -15,8 +15,7 @@
     <account-list-item
       v-for="account in localAccounts"
       :key="account.address.toString()"
-      :account="account"
-      :activeAccount="activeAccount"
+      :address="account.address"
       :shouldShowEdit="true"
       @click="debugSwitch(account)"
       @edit="editName(account)"
@@ -34,9 +33,7 @@
         <div class="flex justify-between">
 
           <a class="flex cursor-pointer"
-            @click="connectHardwareWallet"
-            @mouseover="showHardwareHelper = true"
-            @mouseleave="showHardwareHelper = false">
+            @click="hardwareSwitch(hardwareAddress)">
             <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-rGreen" :class="{'fill-current': isHardwareWalletActive}">
               <path d="M18.7382 10.6172H7.26074V19H18.7382V10.6172Z" stroke="white" stroke-width="1.5" stroke-miterlimit="10" />
               <path d="M10.6592 12.7317V16.8855" stroke="white" stroke-width="1.5" stroke-miterlimit="10" />
@@ -58,11 +55,7 @@
         <div class="text-xs text-white relative z-20 flex justify-between mt-4">
           <span class="mr-2">{{ $t('wallet.addressLabel') }}</span>
           <span class="flex-1 w-full truncate font-mono">{{ displayHardwareAddress }}</span>
-          <click-to-copy
-              :address="hardwareAddress"
-              :checkForHardwareAddress=true
-              @verifyHardwareAddress="verifyHardwareWalletAddress"
-            />
+          <click-to-copy :address="hardwareAddress" />
         </div>
       </div>
 
@@ -100,9 +93,9 @@ const WalletSidebarAccounts = defineComponent({
     const router = useRouter()
     const {
       accounts,
-      activeAccount,
+      activeAddress,
       addAccount,
-      switchAccount,
+      switchAddress,
       connectHardwareWallet,
       setDeleteHWWalletPrompt,
       hardwareAccount,
@@ -130,11 +123,11 @@ const WalletSidebarAccounts = defineComponent({
 
     const isHardwareWalletActive: ComputedRef<boolean> = computed(() => {
       if (!hardwareAddress.value) { return false }
-      return activeAccount.value?.address.toString() === hardwareAddress.value
+      return activeAddress.value?.toString() === hardwareAddress.value
     })
 
     return {
-      activeAccount,
+      activeAddress,
       derivedAccountIndex,
       activeNetwork,
       hardwareAccount,
@@ -144,16 +137,19 @@ const WalletSidebarAccounts = defineComponent({
       localAccounts,
       setState,
       addAccount,
-      switchAccount,
+      switchAddress,
       isHardwareWalletActive,
       debugSwitch (account: AccountT) {
         const name = router.currentRoute.value.name || 'WalletOverview'
-        router.push({ name, params: { activeAccountId: account.address.toString() } })
+        router.push({ name, params: { activeAddress: account.address.toString() } })
+      },
+      hardwareSwitch (val: string) {
+        const name = router.currentRoute.value.name || 'WalletOverview'
+        router.push({ name, params: { activeAddress: val } })
       },
       editName (account: AccountT) {
         setState(false)
-        router.push('/wallet/account-edit-name')
-        switchAccount(account)
+        router.push(`/wallet/${account.address.toString()}/account-edit-name`)
       },
       connectHardwareWallet,
       verifyHardwareWalletAddress,

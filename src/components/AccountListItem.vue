@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="flex flex-row mb-4 justify-between" v-if="account">
+    <div class="flex flex-row mb-4 justify-between" v-if="addressVal">
       <div class="flex flex-row">
         <svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr-4 text-rGreen">
           <path d="M23.7138 12C23.7138 18.1997 18.5868 23.25 12.2319 23.25C5.87702 23.25 0.75 18.1997 0.75 12C0.75 5.80026 5.87702 0.75 12.2319 0.75C18.5868 0.75 23.7138 5.80026 23.7138 12Z" stroke="white" stroke-width="1.5" :class="{'fill-current': isActiveAccount}"/>
@@ -12,7 +12,7 @@
         <div class="font-medium leading-snug text-white hover:text-rGreen transition-colors cursor-pointer w-36 truncate">{{ nickName }}</div>
       </div>
 
-      <div v-if="shouldShowEdit" class="text-white hover:text-rGreen transition-colors cursor-pointer flex items-center justify-center w-5 h-5" @click="editName">
+      <div v-if="shouldShowEdit" class="text-white hover:text-rGreen transition-colors cursor-pointer flex items-center justify-center w-5 h-5" @click.stop="editName">
         <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M7.30515 -5.35835e-06L0.926422 6.37872L3.58423 9.03653L9.96296 2.6578L7.30515 -5.35835e-06Z" fill="white"/>
           <path d="M0 9.99999L2.7429 9.87776L0.0850602 7.22003L0 9.99999Z" fill="white"/>
@@ -24,7 +24,7 @@
       <span class="mr-2">{{ $t('wallet.addressLabel') }}</span>
       <span class="flex-1 w-full truncate font-mono">{{ displayAddress }}</span>
       <click-to-copy
-        :address="address"
+        :address="addressVal"
         :checkForHardwareAddress=true
         class="hover:text-rGreen active:text-rGreenDark"
         @verifyHardwareAddress="verifyHardwareWalletAddress()"
@@ -35,7 +35,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType, toRef, computed, ComputedRef } from 'vue'
-import { AccountT } from '@radixdlt/application'
+import { AccountAddressT } from '@radixdlt/application'
 import ClickToCopy from '@/components/ClickToCopy.vue'
 import { formatWalletAddressForDisplay } from '@/helpers/formatter'
 import { useWallet, useSidebar } from '@/composables'
@@ -47,8 +47,8 @@ const AccountListItem = defineComponent({
   },
 
   props: {
-    account: {
-      type: Object as PropType<AccountT>,
+    address: {
+      type: Object as PropType<AccountAddressT>,
       required: true
     },
     shouldShowEdit: {
@@ -60,33 +60,32 @@ const AccountListItem = defineComponent({
 
   setup (props) {
     const router = useRouter()
-    const { accountNameFor, activeAccount, switchAccount, verifyHardwareWalletAddress } = useWallet(router)
+    const { accountNameFor, activeAddress, verifyHardwareWalletAddress } = useWallet(router)
 
     const { setState } = useSidebar()
-    const account = toRef(props, 'account')
+    const address = toRef(props, 'address')
 
     const editName = () => {
       setState(false)
-      switchAccount(account.value)
-      router.push('/wallet/account-edit-name')
+      router.push(`/wallet/${address.value?.toString()}/account-edit-name`)
     }
 
-    const address: ComputedRef<string> = computed(() => account.value.address.toString())
-    const displayAddress: ComputedRef<string> = computed(() => formatWalletAddressForDisplay(account.value.address))
+    const addressVal: ComputedRef<string> = computed(() => address.value.toString())
+    const displayAddress: ComputedRef<string> = computed(() => formatWalletAddressForDisplay(address.value))
 
     const isActiveAccount: ComputedRef<boolean> = computed(() => {
-      return props.account.address.toString() === activeAccount.value?.address.toString()
+      return address.value.toString() === activeAddress.value?.toString()
     })
 
     return {
-      address,
+      addressVal,
       displayAddress,
       nickName: computed(() => {
-        if (!account.value) return ''
-        const storedName = accountNameFor(account.value.address)
-        return storedName || account.value.address.toString()
+        if (!address.value) return ''
+        const storedName = accountNameFor(address.value)
+        return storedName || address.value.toString()
       }),
-      activeAccount,
+      activeAddress,
       editName,
       isActiveAccount,
       verifyHardwareWalletAddress

@@ -185,7 +185,6 @@ const WalletConfirmTransactionModal = defineComponent({
     const { t } = useI18n({ useScope: 'global' })
     const {
       activeAddress,
-      activeAccount,
       hardwareAccount,
       radix,
       reset
@@ -223,7 +222,7 @@ const WalletConfirmTransactionModal = defineComponent({
       transactionState,
       transferInput,
       selectedCurrency
-    } = useTransactions(radix, router, activeAccount.value, hardwareAccount.value)
+    } = useTransactions(radix, router, activeAddress.value, hardwareAccount.value)
 
     const selectedCurrencyToken: ComputedRef<Token | null> = computed(() => {
       return selectedCurrency.value ? tokenInfoFor(selectedCurrency.value.token_identifier.rri) : null

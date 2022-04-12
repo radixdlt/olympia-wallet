@@ -20,7 +20,7 @@ const routes: Array<RouteRecordRaw> = [
     })
   },
   {
-    path: '/wallet/:activeAccountId',
+    path: '/wallet/:activeAddress',
     name: 'Wallet',
     component: Wallet,
     children: [

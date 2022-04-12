@@ -176,14 +176,13 @@ const WalletStaking = defineComponent({
     const { errors, values, meta, setErrors, resetForm, validateField } = useForm<StakeForm>()
     const {
       activeAddress,
-      activeAccount,
       explorerUrlBase,
       hardwareAccount,
       loadingLatestAddress,
       radix
     } = useWallet(router)
     const { activeForm, setActiveForm, activeStakes, activeUnstakes, loadingAnyStaking, maybeGetValidator, stakingUnsub } = useStaking(radix)
-    const { stakeTokens, unstakeTokens, setActiveTransactionForm } = useTransactions(radix, router, activeAccount.value, hardwareAccount.value)
+    const { stakeTokens, unstakeTokens, setActiveTransactionForm } = useTransactions(radix, router, activeAddress.value, hardwareAccount.value)
     const { nativeToken, nativeTokenUnsub } = useNativeToken(radix)
     const { fetchBalancesForAddress, tokenBalances, tokenBalanceFor, tokenBalancesUnsub } = useTokenBalances(radix)
     const zero = Amount.fromUnsafe(0)._unsafeUnwrap()

@@ -1,5 +1,6 @@
 import { ref, computed, Ref, ComputedRef } from 'vue'
 import {
+  AccountAddress,
   AccountAddressT,
   AccountsT,
   AccountT,
@@ -99,7 +100,6 @@ const setPin = (pin: string) => storePin(pin)
 
 interface useWalletInterface {
   readonly accounts: Ref<AccountsT | null>;
-  readonly activeAccount: Ref<AccountT | null>;
   readonly activeAddress: Ref<AccountAddressT | null>;
   readonly activeNetwork: Ref<Network | null>;
   readonly connected: ComputedRef<boolean>;
@@ -136,14 +136,14 @@ interface useWalletInterface {
   reloadSubscriptions: () => void;
   reset: () => void;
   resetWallet: (nextRoute: 'create-wallet' | 'restore-wallet') => void;
-  setActiveAccount: (address: string) => void;
+  setActiveAddress: (address: string) => void;
   setDeleteHWWalletPrompt: (val: boolean) => void;
   setConnected: (value: boolean) => void;
   setNetwork: (network: Network | null) => void;
   setPin: (pin: string) => Promise<string>;
   setSwitching: (value: boolean) => void;
   setWallet: (newWallet: WalletT) => WalletT;
-  switchAccount: (account: AccountT) => void;
+  switchAddress: (address: AccountAddressT) => void;
   updateConnection: (n: string) => Promise<void>;
   verifyHardwareWalletAddress: () => void;
   waitUntilAllLoaded: () => Promise<any>;
@@ -203,18 +203,13 @@ const initWallet = async (router: Router) => {
   activeAddress.value = account.address
   activeNetwork.value = networkRes
 
-  const latestIsActive = activeAccount.value
-    ? activeAccount.value.address.toString() === latestAddress.value : false
-
-  const foundLatest = accountsRes.all.find((a: AccountT) =>
-    latestAddress.value === a.address.toString()
-  )
+  const latestIsActive = activeAddress.value
+    ? activeAddress.value.toString() === latestAddress.value : false
 
   if (networkRes === Network.MAINNET) explorerUrlBase.value = 'https://explorer.radixdlt.com/'
   else explorerUrlBase.value = 'https://stokenet-explorer.radixdlt.com/'
 
-  if (foundLatest && !latestIsActive) {
-    switchAccount(foundLatest)
+  if (!latestIsActive) {
     router.push(`/wallet/${latestAddress.value}`)
   } else {
     router.push(`/wallet/${activeAddress.value.toString()}`)
@@ -232,9 +227,9 @@ const addAccount = () => {
     })
 }
 
-const switchAccount = (account: AccountT) => {
-  const newAddress = account.address.toString()
-  if (newAddress === activeAccount.value?.toString()) return
+const switchAddress = (address: AccountAddressT) => {
+  const newAddress = address.toString()
+  if (newAddress === activeAddress.value?.toString()) return
   latestAddress.value = newAddress
   loadingLatestAddress.value = false
 
@@ -244,17 +239,14 @@ const switchAccount = (account: AccountT) => {
   }
 }
 
-const setActiveAccount = (accountAddressValue: string) => {
-  if (!accounts.value) return
-  const foundAccount = accounts.value.all.find((account) => {
-    return account.address.toString() === accountAddressValue
-  })
-
-  if (foundAccount) {
-    activeAccount.value = foundAccount
-    activeAddress.value = foundAccount.address
-    switchAccount(foundAccount)
+const setActiveAddress = (accountAddressValue: string) => {
+  console.log(accountAddressValue)
+  const address = AccountAddress.fromUnsafe(accountAddressValue)
+  if (address.isErr()) {
+    throw Error('Invalid Address')
   }
+  activeAddress.value = address.value
+  switchAddress(address.value)
 }
 
 const accountNameFor = (accountAddress: AccountAddressT): string => {
@@ -262,47 +254,46 @@ const accountNameFor = (accountAddress: AccountAddressT): string => {
   return accountName ? accountName.name : ''
 }
 
-const connectHardwareWallet = () => { return null }
+const connectHardwareWallet = () => {
+  if (hardwareAccount.value) {
+    // switchAccount(hardwareAccount.value)
+    // activeAccount.value = hardwareAccount.value
+    return
+  }
+  hardwareError.value = null
+  hardwareInteractionState.value = 'DERIVING'
 
-// const connectHardwareWallet = () => {
-//   if (hardwareAccount.value) {
-//     switchAccount(hardwareAccount.value)
-//     activeAccount.value = hardwareAccount.value
-//     return
-//   }
-//   hardwareError.value = null
-//   hardwareInteractionState.value = 'DERIVING'
+  const data = {
+    keyDerivation: HDPathRadix.create({
+      address: { index: 0, isHardened: true }
+    }),
+    hardwareWalletConnection: HardwareWalletLedger.create({
+      send: sendAPDU
+    }),
+    alsoSwitchTo: false,
+    verificationPrompt: !hardwareAddress.value
+  }
 
-//   const data = {
-//     keyDerivation: HDPathRadix.create({
-//       address: { index: 0, isHardened: true }
-//     }),
-//     hardwareWalletConnection: HardwareWalletLedger.create({
-//       send: sendAPDU
-//     }),
-//     alsoSwitchTo: true,
-//     verificationPrompt: !hardwareAddress.value
-//   }
+  firstValueFrom(radix.__wallet).then((wallet: WalletT) => {
+    return firstValueFrom(wallet.deriveHWAccount(data))
+  }).then((hwAccount: AccountT) => {
+    if (!hardwareAddress.value && activeNetwork.value) {
+      saveHardwareWalletAddress(hwAccount.address.toString(), activeNetwork.value)
+      saveAccountName(hwAccount.address.toString(), 'Hardware Account')
+      hardwareAddress.value = hwAccount.address.toString()
+    }
+    activeAccount.value = hwAccount
+    hardwareAccount.value = hwAccount
+    hardwareInteractionState.value = ''
 
-//   firstValueFrom(radix.__wallet).then((wallet: WalletT) => {
-//     return firstValueFrom(wallet.deriveHWAccount(data))
-//   }).then((hwAccount: AccountT) => {
-//     if (!hardwareAddress.value && activeNetwork.value) {
-//       saveHardwareWalletAddress(hwAccount.address.toString(), activeNetwork.value)
-//       saveAccountName(hwAccount.address.toString(), 'Hardware Account')
-//       hardwareAddress.value = hwAccount.address.toString()
-//     }
-//     activeAccount.value = hwAccount
-//     hardwareAccount.value = hwAccount
-//     hardwareInteractionState.value = ''
+    getAccountNames().then((names) => {
+      accountNames.value = names
+    })
+  }).catch((err) => {
+    hardwareError.value = err
+  })
+}
 
-//     getAccountNames().then((names) => {
-//       accountNames.value = names
-//     })
-//   }).catch((err) => {
-//     hardwareError.value = err
-//   })
-// }
 const verifyHardwareWalletAddress = () => {
   radix.displayAddressForActiveHWAccountOnHWDeviceForVerification()
     .subscribe({
@@ -378,7 +369,6 @@ export default function useWallet (router: Router): useWalletInterface {
 
   return {
     accounts,
-    activeAccount,
     activeAddress,
     activeNetwork,
     explorerUrlBase: computed(() => explorerUrlBase.value),
@@ -444,12 +434,12 @@ export default function useWallet (router: Router): useWalletInterface {
     hideLedgerVerify,
     initWallet,
     persistNodeUrl,
-    setActiveAccount,
+    setActiveAddress,
     setDeleteHWWalletPrompt,
     setPin,
     setWallet,
     setConnected: (val: boolean) => { connected.value = val },
-    switchAccount,
+    switchAddress,
     updateAvailable,
     verifyHardwareWalletAddress,
     versionNumber,
