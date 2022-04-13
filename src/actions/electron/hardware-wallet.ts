@@ -5,17 +5,16 @@ export const sendAPDU = async (event: IpcMainInvokeEvent, apdu: { cla: number, i
   const paths = await TransportNodeHid.list()
   if (paths.length === 0) throw Error('No device found.')
 
-  const device = await TransportNodeHid.open(paths[0])
-
+  const transport = await TransportNodeHid.open(paths[0])
   let result
   try {
-    result = await device.send(apdu.cla, apdu.ins, apdu.p1, apdu.p2, apdu.data ? Buffer.from(apdu.data, 'hex') : undefined)
+    result = await transport.send(apdu.cla, apdu.ins, apdu.p1, apdu.p2, apdu.data ? Buffer.from(apdu.data, 'hex') : undefined)
   } catch (e) {
-    await device.close()
+    await transport.close()
     throw e
   }
 
-  await device.close()
+  await transport.close()
 
   return result
 }

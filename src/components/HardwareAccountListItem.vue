@@ -1,0 +1,103 @@
+<template>
+  <div class="px-5 bg-sidebar border-transparent border-l-4 hover:border-rGreen">
+    <div class="flex flex-row mb-4 justify-between" v-if="addressVal">
+      <div class="flex flex-row">
+        <!-- <svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr-4 text-rGreen">
+          <path d="M23.7138 12C23.7138 18.1997 18.5868 23.25 12.2319 23.25C5.87702 23.25 0.75 18.1997 0.75 12C0.75 5.80026 5.87702 0.75 12.2319 0.75C18.5868 0.75 23.7138 5.80026 23.7138 12Z" stroke="white" stroke-width="1.5" :class="{'fill-current': isActiveAccount}"/>
+          <path d="M16.5562 14.6775C15.5805 13.5196 14.1053 12.7817 12.4544 12.7817C9.51673 12.7817 7.13525 15.118 7.13525 18" stroke="white" stroke-width="1.5" stroke-miterlimit="10"/>
+          <path d="M17.7733 18C17.7733 17.3288 17.6441 16.6871 17.4089 16.0977" stroke="white" stroke-width="1.5" stroke-miterlimit="10"/>
+          <path d="M12.4542 10.1432C13.9019 10.1432 15.0754 8.99183 15.0754 7.57158C15.0754 6.15133 13.9019 5 12.4542 5C11.0065 5 9.83289 6.15133 9.83289 7.57158C9.83289 8.99183 11.0065 10.1432 12.4542 10.1432Z" stroke="white" stroke-width="1.5" stroke-miterlimit="10"/>
+        </svg> -->
+
+        <div class="leading-snug text-rGrayDark hover:text-rGreen transition-colors cursor-pointer w-36 truncate">{{ nickName }}</div>
+      </div>
+
+      <!-- <div v-if="shouldShowEdit" class="text-rGrayDark hover:text-rGreen transition-colors cursor-pointer flex items-center justify-center w-5 h-5" @click="editName">
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M7.30515 -5.35835e-06L0.926422 6.37872L3.58423 9.03653L9.96296 2.6578L7.30515 -5.35835e-06Z" fill="white"/>
+          <path d="M0 9.99999L2.7429 9.87776L0.0850602 7.22003L0 9.99999Z" fill="white"/>
+        </svg>
+      </div> -->
+      <div class="text-rGrayDark hover:text-rGreen transition-colors cursor-pointer flex items-center justify-center">
+        <svg class="" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path class="stroke-current" d="M6.25909 2.91429C6.66583 2.81909 7.08226 2.77149 7.5 2.77248C11.6364 2.77248 14 7.49975 14 7.49975C13.6413 8.17079 13.2135 8.80255 12.7236 9.38475M11.01 11.0097C9.99989 11.7797 8.76993 12.2063 7.5 12.227C3.36364 12.227 1 7.49975 1 7.49975C1.73503 6.12996 2.75449 4.9332 3.99 3.98975L11.01 11.0097Z" stroke="#7A99AC" stroke-linecap="round" stroke-linejoin="round"/>
+          <path class="stroke-current" d="M1 1L14 14" stroke="#7A99AC" stroke-linecap="round" stroke-linejoin="round"/>
+          <path class="stroke-current" d="M9.26777 9.26796C9.03562 9.5001 8.76002 9.68425 8.45671 9.80989C8.15339 9.93553 7.8283 10.0002 7.5 10.0002C7.1717 10.0002 6.84661 9.93552 6.54329 9.80989C6.23998 9.68425 5.96438 9.5001 5.73223 9.26796C5.50009 9.03581 5.31594 8.76021 5.1903 8.4569C5.06466 8.15358 5 7.82849 5 7.50019C5 7.17188 5.06466 6.84679 5.1903 6.54348C5.31594 6.24017 5.50009 5.96457 5.73223 5.73242" stroke="#7A99AC"/>
+          <path class="stroke-current" d="M6.9314 5.0655C7.34303 4.96937 7.77232 4.97919 8.17913 5.09404C8.58594 5.20888 8.95698 5.425 9.25758 5.72219C9.55818 6.01939 9.77851 6.38795 9.89798 6.79342C10.0175 7.1989 10.0322 7.62805 9.94073 8.04075" stroke="#7A99AC" stroke-linecap="round"/>
+        </svg>
+      </div>
+    </div>
+    <div class="text-xs text-rGrayDark relative z-20 flex justify-between">
+      <span class="flex-1 w-full truncate font-mono">{{ displayAddress }}</span>
+      <click-to-copy
+        :address="addressVal"
+        :checkForHardwareAddress=true
+        class="hover:text-rGreen active:text-rGreenDark"
+        @verifyHardwareAddress="verifyHardwareWalletAddress()"
+      />
+    </div>
+  </div>
+</template>
+
+<script lang="ts">
+import { defineComponent, PropType, toRef, computed, ComputedRef } from 'vue'
+import { AccountAddressT } from '@radixdlt/application'
+import ClickToCopy from '@/components/ClickToCopy.vue'
+import { formatWalletAddressForDisplay } from '@/helpers/formatter'
+import { useWallet, useSidebar } from '@/composables'
+import { useRouter } from 'vue-router'
+
+const AccountListItem = defineComponent({
+  components: {
+    ClickToCopy
+  },
+
+  props: {
+    address: {
+      type: Object as PropType<AccountAddressT>,
+      required: true
+    },
+    shouldShowEdit: {
+      type: Boolean,
+      required: false,
+      default: false
+    }
+  },
+
+  setup (props) {
+    const router = useRouter()
+    const { accountNameFor, activeAddress, verifyHardwareWalletAddress } = useWallet(router)
+
+    const { setState } = useSidebar()
+    const address = toRef(props, 'address')
+
+    const editName = () => {
+      setState(false)
+      router.push(`/wallet/${address.value?.toString()}/account-edit-name`)
+    }
+
+    const addressVal: ComputedRef<string> = computed(() => address.value.toString())
+    const displayAddress: ComputedRef<string> = computed(() => formatWalletAddressForDisplay(address.value))
+
+    const isActiveAccount: ComputedRef<boolean> = computed(() => {
+      return address.value.toString() === activeAddress.value?.toString()
+    })
+
+    return {
+      addressVal,
+      displayAddress,
+      nickName: computed(() => {
+        if (!address.value) return ''
+        const storedName = accountNameFor(address.value)
+        return storedName || address.value.toString()
+      }),
+      activeAddress,
+      editName,
+      isActiveAccount,
+      verifyHardwareWalletAddress
+    }
+  }
+})
+
+export default AccountListItem
+</script>
