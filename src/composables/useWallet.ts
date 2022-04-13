@@ -246,13 +246,6 @@ const addHardwareAccount = async () => {
 
       // radix.deriveNextAccount({ alsoSwitchTo: true })
     })
-  console.log('add a hw account!')
-  const network = await firstValueFrom(radix.ledger.networkId())
-  const devices = await getHardwareDevices(network)
-  const firstHwDeviceId = devices[0]
-  // const ledgerAccounts = await getHardwareDeviceAccounts(network, firstHwDeviceId)
-  // console.log('-ledgerId->', devices, firstHwDeviceId)
-  // console.log('-accounts->', ledgerAccounts[0].addresses)
 }
 
 const switchAddress = (address: AccountAddressT) => {

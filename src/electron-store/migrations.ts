@@ -1,3 +1,5 @@
+import { store } from "@/actions/electron/data-store"
+
 const migrations = {
   '0.0.1': (store: Record<string, any>) => {
     store.set('debugPhase', true)
@@ -57,6 +59,8 @@ const migrations = {
       primaryStokenetAccount["addresses"] = [{"name": existingStokenetHardwareAddress, "address": existingStokenetHardwareAddress, "index": 0}]
       store.set(`wallets.stokenet.hardwareDevices`, [primaryStokenetAccount])
     }
+    // --------------------------------------------Hidden Accounts-------------------------------------------------
+    if (!store.get('hiddenAccounts')) store.set('hiddenAccounts', [])
   }
 }
 

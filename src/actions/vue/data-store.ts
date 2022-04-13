@@ -107,3 +107,17 @@ export const getAcceptedTos = (): Promise<boolean> => new Promise((resolve) => {
 export const setAcceptedTos = (value: boolean): Promise<boolean> => new Promise((resolve) => {
   resolve(window.ipcRenderer.invoke('set-accepted-tos', value))
 })
+
+export const getHiddenAccounts = (): Promise<string[]> => new Promise((resolve) => {
+  resolve(window.ipcRenderer.invoke('get-hidden-accounts'))
+})
+
+export const hideAccount = async (address: string): Promise<string[]> => {
+  const newHiddenTokens = await window.ipcRenderer.invoke('hide-account', address)
+  return newHiddenTokens
+}
+
+export const unhideAccount = async (address: string): Promise<string[]> => {
+  const newHiddenTokens = await window.ipcRenderer.invoke('unhide-account', address)
+  return newHiddenTokens
+}
