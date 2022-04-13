@@ -9,7 +9,7 @@
       @click="setState(true)"
     >
       <div class="relative py-3">
-        <account-list-item :address="activeAddress" v-if="activeAddress"/>
+        <account-list-preview :address="activeAddress" v-if="activeAddress"/>
         <div class="absolute bg-gradient-to-r from-blueEnd to-transparent inset-0 w-full h-full z-10 -mx-8 opacity-40">
         </div>
       </div>
@@ -91,7 +91,7 @@
 
 <script lang="ts">
 import { computed, defineComponent } from 'vue'
-import AccountListItem from '@/components/AccountListItem.vue'
+import AccountListPreview from '@/components/AccountListPreview.vue'
 import WalletNavLink from './WalletNavLink.vue'
 import { useWallet, useSidebar } from '@/composables'
 import { useRouter, useRoute } from 'vue-router'
@@ -100,7 +100,7 @@ import SidebarNetworkDisplay from '@/components/SidebarNetworkDisplay.vue'
 const WalletSidebarDefault = defineComponent({
   components: {
     SidebarNetworkDisplay,
-    AccountListItem,
+    AccountListPreview,
     WalletNavLink
   },
 
