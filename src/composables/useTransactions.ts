@@ -147,7 +147,7 @@ export default function useTransactions (radix: ReturnType<typeof Radix.create>,
     ledgerState.value = ''
     transactionState.value = 'PENDING'
 
-    router.push('/wallet/history')
+    router.push(`/wallet/${activeAddress?.toString()}/history`)
   }
 
   // Handle information returned from lifecycle event for Transfer, Stake, and Unstake actions

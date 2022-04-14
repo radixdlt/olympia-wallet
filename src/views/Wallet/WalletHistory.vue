@@ -47,7 +47,7 @@
             :pending="false"
             :nativeToken="nativeToken"
             :explorerUrlBase="explorerUrlBase"
-            @decryptMessage = "(data) => decryptMessage(data)"
+            @decryptMessage="activateThenDecrypt"
           />
         </div>
 
@@ -100,6 +100,7 @@ import WalletLedgerDisconnectedModal from '@/views/Wallet/WalletLedgerDisconnect
 import { useNativeToken, useWallet, useHistory } from '@/composables'
 import { useRouter, onBeforeRouteLeave } from 'vue-router'
 import WalletLedgerVerifyDecryptModal from './WalletLedgerVerifyDecryptModal.vue'
+import { ExecutedTransaction } from '@radixdlt/application'
 
 const WalletHistory = defineComponent({
   components: {
@@ -114,6 +115,7 @@ const WalletHistory = defineComponent({
     const router = useRouter()
     const {
       activeAddress,
+      activateAccount,
       explorerUrlBase,
       hardwareAccount,
       radix,
@@ -161,6 +163,11 @@ const WalletHistory = defineComponent({
       displayLedgerErrorModal.value = false
     }
 
+    const activateThenDecrypt = async (data: ExecutedTransaction) => {
+      await activateAccount()
+      decryptMessage(data)
+    }
+
     // Fetch new history when active account changes
     watch((activeAddress), () => {
       if (activeAddress.value) {
@@ -181,6 +188,7 @@ const WalletHistory = defineComponent({
 
     return {
       activeAddress,
+      activateThenDecrypt,
       canGoBack,
       canGoNext,
       decryptMessage,

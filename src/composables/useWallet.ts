@@ -129,6 +129,7 @@ interface useWalletInterface {
 
   accountNameFor: (address: AccountAddressT) => string;
   accountRenamed: (newName: string) => void;
+  activateAccount: () => Promise<AccountT | false>;
   addAccount: () => Promise<AccountT | false>;
   addHardwareAccount: () => void;
   connectHardwareWallet: () => void;
@@ -159,11 +160,8 @@ interface useWalletInterface {
 const walletLoaded = async () => {
   wallet.value = await firstValueFrom(radix.__wallet)
   hasWallet.value = true
-
-  // radix
-  //   .withTokenBalanceFetchTrigger(tokenBalanceTrigger)
-  //   .withStakingFetchTrigger(interval(15 * 1_000))
 }
+
 const invalidPasswordError: Ref<WalletError | null> = ref(null)
 
 // Disable errors sink for now in favor of API errors
@@ -374,6 +372,24 @@ const hideLedgerVerify = () => {
   showLedgerVerify.value = false
 }
 
+const activateAccount = () : Promise<AccountT | false> => {
+  if (!activeAddress.value || !accounts.value) return Promise.resolve(false)
+  const localAccount = accounts.value?.all.find((account: AccountT) => {
+    if (!activeAddress.value) return false
+    return account.address.equals(activeAddress.value) && account.signingKey.isLocalHDSigningKey
+  })
+
+  if (localAccount) {
+    radix.switchAccount({ toAccount: localAccount })
+    return firstValueFrom(radix.activeAccount).then((account) => {
+      activeAccount.value = account
+      return account
+    })
+  }
+
+  return Promise.resolve(false)
+}
+
 export default function useWallet (router: Router): useWalletInterface {
   const accountRenamed = (newName: string) => {
     if (!activeAddress.value) return
@@ -508,6 +524,8 @@ export default function useWallet (router: Router): useWalletInterface {
         default:
           return ''
       }
-    })
+    }),
+
+    activateAccount
   }
 }

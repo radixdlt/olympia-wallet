@@ -176,6 +176,7 @@ const WalletStaking = defineComponent({
     const { errors, values, meta, setErrors, resetForm, validateField } = useForm<StakeForm>()
     const {
       activeAddress,
+      activateAccount,
       explorerUrlBase,
       hardwareAccount,
       loadingLatestAddress,
@@ -304,7 +305,7 @@ const WalletStaking = defineComponent({
       validateField('validator')
     }
 
-    const handleSubmitStake = () => {
+    const handleSubmitStake = async () => {
       if (!tokenBalances.value || !nativeToken.value) return
       const nativeTokenBalance = tokenBalanceFor(nativeToken.value)
       if (!meta.value.valid || !nativeTokenBalance) return
@@ -322,6 +323,7 @@ const WalletStaking = defineComponent({
         return
       }
       if (!safeAddress || !safeAmount) return
+      await activateAccount()
       activeForm.value === 'STAKING'
         ? stakeTokens({
           to_validator: safeAddress,

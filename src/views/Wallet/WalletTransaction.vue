@@ -155,7 +155,7 @@ const WalletTransaction = defineComponent({
   setup () {
     const router = useRouter()
     const { errors, values, meta, setErrors, resetForm } = useForm<TransactionForm>()
-    const { activeAddress, hardwareAccount, loadingLatestAddress, networkPreamble, radix, verifyHardwareWalletAddress } = useWallet(router)
+    const { activeAddress, activateAccount, hardwareAccount, loadingLatestAddress, networkPreamble, radix, verifyHardwareWalletAddress } = useWallet(router)
     const { setActiveTransactionForm, transferTokens } = useTransactions(radix, router, activeAddress.value, hardwareAccount.value)
     const { t } = useI18n({ useScope: 'global' })
     const { nativeToken, nativeTokenUnsub } = useNativeToken(radix)
@@ -258,7 +258,7 @@ const WalletTransaction = defineComponent({
       tokenOptions.value = nativeTb ? [nativeTb, ...remainingTb] : remainingTb
     }
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
       if (!meta.value.valid || !selectedCurrency.value) return false
       const safeAddress = safelyUnwrapAddress(values.recipient, networkPreamble.value)
       const safeAmount = safelyUnwrapAmount(Number(values.amount))
@@ -284,7 +284,7 @@ const WalletTransaction = defineComponent({
         })
         return
       }
-
+      await activateAccount()
       if (safeAddress && safeAmount) {
         transferTokens(
           {
