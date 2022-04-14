@@ -10,6 +10,7 @@ import {
   getAccountNames,
   getLatestAccountAddress,
   saveAccountName,
+  saveDeviceName,
   getDerivedAccountsIndex,
   saveDerivedAccountsIndex,
   saveDerivedHardwareAccountsIndex,
@@ -128,6 +129,7 @@ ipcMain.handle('get-keystore-message', getKeystoreFile)
 ipcMain.on('copy-to-clipboard', copyToClipboard)
 ipcMain.handle('create-pin', storePin)
 ipcMain.handle('save-account-name', saveAccountName)
+ipcMain.handle('save-device-name', saveDeviceName)
 ipcMain.handle('get-account-names', getAccountNames)
 ipcMain.handle('get-latest-account-address', getLatestAccountAddress)
 ipcMain.handle('save-latest-account-address', saveLatestAccountAddress)

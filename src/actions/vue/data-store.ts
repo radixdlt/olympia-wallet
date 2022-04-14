@@ -5,6 +5,10 @@ export const saveAccountName = (accountAddress: string, prettyName: string): Pro
   resolve(window.ipcRenderer.invoke('save-account-name', JSON.stringify({ accountAddress, prettyName })))
 })
 
+export const saveDeviceName = (deviceIndex: number | undefined, network: string, prettyName: string): Promise<string> => new Promise((resolve) => {
+  resolve(window.ipcRenderer.invoke('save-device-name', JSON.stringify({ network, deviceIndex, prettyName })))
+})
+
 export const getLatestAccountAddress = (network: Network): Promise<string> => new Promise((resolve) => {
   resolve(window.ipcRenderer.invoke('get-latest-account-address', String(network)))
 })

@@ -1,5 +1,5 @@
 <template>
-  <div class="w-80 px-6 pt-8 text-white overflow-y-auto fixed top-0 left-0 h-full bg-rBlueDark z-30 overflow-x-hidden">
+  <div class="w-64 px-6 pt-8 text-white overflow-y-auto fixed top-0 left-0 h-full bg-rBlueDark z-30 overflow-x-hidden">
     <div @click="setState(false)" class="hover:text-rGreen cursor-pointer transition-colors inline-flex flex-row items-center mb-4">
       <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr-2" >
         <circle cx="10" cy="10" r="9.5" transform="rotate(90 10 10)" fill="none" class="stroke-current"  />
@@ -18,7 +18,7 @@
           <path d="M16.8 14.0333L20.2 11.7667L16.8 9.5" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
           <path d="M11.7 15.1667L13.9666 8.3667" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
-        <div class=" pl-3">
+        <div class="pl-3 ">
           {{ $t('wallet.softwareWallets') }}
         </div>
         <svg class="ml-auto mt-1" width="17" height="17" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -61,9 +61,9 @@
           <span class="text-white ml-2"> {{ $t('wallet.hardwareWallets') }} </span>
         </div>
         <div class="border-t border-rGray border-opacity-50 my-6"></div>
-        <div v-if="hardwareDevices" class="mt-2">
+        <div v-if="hardwareDevices" class="mt-2 -my-2 ">
           <div v-for="(hardwareDevice, i) in hardwareDevices" :key="i">
-            <div class="flex justify-between">
+            <div class="flex justify-between group">
               <a class="flex cursor-pointer">
                 <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-rGreen" :class="{'fill-current': isHardwareWalletActive}">
                   <path d="M18.7382 10.6172H7.26074V19H18.7382V10.6172Z" stroke="white" stroke-width="1.5" stroke-miterlimit="10" />
@@ -72,14 +72,14 @@
                   <path d="M1.45471 18.9997H24.5453V21.4505C24.5453 23.4596 22.9165 25.0883 20.9074 25.0883H5.09253C3.08342 25.0883 1.45471 23.4596 1.45471 21.4505V18.9997Z" stroke="white" stroke-width="1.5" stroke-miterlimit="10"/>
                   <path d="M24.5449 7L1.45438 7V4.54926C1.45438 2.54016 3.08309 0.91145 5.09219 0.91145L20.9071 0.91145C22.9162 0.91145 24.5449 2.54016 24.5449 4.54926V7Z" stroke="white" stroke-width="1.5" stroke-miterlimit="10"/>
                 </svg>
-                <span class="text-white ml-2 text-sm"> {{ hardwareDevice.name }} </span>
+                <span class="text-white ml-2 text-sm truncate pt-1 w-26"> {{ hardwareDevice.name }} </span>
               </a>
-              <!-- <div class="text-white hover:text-rGreen transition-colors cursor-pointer flex items-center justify-center w-5 h-5" @click="showDeleteHWPrompt()">
-                <svg width="10" height="12" viewBox="0 0 10 12" fill="none" xmlns="http://www.w3.org/2000/svg" >
-                  <path d="M1.65912 5.23001L1.91 11H7.77L8.02275 5.23001" stroke="white" stroke-width="1.5"/>
-                  <path d="M0 3.21212H2.98M2.98 3.21212V1H6.7V3.21212M2.98 3.21212H6.7M6.7 3.21212H9.68" stroke="white" stroke-width="1.5"/>
+              <div @click.stop="handleAccountEditName(hardwareDevice)" class="z-20 hidden group-hover:block text-rGrayDark hover:text-rGreen transition-colors cursor-pointer pt-1">
+                <svg width="14" height="14" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path class="stroke-current" d="M7.30515 -5.35835e-06L0.926422 6.37872L3.58423 9.03653L9.96296 2.6578L7.30515 -5.35835e-06Z" fill="white"/>
+                  <path class="stroke-current" d="M0 9.99999L2.7429 9.87776L0.0850602 7.22003L0 9.99999Z" fill="white"/>
                 </svg>
-              </div> -->
+              </div>
               <div class="flex pb-10">
                 <div class="flex pt-1  text-rGrayDark hover:text-rGreen transition-colors cursor-pointer">
                   <svg class="mr-2" width="15" height="15" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -97,7 +97,7 @@
                 </div>
               </div>
             </div>
-            <div class="-mx-5">
+            <div class="-mx-6">
               <hardware-account-list-item
                 v-for="address in hardwareDevice.addresses"
                 :key="address.index"
@@ -108,18 +108,6 @@
               />
             </div>
           </div>
-
-          <!-- <div class="text-xs text-white relative z-20 flex justify-between mt-4">
-            <span class="mr-2">{{ $t('wallet.addressLabel') }}</span>
-            <span class="flex-1 w-full truncate font-mono">{{ displayHardwareAddress }}</span>
-            <click-to-copy
-                :address="hardwareAddress"
-                :checkForHardwareAddress=true
-                @verifyHardwareAddress="verifyHardwareWalletAddress"
-              />
-          </div> -->
-        <!-- PLACEHOLDER Loop through accounts in hw wallet not localAccounts -->
-
         <div class="border-t border-rGray border-opacity-50 mx-4 mt-6 pb-2" ></div>
         <div @click="_" class="my-4 pb-6 mx-auto text-center cursor-pointer hover:text-rGreen transition-colors">
           {{ $t('wallet.navAddHWAccount') }}
@@ -209,6 +197,13 @@ const WalletSidebarAccounts = defineComponent({
       return activeAddress.value?.toString() === hardwareAddress.value
     })
 
+    const handleAccountEditName = (device: any) => {
+      setState(false)
+      const firstAccount = device.addresses[0].address?.toString()
+      // router.push(`/wallet/${firstAccount}/device-edit-name`)
+      router.push({ name: 'device-edit-name', params: { firstAccount } })
+    }
+
     return {
       activeAddress,
       derivedAccountIndex,
@@ -219,6 +214,7 @@ const WalletSidebarAccounts = defineComponent({
       showHardwareHelper,
       displayHardwareAddress,
       localAccounts,
+      handleAccountEditName,
       setState,
       addSoftwareAccount () {
         addAccount().then((account: AccountT | false) => {

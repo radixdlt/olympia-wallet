@@ -1,7 +1,7 @@
 import { IpcMainInvokeEvent } from 'electron/main'
 import Store from 'electron-store'
 import migrations from '@/electron-store/migrations'
-import { HardwareDevice, HardwareAccount } from '@/services/_types'
+import { HardwareDevice } from '@/services/_types'
 
 type MaybeString = string | null;
 export type AccountName = { address: string; name: string; }
@@ -15,6 +15,15 @@ export const store = new Store({
 export const saveAccountName = (event: IpcMainInvokeEvent, data: string) => {
   const { accountAddress, prettyName } = JSON.parse(data)
   return store.set(`account.${accountAddress}`, prettyName)
+}
+
+export const saveDeviceName = (event: IpcMainInvokeEvent, data: string) => {
+  const { network, deviceIndex, prettyName } = JSON.parse(data)
+  let hardwareDevices = store.get(`wallets.${network}.hardwareDevices`) as HardwareDevice[]
+  const device = hardwareDevices[deviceIndex]
+  const renamedDeviceObject = {"name": prettyName, "addresses":[...device.addresses]}
+  hardwareDevices.splice(deviceIndex, 1, renamedDeviceObject)
+  store.set(`wallets.${network}.hardwareDevices`, [renamedDeviceObject])
 }
 
 export const getLatestAccountAddress = (event: IpcMainInvokeEvent, network: string): string => {
@@ -49,8 +58,6 @@ export const saveDerivedHardwareAccountsIndex = (event: IpcMainInvokeEvent, data
   
   // copy/destructure existing hardwareDevices struct and append new address to end
   const newAddresses = [{'name': deviceId, addresses: [...devices[0].addresses, newAddressStruct]}] 
-  console.log(newAddresses)
-
   store.set(`wallets.${network}.hardwareDevices`, newAddresses)
 }
 
