@@ -43,7 +43,7 @@ const migrations = {
     if (existingMainnetHardwareAddress) {
       const primaryStokenetAccount: any = {}
       primaryStokenetAccount["name"] = existingMainnetHardwareAddress
-      primaryStokenetAccount["addresses"] = [{"name": existingMainnetHardwareAddress, "address": existingMainnetHardwareAddress}]
+      primaryStokenetAccount["addresses"] = [{"name": existingMainnetHardwareAddress, "address": existingMainnetHardwareAddress, "index": 0}]
       store.set(`wallets.mainnet.hardwareDevices`, [primaryStokenetAccount])
     }
 
@@ -54,7 +54,7 @@ const migrations = {
     if (existingStokenetHardwareAddress) {
       const primaryStokenetAccount: any = {}
       primaryStokenetAccount["name"] = existingStokenetHardwareAddress
-      primaryStokenetAccount["addresses"] = [{"name": existingStokenetHardwareAddress, "address": existingStokenetHardwareAddress}]
+      primaryStokenetAccount["addresses"] = [{"name": existingStokenetHardwareAddress, "address": existingStokenetHardwareAddress, "index": 0}]
       store.set(`wallets.stokenet.hardwareDevices`, [primaryStokenetAccount])
     }
   }

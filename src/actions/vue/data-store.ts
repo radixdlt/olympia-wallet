@@ -1,5 +1,6 @@
 import { AccountName, SelectedNode } from '../electron/data-store'
-import { Network, ResourceIdentifierT } from '@radixdlt/application'
+import { AccountAddress, Network, ResourceIdentifierT } from '@radixdlt/application'
+import { HardwareAddress, EncodedHardwareAddress, HardwareDevice, EncodedHardwareDevice } from '@/services/_types'
 export const saveAccountName = (accountAddress: string, prettyName: string): Promise<string> => new Promise((resolve) => {
   resolve(window.ipcRenderer.invoke('save-account-name', JSON.stringify({ accountAddress, prettyName })))
 })
@@ -36,9 +37,18 @@ export const getHardwareWalletAddress = (network: Network): Promise<string> => n
   resolve(window.ipcRenderer.invoke('get-hw-address', String(network)))
 })
 
-export const getHardwareDevices = (network: Network): Promise<string> => new Promise((resolve) => {
-  resolve(window.ipcRenderer.invoke('get-hw-devices', String(network)))
-})
+export const getHardwareDevices = async (network: Network): Promise<HardwareDevice[]> => {
+  const data = await window.ipcRenderer.invoke('get-hw-devices', String(network)) as EncodedHardwareDevice[]
+
+  return data.map((device: EncodedHardwareDevice) => {
+    const addresses = device.addresses.map((addr: EncodedHardwareAddress) => {
+      const addressResult = AccountAddress.fromUnsafe(addr.address)
+      if (addressResult.isErr()) { throw new Error('Invalid Hardware Address Reference') }
+      return { ...addr, address: addressResult.value } as HardwareAddress
+    })
+    return { ...device, addresses: addresses } as HardwareDevice
+  })
+}
 
 export const getHardwareDeviceAccounts = (network: Network, deviceId: string): Promise<any> => new Promise((resolve) => {
   resolve(window.ipcRenderer.invoke('get-hw-device-accounts', String(network), deviceId))

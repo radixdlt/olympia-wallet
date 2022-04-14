@@ -1,7 +1,7 @@
 import { IpcMainInvokeEvent } from 'electron/main'
 import Store from 'electron-store'
 import migrations from '@/electron-store/migrations'
-import { isObject } from '@radixdlt/application';
+import { HardwareDevice, HardwareAccount } from '@/services/_types'
 
 type MaybeString = string | null;
 export type AccountName = { address: string; name: string; }
@@ -67,19 +67,12 @@ export const getHardwareAddress = (event: IpcMainInvokeEvent, network: string) =
   return store.get(`wallets.${network}.hardwareAddress`)
 }
 
-export const getHardwareDevices = (event: IpcMainInvokeEvent, network: string) => {
-  const hardwareStoreList: any = store.get(`wallets.${network}.hardwareDevices`)
-  return hardwareStoreList.map((device: { name: string; }) => { return device.name})
+export const getHardwareDevices = (event: IpcMainInvokeEvent, network: string) : HardwareDevice[] => {
+  return store.get(`wallets.${network}.hardwareDevices`) as HardwareDevice[]
 }
 
 export const getHardwareDeviceAccounts = (event: IpcMainInvokeEvent, network: string, deviceId: string) => {
   const hardwareStoreList: any = store.get(`wallets.${network}.hardwareDevices`)
-  // return hardwareStoreList.map((device: { name: string; addresses: any; }) => {
-  //   if (device.name == deviceId){
-  //     // console.log('----->>>', device.addresses)
-  //     return device.addresses
-  //   }
-  // })
   return hardwareStoreList
 }
 

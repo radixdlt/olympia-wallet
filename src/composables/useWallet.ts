@@ -17,10 +17,10 @@ import {
   WalletT,
   walletError
 } from '@radixdlt/application'
+import { HardwareDevice } from '@/services/_types'
 import { AccountName } from '@/actions/electron/data-store'
 import { Router } from 'vue-router'
-import { Subscription, interval, Subject, firstValueFrom, zip, merge } from 'rxjs'
-import { filter, switchMap } from 'rxjs/operators'
+import { Subscription, Subject, firstValueFrom, zip } from 'rxjs'
 import { touchKeystore, hasKeystore, initWallet as createNewWallet, storePin } from '@/actions/vue/create-wallet'
 import {
   deleteHardwareWalletAddress,
@@ -63,6 +63,7 @@ const connected = ref(false)
 const derivedAccountIndex: Ref<number> = ref(0)
 const hardwareAccount: Ref<AccountT | null> = ref(null)
 const hardwareAddress: Ref<string> = ref('')
+const hardwareDevices: Ref<HardwareDevice[]> = ref([])
 const hardwareError: Ref<Error | null> = ref(null)
 const hardwareInteractionState: Ref<string> = ref('')
 const hasWallet = ref(false)
@@ -110,6 +111,7 @@ interface useWalletInterface {
   readonly explorerUrlBase: ComputedRef<string>;
   readonly hardwareAccount: Ref<AccountT | null>;
   readonly hardwareAddress: Ref<string | null>;
+  readonly hardwareDevices: Ref<HardwareDevice[]>;
   readonly hardwareError: Ref<Error | null>;
   readonly hardwareInteractionState: Ref<string>;
   readonly hasWallet: Ref<boolean>;
@@ -201,6 +203,7 @@ const initWallet = async (router: Router) => {
   accountNames.value = await getAccountNames()
   versionNumber.value = await getVersionNumber()
   updateAvailable.value = await getIsUpdateAvailable()
+  hardwareDevices.value = await getHardwareDevices(networkRes)
   await fetchAccountsForNetwork(networkRes)
 
   activeAccount.value = account
@@ -246,9 +249,9 @@ const addHardwareAccount = async () => {
   const network = await firstValueFrom(radix.ledger.networkId())
   const devices = await getHardwareDevices(network)
   const firstHwDeviceId = devices[0]
-  const ledgerAccounts = await getHardwareDeviceAccounts(network, firstHwDeviceId)
-  console.log('-ledgerId->', devices, firstHwDeviceId)
-  console.log('-accounts->', ledgerAccounts[0].addresses)
+  // const ledgerAccounts = await getHardwareDeviceAccounts(network, firstHwDeviceId)
+  // console.log('-ledgerId->', devices, firstHwDeviceId)
+  // console.log('-accounts->', ledgerAccounts[0].addresses)
 }
 
 const switchAddress = (address: AccountAddressT) => {
@@ -399,6 +402,7 @@ export default function useWallet (router: Router): useWalletInterface {
     hardwareAccount,
     hardwareAddress,
     hardwareError,
+    hardwareDevices,
     hardwareInteractionState,
     hasWallet,
     ledgerVerifyError,
