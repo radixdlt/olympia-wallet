@@ -131,6 +131,7 @@ const WalletHistory = defineComponent({
       canGoNext,
       decryptedMessages,
       displayLedgerErrorModal,
+      fetchTransactions,
       loadingHistory,
       transactions,
       decryptMessage,
@@ -175,7 +176,8 @@ const WalletHistory = defineComponent({
         updateActiveAccount(activeAddress.value)
       }
       resetHistory()
-    })
+      fetchTransactions()
+    }, { immediate: true })
 
     // Fetch initial history on route load
     onMounted(() => {

@@ -22,7 +22,7 @@ export default function useHistory (radix: ReturnType<typeof Radix.create>, addr
   const activeAddress: Ref<AccountAddressT> = ref(address)
 
   const fetchTransactions = async (cursor?: string) => {
-    const params = { size: PAGE_SIZE, address: address, cursor }
+    const params = { size: PAGE_SIZE, address: activeAddress.value, cursor }
     const data = await firstValueFrom(radix.ledger.transactionHistory(params))
     transactions.value = data.transactions
     loadingHistory.value = false
@@ -46,7 +46,7 @@ export default function useHistory (radix: ReturnType<typeof Radix.create>, addr
     cursorStack.value = []
     transactions.value = []
     decryptedMessages.value = []
-    fetchTransactions()
+    activeCursor.value = ''
   }
 
   const updateActiveAccount = (addr: AccountAddressT) => {
