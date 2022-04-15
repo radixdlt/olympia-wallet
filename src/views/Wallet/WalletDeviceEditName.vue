@@ -38,7 +38,7 @@ const WalletDeviceEditName = defineComponent({
     const router = useRouter()
     const route = useRoute()
 
-    const { activeAddress, deviceRenamed, deviceNameFor, activeNetwork } = useWallet(router)
+    const { activeAddress, deviceRenamed, activeNetwork } = useWallet(router)
     if (!activeAddress.value) {
       return
     }

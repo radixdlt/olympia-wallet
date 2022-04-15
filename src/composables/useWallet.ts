@@ -132,7 +132,6 @@ interface useWalletInterface {
   readonly loadingLatestAddress: ComputedRef<boolean>;
 
   accountNameFor: (address: AccountAddressT) => string;
-  deviceNameFor: (address: AccountAddressT) => string;
   accountRenamed: (newName: string) => void;
   activateAccount: (x: () => void) => Promise<AccountT | false>;
   addAccount: () => Promise<AccountT | false>;
@@ -498,7 +497,6 @@ export default function useWallet (router: Router): useWalletInterface {
     },
 
     accountNameFor,
-    deviceNameFor,
     accountRenamed,
     addAccount,
     addHardwareAccount,

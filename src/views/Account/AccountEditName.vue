@@ -51,7 +51,6 @@ const AccountEditName = defineComponent({
       saveAccountName(activeAddress.value.toString(), name.value)
         .then(() => accountRenamed(name.value))
     }
-
     return { name, handleSubmit }
   }
 })
