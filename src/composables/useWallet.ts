@@ -139,7 +139,7 @@ interface useWalletInterface {
   connectHardwareWallet: (address: HardwareAddress) => Promise<void>;
   createWallet: (mnemonic: MnemomicT, pass: string, network: Network) => Promise<WalletT>;
   deleteLocalHardwareAddress: () => void;
-  deviceRenamed: (newName: string) => void;
+  deviceRenamed: () => void;
   hideLedgerVerify: () => void;
   hideLedgerInteraction: () => void;
   initWallet: (router: Router) => void;
@@ -431,8 +431,9 @@ export default function useWallet (router: Router): useWalletInterface {
       return accountName
     })
   }
-  const deviceRenamed = (newName: string) => {
-    if (!activeAddress.value) return
+  const deviceRenamed = async () => {
+    if (!activeAddress.value || !activeNetwork.value) return
+    hardwareDevices.value = await getHardwareDevices(activeNetwork.value)
     router.push(`/wallet/${activeAddress.value.toString()}`)
   }
 

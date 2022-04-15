@@ -80,7 +80,7 @@ const WalletDeviceEditName = defineComponent({
         .then((idx) => {
           if (!activeNetwork.value || idx) return
           saveDeviceName(idx, activeNetwork.value, name.value)
-          deviceRenamed(name.value)
+          deviceRenamed()
         })
     }
 
