@@ -1,5 +1,5 @@
 <template>
-  <div class="px-5 bg-sidebar border-transparent border-l-4 hover:border-rGreen group">
+  <div class="px-5 bg-sidebar border-transparent border-l-4 group" :class="{'border-rGreen': isActiveAccount}">
     <div class="flex flex-row mb-4 justify-between" v-if="addressVal">
       <div class="flex flex-row">
         <div class="leading-snug text-rGrayDark hover:text-rGreen transition-colors cursor-pointer w-36 truncate">{{ nickName }}</div>

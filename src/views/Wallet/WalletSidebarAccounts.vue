@@ -87,7 +87,7 @@
                     <path class="stroke-current" d="M4.68616 0.875L8.76949 13.125" stroke="#F2F2FC" stroke-linecap="round"/>
                   </svg>
                 </div>
-                <div class="flex pt-1 pr-2 text-rGrayDark hover:text-rGreen transition-colors cursor-pointer">
+                <div class="flex pt-1 pr-1 text-rGrayDark hover:text-rGreen transition-colors cursor-pointer">
                   <svg width="15" height="15" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path class="stroke-current" d="M2 7H5V10" stroke="#F2F2FC" stroke-linecap="round" stroke-linejoin="round"/>
                     <path class="stroke-current" d="M10 5H7V2" stroke="#F2F2FC" stroke-linecap="round" stroke-linejoin="round"/>
@@ -97,7 +97,7 @@
                 </div>
               </div>
             </div>
-            <div class="-mx-6">
+            <div class="-mx-5">
               <hardware-account-list-item
                 v-for="address in hardwareDevice.addresses"
                 :key="address.index"
@@ -135,9 +135,6 @@
           <div class="border-t border-rGray border-opacity-50 mx-4 mt-6 pb-10" ></div>
         </div>
       </div>
-        <div @click="addHardwareAccount" class="mt-3 mb-4 inline-flex flex-row items-center cursor-pointer hover:text-rGreen transition-colors">
-         {{ $t('wallet.addAccount') }}
-        </div>
     </div>
   </div>
 </template>
@@ -200,7 +197,6 @@ const WalletSidebarAccounts = defineComponent({
     const handleAccountEditName = (device: any) => {
       setState(false)
       const firstAccount = device.addresses[0].address?.toString()
-      // router.push(`/wallet/${firstAccount}/device-edit-name`)
       router.push({ name: 'device-edit-name', params: { firstAccount } })
     }
 
