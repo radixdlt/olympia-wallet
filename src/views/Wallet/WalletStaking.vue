@@ -182,7 +182,7 @@ const WalletStaking = defineComponent({
       loadingLatestAddress,
       radix
     } = useWallet(router)
-    const { activeForm, setActiveForm, activeStakes, activeUnstakes, loadingAnyStaking, maybeGetValidator, stakingUnsub } = useStaking(radix)
+    const { activeForm, setActiveForm, activeStakes, activeUnstakes, loadingAnyStaking, maybeGetValidator, stakingUnsub, fetchStakesForAddress } = useStaking(radix)
     const { stakeTokens, unstakeTokens, setActiveTransactionForm } = useTransactions(radix, router, activeAddress.value, hardwareAccount.value)
     const { nativeToken, nativeTokenUnsub } = useNativeToken(radix)
     const { fetchBalancesForAddress, tokenBalances, tokenBalanceFor, tokenBalancesUnsub } = useTokenBalances(radix)
@@ -216,7 +216,8 @@ const WalletStaking = defineComponent({
     watch((activeAddress), (newActiveAddress) => {
       // Update balances when active address changes
       newActiveAddress && fetchBalancesForAddress(newActiveAddress)
-    })
+      newActiveAddress && fetchStakesForAddress(newActiveAddress)
+    }, { immediate: true })
 
     /* ------
      *  Computed Values
