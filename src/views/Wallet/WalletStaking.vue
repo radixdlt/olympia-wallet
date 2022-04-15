@@ -137,7 +137,7 @@
 </template>
 
 <script lang="ts">
-import { Amount, AmountT, ValidatorAddressT } from '@radixdlt/application'
+import { Amount, AmountT, StakeTokensInput, UnstakeTokensInput, ValidatorAddressT } from '@radixdlt/application'
 import { computed, defineComponent, ComputedRef, onMounted, onUnmounted, watch, Ref, ref } from 'vue'
 import { useForm } from 'vee-validate'
 import StakeListItem from '@/components/StakeListItem.vue'
@@ -323,18 +323,20 @@ const WalletStaking = defineComponent({
         return
       }
       if (!safeAddress || !safeAmount) return
-      await activateAccount()
-      activeForm.value === 'STAKING'
-        ? stakeTokens({
-          to_validator: safeAddress,
-          amount: safeAmount,
-          tokenIdentifier: nativeToken.value.rri
-        })
-        : unstakeTokens({
-          from_validator: safeAddress,
-          amount: safeAmount,
-          tokenIdentifier: nativeToken.value.rri
-        })
+      const data = activeForm.value === 'STAKING' ? {
+        to_validator: safeAddress,
+        amount: safeAmount,
+        tokenIdentifier: nativeToken.value?.rri
+      } : {
+        from_validator: safeAddress,
+        amount: safeAmount,
+        tokenIdentifier: nativeToken.value?.rri
+      }
+      await activateAccount(() => {
+        activeForm.value === 'STAKING'
+          ? stakeTokens(data as StakeTokensInput)
+          : unstakeTokens(data as UnstakeTokensInput)
+      })
     }
 
     const handleMaxSubmitUnstake = () => {

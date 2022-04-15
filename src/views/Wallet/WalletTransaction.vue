@@ -120,7 +120,7 @@ import { defineComponent, Ref, ref, ComputedRef, computed, watch, onMounted, onU
 import { useForm } from 'vee-validate'
 
 import { safelyUnwrapAddress, safelyUnwrapAmount, validateAmountOfType, validateGreaterThanZero } from '@/helpers/validateRadixTypes'
-import { Token } from '@radixdlt/application'
+import { AmountOrUnsafeInput, Token } from '@radixdlt/application'
 import { asBigNumber } from '@/components/BigAmount.vue'
 import ClickToCopy from '@/components/ClickToCopy.vue'
 import FormErrorMessage from '@/components/FormErrorMessage.vue'
@@ -284,20 +284,20 @@ const WalletTransaction = defineComponent({
         })
         return
       }
-      await activateAccount()
-      if (safeAddress && safeAmount) {
-        transferTokens(
-          {
-            to_account: safeAddress,
-            amount: safeAmount,
-            tokenIdentifier: token.rri.toString()
-          },
-          {
-            plaintext: values.message,
-            encrypt: values.encrypt
-          },
-          selectedCurrency.value
-        )
+      if (safeAddress && safeAddress) {
+        const transferData = {
+          to_account: safeAddress,
+          amount: safeAmount as AmountOrUnsafeInput,
+          tokenIdentifier: token.rri.toString()
+        }
+        const messageData = {
+          plaintext: values.message,
+          encrypt: values.encrypt
+        }
+        const currencyVal = selectedCurrency.value
+        await activateAccount(() => {
+          transferTokens(transferData, messageData, currencyVal)
+        })
       }
     }
 
