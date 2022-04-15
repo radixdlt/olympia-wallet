@@ -45,6 +45,7 @@ export default function useHistory (radix: ReturnType<typeof Radix.create>, addr
     loadingHistory.value = true
     cursorStack.value = []
     transactions.value = []
+    decryptedMessages.value = []
     fetchTransactions()
   }
 

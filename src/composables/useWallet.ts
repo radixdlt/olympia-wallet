@@ -17,7 +17,7 @@ import {
   WalletT,
   walletError
 } from '@radixdlt/application'
-import { HardwareDevice } from '@/services/_types'
+import { HardwareAddress, HardwareDevice } from '@/services/_types'
 import { AccountName } from '@/actions/electron/data-store'
 import { Router } from 'vue-router'
 import { Subscription, Subject, firstValueFrom, zip } from 'rxjs'
@@ -79,6 +79,8 @@ const versionNumber: Ref<string> = ref('')
 const wallet: Ref<WalletT | null> = ref(null)
 const latestAddress: Ref<string> = ref('')
 const loadingLatestAddress: Ref<boolean> = ref(true)
+const attemptingToConnectToHardwareAddress: Ref<HardwareAddress | null> = ref(null)
+let postActivationCallback: () => void = () => { return false }
 
 const setWallet = (newWallet: WalletT) => {
   wallet.value = newWallet
@@ -129,9 +131,10 @@ interface useWalletInterface {
 
   accountNameFor: (address: AccountAddressT) => string;
   accountRenamed: (newName: string) => void;
+  activateAccount: (x: () => void) => Promise<AccountT | false>;
   addAccount: () => Promise<AccountT | false>;
   addHardwareAccount: () => void;
-  connectHardwareWallet: () => void;
+  connectHardwareWallet: (address: HardwareAddress) => Promise<void>;
   createWallet: (mnemonic: MnemomicT, pass: string, network: Network) => Promise<WalletT>;
   deleteLocalHardwareAddress: () => void;
   hideLedgerVerify: () => void;
@@ -154,16 +157,14 @@ interface useWalletInterface {
   verifyHardwareWalletAddress: () => void;
   waitUntilAllLoaded: () => Promise<any>;
   walletLoaded: () => void;
+  retryWithConnectedHardwareWallet: () => void;
 }
 
 const walletLoaded = async () => {
   wallet.value = await firstValueFrom(radix.__wallet)
   hasWallet.value = true
-
-  // radix
-  //   .withTokenBalanceFetchTrigger(tokenBalanceTrigger)
-  //   .withStakingFetchTrigger(interval(15 * 1_000))
 }
+
 const invalidPasswordError: Ref<WalletError | null> = ref(null)
 
 // Disable errors sink for now in favor of API errors
@@ -280,10 +281,9 @@ const accountNameFor = (accountAddress: AccountAddressT): string => {
   return accountName ? accountName.name : ''
 }
 
-const connectHardwareWallet = () => {
-  if (hardwareAccount.value) {
-    // switchAccount(hardwareAccount.value)
-    // activeAccount.value = hardwareAccount.value
+const connectHardwareWallet = async (hwaddr: HardwareAddress) => {
+  if (hardwareAccount.value && hardwareAccount.value.address.equals(hwaddr.address)) {
+    switchAddress(hwaddr.address)
     return
   }
   hardwareError.value = null
@@ -291,21 +291,21 @@ const connectHardwareWallet = () => {
 
   const data = {
     keyDerivation: HDPathRadix.create({
-      address: { index: 0, isHardened: true }
+      address: { index: hwaddr.index, isHardened: true }
     }),
     hardwareWalletConnection: HardwareWalletLedger.create({
       send: sendAPDU
     }),
-    alsoSwitchTo: false,
-    verificationPrompt: !hardwareAddress.value
+    alsoSwitchTo: true,
+    verificationPrompt: !(hwaddr.address.toString() !== hardwareAddress.value)
   }
 
-  firstValueFrom(radix.__wallet).then((wallet: WalletT) => {
-    return firstValueFrom(wallet.deriveHWAccount(data))
-  }).then((hwAccount: AccountT) => {
+  const wallet = await firstValueFrom(radix.__wallet)
+
+  firstValueFrom(wallet.deriveHWAccount(data)).then((hwAccount: AccountT) => {
     if (!hardwareAddress.value && activeNetwork.value) {
       saveHardwareWalletAddress(hwAccount.address.toString(), activeNetwork.value)
-      saveAccountName(hwAccount.address.toString(), 'Hardware Account')
+      // saveAccountName(hwAccount.address.toString(), 'Hardware Account')
       hardwareAddress.value = hwAccount.address.toString()
     }
     activeAccount.value = hwAccount
@@ -372,6 +372,47 @@ const hideLedgerInteraction = () => {
 
 const hideLedgerVerify = () => {
   showLedgerVerify.value = false
+}
+
+const activateAccount = (callback: () => void) : Promise<AccountT | false> => {
+  if (!activeAddress.value || !accounts.value) return Promise.resolve(false)
+  postActivationCallback = callback
+  const localAccount = accounts.value?.all.find((account: AccountT) => {
+    if (!activeAddress.value) return false
+    return account.address.equals(activeAddress.value) && account.signingKey.isLocalHDSigningKey
+  })
+
+  if (localAccount) {
+    radix.switchAccount({ toAccount: localAccount })
+    return firstValueFrom(radix.activeAccount).then((account) => {
+      activeAccount.value = account
+      callback()
+      return account
+    })
+  }
+
+  const hardwareAddress =
+    hardwareDevices.value
+      .flatMap((device) => device.addresses)
+      .find((addr: HardwareAddress) => {
+        if (!activeAddress.value) return false
+        return addr.address.equals(activeAddress.value)
+      })
+  if (!hardwareAddress) return Promise.resolve(false)
+  attemptingToConnectToHardwareAddress.value = hardwareAddress
+
+  return connectHardwareWallet(hardwareAddress).then(() => {
+    if (!activeAccount.value) return false
+    callback()
+    return activeAccount.value
+  })
+}
+
+const retryWithConnectedHardwareWallet = () => {
+  if (!attemptingToConnectToHardwareAddress.value || !postActivationCallback) return
+  connectHardwareWallet(attemptingToConnectToHardwareAddress.value).then(() => {
+    postActivationCallback()
+  })
 }
 
 export default function useWallet (router: Router): useWalletInterface {
@@ -508,6 +549,9 @@ export default function useWallet (router: Router): useWalletInterface {
         default:
           return ''
       }
-    })
+    }),
+
+    activateAccount,
+    retryWithConnectedHardwareWallet
   }
 }
