@@ -4,7 +4,7 @@
       <div class="flex flex-row">
         <div class="leading-snug text-rGrayDark hover:text-rGreen transition-colors cursor-pointer w-36 truncate">{{ nickName }}</div>
       </div>
-      <div v-if="shouldShowEdit" class="z-20 hidden group-hover:block text-rGrayDark hover:text-rGreen transition-colors cursor-pointer flex items-center justify-center  pt-2 z-20" @click!="editName">
+      <div v-if="shouldShowEdit" class="z-20 hidden group-hover:block text-rGrayDark hover:text-rGreen transition-colors cursor-pointer flex items-center justify-center  pt-2 z-20" @click.stop="editName">
         <svg width="12" height="12" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path class="stroke-current" d="M7.30515 -5.35835e-06L0.926422 6.37872L3.58423 9.03653L9.96296 2.6578L7.30515 -5.35835e-06Z" fill="white"/>
           <path class="stroke-current" d="M0 9.99999L2.7429 9.87776L0.0850602 7.22003L0 9.99999Z" fill="white"/>
