@@ -151,7 +151,6 @@ export const getHiddenAccounts = (): string[] => {
 }
 
 export const hideAccount = (event: IpcMainInvokeEvent, accountAddress: string): string[] => {
-  console.log('hiding accounts')
   const hiddenAccounts = store.get('hiddenAccounts', []) as string[]
   store.set('hiddenAccounts', [...hiddenAccounts, accountAddress])
   return [...hiddenAccounts, accountAddress]
