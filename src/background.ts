@@ -10,6 +10,7 @@ import {
   getAccountNames,
   getLatestAccountAddress,
   saveAccountName,
+  saveDeviceName,
   getDerivedAccountsIndex,
   saveDerivedAccountsIndex,
   saveDerivedHardwareAccountsIndex,
@@ -30,6 +31,9 @@ import {
   hideTokenType,
   getHiddenTokens,
   unhideTokenType,
+  getHiddenAccounts,
+  hideAccount,
+  unhideAccount
 } from './actions/electron/data-store'
 import { getIsUpdateAvailable } from './actions/electron/general'
 import { sendAPDU } from './actions/electron/hardware-wallet'
@@ -125,6 +129,7 @@ ipcMain.handle('get-keystore-message', getKeystoreFile)
 ipcMain.on('copy-to-clipboard', copyToClipboard)
 ipcMain.handle('create-pin', storePin)
 ipcMain.handle('save-account-name', saveAccountName)
+ipcMain.handle('save-device-name', saveDeviceName)
 ipcMain.handle('get-account-names', getAccountNames)
 ipcMain.handle('get-latest-account-address', getLatestAccountAddress)
 ipcMain.handle('save-latest-account-address', saveLatestAccountAddress)
@@ -153,6 +158,9 @@ ipcMain.handle('download-latest-version', downloadUpdate)
 ipcMain.handle('get-is-update-available', getIsUpdateAvailable)
 ipcMain.handle('get-accepted-tos', getAcceptedTos)
 ipcMain.handle('set-accepted-tos', setAcceptedTos)
+ipcMain.handle('get-hidden-accounts', getHiddenAccounts)
+ipcMain.handle('hide-accounts', hideAccount)
+ipcMain.handle('unhide-accounts', unhideAccount)
 // Exit cleanly on request from parent process in development mode.
 if (isDevelopment) {
   if (process.platform === 'win32') {

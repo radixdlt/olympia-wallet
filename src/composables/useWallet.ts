@@ -71,6 +71,7 @@ const ledgerVerifyError: Ref<Error | null> = ref(null)
 const nodeUrl: Ref<string | null> = ref(null)
 const reloadTrigger = new Subject<number>()
 const showDeleteHWWalletPrompt: Ref<boolean> = ref(false)
+const showHideAccountModal: Ref<boolean> = ref(false)
 const showLedgerVerify: Ref<boolean> = ref(false)
 const signingKeychain: Ref<SigningKeychainT | null> = ref(null)
 const switching = ref(false)
@@ -122,6 +123,7 @@ interface useWalletInterface {
   readonly nodeUrl: ComputedRef<string | null>;
   readonly radix: ReturnType<typeof Radix.create>;
   readonly showDeleteHWWalletPrompt: Ref<boolean>;
+  readonly showHideAccountModal: Ref<boolean>;
   readonly showLedgerVerify: Ref<boolean>;
   readonly switching: ComputedRef<boolean>;
   readonly updateAvailable: Ref<boolean>;
@@ -137,6 +139,7 @@ interface useWalletInterface {
   connectHardwareWallet: (address: HardwareAddress) => Promise<void>;
   createWallet: (mnemonic: MnemomicT, pass: string, network: Network) => Promise<WalletT>;
   deleteLocalHardwareAddress: () => void;
+  deviceRenamed: () => void;
   hideLedgerVerify: () => void;
   hideLedgerInteraction: () => void;
   initWallet: (router: Router) => void;
@@ -147,6 +150,7 @@ interface useWalletInterface {
   resetWallet: (nextRoute: 'create-wallet' | 'restore-wallet') => void;
   setActiveAddress: (address: string) => void;
   setDeleteHWWalletPrompt: (val: boolean) => void;
+  setHideAccountModal: (val: boolean) => void;
   setConnected: (value: boolean) => void;
   setNetwork: (network: Network | null) => void;
   setPin: (pin: string) => Promise<string>;
@@ -246,13 +250,6 @@ const addHardwareAccount = async () => {
 
       // radix.deriveNextAccount({ alsoSwitchTo: true })
     })
-  console.log('add a hw account!')
-  const network = await firstValueFrom(radix.ledger.networkId())
-  const devices = await getHardwareDevices(network)
-  const firstHwDeviceId = devices[0]
-  // const ledgerAccounts = await getHardwareDeviceAccounts(network, firstHwDeviceId)
-  // console.log('-ledgerId->', devices, firstHwDeviceId)
-  // console.log('-accounts->', ledgerAccounts[0].addresses)
 }
 
 const switchAddress = (address: AccountAddressT) => {
@@ -337,6 +334,7 @@ const deleteLocalHardwareAddress = () => {
   showDeleteHWWalletPrompt.value = false
   hardwareAccount.value = null
 }
+const setHideAccountModal = (val: boolean) => { showHideAccountModal.value = val }
 
 const hashNodeUrl = async (url:string, signingKeychain: SigningKeychainT): Promise<string> => {
   const hashedUrl = sha256Twice(url)
@@ -433,6 +431,11 @@ export default function useWallet (router: Router): useWalletInterface {
       return accountName
     })
   }
+  const deviceRenamed = async () => {
+    if (!activeAddress.value || !activeNetwork.value) return
+    hardwareDevices.value = await getHardwareDevices(activeNetwork.value)
+    router.push(`/wallet/${activeAddress.value.toString()}`)
+  }
 
   return {
     accounts,
@@ -440,6 +443,7 @@ export default function useWallet (router: Router): useWalletInterface {
     activeNetwork,
     explorerUrlBase: computed(() => explorerUrlBase.value),
     derivedAccountIndex,
+    deviceRenamed,
     hardwareAccount,
     hardwareAddress,
     hardwareError,
@@ -450,6 +454,7 @@ export default function useWallet (router: Router): useWalletInterface {
     loadingLatestAddress: computed(() => loadingLatestAddress.value),
     nodeUrl: computed(() => nodeUrl.value),
     showDeleteHWWalletPrompt,
+    showHideAccountModal,
     showLedgerVerify,
     connected: computed(() => connected.value),
     switching: computed(() => switching.value),
@@ -505,6 +510,7 @@ export default function useWallet (router: Router): useWalletInterface {
     persistNodeUrl,
     setActiveAddress,
     setDeleteHWWalletPrompt,
+    setHideAccountModal,
     setPin,
     setWallet,
     setConnected: (val: boolean) => { connected.value = val },

@@ -8,6 +8,7 @@ import WalletTransaction from '../views/Wallet/WalletTransaction.vue'
 import WalletStaking from '../views/Wallet/WalletStaking.vue'
 import WalletHistory from '../views/Wallet/WalletHistory.vue'
 import AccountEditName from '@/views/Account/AccountEditName.vue'
+import WalletDeviceEditName from '@/views/Wallet/WalletDeviceEditName.vue'
 import SettingsIndex from '@/views/Settings/index.vue'
 
 const routes: Array<RouteRecordRaw> = [
@@ -47,6 +48,11 @@ const routes: Array<RouteRecordRaw> = [
       {
         path: 'account-edit-name',
         component: AccountEditName
+      },
+      {
+        path: 'device-edit-name',
+        component: WalletDeviceEditName,
+        name: 'device-edit-name'
       }
     ]
   },

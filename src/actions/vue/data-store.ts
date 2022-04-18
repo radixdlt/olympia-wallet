@@ -5,6 +5,10 @@ export const saveAccountName = (accountAddress: string, prettyName: string): Pro
   resolve(window.ipcRenderer.invoke('save-account-name', JSON.stringify({ accountAddress, prettyName })))
 })
 
+export const saveDeviceName = (deviceIndex: number | undefined, network: string, prettyName: string): Promise<string> => new Promise((resolve) => {
+  resolve(window.ipcRenderer.invoke('save-device-name', JSON.stringify({ network, deviceIndex, prettyName })))
+})
+
 export const getLatestAccountAddress = (network: Network): Promise<string> => new Promise((resolve) => {
   resolve(window.ipcRenderer.invoke('get-latest-account-address', String(network)))
 })
@@ -107,3 +111,17 @@ export const getAcceptedTos = (): Promise<boolean> => new Promise((resolve) => {
 export const setAcceptedTos = (value: boolean): Promise<boolean> => new Promise((resolve) => {
   resolve(window.ipcRenderer.invoke('set-accepted-tos', value))
 })
+
+export const getHiddenAccounts = (): Promise<string[]> => new Promise((resolve) => {
+  resolve(window.ipcRenderer.invoke('get-hidden-accounts'))
+})
+
+export const hideAccount = async (address: string): Promise<string[]> => {
+  const newHiddenTokens = await window.ipcRenderer.invoke('hide-account', address)
+  return newHiddenTokens
+}
+
+export const unhideAccount = async (address: string): Promise<string[]> => {
+  const newHiddenTokens = await window.ipcRenderer.invoke('unhide-account', address)
+  return newHiddenTokens
+}

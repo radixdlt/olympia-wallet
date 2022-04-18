@@ -116,6 +116,10 @@ const messages = {
       network: 'Network',
       update: 'Update Available',
       disconnected: 'Disconnected',
+      hideSoftwareAccountModalBody: 'Are you sure you want to hide this software account? This account can be unhidden in settings.',
+      hideHardwareAccountModalBody: 'Are you sure you want to hide this hardware account? This account can be unhidden in settings.',
+      hideAccountModalSubmit: 'Hide Account',
+      hideAccountModalCancel: 'Cancel',
       hideBalanceModalTitle: 'Hide Balance',
       hideBalanceModalContent: 'Are you sure you want to hide this %{tokenName} balance? This balance can be unhidden in settings.',
       hideBalanceModalSubmit: 'Hide Balance',
@@ -232,6 +236,7 @@ const messages = {
     },
     account: {
       editNameHeading: 'Let’s set the name of your account',
+      editDeviceNameHeading: 'Let’s set the name of your device',
       nameInputPlaceholder: 'Name me!',
       updateNameButton: 'Save'
     },
