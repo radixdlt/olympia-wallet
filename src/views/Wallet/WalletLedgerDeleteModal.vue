@@ -21,28 +21,10 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
-import { useRouter } from 'vue-router'
-import { useWallet } from '@/composables'
 
 const WalletLedgerDeleteModal = defineComponent({
   components: {
     ButtonSubmit
-  },
-
-  setup () {
-    const router = useRouter()
-    const {
-      setDeleteHWWalletPrompt,
-      deleteLocalHardwareAddress
-    } = useWallet(router)
-    return {
-      close: () => {
-        setDeleteHWWalletPrompt(false)
-      },
-      deleteHWA: () => {
-        deleteLocalHardwareAddress()
-      }
-    }
   }
 })
 
