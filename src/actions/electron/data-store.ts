@@ -65,13 +65,9 @@ export const getDerivedAccountsIndex = (event: IpcMainInvokeEvent, network: stri
   return store.get(`wallets.${network}.derivedAccountsIndex`)
 }
 
-export const saveHardwareAddress = (event: IpcMainInvokeEvent, data: string) => {
-  const { address, network } = JSON.parse(data)
-  return store.set(`wallets.${network}.hardwareAddress`, address)
-}
-
-export const getHardwareAddress = (event: IpcMainInvokeEvent, network: string) => {
-  return store.get(`wallets.${network}.hardwareAddress`)
+export const saveHardwareDevices = (event: IpcMainInvokeEvent, data: string): void => {
+  const { network, encodedDevices } = JSON.parse(data)
+  store.set(`wallets.${network}.hardwareDevices`, encodedDevices)
 }
 
 export const getHardwareDevices = (event: IpcMainInvokeEvent, network: string) : HardwareDevice[] => {
@@ -81,10 +77,6 @@ export const getHardwareDevices = (event: IpcMainInvokeEvent, network: string) :
 export const getHardwareDeviceAccounts = (event: IpcMainInvokeEvent, network: string, deviceId: string) => {
   const hardwareStoreList: any = store.get(`wallets.${network}.hardwareDevices`)
   return hardwareStoreList
-}
-
-export const deleteHardwareAddress = (event: IpcMainInvokeEvent, network: string) => {
-  return store.delete(`wallets.${network}.hardwareAddress`)
 }
 
 export const resetStore = (event: IpcMainInvokeEvent) => {

@@ -1,6 +1,7 @@
 import { AccountName, SelectedNode } from '../electron/data-store'
 import { AccountAddress, Network, ResourceIdentifierT } from '@radixdlt/application'
 import { HardwareAddress, EncodedHardwareAddress, HardwareDevice, EncodedHardwareDevice } from '@/services/_types'
+import { resolveComponent } from 'vue'
 export const saveAccountName = (accountAddress: string, prettyName: string): Promise<string> => new Promise((resolve) => {
   resolve(window.ipcRenderer.invoke('save-account-name', JSON.stringify({ accountAddress, prettyName })))
 })
@@ -33,12 +34,15 @@ export const getDerivedAccountsIndex = (network: Network): Promise<string> => ne
   resolve(window.ipcRenderer.invoke('get-num-accounts', String(network)))
 })
 
-export const saveHardwareWalletAddress = (address: string, network: Network): Promise<string> => new Promise((resolve) => {
-  resolve(window.ipcRenderer.invoke('save-hw-address', JSON.stringify({ address, network })))
-})
+export const saveHardwareDevices = async (network: Network, hardwareDevices: HardwareDevice[]) => new Promise((resolve) => {
+  const data = hardwareDevices.map((hw: HardwareDevice) => {
+    return {
+      name: hw.name,
+      addresses: hw.addresses.map(({ name, index, address }) => ({ name, index, address: address.toString() }))
+    }
+  }) as EncodedHardwareDevice[]
 
-export const getHardwareWalletAddress = (network: Network): Promise<string> => new Promise((resolve) => {
-  resolve(window.ipcRenderer.invoke('get-hw-address', String(network)))
+  resolve(window.ipcRenderer.invoke('save-hw-devices', JSON.stringify({ network: String(network), encodedDevices: data })))
 })
 
 export const getHardwareDevices = async (network: Network): Promise<HardwareDevice[]> => {
@@ -53,14 +57,6 @@ export const getHardwareDevices = async (network: Network): Promise<HardwareDevi
     return { ...device, addresses: addresses } as HardwareDevice
   })
 }
-
-export const getHardwareDeviceAccounts = (network: Network, deviceId: string): Promise<any> => new Promise((resolve) => {
-  resolve(window.ipcRenderer.invoke('get-hw-device-accounts', String(network), deviceId))
-})
-
-export const deleteHardwareWalletAddress = (network: Network): Promise<string> => new Promise((resolve) => {
-  resolve(window.ipcRenderer.invoke('delete-hw-address', String(network)))
-})
 
 export const resetStore = (): Promise<string> => new Promise((resolve) => {
   resolve(window.ipcRenderer.invoke('reset-store'))

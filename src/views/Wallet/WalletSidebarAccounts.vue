@@ -109,31 +109,10 @@
             </div>
           </div>
         <div class="border-t border-rGray border-opacity-50 mx-4 mt-6 pb-2" ></div>
-        <div @click="_" class="my-4 pb-6 mx-auto text-center cursor-pointer hover:text-rGreen transition-colors">
+        <div @click="createNewHardwareAccount" class="my-4 pb-6 mx-auto text-center cursor-pointer hover:text-rGreen transition-colors">
           {{ $t('wallet.navAddHWAccount') }}
         </div>
       </div>
-        <div v-else
-          @click="connectHardwareWallet"
-          class="group"
-        >
-        <div class="flex text-rGrayDark ">
-          <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-rGreen" :class="{'fill-current': isHardwareWalletActive}">
-            <path d="M18.7382 10.6172H7.26074V19H18.7382V10.6172Z" stroke="white" stroke-width="1.5" stroke-miterlimit="10" />
-            <path d="M10.6592 12.7317V16.8855" stroke="white" stroke-width="1.5" stroke-miterlimit="10" />
-            <path d="M15.3405 12.7317V16.8855" stroke="white" stroke-width="1.5" stroke-miterlimit="10"/>
-            <path d="M1.45471 18.9997H24.5453V21.4505C24.5453 23.4596 22.9165 25.0883 20.9074 25.0883H5.09253C3.08342 25.0883 1.45471 23.4596 1.45471 21.4505V18.9997Z" stroke="white" stroke-width="1.5" stroke-miterlimit="10"/>
-            <path d="M24.5449 7L1.45438 7V4.54926C1.45438 2.54016 3.08309 0.91145 5.09219 0.91145L20.9071 0.91145C22.9162 0.91145 24.5449 2.54016 24.5449 4.54926V7Z" stroke="white" stroke-width="1.5" stroke-miterlimit="10"/>
-          </svg>
-          <div class="inline-flex flex-row items-center cursor-pointer hover:text-rGreen transition-colors text-center">
-            {{ $t('wallet.navAddHWWallet') }}
-          </div>
-        </div>
-        <div class="hidden group-hover:block text-xs mt-4">
-          <p class=" mx-auto text-center">Please ensure your Ledger is connected and the Radix application is selected.</p>
-        </div>
-          <div class="border-t border-rGray border-opacity-50 mx-4 mt-6 pb-10" ></div>
-        </div>
       </div>
     </div>
   </div>
@@ -162,15 +141,14 @@ const WalletSidebarAccounts = defineComponent({
       activeAddress,
       addAccount,
       switchAddress,
-      addHardwareAccount,
       connectHardwareWallet,
-      setDeleteHWWalletPrompt,
       hardwareAccount,
       hardwareAddress,
       hardwareDevices,
       derivedAccountIndex,
       activeNetwork,
-      verifyHardwareWalletAddress
+      verifyHardwareWalletAddress,
+      createNewHardwareAccount
     } = useWallet(router)
 
     const { setState } = useSidebar()
@@ -220,7 +198,6 @@ const WalletSidebarAccounts = defineComponent({
         })
       },
       switchAddress,
-      addHardwareAccount,
       isHardwareWalletActive,
       debugSwitch (account: AccountT) {
         const name = router.currentRoute.value.name || 'WalletOverview'
@@ -236,9 +213,7 @@ const WalletSidebarAccounts = defineComponent({
       },
       connectHardwareWallet,
       verifyHardwareWalletAddress,
-      showDeleteHWPrompt () {
-        setDeleteHWWalletPrompt(true)
-      }
+      createNewHardwareAccount
     }
   }
 })
