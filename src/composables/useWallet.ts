@@ -333,20 +333,18 @@ const connectHardwareWallet = async (hwaddr: HardwareAddress) => {
   hardwareError.value = null
   hardwareInteractionState.value = 'DERIVING'
 
-  const data = {
-    keyDerivation: HDPathRadix.create({
-      address: { index: hwaddr.index, isHardened: true }
-    }),
-    hardwareWalletConnection: HardwareWalletLedger.create({
-      send: sendAPDU
-    }),
-    alsoSwitchTo: true,
-    verificationPrompt: !(hwaddr.address.toString() !== hardwareAddress.value)
-  }
-
-  const wallet = await firstValueFrom(radix.__wallet)
-
-  firstValueFrom(wallet.deriveHWAccount(data)).then((hwAccount: AccountT) => {
+  try {
+    // const wallet = await firstValueFrom(radix.__wallet)
+    const hwAccount: AccountT = await firstValueFrom(radix.deriveHWAccount({
+      keyDerivation: HDPathRadix.create({
+        address: { index: hwaddr.index, isHardened: true }
+      }),
+      hardwareWalletConnection: HardwareWalletLedger.create({
+        send: sendAPDU
+      }),
+      alsoSwitchTo: true,
+      verificationPrompt: !(hwaddr.address.toString() !== hardwareAddress.value)
+    }))
     if (!hardwareAddress.value && activeNetwork.value) {
       // saveAccountName(hwAccount.address.toString(), 'Hardware Account')
       hardwareAddress.value = hwAccount.address.toString()
@@ -354,13 +352,10 @@ const connectHardwareWallet = async (hwaddr: HardwareAddress) => {
     activeAccount.value = hwAccount
     hardwareAccount.value = hwAccount
     hardwareInteractionState.value = ''
-
-    getAccountNames().then((names) => {
-      accountNames.value = names
-    })
-  }).catch((err) => {
-    hardwareError.value = err
-  })
+  } catch (err) {
+    console.log(err)
+    hardwareError.value = err as Error
+  }
 }
 
 const verifyHardwareWalletAddress = () => {
