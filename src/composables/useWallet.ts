@@ -300,6 +300,73 @@ const createNewHardwareAccount = async () => {
         if (hwd.name !== hardwareDevice.name) return hwd
         return {
           name: hardwareDevice.name,
+          addresses: [...hardwareDevice.addresses, { name: 'New Hardware Account', address: newAccount.address, index: newIndex }]
+        }
+      })
+      hardwareAddress.value = newAccount.address.toString()
+      activeAccount.value = newAccount
+      hardwareAccount.value = newAccount
+      hardwareDevices.value = newHardwareDevices
+      saveHardwareDevices(activeNetwork.value, newHardwareDevices)
+      router.push(`/wallet/${newAccount.address.toString()}`)
+    } else {
+      const newAddr = connectedDeviceAccount.address.toString()
+      const newHardwareDevices = [...hardwareDevices.value, { name: newAddr, addresses: [{ name: newAddr, address: connectedDeviceAccount.address, index: 0 }] }]
+      hardwareAddress.value = newAddr
+      activeAccount.value = connectedDeviceAccount
+      hardwareAccount.value = connectedDeviceAccount
+      hardwareDevices.value = newHardwareDevices
+      saveHardwareDevices(activeNetwork.value, newHardwareDevices)
+      router.push(`/wallet/${connectedDeviceAccount.address.toString()}`)
+    }
+    hardwareInteractionState.value = ''
+  } catch (err) {
+    hardwareError.value = err as Error
+  }
+}
+
+const connectHardwareWallet = async (hwaddr: HardwareAddress) => {
+  if (hardwareAccount.value && hardwareAccount.value.address.equals(hwaddr.address)) {
+    switchAddress(hwaddr.address)
+    return
+  }
+  hardwareError.value = null
+  hardwareInteractionState.value = 'DERIVING'
+
+  const data = {
+    keyDerivation: HDPathRadix.create({
+      address: { index: 0, isHardened: true }
+    }),
+    hardwareWalletConnection: HardwareWalletLedger.create({
+      send: sendAPDU
+    }),
+    alsoSwitchTo: false,
+    verificationPrompt: false
+  }
+  try {
+    const wallet = await firstValueFrom(radix.__wallet)
+    const connectedDeviceAccount = await firstValueFrom(wallet.deriveHWAccount(data))
+    const hardwareDevice = hardwareDevices.value.find((hw) => hw.addresses.find((addr) => addr.address.equals(connectedDeviceAccount.address)))
+    let newHardwareDevices
+    if (hardwareDevice) {
+      const addressIndexes = hardwareDevice.addresses.map((a) => a.index)
+      const newIndex = Math.max(...addressIndexes) + 1
+      const newAccountData = {
+        keyDerivation: HDPathRadix.create({
+          address: { index: newIndex, isHardened: true }
+        }),
+        hardwareWalletConnection: HardwareWalletLedger.create({
+          send: sendAPDU
+        }),
+        alsoSwitchTo: false,
+        verificationPrompt: false
+      }
+      const secondWallet = await firstValueFrom(radix.__wallet)
+      const newAccount = await firstValueFrom(secondWallet.deriveHWAccount(newAccountData))
+      newHardwareDevices = hardwareDevices.value.map((hwd) => {
+        if (hwd.name !== hardwareDevice.name) return hwd
+        return {
+          name: hardwareDevice.name,
           addresses: [...hardwareDevice.addresses, { address: newAccount.address, index: newIndex }]
         }
       })
