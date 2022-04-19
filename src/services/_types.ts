@@ -7,7 +7,7 @@ export declare type Position = Readonly<{
   unstakes: Array<UnstakePosition>;
 }>;
 
-export declare type HardwareAddress = { name: string; address: AccountAddressT; index: number; };
-export declare type EncodedHardwareAddress = { name: string; address: string; index: number; };
+export declare type HardwareAddress = { address: AccountAddressT; index: number; };
+export declare type EncodedHardwareAddress = { address: string; index: number; };
 export declare type HardwareDevice = { name: string; addresses: HardwareAddress[]; };
 export declare type EncodedHardwareDevice = { name: string; addresses: EncodedHardwareAddress[]; };

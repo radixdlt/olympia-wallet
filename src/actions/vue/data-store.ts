@@ -38,7 +38,7 @@ export const saveHardwareDevices = async (network: Network, hardwareDevices: Har
   const data = hardwareDevices.map((hw: HardwareDevice) => {
     return {
       name: hw.name,
-      addresses: hw.addresses.map(({ name, index, address }) => ({ name, index, address: address.toString() }))
+      addresses: hw.addresses.map(({ index, address }) => ({ index, address: address.toString() }))
     }
   }) as EncodedHardwareDevice[]
 
