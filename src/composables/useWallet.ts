@@ -300,7 +300,7 @@ const createNewHardwareAccount = async () => {
         if (hwd.name !== hardwareDevice.name) return hwd
         return {
           name: hardwareDevice.name,
-          addresses: [...hardwareDevice.addresses, { name: 'New Hardware Account', address: newAccount.address, index: newIndex }]
+          addresses: [...hardwareDevice.addresses, { address: newAccount.address, index: newIndex }]
         }
       })
       hardwareAddress.value = newAccount.address.toString()
@@ -311,7 +311,7 @@ const createNewHardwareAccount = async () => {
       router.push(`/wallet/${newAccount.address.toString()}`)
     } else {
       const newAddr = connectedDeviceAccount.address.toString()
-      const newHardwareDevices = [...hardwareDevices.value, { name: newAddr, addresses: [{ name: newAddr, address: connectedDeviceAccount.address, index: 0 }] }]
+      const newHardwareDevices = [...hardwareDevices.value, { name: newAddr, addresses: [{ address: connectedDeviceAccount.address, index: 0 }] }]
       hardwareAddress.value = newAddr
       activeAccount.value = connectedDeviceAccount
       hardwareAccount.value = connectedDeviceAccount
