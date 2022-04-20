@@ -116,6 +116,8 @@ const messages = {
       network: 'Network',
       update: 'Update Available',
       disconnected: 'Disconnected',
+      newHardwareAccountBody: 'You’ve derived an account from a new ledger device, a new hardware wallet was added.',
+      newHardwareAccountConfirm: 'Got it!',
       hideSoftwareAccountModalBody: 'Are you sure you want to hide this software account? This account can be unhidden in settings.',
       hideHardwareAccountModalBody: 'Are you sure you want to hide this hardware account? This account can be unhidden in settings.',
       hideAccountModalSubmit: 'Hide Account',

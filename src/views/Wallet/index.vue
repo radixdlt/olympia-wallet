@@ -23,6 +23,7 @@
     <wallet-ledger-interaction-modal v-if="hardwareInteractionState && hardwareInteractionState.length > 0" />
     <wallet-ledger-delete-modal v-if="showDeleteHWWalletPrompt" />
     <wallet-hide-account-modal v-if="showHideAccountModal"/>
+    <wallet-new-device-popup v-if="showNewDevicePopup"/>
   </div>
 </template>
 
@@ -35,6 +36,7 @@ import WalletLoading from './WalletLoading.vue'
 import WalletLedgerVerifyAddressModal from '@/views/Wallet/WalletLedgerVerifyAddressModal.vue'
 import WalletLedgerDeleteModal from '@/views/Wallet/WalletLedgerDeleteModal.vue'
 import WalletHideAccountModal from '@/views/Wallet/WalletHideAccountModal.vue'
+import WalletNewDevicePopup from '@/views/Wallet/WalletNewDevicePopup.vue'
 import { useRouter, onBeforeRouteUpdate, onBeforeRouteLeave, useRoute } from 'vue-router'
 import { useTransactions, useWallet } from '@/composables'
 
@@ -46,6 +48,7 @@ const WalletIndex = defineComponent({
     WalletLedgerVerifyAddressModal,
     WalletLedgerDeleteModal,
     WalletHideAccountModal,
+    WalletNewDevicePopup,
     WalletLoading
   },
 
@@ -62,6 +65,7 @@ const WalletIndex = defineComponent({
       radix,
       showDeleteHWWalletPrompt,
       showHideAccountModal,
+      showNewDevicePopup,
       showLedgerVerify,
       setActiveAddress,
       walletLoaded,
@@ -104,6 +108,7 @@ const WalletIndex = defineComponent({
       shouldShowConfirmation,
       showDeleteHWWalletPrompt,
       showHideAccountModal,
+      showNewDevicePopup,
       showLedgerVerify,
       isTestNet,
       walletLoaded
