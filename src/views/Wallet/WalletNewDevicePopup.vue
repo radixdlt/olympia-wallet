@@ -28,8 +28,6 @@ const WalletNewDevicePopup = defineComponent({
 
     return {
       handleClose: () => {
-        // add account to hiddenAccounts in wallet.json
-        // switch to first derived
         setShowNewDevicePopup(false)
       }
     }

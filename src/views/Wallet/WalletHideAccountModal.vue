@@ -47,13 +47,9 @@ const WalletHideAccountModal = defineComponent({
 
     return {
       handleSubmit: () => {
-        // add account to hiddenAccounts in wallet.json
-        // switch to first derived
         setHideAccountModal(false)
       },
       handleClose: () => {
-        // add account to hiddenAccounts in wallet.json
-        // switch to first derived
         setHideAccountModal(false)
       },
       connectHardwareWallet,
