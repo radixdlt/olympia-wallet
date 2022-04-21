@@ -69,6 +69,7 @@ const nodeUrl: Ref<string | null> = ref(null)
 const reloadTrigger = new Subject<number>()
 const showDeleteHWWalletPrompt: Ref<boolean> = ref(false)
 const showHideAccountModal: Ref<boolean> = ref(false)
+const showNewDevicePopup: Ref<boolean> = ref(false)
 const showLedgerVerify: Ref<boolean> = ref(false)
 const signingKeychain: Ref<SigningKeychainT | null> = ref(null)
 const switching = ref(false)
@@ -121,6 +122,7 @@ interface useWalletInterface {
   readonly radix: ReturnType<typeof Radix.create>;
   readonly showDeleteHWWalletPrompt: Ref<boolean>;
   readonly showHideAccountModal: Ref<boolean>;
+  readonly showNewDevicePopup: Ref<boolean>;
   readonly showLedgerVerify: Ref<boolean>;
   readonly switching: ComputedRef<boolean>;
   readonly updateAvailable: Ref<boolean>;
@@ -145,6 +147,7 @@ interface useWalletInterface {
   resetWallet: (nextRoute: 'create-wallet' | 'restore-wallet') => void;
   setActiveAddress: (address: string) => void;
   setHideAccountModal: (val: boolean) => void;
+  setShowNewDevicePopup: (val: boolean) => void;
   setConnected: (value: boolean) => void;
   setNetwork: (network: Network | null) => void;
   setPin: (pin: string) => Promise<string>;
@@ -261,6 +264,8 @@ const accountNameFor = (accountAddress: AccountAddressT): string => {
   return accountName ? accountName.name : ''
 }
 
+const setShowNewDevicePopup = (val: boolean) => { showNewDevicePopup.value = val }
+
 const createNewHardwareAccount = async () => {
   if (!activeNetwork.value) return
   hardwareError.value = null
@@ -300,7 +305,7 @@ const createNewHardwareAccount = async () => {
         if (hwd.name !== hardwareDevice.name) return hwd
         return {
           name: hardwareDevice.name,
-          addresses: [...hardwareDevice.addresses, { address: newAccount.address, index: newIndex }]
+          addresses: [...hardwareDevice.addresses, { name: 'New Hardware Account', address: newAccount.address, index: newIndex }]
         }
       })
       hardwareAddress.value = newAccount.address.toString()
@@ -311,13 +316,15 @@ const createNewHardwareAccount = async () => {
       router.push(`/wallet/${newAccount.address.toString()}`)
     } else {
       const newAddr = connectedDeviceAccount.address.toString()
-      const newHardwareDevices = [...hardwareDevices.value, { name: newAddr, addresses: [{ address: connectedDeviceAccount.address, index: 0 }] }]
+      const newHardwareDevices = [...hardwareDevices.value, { name: newAddr, addresses: [{ name: newAddr, address: connectedDeviceAccount.address, index: 0 }] }]
       hardwareAddress.value = newAddr
       activeAccount.value = connectedDeviceAccount
       hardwareAccount.value = connectedDeviceAccount
       hardwareDevices.value = newHardwareDevices
       saveHardwareDevices(activeNetwork.value, newHardwareDevices)
+      hardwareDevices.value = await getHardwareDevices(activeNetwork.value)
       router.push(`/wallet/${connectedDeviceAccount.address.toString()}`)
+      setShowNewDevicePopup(true)
     }
     hardwareInteractionState.value = ''
   } catch (err) {
@@ -487,6 +494,7 @@ export default function useWallet (router: Router): useWalletInterface {
     nodeUrl: computed(() => nodeUrl.value),
     showDeleteHWWalletPrompt,
     showHideAccountModal,
+    showNewDevicePopup,
     showLedgerVerify,
     connected: computed(() => connected.value),
     switching: computed(() => switching.value),
@@ -540,6 +548,7 @@ export default function useWallet (router: Router): useWalletInterface {
     persistNodeUrl,
     setActiveAddress,
     setHideAccountModal,
+    setShowNewDevicePopup,
     setPin,
     setWallet,
     setConnected: (val: boolean) => { connected.value = val },
