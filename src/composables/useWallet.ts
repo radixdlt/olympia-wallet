@@ -322,6 +322,7 @@ const createNewHardwareAccount = async () => {
       hardwareAccount.value = connectedDeviceAccount
       hardwareDevices.value = newHardwareDevices
       saveHardwareDevices(activeNetwork.value, newHardwareDevices)
+      hardwareDevices.value = await getHardwareDevices(activeNetwork.value)
       router.push(`/wallet/${connectedDeviceAccount.address.toString()}`)
       setShowNewDevicePopup(true)
     }

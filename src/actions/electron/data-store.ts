@@ -23,7 +23,7 @@ export const saveDeviceName = (event: IpcMainInvokeEvent, data: string) => {
   const device = hardwareDevices[deviceIndex]
   const renamedDeviceObject = {"name": prettyName, "addresses":[...device.addresses]}
   hardwareDevices.splice(deviceIndex, 1, renamedDeviceObject)
-  store.set(`wallets.${network}.hardwareDevices`, [renamedDeviceObject])
+  store.set(`wallets.${network}.hardwareDevices`, hardwareDevices)
 }
 
 export const getLatestAccountAddress = (event: IpcMainInvokeEvent, network: string): string => {
@@ -67,6 +67,7 @@ export const getDerivedAccountsIndex = (event: IpcMainInvokeEvent, network: stri
 
 export const saveHardwareDevices = (event: IpcMainInvokeEvent, data: string): void => {
   const { network, encodedDevices } = JSON.parse(data)
+  const devices = store.get(`wallets.${network}.hardwareDevices`)
   store.set(`wallets.${network}.hardwareDevices`, encodedDevices)
 }
 
