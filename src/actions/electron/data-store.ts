@@ -67,7 +67,6 @@ export const getDerivedAccountsIndex = (event: IpcMainInvokeEvent, network: stri
 
 export const saveHardwareDevices = (event: IpcMainInvokeEvent, data: string): void => {
   const { network, encodedDevices } = JSON.parse(data)
-  const devices = store.get(`wallets.${network}.hardwareDevices`)
   store.set(`wallets.${network}.hardwareDevices`, encodedDevices)
 }
 
