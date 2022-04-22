@@ -120,7 +120,7 @@ import { defineComponent, Ref, ref, ComputedRef, computed, watch, onMounted, onU
 import { useForm } from 'vee-validate'
 
 import { safelyUnwrapAddress, safelyUnwrapAmount, validateAmountOfType, validateGreaterThanZero } from '@/helpers/validateRadixTypes'
-import { Token } from '@radixdlt/application'
+import { AmountOrUnsafeInput, Token } from '@radixdlt/application'
 import { asBigNumber } from '@/components/BigAmount.vue'
 import ClickToCopy from '@/components/ClickToCopy.vue'
 import FormErrorMessage from '@/components/FormErrorMessage.vue'
@@ -155,8 +155,8 @@ const WalletTransaction = defineComponent({
   setup () {
     const router = useRouter()
     const { errors, values, meta, setErrors, resetForm } = useForm<TransactionForm>()
-    const { activeAddress, activeAccount, hardwareAccount, loadingLatestAddress, networkPreamble, radix, verifyHardwareWalletAddress } = useWallet(router)
-    const { setActiveTransactionForm, transferTokens } = useTransactions(radix, router, activeAccount.value, hardwareAccount.value)
+    const { activeAddress, activateAccount, hardwareAccount, loadingLatestAddress, networkPreamble, radix, verifyHardwareWalletAddress } = useWallet(router)
+    const { setActiveTransactionForm, transferTokens } = useTransactions(radix, router, activeAddress.value, hardwareAccount.value)
     const { t } = useI18n({ useScope: 'global' })
     const { nativeToken, nativeTokenUnsub } = useNativeToken(radix)
     const { fetchBalancesForAddress, tokenBalances, tokenBalanceFor, tokenInfoFor, tokenBalancesUnsub } = useTokenBalances(radix)
@@ -258,7 +258,7 @@ const WalletTransaction = defineComponent({
       tokenOptions.value = nativeTb ? [nativeTb, ...remainingTb] : remainingTb
     }
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
       if (!meta.value.valid || !selectedCurrency.value) return false
       const safeAddress = safelyUnwrapAddress(values.recipient, networkPreamble.value)
       const safeAmount = safelyUnwrapAmount(Number(values.amount))
@@ -284,20 +284,20 @@ const WalletTransaction = defineComponent({
         })
         return
       }
-
-      if (safeAddress && safeAmount) {
-        transferTokens(
-          {
-            to_account: safeAddress,
-            amount: safeAmount,
-            tokenIdentifier: token.rri.toString()
-          },
-          {
-            plaintext: values.message,
-            encrypt: values.encrypt
-          },
-          selectedCurrency.value
-        )
+      if (safeAddress && safeAddress) {
+        const transferData = {
+          to_account: safeAddress,
+          amount: safeAmount as AmountOrUnsafeInput,
+          tokenIdentifier: token.rri.toString()
+        }
+        const messageData = {
+          plaintext: values.message,
+          encrypt: values.encrypt
+        }
+        const currencyVal = selectedCurrency.value
+        await activateAccount(() => {
+          transferTokens(transferData, messageData, currencyVal)
+        })
       }
     }
 

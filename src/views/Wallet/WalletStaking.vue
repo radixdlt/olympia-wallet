@@ -137,7 +137,7 @@
 </template>
 
 <script lang="ts">
-import { Amount, AmountT, ValidatorAddressT } from '@radixdlt/application'
+import { Amount, AmountT, StakeTokensInput, UnstakeTokensInput, ValidatorAddressT } from '@radixdlt/application'
 import { computed, defineComponent, ComputedRef, onMounted, onUnmounted, watch, Ref, ref } from 'vue'
 import { useForm } from 'vee-validate'
 import StakeListItem from '@/components/StakeListItem.vue'
@@ -176,14 +176,14 @@ const WalletStaking = defineComponent({
     const { errors, values, meta, setErrors, resetForm, validateField } = useForm<StakeForm>()
     const {
       activeAddress,
-      activeAccount,
+      activateAccount,
       explorerUrlBase,
       hardwareAccount,
       loadingLatestAddress,
       radix
     } = useWallet(router)
-    const { activeForm, setActiveForm, activeStakes, activeUnstakes, loadingAnyStaking, maybeGetValidator, stakingUnsub } = useStaking(radix)
-    const { stakeTokens, unstakeTokens, setActiveTransactionForm } = useTransactions(radix, router, activeAccount.value, hardwareAccount.value)
+    const { activeForm, setActiveForm, activeStakes, activeUnstakes, loadingAnyStaking, maybeGetValidator, stakingUnsub, fetchStakesForAddress } = useStaking(radix)
+    const { stakeTokens, unstakeTokens, setActiveTransactionForm } = useTransactions(radix, router, activeAddress.value, hardwareAccount.value)
     const { nativeToken, nativeTokenUnsub } = useNativeToken(radix)
     const { fetchBalancesForAddress, tokenBalances, tokenBalanceFor, tokenBalancesUnsub } = useTokenBalances(radix)
     const zero = Amount.fromUnsafe(0)._unsafeUnwrap()
@@ -216,7 +216,8 @@ const WalletStaking = defineComponent({
     watch((activeAddress), (newActiveAddress) => {
       // Update balances when active address changes
       newActiveAddress && fetchBalancesForAddress(newActiveAddress)
-    })
+      newActiveAddress && fetchStakesForAddress(newActiveAddress)
+    }, { immediate: true })
 
     /* ------
      *  Computed Values
@@ -305,7 +306,7 @@ const WalletStaking = defineComponent({
       validateField('validator')
     }
 
-    const handleSubmitStake = () => {
+    const handleSubmitStake = async () => {
       if (!tokenBalances.value || !nativeToken.value) return
       const nativeTokenBalance = tokenBalanceFor(nativeToken.value)
       if (!meta.value.valid || !nativeTokenBalance) return
@@ -323,17 +324,20 @@ const WalletStaking = defineComponent({
         return
       }
       if (!safeAddress || !safeAmount) return
-      activeForm.value === 'STAKING'
-        ? stakeTokens({
-          to_validator: safeAddress,
-          amount: safeAmount,
-          tokenIdentifier: nativeToken.value.rri
-        })
-        : unstakeTokens({
-          from_validator: safeAddress,
-          amount: safeAmount,
-          tokenIdentifier: nativeToken.value.rri
-        })
+      const data = activeForm.value === 'STAKING' ? {
+        to_validator: safeAddress,
+        amount: safeAmount,
+        tokenIdentifier: nativeToken.value?.rri
+      } : {
+        from_validator: safeAddress,
+        amount: safeAmount,
+        tokenIdentifier: nativeToken.value?.rri
+      }
+      await activateAccount(() => {
+        activeForm.value === 'STAKING'
+          ? stakeTokens(data as StakeTokensInput)
+          : unstakeTokens(data as UnstakeTokensInput)
+      })
     }
 
     const handleMaxSubmitUnstake = () => {

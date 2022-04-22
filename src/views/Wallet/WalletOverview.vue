@@ -155,6 +155,7 @@ const WalletOverview = defineComponent({
     const subs = new Subscription()
     const loadingStakes = ref(true)
     const hiddenTokens: Ref<string[]> = ref([])
+
     const updateObservable = merge(
       radix.activeAccount,
       interval(15000)

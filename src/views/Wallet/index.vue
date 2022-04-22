@@ -22,19 +22,22 @@
     <wallet-ledger-verify-address-modal v-if="showLedgerVerify" />
     <wallet-ledger-interaction-modal v-if="hardwareInteractionState && hardwareInteractionState.length > 0" />
     <wallet-ledger-delete-modal v-if="showDeleteHWWalletPrompt" />
+    <wallet-hide-account-modal v-if="showHideAccountModal"/>
+    <wallet-new-device-popup v-if="showNewDevicePopup"/>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, computed } from 'vue'
-
+import { defineComponent, computed, watch } from 'vue'
 import WalletConfirmTransactionModal from './WalletConfirmTransactionModal.vue'
 import WalletSidebar from './WalletSidebar.vue'
 import WalletLedgerInteractionModal from '@/views/Wallet/WalletLedgerInteractionModal.vue'
 import WalletLoading from './WalletLoading.vue'
 import WalletLedgerVerifyAddressModal from '@/views/Wallet/WalletLedgerVerifyAddressModal.vue'
 import WalletLedgerDeleteModal from '@/views/Wallet/WalletLedgerDeleteModal.vue'
-import { useRouter, onBeforeRouteUpdate, onBeforeRouteLeave } from 'vue-router'
+import WalletHideAccountModal from '@/views/Wallet/WalletHideAccountModal.vue'
+import WalletNewDevicePopup from '@/views/Wallet/WalletNewDevicePopup.vue'
+import { useRouter, onBeforeRouteUpdate, onBeforeRouteLeave, useRoute } from 'vue-router'
 import { useTransactions, useWallet } from '@/composables'
 
 const WalletIndex = defineComponent({
@@ -44,31 +47,47 @@ const WalletIndex = defineComponent({
     WalletLedgerInteractionModal,
     WalletLedgerVerifyAddressModal,
     WalletLedgerDeleteModal,
+    WalletHideAccountModal,
+    WalletNewDevicePopup,
     WalletLoading
   },
 
   setup () {
     const router = useRouter()
+    const route = useRoute()
 
     const {
-      activeAccount,
+      activeAddress,
       activeNetwork,
       hardwareAccount,
       hardwareInteractionState,
       hasWallet,
       radix,
       showDeleteHWWalletPrompt,
+      showHideAccountModal,
+      showNewDevicePopup,
       showLedgerVerify,
+      setActiveAddress,
       walletLoaded,
       waitUntilAllLoaded
     } = useWallet(router)
 
-    const { shouldShowConfirmation } = useTransactions(radix, router, activeAccount.value, hardwareAccount.value)
+    watch(
+      () => route.params.activeAddress,
+      (accountId) => {
+        const id = Array.isArray(accountId) ? accountId[0] : accountId
+        setActiveAddress(id)
+        // await switchAccount(newId, router)
+      },
+      { immediate: true }
+    )
 
     onBeforeRouteUpdate(async () => {
       await waitUntilAllLoaded()
       return true
     })
+    if (!activeAddress.value) return
+    const { shouldShowConfirmation } = useTransactions(radix, router, activeAddress.value, hardwareAccount.value)
 
     // Return home if wallet is undefined
     if (!hasWallet.value) router.push('/')
@@ -88,6 +107,8 @@ const WalletIndex = defineComponent({
       activeNetwork,
       shouldShowConfirmation,
       showDeleteHWWalletPrompt,
+      showHideAccountModal,
+      showNewDevicePopup,
       showLedgerVerify,
       isTestNet,
       walletLoaded

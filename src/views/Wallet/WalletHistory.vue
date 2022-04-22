@@ -47,7 +47,7 @@
             :pending="false"
             :nativeToken="nativeToken"
             :explorerUrlBase="explorerUrlBase"
-            @decryptMessage = "(data) => decryptMessage(data)"
+            @decryptMessage="activateThenDecrypt"
           />
         </div>
 
@@ -100,6 +100,7 @@ import WalletLedgerDisconnectedModal from '@/views/Wallet/WalletLedgerDisconnect
 import { useNativeToken, useWallet, useHistory } from '@/composables'
 import { useRouter, onBeforeRouteLeave } from 'vue-router'
 import WalletLedgerVerifyDecryptModal from './WalletLedgerVerifyDecryptModal.vue'
+import { ExecutedTransaction } from '@radixdlt/application'
 
 const WalletHistory = defineComponent({
   components: {
@@ -114,14 +115,14 @@ const WalletHistory = defineComponent({
     const router = useRouter()
     const {
       activeAddress,
-      activeAccount,
+      activateAccount,
       explorerUrlBase,
       hardwareAccount,
       radix,
       verifyHardwareWalletAddress
     } = useWallet(router)
 
-    if (!activeAccount.value) {
+    if (!activeAddress.value) {
       return
     }
 
@@ -130,6 +131,7 @@ const WalletHistory = defineComponent({
       canGoNext,
       decryptedMessages,
       displayLedgerErrorModal,
+      fetchTransactions,
       loadingHistory,
       transactions,
       decryptMessage,
@@ -139,7 +141,7 @@ const WalletHistory = defineComponent({
       resetHistory,
       updateActiveAccount,
       isDecrypting
-    } = useHistory(radix, activeAccount.value)
+    } = useHistory(radix, activeAddress.value)
 
     const { nativeToken, nativeTokenUnsub } = useNativeToken(radix)
 
@@ -154,8 +156,7 @@ const WalletHistory = defineComponent({
     })
 
     const shouldShowDecryptModal: ComputedRef<boolean> = computed(() =>
-      isDecrypting.value && activeAccount && hardwareAccount &&
-      activeAccount.value === hardwareAccount.value
+      isDecrypting.value && !!activeAddress.value && !!hardwareAccount.value && activeAddress.value === hardwareAccount.value.address
     )
 
     const closeLedgerErrorModal = () => {
@@ -163,13 +164,20 @@ const WalletHistory = defineComponent({
       displayLedgerErrorModal.value = false
     }
 
+    const activateThenDecrypt = async (data: ExecutedTransaction) => {
+      activateAccount(() => {
+        decryptMessage(data)
+      })
+    }
+
     // Fetch new history when active account changes
-    watch((activeAccount), () => {
-      if (activeAccount.value) {
-        updateActiveAccount(activeAccount.value)
+    watch((activeAddress), () => {
+      if (activeAddress.value) {
+        updateActiveAccount(activeAddress.value)
       }
       resetHistory()
-    })
+      fetchTransactions()
+    }, { immediate: true })
 
     // Fetch initial history on route load
     onMounted(() => {
@@ -182,8 +190,8 @@ const WalletHistory = defineComponent({
     })
 
     return {
-      activeAccount,
       activeAddress,
+      activateThenDecrypt,
       canGoBack,
       canGoNext,
       decryptMessage,

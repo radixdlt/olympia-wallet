@@ -9,14 +9,14 @@
       @click="setState(true)"
     >
       <div class="relative py-3">
-        <account-list-item :account="activeAccount" v-if="activeAccount"/>
+        <account-list-preview :address="activeAddress" v-if="activeAddress"/>
         <div class="absolute bg-gradient-to-r from-blueEnd to-transparent inset-0 w-full h-full z-10 -mx-8 opacity-40">
         </div>
       </div>
     </div>
 
-    <div class="flex flex-col flex-1 px-5" v-if="activeAccount">
-      <router-link to="/wallet" custom v-slot="{ href, navigate, isExactActive }">
+    <div class="flex flex-col flex-1 px-5" v-if="activeAddress">
+      <router-link :to="{ name: 'WalletOverview', params: { activeAddress: activeAddress?.toString() }}" custom v-slot="{ href, navigate, isExactActive }">
         <wallet-nav-link :href="href" :navigate="navigate" :isActive="isExactActive" :title="$t('wallet.navBalances')">
           <svg width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr-3">
             <path d="M6.47435 13.5559L6.73728 14.4765C6.73736 16.057 5.45613 17.3382 3.87565 17.3382C2.29524 17.3382 1.01401 16.0569 1.01401 14.4765L1.24602 13.604" stroke="#00C389" stroke-width="1.5" stroke-miterlimit="10"/>
@@ -31,7 +31,7 @@
         </wallet-nav-link>
       </router-link>
 
-      <router-link to="/wallet/transaction" custom v-slot="{ href, navigate, isActive }">
+      <router-link :to="{ name: 'WalletTransaction', params: { activeAddress: activeAddress?.toString() }}" custom v-slot="{ href, navigate, isActive }">
         <wallet-nav-link :href="href" :navigate="navigate" :isActive="isActive" :title="$t('wallet.navTransaction')">
           <svg width="28" height="20" viewBox="0 0 28 20" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr-3">
             <path d="M27 9.8871L14.4194 1.5V9.8871" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -41,7 +41,7 @@
         </wallet-nav-link>
       </router-link>
 
-      <router-link to="/wallet/staking" custom v-slot="{ href, navigate, isActive }">
+      <router-link :to="{ name: 'WalletStaking', params: { activeAddress: activeAddress?.toString() }}" custom v-slot="{ href, navigate, isActive }">
         <wallet-nav-link :href="href" :navigate="navigate" :isActive="isActive" :title="$t('wallet.navStake')">
           <svg width="19" height="24" viewBox="0 0 19 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr-3">
             <path d="M3.27832 9.8159V7.35169C3.27832 3.99519 5.99934 1.27417 9.35584 1.27417C12.7123 1.27417 15.4334 3.99519 15.4334 7.35169V9.8159" stroke="white" stroke-width="1.5" stroke-miterlimit="10"/>
@@ -50,7 +50,7 @@
         </wallet-nav-link>
       </router-link>
 
-      <router-link to="/wallet/history" custom v-slot="{ href, navigate, isActive }">
+      <router-link :to="{ name: 'WalletHistory', params: { activeAddress: activeAddress?.toString() }}" custom v-slot="{ href, navigate, isActive }">
         <wallet-nav-link :href="href" :navigate="navigate" :isActive="isActive" :title="$t('wallet.navHistory')">
           <svg width="20" height="24" viewBox="0 0 20 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr-3">
             <path d="M1 13.3484V9.84839L19 9.84839V16.3484H1V22.8484H19V18.8484" stroke="white" stroke-width="1.5"/>
@@ -76,7 +76,7 @@
     </div>
 
     <div class="flex flex-col px-5">
-      <router-link to="/wallet/settings" custom v-slot="{ href, navigate, isActive }">
+      <router-link to="/settings" custom v-slot="{ href, navigate, isActive }">
         <wallet-nav-link :href="href" :navigate="navigate" :isActive="isActive" :title="$t('wallet.navSettings')">
           <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr-3">
             <path d="M21.0003 8.84836V12.8485L19.5 12.8484L18.2223 12.8484C18.0571 13.4465 17.8225 14.0143 17.5228 14.5424L19.4856 16.5051L16.6572 19.3335L14.6943 17.3709C14.1663 17.6706 13.5982 17.9052 13.0002 18.0706V20.8484H9.00018V18.0706C8.40222 17.9052 7.83417 17.6706 7.30612 17.3709L5.34331 19.3335L2.51485 16.5051L4.47766 14.5424C4.17793 14.0142 3.9434 13.4465 3.77802 12.8484H1V8.84829H3.77802C3.9434 8.25018 4.17793 7.68206 4.47773 7.1543L2.51485 5.19128L5.34331 2.36281L7.30619 4.3259C7.83424 4.02611 8.40229 3.79151 9.00011 3.6262V0.848389H13.0002V3.6262C13.5981 3.79158 14.1661 4.02618 14.6942 4.3259L16.6571 2.36288L19.4856 5.19135L17.5227 7.15437C17.8224 7.68256 18.0571 8.25025 18.2223 8.84836H21.0003Z" stroke="white" stroke-width="1.5" stroke-miterlimit="10"/>
@@ -90,8 +90,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import AccountListItem from '@/components/AccountListItem.vue'
+import { computed, defineComponent } from 'vue'
+import AccountListPreview from '@/components/AccountListPreview.vue'
 import WalletNavLink from './WalletNavLink.vue'
 import { useWallet, useSidebar } from '@/composables'
 import { useRouter, useRoute } from 'vue-router'
@@ -100,27 +100,24 @@ import SidebarNetworkDisplay from '@/components/SidebarNetworkDisplay.vue'
 const WalletSidebarDefault = defineComponent({
   components: {
     SidebarNetworkDisplay,
-    AccountListItem,
+    AccountListPreview,
     WalletNavLink
   },
 
   setup () {
     const router = useRouter()
-    const { activeAccount } = useWallet(router)
+    const { activeAddress } = useWallet(router)
     const { open, setState } = useSidebar()
     const route = useRoute()
 
+    const isOverview = computed(() => route.name === 'WalletOverview')
+
     return {
-      activeAccount,
+      activeAddress,
+      isOverview,
       open,
       route,
       setState
-    }
-  },
-
-  computed: {
-    isOverview: function (): boolean {
-      return this.route.path === '/wallet'
     }
   }
 })

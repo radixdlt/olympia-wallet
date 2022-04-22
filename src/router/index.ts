@@ -8,6 +8,7 @@ import WalletTransaction from '../views/Wallet/WalletTransaction.vue'
 import WalletStaking from '../views/Wallet/WalletStaking.vue'
 import WalletHistory from '../views/Wallet/WalletHistory.vue'
 import AccountEditName from '@/views/Account/AccountEditName.vue'
+import WalletDeviceEditName from '@/views/Wallet/WalletDeviceEditName.vue'
 import SettingsIndex from '@/views/Settings/index.vue'
 
 const routes: Array<RouteRecordRaw> = [
@@ -20,35 +21,45 @@ const routes: Array<RouteRecordRaw> = [
     })
   },
   {
-    path: '/wallet',
+    path: '/wallet/:activeAddress',
     name: 'Wallet',
     component: Wallet,
     children: [
       {
         path: '',
-        component: WalletOverview
+        component: WalletOverview,
+        name: 'WalletOverview'
       },
       {
         path: 'transaction',
-        component: WalletTransaction
+        component: WalletTransaction,
+        name: 'WalletTransaction'
       },
       {
         path: 'staking',
-        component: WalletStaking
+        component: WalletStaking,
+        name: 'WalletStaking'
       },
       {
         path: 'history',
-        component: WalletHistory
+        component: WalletHistory,
+        name: 'WalletHistory'
       },
       {
         path: 'account-edit-name',
         component: AccountEditName
       },
       {
-        path: 'settings',
-        component: SettingsIndex
+        path: 'device-edit-name',
+        component: WalletDeviceEditName,
+        name: 'device-edit-name'
       }
     ]
+  },
+  {
+    path: '/settings',
+    name: 'Settings',
+    component: SettingsIndex
   },
   {
     path: '/create-wallet',

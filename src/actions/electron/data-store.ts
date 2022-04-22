@@ -1,6 +1,7 @@
 import { IpcMainInvokeEvent } from 'electron/main'
 import Store from 'electron-store'
 import migrations from '@/electron-store/migrations'
+import { HardwareDevice } from '@/services/_types'
 
 type MaybeString = string | null;
 export type AccountName = { address: string; name: string; }
@@ -14,6 +15,15 @@ export const store = new Store({
 export const saveAccountName = (event: IpcMainInvokeEvent, data: string) => {
   const { accountAddress, prettyName } = JSON.parse(data)
   return store.set(`account.${accountAddress}`, prettyName)
+}
+
+export const saveDeviceName = (event: IpcMainInvokeEvent, data: string) => {
+  const { network, deviceIndex, prettyName } = JSON.parse(data)
+  let hardwareDevices = store.get(`wallets.${network}.hardwareDevices`) as HardwareDevice[]
+  const device = hardwareDevices[deviceIndex]
+  const renamedDeviceObject = {"name": prettyName, "addresses":[...device.addresses]}
+  hardwareDevices.splice(deviceIndex, 1, renamedDeviceObject)
+  store.set(`wallets.${network}.hardwareDevices`, hardwareDevices)
 }
 
 export const getLatestAccountAddress = (event: IpcMainInvokeEvent, network: string): string => {
@@ -39,21 +49,34 @@ export const saveDerivedAccountsIndex = (event: IpcMainInvokeEvent, data: string
   store.set(`wallets.${network}.derivedAccountsIndex`, num)
 }
 
+export const saveDerivedHardwareAccountsIndex = (event: IpcMainInvokeEvent, data: string): void => {
+  const { num, network, deviceId } = JSON.parse(data) // instead of num, need this to be the new account address
+  const devices: any = store.get(`wallets.${network}.hardwareDevices`, []) 
+  
+  // deviceId should be the new account address
+  const newAddressStruct = {'name': deviceId, 'account': deviceId}  
+  
+  // copy/destructure existing hardwareDevices struct and append new address to end
+  const newAddresses = [{'name': deviceId, addresses: [...devices[0].addresses, newAddressStruct]}] 
+  store.set(`wallets.${network}.hardwareDevices`, newAddresses)
+}
+
 export const getDerivedAccountsIndex = (event: IpcMainInvokeEvent, network: string) => {
   return store.get(`wallets.${network}.derivedAccountsIndex`)
 }
 
-export const saveHardwareAddress = (event: IpcMainInvokeEvent, data: string) => {
-  const { address, network } = JSON.parse(data)
-  return store.set(`wallets.${network}.hardwareAddress`, address)
+export const saveHardwareDevices = (event: IpcMainInvokeEvent, data: string): void => {
+  const { network, encodedDevices } = JSON.parse(data)
+  store.set(`wallets.${network}.hardwareDevices`, encodedDevices)
 }
 
-export const getHardwareAddress = (event: IpcMainInvokeEvent, network: string) => {
-  return store.get(`wallets.${network}.hardwareAddress`)
+export const getHardwareDevices = (event: IpcMainInvokeEvent, network: string) : HardwareDevice[] => {
+  return store.get(`wallets.${network}.hardwareDevices`) as HardwareDevice[]
 }
 
-export const deleteHardwareAddress = (event: IpcMainInvokeEvent, network: string) => {
-  return store.delete(`wallets.${network}.hardwareAddress`)
+export const getHardwareDeviceAccounts = (event: IpcMainInvokeEvent, network: string, deviceId: string) => {
+  const hardwareStoreList: any = store.get(`wallets.${network}.hardwareDevices`)
+  return hardwareStoreList
 }
 
 export const resetStore = (event: IpcMainInvokeEvent) => {
@@ -112,4 +135,22 @@ export const setAcceptedTos = (event: IpcMainInvokeEvent, value: boolean): void 
 export const getHiddenTokens = (): string[] => {
   const hiddenTokens = store.get('hiddenTokens', []) as string[]
   return hiddenTokens
+}
+
+export const getHiddenAccounts = (): string[] => {
+  const hiddenAccounts = store.get('hiddenAccounts', []) as string[]
+  return hiddenAccounts
+}
+
+export const hideAccount = (event: IpcMainInvokeEvent, accountAddress: string): string[] => {
+  const hiddenAccounts = store.get('hiddenAccounts', []) as string[]
+  store.set('hiddenAccounts', [...hiddenAccounts, accountAddress])
+  return [...hiddenAccounts, accountAddress]
+}
+
+export const unhideAccount = (event: IpcMainInvokeEvent, accountAddress: string): string[] => {
+  let hiddenAccounts = store.get('hiddenAccounts', []) as string[]
+  hiddenAccounts = hiddenAccounts.filter((t: string) => t !== accountAddress)
+  store.set('hiddenAccounts', hiddenAccounts)
+  return hiddenAccounts
 }

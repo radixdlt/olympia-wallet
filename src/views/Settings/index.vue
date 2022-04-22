@@ -1,43 +1,40 @@
 <template>
-  <div class="bg-rGrayLightest p-5 flex-1 overflow-y-auto">
-    <div class="flex flex-col">
-      <div class="flex flex-row">
-        <tabs-tab :isActive="activeTab === 'password'" @click="() => handleClickTab('password')" :isDisabled="!connected">{{ $t('settings.tabTitlePassword') }}</tabs-tab>
-        <tabs-tab :isActive="activeTab === 'pin'" @click="() => handleClickTab('pin')" :isDisabled="!connected">{{ $t('settings.tabTitlePin') }}</tabs-tab>
-        <tabs-tab :isActive="activeTab === 'mnemonic'" @click="() => handleClickTab('mnemonic')" :isDisabled="!connected">{{ $t('settings.tabTitleMnemonic') }}</tabs-tab>
-        <tabs-tab :isActive="activeTab === 'tokens'" @click="() => handleClickTab('tokens')">{{ $t('settings.tabTitleTokens') }}</tabs-tab>
-        <tabs-tab :isActive="activeTab === 'nodes'" @click="() => handleClickTab('nodes')">{{ $t('settings.tabTitleGateway') }}</tabs-tab>
-      </div>
-      <tabs-content :leftTabIsActive="activeTab === 'password'">
-        <settings-reset-password
-          v-if="activeTab === 'password'"
-        />
-        <settings-reset-pin
-          v-if="activeTab === 'pin'"
-        />
-        <settings-reveal-mnemonic
-          v-if="activeTab === 'mnemonic'"
-          @clickAccessMnemonic="handleAccessMnemonic"
-          :mnemonic="mnemonic"
-        />
-        <template v-if="activeTab === 'tokens'">
-          <div
-            v-if="activeAccountIsLoading"
-            class="p-4 flex items-center justify-center"
-          >
-            <loading-icon class="text-rGrayDark" />
-          </div>
-          <settings-tokens
-            v-else
-            :activeAccount="activeAccount"
+  <WalletLayout>
+    <div class="bg-rGrayLightest p-5 flex-1 overflow-y-auto">
+      <div class="flex flex-col">
+        <div class="flex flex-row">
+          <tabs-tab :isActive="activeTab === 'password'" @click="() => handleClickTab('password')" :isDisabled="!connected">{{ $t('settings.tabTitlePassword') }}</tabs-tab>
+          <tabs-tab :isActive="activeTab === 'pin'" @click="() => handleClickTab('pin')" :isDisabled="!connected">{{ $t('settings.tabTitlePin') }}</tabs-tab>
+          <tabs-tab :isActive="activeTab === 'mnemonic'" @click="() => handleClickTab('mnemonic')" :isDisabled="!connected">{{ $t('settings.tabTitleMnemonic') }}</tabs-tab>
+          <tabs-tab :isActive="activeTab === 'tokens'" @click="() => handleClickTab('tokens')">{{ $t('settings.tabTitleTokens') }}</tabs-tab>
+          <tabs-tab :isActive="activeTab === 'nodes'" @click="() => handleClickTab('nodes')">{{ $t('settings.tabTitleGateway') }}</tabs-tab>
+        </div>
+        <tabs-content :leftTabIsActive="activeTab === 'password'">
+          <settings-reset-password
+            v-if="activeTab === 'password'"
           />
-        </template>
-        <settings-select-node
-          v-if="activeTab === 'nodes'"
-        />
-      </tabs-content>
+          <settings-reset-pin
+            v-if="activeTab === 'pin'"
+          />
+          <settings-reveal-mnemonic
+            v-if="activeTab === 'mnemonic'"
+            @clickAccessMnemonic="handleAccessMnemonic"
+            :mnemonic="mnemonic"
+          />
+          <template v-if="activeTab === 'tokens'">
+            <settings-tokens v-if="activeAddress" />
+            <div
+              v-else
+              class="p-4 flex items-center justify-center"
+            >
+              <loading-icon class="text-rGrayDark" />
+            </div>
+          </template>
+          <settings-select-node v-if="activeTab === 'nodes'" />
+        </tabs-content>
+      </div>
     </div>
-  </div>
+  </WalletLayout>
 </template>
 
 <script lang="ts">
@@ -51,6 +48,7 @@ import SettingsRevealMnemonic from './SettingsRevealMnemonic.vue'
 import SettingsResetPassword from './SettingsResetPassword.vue'
 import SettingsSelectNode from './SettingsSelectNode.vue'
 import SettingsTokens from './SettingsTokens.vue'
+import WalletLayout from '@/components/WalletLayout.vue'
 import { Ref, ref } from '@nopr3d/vue-next-rx'
 import { useSettingsTab, useWallet } from '@/composables'
 import { useRouter } from 'vue-router'
@@ -65,7 +63,8 @@ const SettingsIndex = defineComponent({
     SettingsSelectNode,
     SettingsTokens,
     TabsContent,
-    TabsTab
+    TabsTab,
+    WalletLayout
   },
 
   setup () {
@@ -73,10 +72,10 @@ const SettingsIndex = defineComponent({
     const mnemonic: Ref<MnemomicT | null> = ref(null)
     const userRequestedMnemonic = new Subject<boolean>()
     const router = useRouter()
-    const { connected, radix, activeAccount } = useWallet(router)
+    const { connected, radix, activeAddress } = useWallet(router)
     const { activeTab, setTab } = useSettingsTab()
 
-    const activeAccountIsLoading: ComputedRef<boolean> = computed(() => !activeAccount.value)
+    const activeAccountIsLoading: ComputedRef<boolean> = computed(() => !activeAddress.value)
 
     // Only fetch mnemonic if user confirms pin
     const watchUserDidRequstMnemonic = combineLatest<[MnemomicT, boolean]>([radix.revealMnemonic(), userRequestedMnemonic])
@@ -100,8 +99,7 @@ const SettingsIndex = defineComponent({
     onUnmounted(() => subs.unsubscribe())
 
     return {
-      activeAccount,
-      activeAccountIsLoading,
+      activeAddress,
       connected,
       mnemonic,
       handleAccessMnemonic,

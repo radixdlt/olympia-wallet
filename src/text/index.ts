@@ -92,6 +92,9 @@ const messages = {
       addressLabel: 'Address:',
       back: 'back',
       addAccount: '+ Add Account',
+      addSoftwareAccount: '+ Add Software Account',
+      softwareWallets: 'Software Wallets',
+      hardwareWallets: 'Hardware Wallets',
       chooseAnAccount: 'Choose an account:',
       balancesHeading: 'XRD Balances',
       additionalBalancesHeading: 'Additional Balances',
@@ -105,13 +108,20 @@ const messages = {
       navStake: 'Stake & Unstake',
       navSettings: 'Wallet Settings',
       navHelp: 'Help',
-      navAddHWWallet: '+ Add Hardware Account',
+      navAddHWWallet: 'Add your first hardware account',
+      navAddHWAccount: '+ Add hardware account',
       hardwareWalletHeading: 'Hardware Account',
       testNetworkDisclaimer: 'You are currently connected to a TEST NETWORK. To view your legitimate tokens and transactions on the Radix Public Network, you must choose "Mainnet" in Wallet Settings.',
       version: 'Version',
       network: 'Network',
       update: 'Update Available',
       disconnected: 'Disconnected',
+      newHardwareAccountBody: 'You’ve derived an account from a new ledger device, a new hardware wallet was added.',
+      newHardwareAccountConfirm: 'Got it!',
+      hideSoftwareAccountModalBody: 'Are you sure you want to hide this software account? This account can be unhidden in settings.',
+      hideHardwareAccountModalBody: 'Are you sure you want to hide this hardware account? This account can be unhidden in settings.',
+      hideAccountModalSubmit: 'Hide Account',
+      hideAccountModalCancel: 'Cancel',
       hideBalanceModalTitle: 'Hide Balance',
       hideBalanceModalContent: 'Are you sure you want to hide this %{tokenName} balance? This balance can be unhidden in settings.',
       hideBalanceModalSubmit: 'Hide Balance',
@@ -119,7 +129,8 @@ const messages = {
         title: 'Ledger Device Disconnected',
         content: 'Unable to decrypt message. Ensure your device is connected or switch accounts to continue.',
         buttonText: 'Dismiss'
-      }
+      },
+      hardwareWalletAccounts: 'Hardware Wallet Accounts:'
     },
     hardware: {
       disclaimer: 'Whenever copying a hardware wallet address, it is strongly recommended to verify it on the hardware device. To copy and verify this address, please switch to the hardware address first by selecting it in the account picker.',
@@ -227,6 +238,7 @@ const messages = {
     },
     account: {
       editNameHeading: 'Let’s set the name of your account',
+      editDeviceNameHeading: 'Let’s set the name of your device',
       nameInputPlaceholder: 'Name me!',
       updateNameButton: 'Save'
     },

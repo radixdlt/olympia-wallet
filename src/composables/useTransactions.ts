@@ -8,6 +8,8 @@ import {
 } from 'rxjs'
 import { mergeMap, take, filter, mapTo } from 'rxjs/operators'
 import {
+  AccountT,
+  AccountAddressT,
   AmountT,
   IntendedAction,
   ManualUserConfirmTX,
@@ -16,11 +18,10 @@ import {
   StakeTokensInput,
   TransactionIntent,
   TransactionStateSuccess,
+  TransactionStateUpdate,
   TransactionTracking,
   TransferTokensInput,
-  UnstakeTokensInput,
-  AccountT,
-  TransactionStateUpdate
+  UnstakeTokensInput
 } from '@radixdlt/application'
 import { Router } from 'vue-router'
 import { useErrors } from '.'
@@ -96,7 +97,7 @@ userConfirmation
     txnToConfirm()
   })
 
-export default function useTransactions (radix: ReturnType<typeof Radix.create>, router: Router, activeAccount: AccountT | null, hardwareAccount: AccountT | null): useTransactionsInterface {
+export default function useTransactions (radix: ReturnType<typeof Radix.create>, router: Router, activeAddress: AccountAddressT | null, hardwareAccount: AccountT | null): useTransactionsInterface {
   const { setError } = useErrors(radix)
 
   // Cleanup subscriptions on cancel and complete
@@ -116,7 +117,7 @@ export default function useTransactions (radix: ReturnType<typeof Radix.create>,
   })
 
   const confirmTransaction = () => {
-    if (activeAccount && hardwareAccount && activeAccount === hardwareAccount) {
+    if (activeAddress && hardwareAccount && activeAddress === hardwareAccount.address) {
       ledgerState.value = 'hw-signing'
     }
     userDidConfirm.next(true)
@@ -146,7 +147,7 @@ export default function useTransactions (radix: ReturnType<typeof Radix.create>,
     ledgerState.value = ''
     transactionState.value = 'PENDING'
 
-    router.push('/wallet/history')
+    router.push(`/wallet/${activeAddress?.toString()}/history`)
   }
 
   // Handle information returned from lifecycle event for Transfer, Stake, and Unstake actions
