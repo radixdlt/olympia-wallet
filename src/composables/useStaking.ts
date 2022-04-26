@@ -1,19 +1,19 @@
 import { ref, computed, Ref, ComputedRef } from 'vue'
 import { AccountAddressT, Amount, Radix, Validator, ValidatorAddressT, Validators } from '@radixdlt/application'
 import { mergeMap } from 'rxjs/operators'
-import { Observed } from '@/helpers/typeHelpers'
 import { firstValueFrom } from 'rxjs'
+import { StakePositionsEndpoint, UnstakePositionsEndpoint } from '@radixdlt/application/dist/api/open-api/_types'
 
 const activeForm: Ref<'STAKING'|'UNSTAKING'> = ref('STAKING')
 const validators: Ref<Validators | null> = ref(null)
 const loadingValidators: Ref<boolean> = ref(true)
 
-export default function useStaking (radix: ReturnType<typeof Radix.create>) {
-  const activeStakes: Ref<Observed<ReturnType<typeof radix.ledger.stakesForAddress>> | null> = ref(null)
-  const activeUnstakes: Ref<Observed<ReturnType<typeof radix.ledger.unstakesForAddress>> | null> = ref(null)
-  const loadingStakes: Ref<boolean> = ref(true)
-  const loadingUnstakes: Ref<boolean> = ref(true)
+const activeStakes: Ref<StakePositionsEndpoint.DecodedResponse | null> = ref(null)
+const activeUnstakes: Ref<UnstakePositionsEndpoint.DecodedResponse | null> = ref(null)
+const loadingStakes: Ref<boolean> = ref(true)
+const loadingUnstakes: Ref<boolean> = ref(true)
 
+export default function useStaking (radix: ReturnType<typeof Radix.create>) {
   const validatorSub = radix.ledger.networkId()
     .pipe(mergeMap((network) => radix.ledger.validators(network)))
     .subscribe((validatorsRes: any) => {

@@ -125,8 +125,6 @@
           v-for="(v) in relatedValidators"
           :key="v.toString()"
           :validatorAddress="v"
-          :nativeToken="nativeToken"
-          :explorerUrlBase="explorerUrlBase"
           @addToValidator="handleAddToValidator"
           @reduceFromValidator="handleReduceFromValidator"
         >
@@ -152,7 +150,6 @@ import LoadingIcon from '@/components/LoadingIcon.vue'
 import { useStaking, useTransactions, useTokenBalances, useWallet } from '@/composables'
 import { useRouter, onBeforeRouteLeave } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { firstValueFrom } from 'rxjs'
 
 interface StakeForm {
   validator: string;
@@ -180,7 +177,6 @@ const WalletStaking = defineComponent({
       explorerUrlBase,
       hardwareAccount,
       nativeToken,
-      loadingLatestAddress,
       radix
     } = useWallet(router)
     const { activeForm, setActiveForm, activeStakes, activeUnstakes, loadingAnyStaking, maybeGetValidator, stakingUnsub, fetchStakesForAddress } = useStaking(radix)
@@ -188,20 +184,6 @@ const WalletStaking = defineComponent({
     const { fetchBalancesForAddress, tokenBalances, tokenBalanceFor, tokenBalancesUnsub } = useTokenBalances(radix)
     const zero = Amount.fromUnsafe(0)._unsafeUnwrap()
     const maxUnstakeMode: Ref<boolean> = ref(false)
-
-    /* ------
-     *  Lifecycle Events
-     */
-    onMounted(() => {
-      // default active form is stake
-      setActiveTransactionForm('stake')
-      // fetch latest balances and begin polling
-      activeAddress.value && fetchBalancesForAddress(activeAddress.value)
-    })
-
-    onUnmounted(() => {
-      tokenBalancesUnsub()
-    })
 
     onBeforeRouteLeave(() => {
       tokenBalancesUnsub()
@@ -212,10 +194,19 @@ const WalletStaking = defineComponent({
      *  Side Effects
      */
 
-    watch((activeAddress), (newActiveAddress) => {
+    watch(activeAddress, async (newActiveAddress, oldAddress) => {
+      if (!newActiveAddress) return
+      if (oldAddress && newActiveAddress.equals(oldAddress)) return
+
+      if (oldAddress) {
+        tokenBalancesUnsub()
+        stakingUnsub()
+      }
+
       // Update balances when active address changes
-      newActiveAddress && fetchBalancesForAddress(newActiveAddress)
-      newActiveAddress && fetchStakesForAddress(newActiveAddress)
+      await fetchBalancesForAddress(newActiveAddress)
+      await fetchStakesForAddress(newActiveAddress)
+      setActiveTransactionForm('stake')
     }, { immediate: true })
 
     /* ------
@@ -229,23 +220,35 @@ const WalletStaking = defineComponent({
       return nativeTokenBalance.value
     })
 
+    const uniqBy = (arr: any[], predicate: (item: any) => string) => {
+      if (!Array.isArray(arr)) { return [] }
+      const cb = typeof predicate === 'function' ? predicate : (o: any) => o[predicate]
+
+      const pickedObjects = arr
+        .filter(item => item)
+        .reduce((map, item) => {
+          const key = cb(item)
+
+          if (!key) { return map }
+
+          return map.has(key) ? map : map.set(key, item)
+        }, new Map())
+        .values()
+
+      return [...pickedObjects]
+    }
+
     const relatedValidators: ComputedRef<Array<ValidatorAddressT>> = computed(() => {
-      const vals: ValidatorAddressT[] = []
-      if (activeStakes.value) {
-        activeStakes.value.stakes.map((stake) => vals.push(stake.validator))
-        activeStakes.value.pendingStakes.map((stake) => {
-          if (!vals.find((v) => stake.validator.equals(v))) vals.push(stake.validator)
-        })
-      }
-      if (activeUnstakes.value) {
-        activeUnstakes.value.unstakes.map((unstake) => {
-          if (!vals.find((v) => unstake.validator.equals(v))) vals.push(unstake.validator)
-        })
-        activeUnstakes.value.pendingUnstakes.map((unstake) => {
-          if (!vals.find((v) => unstake.validator.equals(v))) vals.push(unstake.validator)
-        })
-      }
-      return vals
+      const stakeValidators = activeStakes.value ? [
+        ...activeStakes.value.stakes.map((stake) => stake.validator),
+        ...activeStakes.value.pendingStakes.map((stake) => stake.validator)
+      ] : []
+
+      const unstakeValidators = activeUnstakes.value ? [
+        ...activeUnstakes.value.unstakes.map((stake) => stake.validator),
+        ...activeUnstakes.value.pendingUnstakes.map((stake) => stake.validator)
+      ] : []
+      return uniqBy([...stakeValidators, ...unstakeValidators], (v) => v.toString())
     })
 
     const stakingDisclaimer: ComputedRef<string> = computed(() =>
@@ -272,7 +275,7 @@ const WalletStaking = defineComponent({
     })
 
     const loadedAllData: ComputedRef<boolean> = computed(() => {
-      if (activeAddress && activeAddress.value && nativeToken.value && tokenBalances.value && !loadingLatestAddress.value) return true
+      if (activeAddress.value && nativeToken.value && tokenBalances.value) return true
       return false
     })
 

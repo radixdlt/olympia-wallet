@@ -205,7 +205,6 @@ const WalletOverview = defineComponent({
 
       await fetchSummaries(addr)
       refreshSub.value = interval(15000).subscribe(() => {
-        console.log('sub!')
         fetchSummaries(addr)
       })
       loading.value = false
@@ -217,7 +216,6 @@ const WalletOverview = defineComponent({
     watch((activeAddress), (newActiveAddress, oldActiveAddress) => {
       if (!newActiveAddress) return
       if (oldActiveAddress && newActiveAddress.equals(oldActiveAddress)) return
-      console.log(newActiveAddress?.toString())
       // Update balances when active address change
       fetchAndRefreshSummaries(newActiveAddress)
     }, { immediate: true })

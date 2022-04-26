@@ -75,7 +75,7 @@
           <div class="flex items-center flex-wrap">
             <div class="mb-1 w-26 flex-grow-0 text-rGrayMed text-xs">{{ $t('staking.stakedLabel') }}:</div>
             <div class="mb-1 flex-1 text-rBlack">
-              <big-amount :amount="getActiveStakeAmountForValidator(validatorAddress)" />
+              <big-amount :amount="stakeAmount" />
               <token-symbol
                 :symbol="nativeToken.symbol"
                 :rri="nativeToken.rri.toString()"
@@ -120,7 +120,7 @@
 
 <script lang="ts">
 import { AmountT, Token, ValidatorAddressT } from '@radixdlt/application'
-import { computed, ComputedRef, defineComponent, PropType, Ref, ref } from 'vue'
+import { computed, ComputedRef, defineComponent, PropType, Ref, ref, toRef } from 'vue'
 import BigAmount from '@/components/BigAmount.vue'
 import ClickToCopy from '@/components/ClickToCopy.vue'
 import { checkValidatorUrlExploitable } from '@/helpers/explorerLinks'
@@ -145,36 +145,29 @@ const StakeListItem = defineComponent({
     validatorAddress: {
       type: Object as PropType<ValidatorAddressT>,
       required: true
-    },
-    nativeToken: {
-      type: Object as PropType<Token>,
-      required: true
-    },
-    explorerUrlBase: {
-      type: String,
-      required: true
     }
   },
 
   setup (props) {
     const router = useRouter()
-    const { radix } = useWallet(router)
+    const { radix, nativeToken, explorerUrlBase } = useWallet(router)
+    const validatorAddress = toRef(props, 'validatorAddress')
     const validator: Ref<Observed<ReturnType<typeof radix.ledger.lookupValidator>> | null> = ref(null)
     const { validatorsTopOneHundred, maybeGetValidator, getActiveStakeAmountForValidator, getPendingStakeAmountForValidator, getUnstakeAmountForValidator } = useStaking(radix)
 
     // Attempt to get validator from memory before re-fetching
-    validator.value = maybeGetValidator(props.validatorAddress)
+    validator.value = maybeGetValidator(validatorAddress.value)
     if (!validator.value) {
-      firstValueFrom(radix.ledger.lookupValidator(props.validatorAddress))
+      firstValueFrom(radix.ledger.lookupValidator(validatorAddress.value))
         .then((validatorRes) => { validator.value = validatorRes })
     }
 
     const explorerUrl: ComputedRef<string> = computed(() =>
-      validator.value ? `${props.explorerUrlBase}/#/validators/${validator.value.address.toString()}` : `${props.explorerUrlBase}/#/validators/`
+      validator.value ? `${explorerUrlBase}/#/validators/${validatorAddress.value.toString()}` : `${explorerUrlBase}/#/validators/`
     )
 
     const inTopOneHundred: ComputedRef<boolean> = computed(() =>
-      validatorsTopOneHundred.value && !!(validatorsTopOneHundred.value.find((v) => v.address.toString() === props.validatorAddress.toString()))
+      validatorsTopOneHundred.value && !!(validatorsTopOneHundred.value.find((v) => v.address.equals(validatorAddress.value)))
     )
 
     const validatorAddressForDisplay: ComputedRef<string> = computed(() =>
@@ -190,24 +183,22 @@ const StakeListItem = defineComponent({
       return inTopOneHundred.value && validator.value ? `${validator.value.uptimePercentage}%` : '-'
     })
 
-    const unstakeAmount: ComputedRef<AmountT> = computed(() => getUnstakeAmountForValidator(props.validatorAddress))
-    const pendingStakeAmount: ComputedRef<AmountT> = computed(() => getPendingStakeAmountForValidator(props.validatorAddress))
+    const unstakeAmount: ComputedRef<AmountT> = computed(() => getUnstakeAmountForValidator(validatorAddress.value))
+    const pendingStakeAmount: ComputedRef<AmountT> = computed(() => getPendingStakeAmountForValidator(validatorAddress.value))
+    const stakeAmount: ComputedRef<AmountT> = computed(() => getActiveStakeAmountForValidator(validatorAddress.value))
 
     return {
       explorerUrl,
       inTopOneHundred,
       pendingStakeAmount,
+      nativeToken,
       unstakeAmount,
       validateGreaterThanZero,
       validatorUptimeContent,
       validatedValidatorUrl,
       validator,
       validatorAddressForDisplay,
-
-      // methods
-      getActiveStakeAmountForValidator,
-      getPendingStakeAmountForValidator,
-      getUnstakeAmountForValidator
+      stakeAmount
     }
   },
 
