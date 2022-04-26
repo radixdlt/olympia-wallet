@@ -75,8 +75,6 @@ const SettingsIndex = defineComponent({
     const { connected, radix, activeAddress } = useWallet(router)
     const { activeTab, setTab } = useSettingsTab()
 
-    const activeAccountIsLoading: ComputedRef<boolean> = computed(() => !activeAddress.value)
-
     // Only fetch mnemonic if user confirms pin
     const watchUserDidRequstMnemonic = combineLatest<[MnemomicT, boolean]>([radix.revealMnemonic(), userRequestedMnemonic])
       .subscribe(([m, didRequest]: [MnemomicT, boolean]) => {

@@ -2,7 +2,6 @@ import useConnectableRadix from './useConnectableRadix'
 import useErrors from './useErrors'
 import useHistory from './useHistory'
 import useHomeModal from './useHomeModal'
-import useNativeToken from './useNativeToken'
 import useSettingsTab from './useSettingsTab'
 import useSidebar from './useSidebar'
 import useStaking from './useStaking'
@@ -15,7 +14,6 @@ export {
   useErrors,
   useHistory,
   useHomeModal,
-  useNativeToken,
   useSettingsTab,
   useSidebar,
   useStaking,

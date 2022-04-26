@@ -149,7 +149,7 @@ import FormField from '@/components/FormField.vue'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
 import { asBigNumber } from '@/components/BigAmount.vue'
 import LoadingIcon from '@/components/LoadingIcon.vue'
-import { useNativeToken, useStaking, useTransactions, useTokenBalances, useWallet } from '@/composables'
+import { useStaking, useTransactions, useTokenBalances, useWallet } from '@/composables'
 import { useRouter, onBeforeRouteLeave } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { firstValueFrom } from 'rxjs'
@@ -179,12 +179,12 @@ const WalletStaking = defineComponent({
       activateAccount,
       explorerUrlBase,
       hardwareAccount,
+      nativeToken,
       loadingLatestAddress,
       radix
     } = useWallet(router)
     const { activeForm, setActiveForm, activeStakes, activeUnstakes, loadingAnyStaking, maybeGetValidator, stakingUnsub, fetchStakesForAddress } = useStaking(radix)
     const { stakeTokens, unstakeTokens, setActiveTransactionForm } = useTransactions(radix, router, activeAddress.value, hardwareAccount.value)
-    const { nativeToken, nativeTokenUnsub } = useNativeToken(radix)
     const { fetchBalancesForAddress, tokenBalances, tokenBalanceFor, tokenBalancesUnsub } = useTokenBalances(radix)
     const zero = Amount.fromUnsafe(0)._unsafeUnwrap()
     const maxUnstakeMode: Ref<boolean> = ref(false)
@@ -204,7 +204,6 @@ const WalletStaking = defineComponent({
     })
 
     onBeforeRouteLeave(() => {
-      nativeTokenUnsub()
       tokenBalancesUnsub()
       stakingUnsub()
     })
