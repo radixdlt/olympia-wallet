@@ -155,7 +155,7 @@ const WalletTransaction = defineComponent({
   setup () {
     const router = useRouter()
     const { errors, values, meta, setErrors, resetForm } = useForm<TransactionForm>()
-    const { activeAddress, activateAccount, hardwareAccount, loadingLatestAddress, nativeToken, networkPreamble, radix, verifyHardwareWalletAddress } = useWallet(router)
+    const { activeAddress, activateAccount, hardwareAccount, nativeToken, networkPreamble, radix, verifyHardwareWalletAddress } = useWallet(router)
     const { setActiveTransactionForm, transferTokens } = useTransactions(radix, router, activeAddress.value, hardwareAccount.value)
     const { t } = useI18n({ useScope: 'global' })
     const { fetchBalancesForAddress, tokenBalances, tokenBalanceFor, tokenInfoFor, tokenBalancesUnsub } = useTokenBalances(radix)
@@ -217,7 +217,7 @@ const WalletTransaction = defineComponent({
       if (!tokenBalances.value || tokenBalances.value.account_balances.liquid_balances.length <= 0) return null
 
       const selectedCurrency = tokenBalances.value.account_balances.liquid_balances.find((tokenBalance) => tokenBalance.token_identifier.rri.toString() === currency.value)
-      return selectedCurrency || null
+      return selectedCurrency || tokenBalances.value.account_balances.liquid_balances[0]
     })
 
     const amountPlaceholder: ComputedRef<string> = computed(() => {
@@ -230,7 +230,7 @@ const WalletTransaction = defineComponent({
     })
 
     const loadedAllData: ComputedRef<boolean> = computed(() => {
-      if (activeAddress && activeAddress.value && nativeToken.value && tokenBalances.value && !loadingLatestAddress.value) return true
+      if (activeAddress.value && nativeToken.value && tokenBalances.value) return true
       return false
     })
 
