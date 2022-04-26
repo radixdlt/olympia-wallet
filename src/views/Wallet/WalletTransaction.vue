@@ -128,7 +128,7 @@ import FormField from '@/components/FormField.vue'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
 import LoadingIcon from '@/components/LoadingIcon.vue'
 import FormCheckbox from '@/components/FormCheckbox.vue'
-import { useNativeToken, useTransactions, useTokenBalances, useWallet } from '@/composables'
+import { useTransactions, useTokenBalances, useWallet } from '@/composables'
 import { useRouter, onBeforeRouteLeave } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { Decoded } from '@radixdlt/application/dist/api/open-api/_types'
@@ -155,13 +155,11 @@ const WalletTransaction = defineComponent({
   setup () {
     const router = useRouter()
     const { errors, values, meta, setErrors, resetForm } = useForm<TransactionForm>()
-    const { activeAddress, activateAccount, hardwareAccount, loadingLatestAddress, networkPreamble, radix, verifyHardwareWalletAddress } = useWallet(router)
+    const { activeAddress, activateAccount, hardwareAccount, loadingLatestAddress, nativeToken, networkPreamble, radix, verifyHardwareWalletAddress } = useWallet(router)
     const { setActiveTransactionForm, transferTokens } = useTransactions(radix, router, activeAddress.value, hardwareAccount.value)
     const { t } = useI18n({ useScope: 'global' })
-    const { nativeToken, nativeTokenUnsub } = useNativeToken(radix)
     const { fetchBalancesForAddress, tokenBalances, tokenBalanceFor, tokenInfoFor, tokenBalancesUnsub } = useTokenBalances(radix)
 
-    const nativeTokenLoaded: Ref<boolean> = ref(false)
     const currency: Ref<string | null> = ref(null)
     const tokenOptions: Ref<Decoded.TokenAmount[]> = ref([])
     const hiddenTokens: Ref<string[]> = ref([])
@@ -185,7 +183,6 @@ const WalletTransaction = defineComponent({
     })
 
     onBeforeRouteLeave(() => {
-      nativeTokenUnsub()
       tokenBalancesUnsub()
     })
 
@@ -203,9 +200,8 @@ const WalletTransaction = defineComponent({
 
     // reset currency when required state has loaded. Especially necessary when switching account
     watch([nativeToken, tokenBalances], ([nt, tb]) => {
-      if (tb && nt && !nativeTokenLoaded.value) {
+      if (tb && nt) {
         setXRDByDefault(nt)
-        nativeTokenLoaded.value = true
       }
     })
 

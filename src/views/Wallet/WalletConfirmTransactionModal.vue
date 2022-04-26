@@ -160,7 +160,7 @@ import PinInput from '@/components/PinInput.vue'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
 import { validatePin } from '@/actions/vue/create-wallet'
 import { useRouter } from 'vue-router'
-import { useNativeToken, useHomeModal, useTransactions, useWallet, useTokenBalances } from '@/composables'
+import { useHomeModal, useTransactions, useWallet, useTokenBalances } from '@/composables'
 import { useI18n } from 'vue-i18n'
 
 interface ConfirmationForm {
@@ -186,10 +186,10 @@ const WalletConfirmTransactionModal = defineComponent({
     const {
       activeAddress,
       hardwareAccount,
+      nativeToken,
       radix,
       reset
     } = useWallet(router)
-    const { nativeToken, nativeTokenUnsub } = useNativeToken(radix)
     const { tokenBalances, tokenBalanceFor, tokenInfoFor, tokenBalancesUnsub } = useTokenBalances(radix)
 
     const updateObservable = merge(
@@ -243,7 +243,6 @@ const WalletConfirmTransactionModal = defineComponent({
     })
 
     onUnmounted(() => {
-      nativeTokenUnsub()
       window.removeEventListener('keydown', escapeListener)
     })
 

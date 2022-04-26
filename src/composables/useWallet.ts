@@ -13,6 +13,7 @@ import {
   Radix,
   SigningKeychain,
   SigningKeychainT,
+  Token,
   WalletErrorCause,
   WalletT,
   walletError
@@ -65,6 +66,7 @@ const hardwareError: Ref<Error | null> = ref(null)
 const hardwareInteractionState: Ref<string> = ref('')
 const hasWallet = ref(false)
 const ledgerVerifyError: Ref<Error | null> = ref(null)
+const nativeToken: Ref<Token | null> = ref(null)
 const nodeUrl: Ref<string | null> = ref(null)
 const reloadTrigger = new Subject<number>()
 const showDeleteHWWalletPrompt: Ref<boolean> = ref(false)
@@ -117,6 +119,7 @@ interface useWalletInterface {
   readonly hardwareInteractionState: Ref<string>;
   readonly hasWallet: Ref<boolean>;
   readonly ledgerVerifyError: Ref<Error | null>;
+  readonly nativeToken: Ref<Token | null>;
   readonly networkPreamble: ComputedRef<string>;
   readonly nodeUrl: ComputedRef<string | null>;
   readonly radix: ReturnType<typeof Radix.create>;
@@ -206,6 +209,7 @@ const initWallet = async (router: Router) => {
   versionNumber.value = await getVersionNumber()
   updateAvailable.value = await getIsUpdateAvailable()
   hardwareDevices.value = await getHardwareDevices(networkRes)
+  nativeToken.value = await firstValueFrom(radix.ledger.nativeToken(networkRes))
   await fetchAccountsForNetwork(networkRes)
 
   activeAccount.value = account
@@ -217,8 +221,7 @@ const initWallet = async (router: Router) => {
 
   if (networkRes === Network.MAINNET) explorerUrlBase.value = 'https://explorer.radixdlt.com/'
   else explorerUrlBase.value = 'https://stokenet-explorer.radixdlt.com/'
-
-  if (!latestIsActive) {
+  if (latestIsActive) {
     router.push(`/wallet/${latestAddress.value}`)
   } else {
     router.push(`/wallet/${activeAddress.value.toString()}`)
@@ -491,6 +494,7 @@ export default function useWallet (router: Router): useWalletInterface {
     hasWallet,
     ledgerVerifyError,
     loadingLatestAddress: computed(() => loadingLatestAddress.value),
+    nativeToken,
     nodeUrl: computed(() => nodeUrl.value),
     showDeleteHWWalletPrompt,
     showHideAccountModal,

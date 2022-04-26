@@ -1,10 +1,27 @@
 import { computed, ref, Ref } from 'vue'
-import { AccountAddressT, Radix, ResourceIdentifierT, Token } from '@radixdlt/application'
+import { AccountAddressT, Radix, RadixT, ResourceIdentifierT, Token } from '@radixdlt/application'
 import { firstValueFrom, interval, Subscription } from 'rxjs'
 import { AccountBalancesEndpoint } from '@radixdlt/application/dist/api/open-api/_types'
 
 const relatedTokens: Ref<Token[]> = ref([])
 const tokenBalances: Ref<AccountBalancesEndpoint.DecodedResponse | null> = ref(null)
+
+const gatherRelevantTokens = async (radix: ReturnType<typeof Radix.create>, balances: AccountBalancesEndpoint.DecodedResponse) => {
+  const relatedTokenPromises: Promise<any>[] = []
+  balances.account_balances.liquid_balances.map((balance) => {
+    if (!relatedTokens.value.find((t) => t.rri.equals(balance.token_identifier.rri))) {
+      relatedTokenPromises.push(
+        firstValueFrom(radix.ledger.tokenInfo(balance.token_identifier.rri))
+          .then((t) => {
+            if (!relatedTokens.value.find((t) => t.rri.equals(balance.token_identifier.rri))) {
+              relatedTokens.value = [...relatedTokens.value, t]
+            }
+          })
+      )
+    }
+  })
+  return await Promise.all(relatedTokenPromises)
+}
 
 export default function useTokenBalances (radix: ReturnType<typeof Radix.create>) {
   let tokenBalancesSub: Subscription | null
@@ -20,30 +37,13 @@ export default function useTokenBalances (radix: ReturnType<typeof Radix.create>
     // Initiate polling every 15 seconds for balance updates
     tokenBalancesSub = interval(15 * 1_000).subscribe(() => fetchBalancesForAddress(address))
 
-    // Get token info for tokens related to this account and save in memory
-    // Don't save duplicates
-    const relatedTokenPromises: Promise<any>[] = []
-    res.account_balances.liquid_balances.map((balance) => {
-      if (!relatedTokens.value.find((t) => t.rri.equals(balance.token_identifier.rri))) {
-        relatedTokenPromises.push(
-          firstValueFrom(radix.ledger.tokenInfo(balance.token_identifier.rri))
-            .then((t) => {
-              if (!relatedTokens.value.find((t) => t.rri.equals(balance.token_identifier.rri))) {
-                relatedTokens.value = [...relatedTokens.value, t]
-              }
-            })
-        )
-      }
-    })
-
-    // Wait until missing related tokens have been fetched before returning so all token info is present
-    // for account balances
-    await Promise.all(relatedTokenPromises)
+    await gatherRelevantTokens(radix, res)
   }
 
   return {
     tokenBalances: computed(() => tokenBalances.value),
     relatedTokens: computed(() => relatedTokens.value),
+    gatherRelevantTokens,
     loadingRelatedTokens: computed(() => {
       if (!tokenBalances.value || !relatedTokens.value) return false
       // All liquid_balances must have a corresponding relatedToken info entry

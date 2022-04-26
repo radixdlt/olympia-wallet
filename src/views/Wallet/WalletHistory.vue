@@ -97,7 +97,7 @@ import TransactionListItem from '@/components/TransactionListItem.vue'
 import LoadingIcon from '@/components/LoadingIcon.vue'
 import ClickToCopy from '@/components/ClickToCopy.vue'
 import WalletLedgerDisconnectedModal from '@/views/Wallet/WalletLedgerDisconnectedModal.vue'
-import { useNativeToken, useWallet, useHistory } from '@/composables'
+import { useWallet, useHistory } from '@/composables'
 import { useRouter, onBeforeRouteLeave } from 'vue-router'
 import WalletLedgerVerifyDecryptModal from './WalletLedgerVerifyDecryptModal.vue'
 import { ExecutedTransaction } from '@radixdlt/application'
@@ -118,6 +118,7 @@ const WalletHistory = defineComponent({
       activateAccount,
       explorerUrlBase,
       hardwareAccount,
+      nativeToken,
       radix,
       verifyHardwareWalletAddress
     } = useWallet(router)
@@ -142,8 +143,6 @@ const WalletHistory = defineComponent({
       updateActiveAccount,
       isDecrypting
     } = useHistory(radix, activeAddress.value)
-
-    const { nativeToken, nativeTokenUnsub } = useNativeToken(radix)
 
     const transactionsWithMessages = computed(() => {
       return transactions.value.map((tx) => {
@@ -185,7 +184,6 @@ const WalletHistory = defineComponent({
     })
 
     onBeforeRouteLeave(() => {
-      nativeTokenUnsub()
       leavingHistory()
     })
 

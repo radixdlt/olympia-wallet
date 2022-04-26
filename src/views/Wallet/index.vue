@@ -74,10 +74,11 @@ const WalletIndex = defineComponent({
 
     watch(
       () => route.params.activeAddress,
-      (accountId) => {
-        const id = Array.isArray(accountId) ? accountId[0] : accountId
+      (addr, oldAddr) => {
+        if (!addr) return
+        if (addr === oldAddr) return
+        const id = Array.isArray(addr) ? addr[0] : addr
         setActiveAddress(id)
-        // await switchAccount(newId, router)
       },
       { immediate: true }
     )
@@ -86,7 +87,7 @@ const WalletIndex = defineComponent({
       await waitUntilAllLoaded()
       return true
     })
-    if (!activeAddress.value) return
+
     const { shouldShowConfirmation } = useTransactions(radix, router, activeAddress.value, hardwareAccount.value)
 
     // Return home if wallet is undefined
