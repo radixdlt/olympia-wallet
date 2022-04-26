@@ -21,27 +21,34 @@
         <div class="pl-3 ">
           {{ $t('wallet.softwareWallets') }}
         </div>
-        <svg class="ml-auto mt-1" width="17" height="17" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M2 7H5V10" stroke="#F2F2FC" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M10 5H7V2" stroke="#F2F2FC" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M7 5L10.5 1.5" stroke="#F2F2FC" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M1.5 10.5L5 7" stroke="#F2F2FC" stroke-linecap="round" stroke-linejoin="round"/>
+        <svg v-if="showSoftwareAccounts" @click="toggleSoftwareAccounts" class="ml-auto mt-1 text-rGrayDark hover:text-rGreen transition-colors" width="17" height="17" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path class="stroke-current" d="M2 7H5V10" stroke="#F2F2FC" stroke-linecap="round" stroke-linejoin="round"/>
+          <path class="stroke-current" d="M10 5H7V2" stroke="#F2F2FC" stroke-linecap="round" stroke-linejoin="round"/>
+          <path class="stroke-current" d="M7 5L10.5 1.5" stroke="#F2F2FC" stroke-linecap="round" stroke-linejoin="round"/>
+          <path class="stroke-current" d="M1.5 10.5L5 7" stroke="#F2F2FC" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
+        <svg v-else @click="toggleSoftwareAccounts" class="ml-auto mt-1 stroke-current text-rGrayDark hover:text-rGreen transition-colors" width="15" height="15" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path class="stroke-current" d="M7.5 1.5H10.5V4.5" stroke="#F2F2FC" stroke-linecap="round" stroke-linejoin="round"/>
+          <path class="stroke-current" d="M4.5 10.5H1.5V7.5" stroke="#F2F2FC" stroke-linecap="round" stroke-linejoin="round"/>
+          <path class="stroke-current" d="M10.5 1.5L7 5" stroke="#F2F2FC" stroke-linecap="round" stroke-linejoin="round"/>
+          <path class="stroke-current" d="M1.5 10.5L5 7" stroke="#F2F2FC" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+
       </div>
-
-      <account-list-item
-        v-for="account in localAccounts"
-        :key="account.address.toString()"
-        :address="account.address"
-        :shouldShowEdit="true"
-        @click="debugSwitch(account)"
-        @edit="editName(account)"
-        class="mb-8"
-      >
-      </account-list-item>
-
-      <div @click="addSoftwareAccount" class="my-4 text-center cursor-pointer hover:text-rGreen transition-colors">
-        {{ $t('wallet.addSoftwareAccount') }}
+      <div v-if="showSoftwareAccounts">
+        <account-list-item
+          v-for="account in localAccounts"
+          :key="account.address.toString()"
+          :address="account.address"
+          :shouldShowEdit="true"
+          @click="debugSwitch(account)"
+          @edit="editName(account)"
+          class="mb-8"
+        >
+        </account-list-item>
+        <div @click="addSoftwareAccount" class="my-4 text-center cursor-pointer hover:text-rGreen transition-colors">
+          {{ $t('wallet.addSoftwareAccount') }}
+        </div>
       </div>
       <div class="border-t border-rGray border-opacity-50 mx-4 mt-2 py-4" ></div>
     </div>
@@ -153,6 +160,7 @@ const WalletSidebarAccounts = defineComponent({
 
     const { setState } = useSidebar()
     const showHardwareHelper = ref(false)
+    const showSoftwareAccounts = ref(true)
 
     const displayHardwareAddress: ComputedRef<string> = computed(() => {
       if (!hardwareAddress.value) return ''
@@ -186,6 +194,7 @@ const WalletSidebarAccounts = defineComponent({
       hardwareAddress,
       hardwareDevices,
       showHardwareHelper,
+      showSoftwareAccounts,
       displayHardwareAddress,
       localAccounts,
       handleAccountEditName,
@@ -206,6 +215,9 @@ const WalletSidebarAccounts = defineComponent({
       hardwareSwitch (val: string) {
         const name = router.currentRoute.value.name || 'WalletOverview'
         router.push({ name, params: { activeAddress: val } })
+      },
+      toggleSoftwareAccounts () {
+        showSoftwareAccounts.value = !showSoftwareAccounts.value
       },
       editName (account: AccountT) {
         setState(false)
