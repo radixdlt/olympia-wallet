@@ -1,5 +1,5 @@
 import { ref, computed, Ref, ComputedRef } from 'vue'
-import { AccountAddressT, Amount, Radix, Validator, ValidatorAddressT, Validators } from '@radixdlt/application'
+import { AccountAddressT, Amount, Network, Radix, Validator, ValidatorAddressT, Validators } from '@radixdlt/application'
 import { mergeMap } from 'rxjs/operators'
 import { firstValueFrom } from 'rxjs'
 import { StakePositionsEndpoint, UnstakePositionsEndpoint } from '@radixdlt/application/dist/api/open-api/_types'
@@ -13,14 +13,23 @@ const activeUnstakes: Ref<UnstakePositionsEndpoint.DecodedResponse | null> = ref
 const loadingStakes: Ref<boolean> = ref(true)
 const loadingUnstakes: Ref<boolean> = ref(true)
 
-export default function useStaking (radix: ReturnType<typeof Radix.create>) {
-  const validatorSub = radix.ledger.networkId()
-    .pipe(mergeMap((network) => radix.ledger.validators(network)))
-    .subscribe((validatorsRes: any) => {
-      validators.value = validatorsRes
-      loadingValidators.value = false
-    })
+const maybeFetchValidators = async (radix: ReturnType<typeof Radix.create>, network: Network) => {
+  if (!loadingValidators.value) return
+  const response = await firstValueFrom(radix.ledger.validators(network))
+  validators.value = response as Validators
+  loadingValidators.value = false
+}
 
+const fetchStakesForAddress = async (radix: ReturnType<typeof Radix.create>, address: AccountAddressT) => {
+  loadingStakes.value = true
+  loadingUnstakes.value = true
+  activeStakes.value = await firstValueFrom(radix.ledger.stakesForAddress(address))
+  activeUnstakes.value = await firstValueFrom(radix.ledger.unstakesForAddress(address))
+  loadingStakes.value = false
+  loadingUnstakes.value = false
+}
+
+export default function useStaking (radix: ReturnType<typeof Radix.create>, network: Network) {
   const validatorsTopOneHundred: ComputedRef<Array<Validator>> = computed(() => {
     if (validators.value && validators.value.validators) return validators.value.validators.filter(validator => validator.registered).slice(0, 100)
     return []
@@ -61,15 +70,6 @@ export default function useStaking (radix: ReturnType<typeof Radix.create>) {
       .reduce((accum, stake) => accum.add(stake.amount), Amount.fromUnsafe(0)._unsafeUnwrap())
   }
 
-  const fetchStakesForAddress = async (address: AccountAddressT) => {
-    loadingStakes.value = true
-    loadingUnstakes.value = true
-    activeStakes.value = await firstValueFrom(radix.ledger.stakesForAddress(address))
-    activeUnstakes.value = await firstValueFrom(radix.ledger.unstakesForAddress(address))
-    loadingStakes.value = false
-    loadingUnstakes.value = false
-  }
-
   return {
     activeForm: computed(() => activeForm.value),
     activeStakes,
@@ -78,16 +78,15 @@ export default function useStaking (radix: ReturnType<typeof Radix.create>) {
     validators: computed(() => validators.value),
     validatorsTopOneHundred: computed(() => validatorsTopOneHundred.value),
 
+    fetchValidatorsAndStakes: async (address: AccountAddressT) => {
+      await maybeFetchValidators(radix, network)
+      await fetchStakesForAddress(radix, address)
+    },
     getActiveStakeAmountForValidator,
     getPendingStakeAmountForValidator,
     getUnstakeAmountForValidator,
     maybeGetValidator,
     fetchStakesForAddress,
-    setActiveForm: (form: 'STAKING'|'UNSTAKING') => { activeForm.value = form },
-    stakingUnsub: () => {
-      loadingStakes.value = true
-      loadingUnstakes.value = true
-      validatorSub.unsubscribe()
-    }
+    setActiveForm: (form: 'STAKING'|'UNSTAKING') => { activeForm.value = form }
   }
 }

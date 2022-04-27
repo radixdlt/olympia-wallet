@@ -177,7 +177,8 @@ export default function useTransactions (radix: ReturnType<typeof Radix.create>,
           category: ''
         }
       })
-    // Catch encypted message is too long error
+      cancelTransaction()
+      // Catch encypted message is too long error
     } else if (err.toString().indexOf('Plaintext is too long') >= 0) {
       setError({
         ...err,
@@ -188,6 +189,7 @@ export default function useTransactions (radix: ReturnType<typeof Radix.create>,
           }
         }
       })
+      cancelTransaction()
     } else if (err.toString().indexOf('Error: Failed to sign tx with Ledger') >= 0 && err.toString().includes('(0x6985')) {
       setError({
         ...err,
@@ -196,6 +198,7 @@ export default function useTransactions (radix: ReturnType<typeof Radix.create>,
           category: 'UserRejectedSignature'
         }
       })
+      cancelTransaction()
     } else if (err.toString().indexOf('Error: Failed to sign tx with Ledger') >= 0 && err.toString().includes('(0x530c')) {
       setError({
         ...err,
@@ -204,6 +207,7 @@ export default function useTransactions (radix: ReturnType<typeof Radix.create>,
           category: 'SignatureTimedOut'
         }
       })
+      cancelTransaction()
     } else if (err.toString().indexOf('(denied by the user') >= 0) {
       cancelTransaction()
     } else {
