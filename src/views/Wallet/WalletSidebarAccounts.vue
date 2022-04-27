@@ -116,6 +116,7 @@
                 :key="address.index"
                 :address="address.address"
                 :shouldShowEdit="true"
+                :id="address.address.toString()"
                 @click="hardwareSwitch(address.address.toString())"
                 class="mb-8"
               />
