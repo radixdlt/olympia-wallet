@@ -42,7 +42,7 @@ import ButtonSubmit from '@/components/ButtonSubmit.vue'
 import { useConnectableRadix } from '@/composables'
 import { isDefaultNetworkByUrl } from '@/helpers/network'
 
-const WalletLedgerDeleteModal = defineComponent({
+const ConfirmNetworkChangeModal = defineComponent({
   components: {
     ButtonSubmit
   },
@@ -75,5 +75,5 @@ const WalletLedgerDeleteModal = defineComponent({
   emits: ['confirm', 'cancel']
 })
 
-export default WalletLedgerDeleteModal
+export default ConfirmNetworkChangeModal
 </script>

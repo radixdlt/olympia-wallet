@@ -52,9 +52,9 @@ interface useTransactionsInterface {
   cancelTransaction: () => void;
   confirmTransaction: () => void;
   setActiveTransactionForm: (val: string) => void;
-  stakeTokens: (input: StakeTokensInput) => void;
-  transferTokens: (input: TransferTokensInput, message: MessageInTransaction, sc: Decoded.TokenAmount) => void;
-  unstakeTokens: (input: UnstakeTokensInput) => void;
+  stakeTokens: (client: ReturnType<typeof Radix.create>, input: StakeTokensInput) => void;
+  transferTokens: (client: ReturnType<typeof Radix.create>, input: TransferTokensInput, message: MessageInTransaction, sc: Decoded.TokenAmount) => void;
+  unstakeTokens: (client: ReturnType<typeof Radix.create>, input: UnstakeTokensInput) => void;
 }
 
 const transactionSubs = new Subscription()
@@ -97,24 +97,39 @@ userConfirmation
     txnToConfirm()
   })
 
+userDidCancel.subscribe((didCancel: boolean) => {
+  if (didCancel) {
+    cleanupTransactionSubs()
+    shouldShowConfirmation.value = false
+    shouldShowMaxUnstakeConfirmation.value = false
+    activeMessage.value = ''
+    ledgerState.value = ''
+    transactionState.value = 'PENDING'
+  }
+})
+
+
+const cancelTransaction = () => {
+  console.log('cancel')
+  userDidCancel.next(true)
+}
+
+const setActiveTransactionForm = (val: string) => {
+  activeTransactionForm.value = val
+}
+
+const cleanupInputs = () => {
+  transferInput.value = null
+  stakeInput.value = null
+  unstakeInput.value = null
+}
+
+// Cleanup subscriptions on cancel and complete
+const cleanupTransactionSubs = () => {
+  transactionErrorMessage.value = null
+}
 export default function useTransactions (radix: ReturnType<typeof Radix.create>, router: Router, activeAddress: AccountAddressT | null, hardwareAccount: AccountT | null): useTransactionsInterface {
   const { setError } = useErrors(radix)
-
-  // Cleanup subscriptions on cancel and complete
-  const cleanupTransactionSubs = () => {
-    transactionErrorMessage.value = null
-  }
-
-  userDidCancel.subscribe((didCancel: boolean) => {
-    if (didCancel) {
-      cleanupTransactionSubs()
-      shouldShowConfirmation.value = false
-      shouldShowMaxUnstakeConfirmation.value = false
-      activeMessage.value = ''
-      ledgerState.value = ''
-      transactionState.value = 'PENDING'
-    }
-  })
 
   const confirmTransaction = () => {
     if (activeAddress && hardwareAccount && activeAddress === hardwareAccount.address) {
@@ -122,21 +137,7 @@ export default function useTransactions (radix: ReturnType<typeof Radix.create>,
     }
     userDidConfirm.next(true)
   }
-
-  const cancelTransaction = () => {
-    userDidCancel.next(true)
-  }
-
-  const setActiveTransactionForm = (val: string) => {
-    activeTransactionForm.value = val
-  }
-
-  const cleanupInputs = () => {
-    transferInput.value = null
-    stakeInput.value = null
-    unstakeInput.value = null
-  }
-
+  
   // After a transaction is completed, cleanup subs and input fields.
   // Navigate user to history view
   const handleTransactionCompleted = () => {
@@ -213,11 +214,12 @@ export default function useTransactions (radix: ReturnType<typeof Radix.create>,
     } else {
       const apiError = { ...err, type: 'api' }
       setError(apiError)
+      cancelTransaction()
     }
   }
 
   // call transferTokens() with built options and subscribe to confirmation and results
-  const transferTokens = (transferTokensInput: TransferTokensInput, message: MessageInTransaction, sc: Decoded.TokenAmount) => {
+  const transferTokens = (client: ReturnType<typeof Radix.create>, transferTokensInput: TransferTokensInput, message: MessageInTransaction, sc: Decoded.TokenAmount) => {
     cleanupInputs()
     transferInput.value = transferTokensInput
     selectedCurrency.value = sc
@@ -225,7 +227,7 @@ export default function useTransactions (radix: ReturnType<typeof Radix.create>,
     activeMessageInTransaction.value = message
     confirmationMode.value = 'transfer'
 
-    const { events, completion } = radix.transferTokens({
+    const { events, completion } = client.transferTokens({
       transferInput: transferTokensInput,
       userConfirmation,
       pollTXStatusTrigger: interval(1000),
@@ -243,12 +245,12 @@ export default function useTransactions (radix: ReturnType<typeof Radix.create>,
   }
 
   // call unstakeTokens() with built options and subscribe to confirmation and results
-  const unstakeTokens = async (unstakeTokensInput: UnstakeTokensInput) => {
+  const unstakeTokens = async (client: ReturnType<typeof Radix.create>, unstakeTokensInput: UnstakeTokensInput) => {
     cleanupInputs()
     unstakeInput.value = unstakeTokensInput
     confirmationMode.value = 'unstake'
 
-    const { completion, events } = await radix.unstakeTokens({
+    const { completion, events } = await client.unstakeTokens({
       unstakeInput: unstakeTokensInput,
       userConfirmation,
       pollTXStatusTrigger: interval(1000)
@@ -268,12 +270,12 @@ export default function useTransactions (radix: ReturnType<typeof Radix.create>,
   }
 
   // call stakeTokens() with built options and subscribe to confirmation and results
-  const stakeTokens = async (stakeTokensInput: StakeTokensInput) => {
+  const stakeTokens = async (client: ReturnType<typeof Radix.create>, stakeTokensInput: StakeTokensInput) => {
     cleanupInputs()
     stakeInput.value = stakeTokensInput
     confirmationMode.value = 'stake'
 
-    const { completion, events } = await radix.stakeTokens({
+    const { completion, events } = await client.stakeTokens({
       stakeInput: stakeTokensInput,
       userConfirmation,
       pollTXStatusTrigger: interval(1000)

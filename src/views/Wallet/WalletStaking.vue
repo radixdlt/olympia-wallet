@@ -135,7 +135,7 @@
 </template>
 
 <script lang="ts">
-import { AccountAddressT, Amount, AmountT, StakeTokensInput, TokenBalance, UnstakeTokensInput, ValidatorAddressT } from '@radixdlt/application'
+import { AccountAddressT, Amount, AmountT, Radix, StakeTokensInput, TokenBalance, UnstakeTokensInput, ValidatorAddressT } from '@radixdlt/application'
 import { computed, defineComponent, ComputedRef, onMounted, onUnmounted, watch, Ref, ref } from 'vue'
 import { useForm } from 'vee-validate'
 import StakeListItem from '@/components/StakeListItem.vue'
@@ -177,8 +177,8 @@ const uniqBy = (arr: any[], predicate: (item: any) => string) => {
   return [...pickedObjects]
 }
 
-let stake: (input: StakeTokensInput) => void
-let unstake: (input: UnstakeTokensInput) => void
+let stake: (client: ReturnType<typeof Radix.create>, input: StakeTokensInput) => void
+let unstake: (client: ReturnType<typeof Radix.create>, input: UnstakeTokensInput) => void
 
 const WalletStaking = defineComponent({
   components: {
@@ -366,24 +366,26 @@ const WalletStaking = defineComponent({
         amount: safeAmount,
         tokenIdentifier: nativeToken.value?.rri
       }
-      await activateAccount(() => {
+      await activateAccount((client) => {
         activeForm.value === 'STAKING'
-          ? stake(data as StakeTokensInput)
-          : unstake(data as UnstakeTokensInput)
+          ? stake(client, data as StakeTokensInput)
+          : unstake(client, data as UnstakeTokensInput)
       })
     }
 
     const handleMaxSubmitUnstake = () => {
-      if (!nativeToken.value) return
       const safeAddress = safelyUnwrapValidator(values.validator)
       if (!safeAddress) return
       const safeOneHundredPercent = safelyUnwrapAmount(Number('0.0000000000000001'))
       if (!safeOneHundredPercent) return
 
-      unstake({
-        from_validator: safeAddress,
-        unstake_percentage: safeOneHundredPercent,
-        tokenIdentifier: nativeToken.value.rri
+      activateAccount((client) => {
+        if (!nativeToken.value) return
+        unstake(client, {
+          from_validator: safeAddress,
+          unstake_percentage: safeOneHundredPercent,
+          tokenIdentifier: nativeToken.value.rri
+        })
       })
     }
 

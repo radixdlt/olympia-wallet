@@ -53,9 +53,9 @@ export default function useHistory (radix: ReturnType<typeof Radix.create>, addr
     activeAddress.value = addr
   }
 
-  const decryptMessage = (tx: ExecutedTransaction) => {
+  const decryptMessage = (client: ReturnType<typeof Radix.create>, tx: ExecutedTransaction) => {
     isDecrypting.value = true
-    firstValueFrom(radix.decryptTransaction(tx))
+    firstValueFrom(client.decryptTransaction(tx))
       .then((val) => {
         decryptedMessages.value.push({ id: tx.txID.toString(), message: val })
       })
