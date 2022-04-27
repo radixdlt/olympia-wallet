@@ -73,13 +73,14 @@
                 <select
                   class="border-t-0 border-r-0 border-l-0 py-2 border-rBlack focus:ring-0 focus:outline-none focus:border-rGreen"
                   v-model="currency"
+                  v-if="tokenOptions"
                 >
                   <option
                     v-for="token in tokenOptions"
-                    :key="token.token_identifier.rri.toString()"
-                    :value="token.token_identifier.rri.toString()"
+                    :key="token.token.token_identifier.rri.toString()"
+                    :value="token.token.token_identifier.rri.toString()"
                   >
-                    {{ tokenInfoFor(token.token_identifier.rri).symbol.toUpperCase() }}
+                    {{ token.data?.symbol.toUpperCase() }}
                   </option>
                 </select>
               </div>
@@ -120,7 +121,7 @@ import { defineComponent, Ref, ref, ComputedRef, computed, watch, onMounted, onU
 import { useForm } from 'vee-validate'
 import { interval, Subscription, firstValueFrom } from 'rxjs'
 import { safelyUnwrapAddress, safelyUnwrapAmount, validateAmountOfType, validateGreaterThanZero } from '@/helpers/validateRadixTypes'
-import { AccountAddressT, AmountOrUnsafeInput, Token, TransferTokensInput, MessageInTransaction } from '@radixdlt/application'
+import { Radix, AccountAddressT, AmountOrUnsafeInput, Token, TransferTokensInput, MessageInTransaction } from '@radixdlt/application'
 import { asBigNumber } from '@/components/BigAmount.vue'
 import ClickToCopy from '@/components/ClickToCopy.vue'
 import FormErrorMessage from '@/components/FormErrorMessage.vue'
@@ -140,7 +141,13 @@ interface TransactionForm {
   message: string;
   encrypt: boolean;
 }
-let transfer: (input: TransferTokensInput, message: MessageInTransaction, sc: Decoded.TokenAmount) => void
+
+type TokenOption = {
+  token: Decoded.TokenAmount,
+  data: Token | null
+}
+
+let transfer: (client: ReturnType<typeof Radix.create>, input: TransferTokensInput, message: MessageInTransaction, sc: Decoded.TokenAmount) => void
 const refreshSub: Ref<Subscription | null> = ref(null)
 
 const WalletTransaction = defineComponent({
@@ -159,10 +166,10 @@ const WalletTransaction = defineComponent({
     const { activeAddress, activateAccount, hardwareAccount, nativeToken, networkPreamble, radix, verifyHardwareWalletAddress } = useWallet(router)
     const { t } = useI18n({ useScope: 'global' })
     const { tokenBalanceFor, tokenInfoFor } = useTokenBalances(radix)
-    const { setActiveTransactionForm, transferTokens } = useTransactions(radix, router, activeAddress.value, hardwareAccount.value)
+    const { cancelTransaction, setActiveTransactionForm, transferTokens } = useTransactions(radix, router, activeAddress.value, hardwareAccount.value)
     transfer = transferTokens
     const currency: Ref<string | null> = ref(null)
-    const tokenOptions: Ref<Decoded.TokenAmount[]> = ref([])
+    const tokenOptions: Ref<TokenOption[]> = ref([])
     const hiddenTokens: Ref<string[]> = ref([])
     const tokenBalances: Ref<AccountBalancesEndpoint.DecodedResponse | null> = ref(null)
 
@@ -274,7 +281,9 @@ const WalletTransaction = defineComponent({
         !b.token_identifier.rri.equals(nativeToken.rri) &&
         !hiddenTokens.value.find((ht) => b.token_identifier.rri.toString() === ht)
       ) || []
-      tokenOptions.value = nativeTb ? [nativeTb, ...remainingTb] : remainingTb
+
+      const sortedOptions = nativeTb ? [nativeTb, ...remainingTb] : remainingTb
+      tokenOptions.value = sortedOptions.map((token) => ({ token, data: tokenInfoFor(token.token_identifier.rri) }))
     }
 
     const handleSubmit = async () => {
@@ -314,8 +323,12 @@ const WalletTransaction = defineComponent({
           encrypt: values.encrypt
         }
         const currencyVal = selectedCurrency.value
-        await activateAccount(() => {
-          transfer(transferData, messageData, currencyVal)
+        activateAccount((client: ReturnType<typeof Radix.create>) => {
+          transfer(client, transferData, messageData, currencyVal)
+        }).catch((e) => {
+          cancelTransaction()
+          if (!activeAddress.value) return
+          fetchAndRefreshAccountData(activeAddress.value)
         })
       }
     }

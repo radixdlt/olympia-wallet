@@ -9,11 +9,8 @@
           <div class="text-center mt-4 text-rBlack text-sm px-8">
             We were unable to derive your wallet. Please ensure your Ledger is connected and the Radix application is open.
           </div>
-          <ButtonSubmit @click="retryWithConnectedHardwareWallet()" class="w-72 mx-auto mt-4" :disabled=false>
-            Retry
-          </ButtonSubmit>
 
-          <button @click="hideLedgerInteraction()" class="block m-auto pt-4"> Close this </button>
+          <button @click="close()" class="block m-auto pt-4"> Close this </button>
         </div>
       </div>
       <div v-else>
@@ -37,27 +34,30 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import ButtonSubmit from '@/components/ButtonSubmit.vue'
 import { useRouter } from 'vue-router'
-import { useWallet } from '@/composables'
+import { useWallet, useTransactions } from '@/composables'
 
 const WalletLedgerInteractionModal = defineComponent({
-  components: {
-    ButtonSubmit
-  },
 
   setup () {
     const router = useRouter()
     const {
-      retryWithConnectedHardwareWallet,
+      activeAddress,
+      hardwareAccount,
       hardwareError,
-      hideLedgerInteraction
+      hideLedgerInteraction,
+      radix
     } = useWallet(router)
 
+    const { cancelTransaction } = useTransactions(radix, router, activeAddress.value, hardwareAccount.value)
+
     return {
-      retryWithConnectedHardwareWallet,
       hardwareError,
-      hideLedgerInteraction
+      hideLedgerInteraction,
+      close () {
+        hideLedgerInteraction()
+        cancelTransaction()
+      }
     }
   }
 })
