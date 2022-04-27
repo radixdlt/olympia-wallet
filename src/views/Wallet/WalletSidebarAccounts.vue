@@ -94,22 +94,29 @@
                     <path class="stroke-current" d="M4.68616 0.875L8.76949 13.125" stroke="#F2F2FC" stroke-linecap="round"/>
                   </svg>
                 </div>
-                <div class="flex pt-1 pr-1 text-rGrayDark hover:text-rGreen transition-colors cursor-pointer">
-                  <svg width="15" height="15" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <div @click="toggleHardwareAccounts(hardwareDevice)" class="flex pt-1 pr-1 text-rGrayDark hover:text-rGreen transition-colors cursor-pointer">
+                  <svg v-if="deviceHidden(hardwareDevice.name)" width="17" height="17" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path class="stroke-current" d="M2 7H5V10" stroke="#F2F2FC" stroke-linecap="round" stroke-linejoin="round"/>
                     <path class="stroke-current" d="M10 5H7V2" stroke="#F2F2FC" stroke-linecap="round" stroke-linejoin="round"/>
                     <path class="stroke-current" d="M7 5L10.5 1.5" stroke="#F2F2FC" stroke-linecap="round" stroke-linejoin="round"/>
                     <path class="stroke-current" d="M1.5 10.5L5 7" stroke="#F2F2FC" stroke-linecap="round" stroke-linejoin="round"/>
                   </svg>
+                  <svg v-else @click="!deviceHidden(hardwareDevice.name)" class="ml-auto stroke-current text-rGrayDark hover:text-rGreen transition-colors" width="15" height="15" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path class="stroke-current" d="M7.5 1.5H10.5V4.5" stroke="#F2F2FC" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path class="stroke-current" d="M4.5 10.5H1.5V7.5" stroke="#F2F2FC" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path class="stroke-current" d="M10.5 1.5L7 5" stroke="#F2F2FC" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path class="stroke-current" d="M1.5 10.5L5 7" stroke="#F2F2FC" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
                 </div>
               </div>
             </div>
-            <div class="-mx-5">
+            <div v-if="deviceHidden(hardwareDevice.name)" class="-mx-5">
               <hardware-account-list-item
                 v-for="address in hardwareDevice.addresses"
                 :key="address.index"
                 :address="address.address"
                 :shouldShowEdit="true"
+                :id="address.address.toString()"
                 @click="hardwareSwitch(address.address.toString())"
                 class="mb-8"
               />
@@ -161,6 +168,8 @@ const WalletSidebarAccounts = defineComponent({
     const { setState } = useSidebar()
     const showHardwareHelper = ref(false)
     const showSoftwareAccounts = ref(true)
+    const showHardwareAccounts = ref(true)
+    const hiddenHwAccounts: any = ref([])
 
     const displayHardwareAddress: ComputedRef<string> = computed(() => {
       if (!hardwareAddress.value) return ''
@@ -195,6 +204,7 @@ const WalletSidebarAccounts = defineComponent({
       hardwareDevices,
       showHardwareHelper,
       showSoftwareAccounts,
+      showHardwareAccounts,
       displayHardwareAddress,
       localAccounts,
       handleAccountEditName,
@@ -218,6 +228,18 @@ const WalletSidebarAccounts = defineComponent({
       },
       toggleSoftwareAccounts () {
         showSoftwareAccounts.value = !showSoftwareAccounts.value
+      },
+      toggleHardwareAccounts (hardwareDevice: any) {
+        const index = hiddenHwAccounts.value.indexOf(hardwareDevice.name)
+        if (index > -1) {
+          hiddenHwAccounts.value.splice(index, 1)
+        } else {
+          hiddenHwAccounts.value.push(hardwareDevice.name)
+        }
+      },
+      deviceHidden (deviceName: string) {
+        const hiddenDevices = Object.values(hiddenHwAccounts.value)
+        return !hiddenDevices.includes(deviceName)
       },
       editName (account: AccountT) {
         setState(false)

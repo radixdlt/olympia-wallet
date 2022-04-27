@@ -35,8 +35,8 @@ export const getDerivedAccountsIndex = (network: Network): Promise<string> => ne
 })
 
 export const saveHardwareDevices = async (network: Network, hardwareDevices: HardwareDevice[]) => new Promise((resolve) => {
-  const data = hardwareDevices.map((hw: HardwareDevice) => {
-    const name = hw.name.length < 50 ? hw.name : 'hardware device'
+  const data = hardwareDevices.map((hw: HardwareDevice, i) => {
+    const name = hw.name.length < 50 ? hw.name : `hardware device ${i}`
     return {
       name: name,
       addresses: hw.addresses.map(({ index, address }) => ({ index, address: address.toString() }))
