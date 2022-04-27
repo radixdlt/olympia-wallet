@@ -118,9 +118,9 @@
 <script lang="ts">
 import { defineComponent, Ref, ref, ComputedRef, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useForm } from 'vee-validate'
-
+import { interval, Subscription, firstValueFrom } from 'rxjs'
 import { safelyUnwrapAddress, safelyUnwrapAmount, validateAmountOfType, validateGreaterThanZero } from '@/helpers/validateRadixTypes'
-import { AmountOrUnsafeInput, Token } from '@radixdlt/application'
+import { AccountAddressT, AmountOrUnsafeInput, Token, TransferTokensInput, MessageInTransaction } from '@radixdlt/application'
 import { asBigNumber } from '@/components/BigAmount.vue'
 import ClickToCopy from '@/components/ClickToCopy.vue'
 import FormErrorMessage from '@/components/FormErrorMessage.vue'
@@ -131,8 +131,7 @@ import FormCheckbox from '@/components/FormCheckbox.vue'
 import { useTransactions, useTokenBalances, useWallet } from '@/composables'
 import { useRouter, onBeforeRouteLeave } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { Decoded } from '@radixdlt/application/dist/api/open-api/_types'
-import { Observed } from '@/helpers/typeHelpers'
+import { AccountBalancesEndpoint, Decoded } from '@radixdlt/application/dist/api/open-api/_types'
 import { getHiddenTokens } from '@/actions/vue/data-store'
 
 interface TransactionForm {
@@ -141,6 +140,8 @@ interface TransactionForm {
   message: string;
   encrypt: boolean;
 }
+let transfer: (input: TransferTokensInput, message: MessageInTransaction, sc: Decoded.TokenAmount) => void
+const refreshSub: Ref<Subscription | null> = ref(null)
 
 const WalletTransaction = defineComponent({
   components: {
@@ -156,15 +157,14 @@ const WalletTransaction = defineComponent({
     const router = useRouter()
     const { errors, values, meta, setErrors, resetForm } = useForm<TransactionForm>()
     const { activeAddress, activateAccount, hardwareAccount, nativeToken, networkPreamble, radix, verifyHardwareWalletAddress } = useWallet(router)
-    const { setActiveTransactionForm, transferTokens } = useTransactions(radix, router, activeAddress.value, hardwareAccount.value)
     const { t } = useI18n({ useScope: 'global' })
-    const { fetchBalancesForAddress, tokenBalances, tokenBalanceFor, tokenInfoFor, tokenBalancesUnsub } = useTokenBalances(radix)
-
+    const { tokenBalanceFor, tokenInfoFor } = useTokenBalances(radix)
+    const { setActiveTransactionForm, transferTokens } = useTransactions(radix, router, activeAddress.value, hardwareAccount.value)
+    transfer = transferTokens
     const currency: Ref<string | null> = ref(null)
     const tokenOptions: Ref<Decoded.TokenAmount[]> = ref([])
     const hiddenTokens: Ref<string[]> = ref([])
-
-    setActiveTransactionForm('transaction')
+    const tokenBalances: Ref<AccountBalancesEndpoint.DecodedResponse | null> = ref(null)
 
     /* ------
      *  Lifecycle Events
@@ -174,29 +174,45 @@ const WalletTransaction = defineComponent({
         hiddenTokens.value = res
       })
       if (nativeToken.value) setXRDByDefault(nativeToken.value)
-      // fetch latest balances and begin polling
-      activeAddress.value && fetchBalancesForAddress(activeAddress.value)
     })
 
-    onUnmounted(() => {
-      tokenBalancesUnsub()
-    })
+    setActiveTransactionForm('transaction')
 
-    onBeforeRouteLeave(() => {
-      tokenBalancesUnsub()
-    })
+    const fetchBalances = async (addr: AccountAddressT) => {
+      tokenBalances.value = await firstValueFrom(radix.ledger.tokenBalancesForAddress(addr))
+    }
+
+    const fetchAndRefreshAccountData = async (addr: AccountAddressT) => {
+      if (refreshSub.value) {
+        refreshSub.value.unsubscribe()
+        refreshSub.value = null
+      }
+
+      await fetchBalances(addr)
+      refreshSub.value = interval(15000).subscribe(() => {
+        fetchBalances(addr)
+      })
+    }
 
     /* ------
      *  Side Effects
      */
 
-    watch((activeAddress), (newActiveAddress) => {
+    watch((activeAddress), () => {
       // Clear form input and validation errors when switching accounts
       resetForm()
       if (nativeToken.value) setXRDByDefault(nativeToken.value)
-      // Update balances when active address changes
-      newActiveAddress && fetchBalancesForAddress(newActiveAddress)
+      setActiveTransactionForm('transaction')
     })
+
+    watch((activeAddress), (newActiveAddress, oldActiveAddress) => {
+      if (!newActiveAddress) return
+      if (oldActiveAddress && newActiveAddress.equals(oldActiveAddress)) return
+      // Update balances when active address changes
+      fetchAndRefreshAccountData(newActiveAddress)
+      const { transferTokens } = useTransactions(radix, router, activeAddress.value, hardwareAccount.value)
+      transfer = transferTokens
+    }, { immediate: true })
 
     // reset currency when required state has loaded. Especially necessary when switching account
     watch([nativeToken, tokenBalances], ([nt, tb]) => {
@@ -292,7 +308,7 @@ const WalletTransaction = defineComponent({
         }
         const currencyVal = selectedCurrency.value
         await activateAccount(() => {
-          transferTokens(transferData, messageData, currencyVal)
+          transfer(transferData, messageData, currencyVal)
         })
       }
     }

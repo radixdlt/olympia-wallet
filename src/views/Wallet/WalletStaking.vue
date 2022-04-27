@@ -176,19 +176,20 @@ const WalletStaking = defineComponent({
       activateAccount,
       explorerUrlBase,
       hardwareAccount,
+      activeNetwork,
       nativeToken,
       radix
     } = useWallet(router)
-    const { activeForm, setActiveForm, activeStakes, activeUnstakes, loadingAnyStaking, maybeGetValidator, stakingUnsub, fetchStakesForAddress } = useStaking(radix)
+
+    if (!activeNetwork.value) {
+      router.push('/')
+      return {}
+    }
+    const { activeForm, setActiveForm, activeStakes, activeUnstakes, loadingAnyStaking, maybeGetValidator, fetchValidatorsAndStakes } = useStaking(radix, activeNetwork.value)
     const { stakeTokens, unstakeTokens, setActiveTransactionForm } = useTransactions(radix, router, activeAddress.value, hardwareAccount.value)
-    const { fetchBalancesForAddress, tokenBalances, tokenBalanceFor, tokenBalancesUnsub } = useTokenBalances(radix)
+    const { fetchBalancesForAddress, tokenBalances, tokenBalanceFor } = useTokenBalances(radix)
     const zero = Amount.fromUnsafe(0)._unsafeUnwrap()
     const maxUnstakeMode: Ref<boolean> = ref(false)
-
-    onBeforeRouteLeave(() => {
-      tokenBalancesUnsub()
-      stakingUnsub()
-    })
 
     /* ------
      *  Side Effects
@@ -198,16 +199,11 @@ const WalletStaking = defineComponent({
       if (!newActiveAddress) return
       if (oldAddress && newActiveAddress.equals(oldAddress)) return
 
-      if (oldAddress) {
-        tokenBalancesUnsub()
-        stakingUnsub()
-      }
-
       // Update balances when active address changes
       await fetchBalancesForAddress(newActiveAddress)
-      await fetchStakesForAddress(newActiveAddress)
+      await fetchValidatorsAndStakes(newActiveAddress)
       setActiveTransactionForm('stake')
-    }, { immediate: true })
+    })
 
     /* ------
      *  Computed Values

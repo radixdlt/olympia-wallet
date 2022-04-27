@@ -158,7 +158,7 @@ const WalletOverview = defineComponent({
 
     const { gatherRelevantTokens } = useTokenBalances(radix)
 
-    if (!hasWallet || !nativeToken.value) {
+    if (!hasWallet || !nativeToken.value || !activeAddress.value) {
       router.push('/')
       return
     }

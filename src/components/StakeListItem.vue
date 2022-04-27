@@ -150,10 +150,11 @@ const StakeListItem = defineComponent({
 
   setup (props) {
     const router = useRouter()
-    const { radix, nativeToken, explorerUrlBase } = useWallet(router)
+    const { radix, activeNetwork, nativeToken, explorerUrlBase } = useWallet(router)
+    if (!activeNetwork.value) return
     const validatorAddress = toRef(props, 'validatorAddress')
     const validator: Ref<Observed<ReturnType<typeof radix.ledger.lookupValidator>> | null> = ref(null)
-    const { validatorsTopOneHundred, maybeGetValidator, getActiveStakeAmountForValidator, getPendingStakeAmountForValidator, getUnstakeAmountForValidator } = useStaking(radix)
+    const { validatorsTopOneHundred, maybeGetValidator, getActiveStakeAmountForValidator, getPendingStakeAmountForValidator, getUnstakeAmountForValidator } = useStaking(radix, activeNetwork.value)
 
     // Attempt to get validator from memory before re-fetching
     validator.value = maybeGetValidator(validatorAddress.value)

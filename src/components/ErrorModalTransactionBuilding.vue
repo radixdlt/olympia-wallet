@@ -75,9 +75,10 @@ export default defineComponent({
     const updateVisible = () => { isVisible.value = !isVisible.value }
     const error = toRef(props, 'error')
     const router = useRouter()
-    const { radix } = useWallet(router)
+    const { radix, activeNetwork } = useWallet(router)
+    if (!activeNetwork.value) return
     const { clearLatestError } = useErrors(radix)
-    const { activeForm } = useStaking(radix)
+    const { activeForm } = useStaking(radix, activeNetwork.value)
 
     const transactionType: ComputedRef<'TRANSFER' | 'STAKING'> = computed(() => {
       if (router.currentRoute.value.fullPath.indexOf('staking') >= 0) return 'STAKING'

@@ -24,18 +24,12 @@ const gatherRelevantTokens = async (radix: ReturnType<typeof Radix.create>, bala
 }
 
 export default function useTokenBalances (radix: ReturnType<typeof Radix.create>) {
-  let tokenBalancesSub: Subscription | null
-
   const fetchBalancesForAddress = async (address: AccountAddressT) => {
     // Unsubscribe from previous tokenBalancesSub
-    tokenBalancesSub && tokenBalancesSub.unsubscribe()
 
     // Fetch token balances for address
     const res = await firstValueFrom(radix.ledger.tokenBalancesForAddress(address))
     tokenBalances.value = res
-
-    // Initiate polling every 15 seconds for balance updates
-    tokenBalancesSub = interval(15 * 1_000).subscribe(() => fetchBalancesForAddress(address))
 
     await gatherRelevantTokens(radix, res)
   }
@@ -51,9 +45,6 @@ export default function useTokenBalances (radix: ReturnType<typeof Radix.create>
         .every((tb) => !!relatedTokens.value.find((rt) => rt.rri.equals(tb.token_identifier.rri)))
     }),
 
-    tokenBalancesUnsub: () => {
-      tokenBalancesSub && tokenBalancesSub.unsubscribe()
-    },
     tokenBalanceFor: (token: Token) => {
       if (!tokenBalances.value) return null
       return tokenBalances.value.account_balances.liquid_balances.find((lb) => lb.token_identifier.rri.equals(token.rri)) || null

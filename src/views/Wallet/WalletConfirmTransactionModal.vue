@@ -190,7 +190,7 @@ const WalletConfirmTransactionModal = defineComponent({
       radix,
       reset
     } = useWallet(router)
-    const { tokenBalances, tokenBalanceFor, tokenInfoFor, tokenBalancesUnsub } = useTokenBalances(radix)
+    const { tokenBalances, tokenBalanceFor, tokenInfoFor } = useTokenBalances(radix)
 
     const updateObservable = merge(
       radix.activeAccount,
@@ -206,7 +206,6 @@ const WalletConfirmTransactionModal = defineComponent({
 
     onUnmounted(() => {
       subs.unsubscribe()
-      tokenBalancesUnsub()
     })
 
     const {

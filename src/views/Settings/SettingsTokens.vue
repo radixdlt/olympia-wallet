@@ -68,7 +68,7 @@ export default defineComponent({
     const loading: Ref<boolean> = ref(true)
     const router = useRouter()
     const { radix, activeAddress } = useWallet(router)
-    const { fetchBalancesForAddress, tokenBalances, tokenBalancesUnsub, tokenBalanceForByString } = useTokenBalances(radix)
+    const { fetchBalancesForAddress, tokenBalances, tokenBalanceForByString } = useTokenBalances(radix)
 
     /* ------
      *  Lifecycle Events
@@ -77,8 +77,6 @@ export default defineComponent({
       // fetch latest balances and begin polling
       activeAddress.value && computeListOfHiddenTokens(activeAddress.value)
     })
-
-    onUnmounted(() => { tokenBalancesUnsub() })
 
     /* ------
      *  Side Effects
