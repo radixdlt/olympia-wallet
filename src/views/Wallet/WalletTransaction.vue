@@ -27,7 +27,7 @@
         class="flex flex-col items-end"
       >
         <div class="bg-white rounded-md border border-rGray text-rBlack mb-8 w-full">
-          <template v-if="loadedAllData">
+          <template v-if="loadedAllData && activeAddress">
             <div class="border-b border-rGray py-7 flex items-center">
               <div class="w-32 text-right text-rGrayDark mr-8">{{ $t('transaction.fromLabel') }}</div>
               <div class="flex-1 font-mono">{{ activeAddress.toString() }}</div>
@@ -210,7 +210,7 @@ const WalletTransaction = defineComponent({
       if (oldActiveAddress && newActiveAddress.equals(oldActiveAddress)) return
       // Update balances when active address changes
       fetchAndRefreshAccountData(newActiveAddress)
-      const { transferTokens } = useTransactions(radix, router, activeAddress.value, hardwareAccount.value)
+      const { transferTokens } = useTransactions(radix, router, newActiveAddress, hardwareAccount.value)
       transfer = transferTokens
     }, { immediate: true })
 
@@ -218,6 +218,13 @@ const WalletTransaction = defineComponent({
     watch([nativeToken, tokenBalances], ([nt, tb]) => {
       if (tb && nt) {
         setXRDByDefault(nt)
+      }
+    })
+
+    onBeforeRouteLeave(() => {
+      if (refreshSub.value) {
+        refreshSub.value.unsubscribe()
+        refreshSub.value = null
       }
     })
 

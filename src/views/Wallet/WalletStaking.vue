@@ -1,6 +1,6 @@
 <template>
   <div class="bg-rGrayLightest flex flex-row w-full p-5 flex-1 h-screen overflow-y-auto">
-    <div v-if="!loadedAllData" class="p-4 flex items-center justify-center flex-1 h-32">
+    <div v-if="!loadedAllData || !nativeToken" class="p-4 flex items-center justify-center flex-1 h-32">
       <loading-icon class="text-rGrayDark" />
     </div>
     <div v-else-if="!hasTokenBalances" class="p-4 flex-1">
@@ -135,7 +135,7 @@
 </template>
 
 <script lang="ts">
-import { Amount, AmountT, StakeTokensInput, UnstakeTokensInput, ValidatorAddressT } from '@radixdlt/application'
+import { AccountAddressT, Amount, AmountT, StakeTokensInput, TokenBalance, UnstakeTokensInput, ValidatorAddressT } from '@radixdlt/application'
 import { computed, defineComponent, ComputedRef, onMounted, onUnmounted, watch, Ref, ref } from 'vue'
 import { useForm } from 'vee-validate'
 import StakeListItem from '@/components/StakeListItem.vue'
@@ -150,11 +150,35 @@ import LoadingIcon from '@/components/LoadingIcon.vue'
 import { useStaking, useTransactions, useTokenBalances, useWallet } from '@/composables'
 import { useRouter, onBeforeRouteLeave } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import { interval, Subscription, firstValueFrom } from 'rxjs'
+import { Decoded, AccountBalancesEndpoint } from '@radixdlt/application/dist/api/open-api/_types'
 
 interface StakeForm {
   validator: string;
   amount: number;
 }
+const refreshSub: Ref<Subscription | null> = ref(null)
+
+const uniqBy = (arr: any[], predicate: (item: any) => string) => {
+  if (!Array.isArray(arr)) { return [] }
+  const cb = typeof predicate === 'function' ? predicate : (o: any) => o[predicate]
+
+  const pickedObjects = arr
+    .filter(item => item)
+    .reduce((map, item) => {
+      const key = cb(item)
+
+      if (!key) { return map }
+
+      return map.has(key) ? map : map.set(key, item)
+    }, new Map())
+    .values()
+
+  return [...pickedObjects]
+}
+
+let stake: (input: StakeTokensInput) => void
+let unstake: (input: UnstakeTokensInput) => void
 
 const WalletStaking = defineComponent({
   components: {
@@ -181,28 +205,61 @@ const WalletStaking = defineComponent({
       radix
     } = useWallet(router)
 
-    if (!activeNetwork.value) {
+    if (!activeNetwork.value || !nativeToken.value) {
       router.push('/')
       return {}
     }
     const { activeForm, setActiveForm, activeStakes, activeUnstakes, loadingAnyStaking, maybeGetValidator, fetchValidatorsAndStakes } = useStaking(radix, activeNetwork.value)
-    const { stakeTokens, unstakeTokens, setActiveTransactionForm } = useTransactions(radix, router, activeAddress.value, hardwareAccount.value)
-    const { fetchBalancesForAddress, tokenBalances, tokenBalanceFor } = useTokenBalances(radix)
+    const { setActiveTransactionForm } = useTransactions(radix, router, activeAddress.value, hardwareAccount.value)
     const zero = Amount.fromUnsafe(0)._unsafeUnwrap()
     const maxUnstakeMode: Ref<boolean> = ref(false)
+    const tokenBalances: Ref<AccountBalancesEndpoint.DecodedResponse | null> = ref(null)
+    const nativeTokenBalance: Ref<Decoded.TokenAmount | null> = ref(null)
 
     /* ------
      *  Side Effects
      */
 
-    watch(activeAddress, async (newActiveAddress, oldAddress) => {
-      if (!newActiveAddress) return
-      if (oldAddress && newActiveAddress.equals(oldAddress)) return
+    const fetchData = async (addr: AccountAddressT) => {
+      tokenBalances.value = await firstValueFrom(radix.ledger.tokenBalancesForAddress(addr))
+      nativeTokenBalance.value = tokenBalances.value.account_balances.liquid_balances.find((lb) => {
+        if (!nativeToken.value) return false
+        return lb.token_identifier.rri.equals(nativeToken.value.rri)
+      }) || null
+      await fetchValidatorsAndStakes(addr)
+    }
 
-      // Update balances when active address changes
-      await fetchBalancesForAddress(newActiveAddress)
-      await fetchValidatorsAndStakes(newActiveAddress)
+    const fetchAndRefreshData = async (addr: AccountAddressT) => {
+      if (refreshSub.value) {
+        refreshSub.value.unsubscribe()
+        refreshSub.value = null
+      }
+
+      await fetchData(addr)
+      refreshSub.value = interval(15000).subscribe(() => {
+        fetchData(addr)
+      })
+    }
+
+    watch(activeAddress, () => {
+      resetForm()
       setActiveTransactionForm('stake')
+    })
+
+    watch(activeAddress, async (newActiveAddress, oldActiveAddress) => {
+      if (!newActiveAddress) return
+      if (oldActiveAddress && newActiveAddress.equals(oldActiveAddress)) return
+      await fetchAndRefreshData(newActiveAddress)
+      const { stakeTokens, unstakeTokens } = useTransactions(radix, router, newActiveAddress, hardwareAccount.value)
+      stake = stakeTokens
+      unstake = unstakeTokens
+    }, { immediate: true })
+
+    onBeforeRouteLeave(() => {
+      if (refreshSub.value) {
+        refreshSub.value.unsubscribe()
+        refreshSub.value = null
+      }
     })
 
     /* ------
@@ -210,29 +267,8 @@ const WalletStaking = defineComponent({
      */
 
     const xrdBalance: ComputedRef<AmountT> = computed(() => {
-      if (!tokenBalances.value || !nativeToken.value) return zero
-      const nativeTokenBalance = tokenBalanceFor(nativeToken.value)
-      if (!nativeTokenBalance) return zero
-      return nativeTokenBalance.value
+      return nativeTokenBalance.value ? nativeTokenBalance.value.value : zero
     })
-
-    const uniqBy = (arr: any[], predicate: (item: any) => string) => {
-      if (!Array.isArray(arr)) { return [] }
-      const cb = typeof predicate === 'function' ? predicate : (o: any) => o[predicate]
-
-      const pickedObjects = arr
-        .filter(item => item)
-        .reduce((map, item) => {
-          const key = cb(item)
-
-          if (!key) { return map }
-
-          return map.has(key) ? map : map.set(key, item)
-        }, new Map())
-        .values()
-
-      return [...pickedObjects]
-    }
 
     const relatedValidators: ComputedRef<Array<ValidatorAddressT>> = computed(() => {
       const stakeValidators = activeStakes.value ? [
@@ -306,8 +342,7 @@ const WalletStaking = defineComponent({
 
     const handleSubmitStake = async () => {
       if (!tokenBalances.value || !nativeToken.value) return
-      const nativeTokenBalance = tokenBalanceFor(nativeToken.value)
-      if (!meta.value.valid || !nativeTokenBalance) return
+      if (!meta.value.valid || !nativeTokenBalance.value) return
       const safeAddress = safelyUnwrapValidator(values.validator)
       const safeAmount = safelyUnwrapAmount(Number(values.amount))
       const greaterThanZero = safeAmount && validateGreaterThanZero(safeAmount)
@@ -333,8 +368,8 @@ const WalletStaking = defineComponent({
       }
       await activateAccount(() => {
         activeForm.value === 'STAKING'
-          ? stakeTokens(data as StakeTokensInput)
-          : unstakeTokens(data as UnstakeTokensInput)
+          ? stake(data as StakeTokensInput)
+          : unstake(data as UnstakeTokensInput)
       })
     }
 
@@ -345,7 +380,7 @@ const WalletStaking = defineComponent({
       const safeOneHundredPercent = safelyUnwrapAmount(Number('0.0000000000000001'))
       if (!safeOneHundredPercent) return
 
-      unstakeTokens({
+      unstake({
         from_validator: safeAddress,
         unstake_percentage: safeOneHundredPercent,
         tokenIdentifier: nativeToken.value.rri
