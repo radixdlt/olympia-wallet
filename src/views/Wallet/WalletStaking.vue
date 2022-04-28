@@ -210,7 +210,7 @@ const WalletStaking = defineComponent({
       return {}
     }
     const { activeForm, setActiveForm, activeStakes, activeUnstakes, loadingAnyStaking, maybeGetValidator, fetchValidatorsAndStakes } = useStaking(radix, activeNetwork.value)
-    const { setActiveTransactionForm } = useTransactions(radix, router, activeAddress.value, hardwareAccount.value)
+    const { setActiveTransactionForm, cancelTransaction } = useTransactions(radix, router, activeAddress.value, hardwareAccount.value)
     const zero = Amount.fromUnsafe(0)._unsafeUnwrap()
     const maxUnstakeMode: Ref<boolean> = ref(false)
     const tokenBalances: Ref<AccountBalancesEndpoint.DecodedResponse | null> = ref(null)
@@ -366,10 +366,14 @@ const WalletStaking = defineComponent({
         amount: safeAmount,
         tokenIdentifier: nativeToken.value?.rri
       }
-      await activateAccount((client) => {
+      activateAccount((client: ReturnType<typeof Radix.create>) => {
         activeForm.value === 'STAKING'
           ? stake(client, data as StakeTokensInput)
           : unstake(client, data as UnstakeTokensInput)
+      }).catch((e) => {
+        cancelTransaction()
+        if (!activeAddress.value) return
+        fetchAndRefreshData(activeAddress.value)
       })
     }
 
@@ -386,6 +390,10 @@ const WalletStaking = defineComponent({
           unstake_percentage: safeOneHundredPercent,
           tokenIdentifier: nativeToken.value.rri
         })
+      }).catch((e) => {
+        cancelTransaction()
+        if (!activeAddress.value) return
+        fetchAndRefreshData(activeAddress.value)
       })
     }
 
