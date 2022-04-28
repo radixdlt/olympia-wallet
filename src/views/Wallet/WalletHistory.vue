@@ -164,8 +164,13 @@ const WalletHistory = defineComponent({
     }
 
     const activateThenDecrypt = async (data: ExecutedTransaction) => {
-      activateAccount(() => {
-        decryptMessage(radix, data)
+      activateAccount((client) => {
+        decryptMessage(client, data)
+      }).catch((e) => {
+        if (!activeAddress.value) return
+        updateActiveAccount(activeAddress.value)
+        resetHistory()
+        fetchTransactions()
       })
     }
 
