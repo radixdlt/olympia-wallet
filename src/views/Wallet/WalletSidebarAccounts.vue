@@ -88,7 +88,7 @@
                 </svg>
               </div>
               <div class="flex pb-10">
-                <div @click="disconnectDevice(hardwareDevice.name)" class="flex pt-1 text-rGrayDark hover:text-rGreen transition-colors cursor-pointer">
+                <div @click="disconnectDevice(i)" class="flex pt-1 text-rGrayDark hover:text-rGreen transition-colors cursor-pointer">
                   <svg class="mr-2" width="15" height="15" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path class="stroke-current" d="M3.20657 5.50278L1.89417 6.81518C0.535275 8.17407 0.535276 10.3773 1.89417 11.7362C3.25307 13.0951 5.45628 13.0951 6.81518 11.7362L7.87636 10.675M10.3264 8.225L11.7362 6.81518C13.0951 5.45628 13.0951 3.25307 11.7362 1.89417C10.3773 0.535275 8.17407 0.535276 6.81518 1.89417L5.65657 3.05278" stroke="#F2F2FC" stroke-linecap="round"/>
                     <path class="stroke-current" d="M4.68616 0.875L8.76949 13.125" stroke="#F2F2FC" stroke-linecap="round"/>
@@ -241,9 +241,8 @@ const WalletSidebarAccounts = defineComponent({
         const hiddenDevices = Object.values(hiddenHwAccounts.value)
         return !hiddenDevices.includes(deviceName)
       },
-      disconnectDevice (deviceName: any) {
-        console.log(deviceName)
-        setDisconnectDeviceModal(true)
+      disconnectDevice (index: number) {
+        setDisconnectDeviceModal(index)
       },
       editName (account: AccountT) {
         setState(false)

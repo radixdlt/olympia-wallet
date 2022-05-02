@@ -26,7 +26,6 @@ import { touchKeystore, hasKeystore, initWallet as createNewWallet, storePin } f
 import {
   getDerivedAccountsIndex,
   getHardwareDevices,
-  forgetHardwareDevice,
   resetStore,
   saveAccountName,
   saveDerivedAccountsIndex,
@@ -72,7 +71,7 @@ const nodeUrl: Ref<string | null> = ref(null)
 const reloadTrigger = new Subject<number>()
 const showDeleteHWWalletPrompt: Ref<boolean> = ref(false)
 const showHideAccountModal: Ref<boolean> = ref(false)
-const showDisconnectDeviceModal: Ref<boolean> = ref(false)
+const hardwareDeviceIndexToForget: Ref<number> = ref(-1)
 const showNewDevicePopup: Ref<boolean> = ref(false)
 const showLedgerVerify: Ref<boolean> = ref(false)
 const signingKeychain: Ref<SigningKeychainT | null> = ref(null)
@@ -125,7 +124,7 @@ interface useWalletInterface {
   readonly radix: ReturnType<typeof Radix.create>;
   readonly showDeleteHWWalletPrompt: Ref<boolean>;
   readonly showHideAccountModal: Ref<boolean>;
-  readonly showDisconnectDeviceModal: Ref<boolean>;
+  readonly showDisconnectDeviceModal: ComputedRef<boolean>;
   readonly showNewDevicePopup: Ref<boolean>;
   readonly showLedgerVerify: Ref<boolean>;
   readonly switching: ComputedRef<boolean>;
@@ -151,8 +150,8 @@ interface useWalletInterface {
   resetWallet: (nextRoute: 'create-wallet' | 'restore-wallet') => void;
   setActiveAddress: (address: string) => void;
   setHideAccountModal: (val: boolean) => void;
-  setDisconnectDeviceModal: (val: boolean) => void;
-  forgetDevice: (deviceName: string) => void;
+  setDisconnectDeviceModal: (val: number) => void;
+  forgetDevice: () => void;
   setShowNewDevicePopup: (val: boolean) => void;
   setConnected: (value: boolean) => void;
   setNetwork: (network: Network | null) => void;
@@ -376,11 +375,8 @@ const verifyHardwareWalletAddress = () => {
 
 const setHideAccountModal = (val: boolean) => { showHideAccountModal.value = val }
 
-const setDisconnectDeviceModal = (val: boolean) => { showDisconnectDeviceModal.value = val }
-
-const forgetDevice = (deviceName: string) => {
-  if (!activeNetwork.value) return
-  forgetHardwareDevice(activeNetwork.value, deviceName)
+const setDisconnectDeviceModal = (val: number) => {
+  hardwareDeviceIndexToForget.value = val
 }
 
 const hashNodeUrl = async (url:string, signingKeychain: SigningKeychainT): Promise<string> => {
@@ -482,6 +478,25 @@ export default function useWallet (router: Router): useWalletInterface {
     router.push(`/wallet/${activeAddress.value.toString()}`)
   }
 
+  const forgetDevice = () => {
+    if (!activeNetwork.value || hardwareDeviceIndexToForget.value < 0 || !activeAddress.value) return
+
+    const shouldNavigateAwayFromForgottenDevice = hardwareDevices.value[hardwareDeviceIndexToForget.value]?.addresses.find((a) => {
+      if (!activeAddress.value) return false
+      return a.address.equals(activeAddress.value)
+    })
+
+    if (shouldNavigateAwayFromForgottenDevice) {
+      if (accounts.value?.all.length === 0) return
+      router.push(`/wallet/${accounts.value?.all[0]?.address.toString()}`)
+    }
+
+    const newHardwareDevices = hardwareDevices.value.filter((val, i) => i !== hardwareDeviceIndexToForget.value)
+    saveHardwareDevices(activeNetwork.value, newHardwareDevices)
+    hardwareDevices.value = newHardwareDevices
+    hardwareDeviceIndexToForget.value = -1
+  }
+
   return {
     accounts,
     activeAddress,
@@ -501,7 +516,7 @@ export default function useWallet (router: Router): useWalletInterface {
     nodeUrl: computed(() => nodeUrl.value),
     showDeleteHWWalletPrompt,
     showHideAccountModal,
-    showDisconnectDeviceModal,
+    showDisconnectDeviceModal: computed(() => hardwareDeviceIndexToForget.value >= 0),
     showNewDevicePopup,
     showLedgerVerify,
     connected: computed(() => connected.value),

@@ -44,11 +44,10 @@ const WalletHideAccountModal = defineComponent({
 
     return {
       handleSubmit: () => {
-        // remove device from store
-        setDisconnectDeviceModal(false)
+        setDisconnectDeviceModal(-1)
       },
       handleClose: () => {
-        setDisconnectDeviceModal(false)
+        setDisconnectDeviceModal(-1)
       }
     }
   }

@@ -46,11 +46,11 @@ const WalletDisconnectDeviceModal = defineComponent({
 
     return {
       handleSubmit: () => {
-        forgetDevice('need to access this accounts name')
-        setDisconnectDeviceModal(false)
+        forgetDevice()
+        setDisconnectDeviceModal(-1)
       },
       handleClose: () => {
-        setDisconnectDeviceModal(false)
+        setDisconnectDeviceModal(-1)
       },
       connectHardwareWallet,
       hardwareError,

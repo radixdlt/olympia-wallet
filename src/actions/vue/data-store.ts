@@ -57,11 +57,6 @@ export const getHardwareDevices = async (network: Network): Promise<HardwareDevi
   })
 }
 
-export const forgetHardwareDevice = async (network: Network, deviceName: string): Promise<any> => {
-  const data = await window.ipcRenderer.invoke('get-hw-devices', String(network)) as EncodedHardwareDevice[]
-  console.log('----->', data, deviceName)
-}
-
 export const resetStore = (): Promise<string> => new Promise((resolve) => {
   resolve(window.ipcRenderer.invoke('reset-store'))
 })
