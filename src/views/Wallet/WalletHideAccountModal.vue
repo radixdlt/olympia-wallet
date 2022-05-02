@@ -39,22 +39,17 @@ const WalletHideAccountModal = defineComponent({
   setup () {
     const router = useRouter()
     const {
-      setHideAccountModal,
-      connectHardwareWallet,
-      hardwareError,
-      hideLedgerInteraction
+      setDisconnectDeviceModal
     } = useWallet(router)
 
     return {
       handleSubmit: () => {
-        setHideAccountModal(false)
+        // remove device from store
+        setDisconnectDeviceModal(false)
       },
       handleClose: () => {
-        setHideAccountModal(false)
-      },
-      connectHardwareWallet,
-      hardwareError,
-      hideLedgerInteraction
+        setDisconnectDeviceModal(false)
+      }
     }
   }
 })

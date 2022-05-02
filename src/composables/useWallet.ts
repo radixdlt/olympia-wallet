@@ -26,6 +26,7 @@ import { touchKeystore, hasKeystore, initWallet as createNewWallet, storePin } f
 import {
   getDerivedAccountsIndex,
   getHardwareDevices,
+  forgetHardwareDevice,
   resetStore,
   saveAccountName,
   saveDerivedAccountsIndex,
@@ -71,6 +72,7 @@ const nodeUrl: Ref<string | null> = ref(null)
 const reloadTrigger = new Subject<number>()
 const showDeleteHWWalletPrompt: Ref<boolean> = ref(false)
 const showHideAccountModal: Ref<boolean> = ref(false)
+const showDisconnectDeviceModal: Ref<boolean> = ref(false)
 const showNewDevicePopup: Ref<boolean> = ref(false)
 const showLedgerVerify: Ref<boolean> = ref(false)
 const signingKeychain: Ref<SigningKeychainT | null> = ref(null)
@@ -123,6 +125,7 @@ interface useWalletInterface {
   readonly radix: ReturnType<typeof Radix.create>;
   readonly showDeleteHWWalletPrompt: Ref<boolean>;
   readonly showHideAccountModal: Ref<boolean>;
+  readonly showDisconnectDeviceModal: Ref<boolean>;
   readonly showNewDevicePopup: Ref<boolean>;
   readonly showLedgerVerify: Ref<boolean>;
   readonly switching: ComputedRef<boolean>;
@@ -148,6 +151,8 @@ interface useWalletInterface {
   resetWallet: (nextRoute: 'create-wallet' | 'restore-wallet') => void;
   setActiveAddress: (address: string) => void;
   setHideAccountModal: (val: boolean) => void;
+  setDisconnectDeviceModal: (val: boolean) => void;
+  forgetDevice: (deviceName: string) => void;
   setShowNewDevicePopup: (val: boolean) => void;
   setConnected: (value: boolean) => void;
   setNetwork: (network: Network | null) => void;
@@ -371,6 +376,13 @@ const verifyHardwareWalletAddress = () => {
 
 const setHideAccountModal = (val: boolean) => { showHideAccountModal.value = val }
 
+const setDisconnectDeviceModal = (val: boolean) => { showDisconnectDeviceModal.value = val }
+
+const forgetDevice = (deviceName: string) => {
+  if (!activeNetwork.value) return
+  forgetHardwareDevice(activeNetwork.value, deviceName)
+}
+
 const hashNodeUrl = async (url:string, signingKeychain: SigningKeychainT): Promise<string> => {
   const hashedUrl = sha256Twice(url)
   const signed = signingKeychain.signHash(hashedUrl)
@@ -489,6 +501,7 @@ export default function useWallet (router: Router): useWalletInterface {
     nodeUrl: computed(() => nodeUrl.value),
     showDeleteHWWalletPrompt,
     showHideAccountModal,
+    showDisconnectDeviceModal,
     showNewDevicePopup,
     showLedgerVerify,
     connected: computed(() => connected.value),
@@ -543,6 +556,8 @@ export default function useWallet (router: Router): useWalletInterface {
     persistNodeUrl,
     setActiveAddress,
     setHideAccountModal,
+    setDisconnectDeviceModal,
+    forgetDevice,
     setShowNewDevicePopup,
     setPin,
     setWallet,
