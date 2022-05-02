@@ -108,7 +108,6 @@ userDidCancel.subscribe((didCancel: boolean) => {
   }
 })
 
-
 const cancelTransaction = () => {
   console.log('cancel')
   userDidCancel.next(true)
@@ -137,7 +136,7 @@ export default function useTransactions (radix: ReturnType<typeof Radix.create>,
     }
     userDidConfirm.next(true)
   }
-  
+
   // After a transaction is completed, cleanup subs and input fields.
   // Navigate user to history view
   const handleTransactionCompleted = () => {
