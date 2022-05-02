@@ -316,7 +316,8 @@ const createNewHardwareAccount = async () => {
       router.push(`/wallet/${newAccount.address.toString()}`)
     } else {
       const newAddr = connectedDeviceAccount.address.toString()
-      const newHardwareDevices = [...hardwareDevices.value, { name: newAddr, addresses: [{ name: newAddr, address: connectedDeviceAccount.address, index: 0 }] }]
+      const deviceNumber = hardwareDevices.value.length + 1
+      const newHardwareDevices = [...hardwareDevices.value, { name: `Hardware Device ${deviceNumber}`, addresses: [{ name: newAddr, address: connectedDeviceAccount.address, index: 0 }] }]
       hardwareAddress.value = newAddr
       activeAccount.value = connectedDeviceAccount
       hardwareAccount.value = connectedDeviceAccount
