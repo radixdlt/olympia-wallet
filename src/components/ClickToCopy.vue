@@ -30,11 +30,17 @@ const ClickToCopy = defineComponent({
   setup (props) {
     const toast = useToast()
     const router = useRouter()
-    const { hardwareAddress, verifyHardwareWalletAddress } = useWallet(router)
+    const { activeAddress, activateAccount, verifyHardwareWalletAddress, hardwareDevices } = useWallet(router)
     const { address, checkForHardwareAddress } = toRefs(props)
+    const potentialHWAddress = hardwareDevices.value.flatMap((v) => v.addresses).find((a) => a.address.toString() === address.value)
+
     const copyText = () => {
-      if (checkForHardwareAddress.value && hardwareAddress.value && address.value === hardwareAddress.value) {
-        verifyHardwareWalletAddress()
+      if (checkForHardwareAddress.value && potentialHWAddress && activeAddress.value?.toString() === address.value) {
+        activateAccount(() => {
+          verifyHardwareWalletAddress()
+        }).catch((e) => {
+          toast.error('Unable to connect to Ledger')
+        })
       } else {
         copyToClipboard(address.value)
         toast.success('Copied to Clipboard')
