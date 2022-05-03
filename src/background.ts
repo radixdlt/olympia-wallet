@@ -4,6 +4,7 @@ import electron, { app, ipcMain, protocol, BrowserWindow, webContents } from 'el
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 import path from 'path'
+import { debounce } from '@/helpers/debounce'
 import contextMenu from 'electron-context-menu'
 import { copyToClipboard, getKeystoreFile, storePin, validatePin, writeKeystoreFile } from '@/actions/electron/create-wallet'
 import {
@@ -79,9 +80,15 @@ async function createWindow () {
   }
 }
 
-function resetInteractionTimer(interval: NodeJS.Timeout) {
-  clearInterval(interval)
-  return setInterval(() => { win.reload() }, 3600000)
+const INACTIVITY_INTERVAL = 3600000
+const DEBOUNCE_INTERVAL = 1000
+// Set interaction detection time period to 1hr. If user does not move mouse or
+// interact with keyboard, refresh app and have User log in again.
+let idleInterval = setInterval(() => { win.reload()}, INACTIVITY_INTERVAL)
+
+const resetInteractionTimer = () => {
+  clearInterval(idleInterval)
+  idleInterval = setInterval(() => { win.reload() }, INACTIVITY_INTERVAL)  
 }
 
 // Quit when all windows are closed.
@@ -119,21 +126,10 @@ app.on('ready', async () => {
   }
   createWindow()
 
-  // Set interaction detection time period to 1hr. If user does not move mouse or
-  // interact with keyboard, refresh app and have User log in again.
-  let idleInterval = setInterval(() => { win.reload()}, 3600000)
-
-  win.webContents.on('before-input-event', (_, input) => {
-    if(input.type === 'keyDown') {
-      idleInterval = resetInteractionTimer(idleInterval)
-    }
-  })
-
-  win.webContents.on('cursor-changed', (_, type) => {
-    if(type) {
-      idleInterval = resetInteractionTimer(idleInterval)
-    }
-  })
+  const onEvent = debounce(resetInteractionTimer, DEBOUNCE_INTERVAL)
+  win.webContents.on('before-input-event', onEvent)
+  win.webContents.on('cursor-changed', onEvent)
+  win.webContents.on('before-input-event', onEvent)
 
   checkForUpdates()
 })
