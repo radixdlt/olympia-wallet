@@ -1,9 +1,10 @@
 'use strict'
 
-import electron, { app, ipcMain, protocol, BrowserWindow } from 'electron'
+import electron, { app, ipcMain, protocol, BrowserWindow, webContents } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 import path from 'path'
+import { debounce } from '@/helpers/debounce'
 import contextMenu from 'electron-context-menu'
 import { copyToClipboard, getKeystoreFile, storePin, validatePin, writeKeystoreFile } from '@/actions/electron/create-wallet'
 import {
@@ -83,6 +84,17 @@ async function createWindow () {
   }
 }
 
+const INACTIVITY_INTERVAL = 3600000
+const DEBOUNCE_INTERVAL = 1000
+// Set interaction detection time period to 1hr. If user does not move mouse or
+// interact with keyboard, refresh app and have User log in again.
+let idleInterval = setInterval(() => { win.reload()}, INACTIVITY_INTERVAL)
+
+const resetInteractionTimer = () => {
+  clearInterval(idleInterval)
+  idleInterval = setInterval(() => { win.reload() }, INACTIVITY_INTERVAL)  
+}
+
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
   // On macOS it is common for applications and their menu bar
@@ -117,6 +129,12 @@ app.on('ready', async () => {
     }
   }
   createWindow()
+
+  const onEvent = debounce(resetInteractionTimer, DEBOUNCE_INTERVAL)
+  win.webContents.on('before-input-event', onEvent)
+  win.webContents.on('cursor-changed', onEvent)
+  win.webContents.on('before-input-event', onEvent)
+
   checkForUpdates()
 })
 
