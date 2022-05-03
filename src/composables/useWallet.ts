@@ -254,12 +254,13 @@ const switchAddress = (address: AccountAddressT) => {
   }
 }
 
-const setActiveAddress = (accountAddressValue: string) => {
+const setActiveAddress = async (accountAddressValue: string) => {
   const address = AccountAddress.fromUnsafe(accountAddressValue)
   if (address.isErr()) {
     throw Error('Invalid Address')
   }
   activeAddress.value = address.value
+  accounts.value = await firstValueFrom(radix.accounts)
   switchAddress(address.value)
 }
 

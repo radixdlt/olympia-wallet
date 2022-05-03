@@ -72,7 +72,7 @@
           <div v-for="(hardwareDevice, i) in hardwareDevices" :key="i">
             <div class="flex justify-between group">
               <a class="flex cursor-pointer">
-                <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-rGreen" :class="{'fill-current': isHardwareWalletActive}">
+                <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-rGreen" :class="{'fill-current': isActiveDevice(hardwareDevice)}">
                   <path d="M18.7382 10.6172H7.26074V19H18.7382V10.6172Z" stroke="white" stroke-width="1.5" stroke-miterlimit="10" />
                   <path d="M10.6592 12.7317V16.8855" stroke="white" stroke-width="1.5" stroke-miterlimit="10" />
                   <path d="M15.3405 12.7317V16.8855" stroke="white" stroke-width="1.5" stroke-miterlimit="10"/>
@@ -139,6 +139,7 @@ import HardwareAccountListItem from '@/components/HardwareAccountListItem.vue'
 // import ClickToCopy from '@/components/ClickToCopy.vue'
 import { useWallet, useSidebar } from '@/composables'
 import { useRouter } from 'vue-router'
+import { HardwareDevice } from '@/services/_types'
 
 const WalletSidebarAccounts = defineComponent({
   components: {
@@ -156,7 +157,6 @@ const WalletSidebarAccounts = defineComponent({
       switchAddress,
       connectHardwareWallet,
       hardwareAccount,
-      hardwareAddress,
       hardwareDevices,
       derivedAccountIndex,
       activeNetwork,
@@ -171,22 +171,11 @@ const WalletSidebarAccounts = defineComponent({
     const showHardwareAccounts = ref(true)
     const hiddenHwAccounts: Ref<string[]> = ref([])
 
-    const displayHardwareAddress: ComputedRef<string> = computed(() => {
-      if (!hardwareAddress.value) return ''
-      const add: string = hardwareAddress.value
-      return add.substring(0, 3) + '...' + add.substring(add.length - 9)
-    })
-
     const localAccounts: ComputedRef<AccountT[]> = computed(() => {
       if (!accounts.value) return []
       return accounts.value.all.filter((account: AccountT) => {
         return account.signingKey.isLocalHDSigningKey
       })
-    })
-
-    const isHardwareWalletActive: ComputedRef<boolean> = computed(() => {
-      if (!hardwareAddress.value) { return false }
-      return activeAddress.value?.toString() === hardwareAddress.value
     })
 
     const handleAccountEditName = (device: any) => {
@@ -200,12 +189,10 @@ const WalletSidebarAccounts = defineComponent({
       derivedAccountIndex,
       activeNetwork,
       hardwareAccount,
-      hardwareAddress,
       hardwareDevices,
       showHardwareHelper,
       showSoftwareAccounts,
       showHardwareAccounts,
-      displayHardwareAddress,
       localAccounts,
       handleAccountEditName,
       setState,
@@ -217,7 +204,6 @@ const WalletSidebarAccounts = defineComponent({
         })
       },
       switchAddress,
-      isHardwareWalletActive,
       debugSwitch (account: AccountT) {
         const name = router.currentRoute.value.name || 'WalletOverview'
         router.push({ name, params: { activeAddress: account.address.toString() } })
@@ -250,7 +236,13 @@ const WalletSidebarAccounts = defineComponent({
       },
       connectHardwareWallet,
       verifyHardwareWalletAddress,
-      createNewHardwareAccount
+      createNewHardwareAccount,
+      isActiveDevice (hardwareDevice: HardwareDevice) {
+        return !!hardwareDevice.addresses.find((hwaddr) => {
+          if (!activeAddress.value) return false
+          return hwaddr.address.equals(activeAddress.value)
+        })
+      }
     }
   }
 })
