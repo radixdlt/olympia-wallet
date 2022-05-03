@@ -132,7 +132,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed, ComputedRef } from 'vue'
+import { defineComponent, ref, Ref, computed, ComputedRef } from 'vue'
 import { AccountT } from '@radixdlt/application'
 import AccountListItem from '@/components/AccountListItem.vue'
 import HardwareAccountListItem from '@/components/HardwareAccountListItem.vue'
@@ -168,7 +168,7 @@ const WalletSidebarAccounts = defineComponent({
     const showHardwareHelper = ref(false)
     const showSoftwareAccounts = ref(true)
     const showHardwareAccounts = ref(true)
-    const hiddenHwAccounts: any = ref([])
+    const hiddenHwAccounts: Ref<string[]> = ref([])
 
     const displayHardwareAddress: ComputedRef<string> = computed(() => {
       if (!hardwareAddress.value) return ''
