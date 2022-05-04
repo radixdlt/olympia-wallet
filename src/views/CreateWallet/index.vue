@@ -160,14 +160,17 @@ const CreateWallet = defineComponent({
       setWallet(newWallet.value)
       setPin(pin)
       loginWithWallet(passcode.value).then((client) => {
-        return firstValueFrom(client.ledger.networkId())
-      }).then((network) => {
+        return Promise.all([
+          firstValueFrom(client.ledger.networkId()),
+          firstValueFrom(client.activeAccount)
+        ])
+      }).then(([network, activeAccount]) => {
         setNetwork(network)
         walletLoaded()
-        return waitUntilAllLoaded()
-      }).then(() => {
+        return waitUntilAllLoaded().then(() => activeAccount)
+      }).then((account) => {
         setState(true)
-        router.push('/wallet/account-edit-name')
+        router.push(`/wallet/${account.address.toString()}/account-edit-name`)
       })
     }
 

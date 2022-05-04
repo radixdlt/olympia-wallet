@@ -71,7 +71,7 @@ export const saveHardwareDevices = (event: IpcMainInvokeEvent, data: string): vo
 }
 
 export const getHardwareDevices = (event: IpcMainInvokeEvent, network: string) : HardwareDevice[] => {
-  return store.get(`wallets.${network}.hardwareDevices`) as HardwareDevice[]
+  return store.get(`wallets.${network}.hardwareDevices`) as HardwareDevice[] || [] 
 }
 
 export const getHardwareDeviceAccounts = (event: IpcMainInvokeEvent, network: string, deviceId: string) => {
