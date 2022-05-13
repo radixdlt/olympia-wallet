@@ -84,7 +84,8 @@
                     :class="{'w-full': activeForm !== 'UNSTAKING'}"
                     :placeholder="amountPlaceholder"
                     rules="required|validAmount"
-                    @input="compareToMaxUnstakeAmount"
+                    v-model="stakingInputAmount"
+                    v-on:input="e => compareToMaxUnstakeAmount(stakingInputAmount)"
                     :validateOnInput="true"
                   />
                   <button
@@ -159,6 +160,7 @@ interface StakeForm {
   amount: number;
 }
 const refreshSub: Ref<Subscription | null> = ref(null)
+const validatorAddress: Ref<ValidatorAddressT | null> = ref(null)
 
 const uniqBy = (arr: any[], predicate: (item: any) => string) => {
   if (!Array.isArray(arr)) { return [] }
@@ -333,6 +335,7 @@ const WalletStaking = defineComponent({
     }
 
     const handleReduceFromValidator = (validator: ValidatorAddressT) => {
+      validatorAddress.value = validator
       setActiveForm('UNSTAKING')
       setActiveTransactionForm('unstake')
       resetForm()
@@ -341,17 +344,14 @@ const WalletStaking = defineComponent({
       validateField('validator')
     }
 
-    const compareToMaxUnstakeAmount = () => {
-      const safeAddress = safelyUnwrapValidator(values.validator)
-      const safeAmount = safelyUnwrapAmount(Number(values.amount))
-      if (!safeAddress || !safeAmount) return
-
-      const activeValidatorStakeAmount = getActiveStakeAmountForValidator(safeAddress)
-      const maxAmount = +asBigNumber(activeValidatorStakeAmount) as number
-      const currentValue = +asBigNumber(safeAmount) as number
-      const minDifference = maxAmount - currentValue
-      if (minDifference <= 0.000001) {
-        setMaxUnstakeOn()
+    const compareToMaxUnstakeAmount = (stakingInputAmount: number) => {
+      if (validatorAddress.value) {
+        const activeValidatorStakeAmount = getActiveStakeAmountForValidator(validatorAddress.value)
+        const maxAmount: number = +asBigNumber(activeValidatorStakeAmount)
+        const minDifference: number = maxAmount - stakingInputAmount
+        if (minDifference < 0.000001) {
+          setMaxUnstakeOn()
+        }
       }
     }
 
