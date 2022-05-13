@@ -84,6 +84,8 @@
                     :class="{'w-full': activeForm !== 'UNSTAKING'}"
                     :placeholder="amountPlaceholder"
                     rules="required|validAmount"
+                    v-model="stakingInputAmount"
+                    v-on:input="e => compareToMaxUnstakeAmount(stakingInputAmount)"
                     :validateOnInput="true"
                   />
                   <button
@@ -158,6 +160,7 @@ interface StakeForm {
   amount: number;
 }
 const refreshSub: Ref<Subscription | null> = ref(null)
+const validatorAddress: Ref<ValidatorAddressT | null> = ref(null)
 
 const uniqBy = (arr: any[], predicate: (item: any) => string) => {
   if (!Array.isArray(arr)) { return [] }
@@ -209,7 +212,7 @@ const WalletStaking = defineComponent({
       router.push('/')
       return {}
     }
-    const { activeForm, setActiveForm, activeStakes, activeUnstakes, loadingAnyStaking, maybeGetValidator, fetchValidatorsAndStakes } = useStaking(radix, activeNetwork.value)
+    const { activeForm, setActiveForm, activeStakes, activeUnstakes, loadingAnyStaking, maybeGetValidator, fetchValidatorsAndStakes, getActiveStakeAmountForValidator } = useStaking(radix, activeNetwork.value)
     const { setActiveTransactionForm, cancelTransaction } = useTransactions(radix, router, activeAddress.value, hardwareAccount.value)
     const zero = Amount.fromUnsafe(0)._unsafeUnwrap()
     const maxUnstakeMode: Ref<boolean> = ref(false)
@@ -332,12 +335,24 @@ const WalletStaking = defineComponent({
     }
 
     const handleReduceFromValidator = (validator: ValidatorAddressT) => {
+      validatorAddress.value = validator
       setActiveForm('UNSTAKING')
       setActiveTransactionForm('unstake')
       resetForm()
       setMaxUnstakeOff()
       values.validator = validator.toString()
       validateField('validator')
+    }
+
+    const compareToMaxUnstakeAmount = (stakingInputAmount: number) => {
+      if (validatorAddress.value) {
+        const activeValidatorStakeAmount = getActiveStakeAmountForValidator(validatorAddress.value)
+        const maxAmount: number = +asBigNumber(activeValidatorStakeAmount)
+        const minDifference: number = maxAmount - stakingInputAmount
+        if (minDifference < 0.000001) {
+          setMaxUnstakeOn()
+        }
+      }
     }
 
     const handleSubmitStake = async () => {
@@ -454,7 +469,8 @@ const WalletStaking = defineComponent({
       setErrors,
       setForm,
       setMaxUnstakeOff,
-      setMaxUnstakeOn
+      setMaxUnstakeOn,
+      compareToMaxUnstakeAmount
     }
   }
 })
