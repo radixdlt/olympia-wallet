@@ -349,7 +349,7 @@ const WalletStaking = defineComponent({
         const activeValidatorStakeAmount = getActiveStakeAmountForValidator(validatorAddress.value)
         const maxAmount: number = +asBigNumber(activeValidatorStakeAmount)
         const minDifference: number = maxAmount - stakingInputAmount
-        if (minDifference < 0.000001) {
+        if (minDifference <= 0.000001) {
           setMaxUnstakeOn()
         }
       }
