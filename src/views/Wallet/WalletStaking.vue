@@ -84,8 +84,7 @@
                     :class="{'w-full': activeForm !== 'UNSTAKING'}"
                     :placeholder="amountPlaceholder"
                     rules="required|validAmount"
-                    v-model="stakingInputAmount"
-                    v-on:input="e => compareToMaxUnstakeAmount(stakingInputAmount)"
+                    @input="compareToMaxUnstakeAmount"
                     :validateOnInput="true"
                   />
                   <button
@@ -160,7 +159,6 @@ interface StakeForm {
   amount: number;
 }
 const refreshSub: Ref<Subscription | null> = ref(null)
-const validatorAddress: Ref<ValidatorAddressT | null> = ref(null)
 
 const uniqBy = (arr: any[], predicate: (item: any) => string) => {
   if (!Array.isArray(arr)) { return [] }
@@ -335,7 +333,6 @@ const WalletStaking = defineComponent({
     }
 
     const handleReduceFromValidator = (validator: ValidatorAddressT) => {
-      validatorAddress.value = validator
       setActiveForm('UNSTAKING')
       setActiveTransactionForm('unstake')
       resetForm()
@@ -344,14 +341,17 @@ const WalletStaking = defineComponent({
       validateField('validator')
     }
 
-    const compareToMaxUnstakeAmount = (stakingInputAmount: number) => {
-      if (validatorAddress.value) {
-        const activeValidatorStakeAmount = getActiveStakeAmountForValidator(validatorAddress.value)
-        const maxAmount: number = +asBigNumber(activeValidatorStakeAmount)
-        const minDifference: number = maxAmount - stakingInputAmount
-        if (minDifference <= 0.000001) {
-          setMaxUnstakeOn()
-        }
+    const compareToMaxUnstakeAmount = () => {
+      const safeAddress = safelyUnwrapValidator(values.validator)
+      const safeAmount = safelyUnwrapAmount(Number(values.amount))
+      if (!safeAddress || !safeAmount) return
+
+      const activeValidatorStakeAmount = getActiveStakeAmountForValidator(safeAddress)
+      const maxAmount = +asBigNumber(activeValidatorStakeAmount) as number
+      const currentValue = +asBigNumber(safeAmount) as number
+      const minDifference = maxAmount - currentValue
+      if (minDifference <= 0.000001) {
+        setMaxUnstakeOn()
       }
     }
 
@@ -395,6 +395,10 @@ const WalletStaking = defineComponent({
     const handleMaxSubmitUnstake = () => {
       const safeAddress = safelyUnwrapValidator(values.validator)
       if (!safeAddress) return
+      // What is safeOneHundredPercent?
+      // values.validator is the validator address
+      // values.amount is the amount the user types
+      // What does safelyUnrapValidator do? I did a console.log but I wasnt sure what i was looking at
       const safeOneHundredPercent = safelyUnwrapAmount(Number('0.0000000000000001'))
       if (!safeOneHundredPercent) return
 
