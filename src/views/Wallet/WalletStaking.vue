@@ -395,10 +395,6 @@ const WalletStaking = defineComponent({
     const handleMaxSubmitUnstake = () => {
       const safeAddress = safelyUnwrapValidator(values.validator)
       if (!safeAddress) return
-      // What is safeOneHundredPercent?
-      // values.validator is the validator address
-      // values.amount is the amount the user types
-      // What does safelyUnrapValidator do? I did a console.log but I wasnt sure what i was looking at
       const safeOneHundredPercent = safelyUnwrapAmount(Number('0.0000000000000001'))
       if (!safeOneHundredPercent) return
 
