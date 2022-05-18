@@ -78,6 +78,7 @@ const signingKeychain: Ref<SigningKeychainT | null> = ref(null)
 const switching = ref(false)
 const updateAvailable: Ref<boolean> = ref(false)
 const versionNumber: Ref<string> = ref('')
+const updateInProcess: Ref<boolean> = ref(false)
 const wallet: Ref<WalletT | null> = ref(null)
 const latestAddress: Ref<string> = ref('')
 const loadingLatestAddress: Ref<boolean> = ref(true)
@@ -129,6 +130,7 @@ interface useWalletInterface {
   readonly showLedgerVerify: Ref<boolean>;
   readonly switching: ComputedRef<boolean>;
   readonly updateAvailable: Ref<boolean>;
+  readonly updateInProcess: Ref<boolean>;
   readonly versionNumber: Ref<string>;
   readonly walletHasLoaded: ComputedRef<boolean>;
   readonly loadingLatestAddress: ComputedRef<boolean>;
@@ -150,6 +152,7 @@ interface useWalletInterface {
   resetWallet: (nextRoute: 'create-wallet' | 'restore-wallet') => void;
   setActiveAddress: (address: string) => void;
   setHideAccountModal: (val: boolean) => void;
+  setUpdateInProcess: (val: boolean) => void;
   setDisconnectDeviceModal: (val: number) => void;
   forgetDevice: () => void;
   setShowNewDevicePopup: (val: boolean) => void;
@@ -376,6 +379,10 @@ const verifyHardwareWalletAddress = () => {
 
 const setHideAccountModal = (val: boolean) => { showHideAccountModal.value = val }
 
+const setUpdateInProcess = (val: boolean) => {
+  updateInProcess.value = val
+}
+
 const setDisconnectDeviceModal = (val: number) => {
   hardwareDeviceIndexToForget.value = val
 }
@@ -517,6 +524,7 @@ export default function useWallet (router: Router): useWalletInterface {
     nodeUrl: computed(() => nodeUrl.value),
     showDeleteHWWalletPrompt,
     showHideAccountModal,
+    updateInProcess,
     showDisconnectDeviceModal: computed(() => hardwareDeviceIndexToForget.value >= 0),
     showNewDevicePopup,
     showLedgerVerify,
@@ -580,6 +588,7 @@ export default function useWallet (router: Router): useWalletInterface {
     setConnected: (val: boolean) => { connected.value = val },
     switchAddress,
     updateAvailable,
+    setUpdateInProcess,
     verifyHardwareWalletAddress,
     versionNumber,
     waitUntilAllLoaded,

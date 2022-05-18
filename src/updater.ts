@@ -1,7 +1,7 @@
 import path from 'path'
 import { dialog } from 'electron'
 import { autoUpdater } from 'electron-updater'
-import { setUpdateIsAvailable } from '@/actions/electron/general'
+import { setUpdateIsAvailable, setUpdateIsDownloaded } from '@/actions/electron/general'
 
 autoUpdater.autoDownload = false
 if (process.env.WEBPACK_DEV_SERVER_URL) {
@@ -24,13 +24,12 @@ autoUpdater.on('update-not-available', () => {
 })
 
 autoUpdater.on('update-downloaded', () => {
-  dialog.showMessageBox({
-    title: 'Install Updates',
-    message: 'Updates downloaded, application will restart to update.'
-  }).then(() => {
-    setImmediate(() => autoUpdater.quitAndInstall())
-  })
+  setUpdateIsDownloaded(true)
 })
+
+export const quitAndInstall = (): void => {
+  autoUpdater.quitAndInstall()
+}
 
 export const downloadUpdate = (): void => {
   autoUpdater.downloadUpdate()

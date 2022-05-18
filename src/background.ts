@@ -33,9 +33,9 @@ import {
   hideAccount,
   unhideAccount
 } from './actions/electron/data-store'
-import { getIsUpdateAvailable } from './actions/electron/general'
+import { getIsUpdateAvailable, getIsUpdateDownloaded } from './actions/electron/general'
 import { sendAPDU } from './actions/electron/hardware-wallet'
-import { checkForUpdates, downloadUpdate } from './updater'
+import { checkForUpdates, downloadUpdate, quitAndInstall } from './updater'
 
 const pkg = require('../package.json')
 
@@ -168,6 +168,8 @@ ipcMain.handle('refresh-app', () => { win.reload() })
 ipcMain.handle('get-version-number', () => pkg.version)
 ipcMain.handle('download-latest-version', downloadUpdate)
 ipcMain.handle('get-is-update-available', getIsUpdateAvailable)
+ipcMain.handle('get-is-update-downloaded', getIsUpdateDownloaded)
+ipcMain.handle('quit-and-install', quitAndInstall)
 ipcMain.handle('get-accepted-tos', getAcceptedTos)
 ipcMain.handle('set-accepted-tos', setAcceptedTos)
 ipcMain.handle('get-hidden-accounts', getHiddenAccounts)

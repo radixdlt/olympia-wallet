@@ -1,6 +1,6 @@
 <template>
   <div class="fixed w-screen h-screen z-20 flex items-center justify-center bg-translucent-black">
-    <div class="h-modalSmall bg-rGrayLight rounded-md w-full h-full max-w-lg absolute top-1/2 left-1/2 transform -translate-x-1/3 -translate-y-1/2" v-if="true">
+    <div class="h-modalSmall bg-rGrayLight rounded-md w-full h-full max-w-lg absolute top-1/2 left-1/2 transform -translate-x-1/3 -translate-y-1/2" v-if="loading">
       <div class="bg-rGrayLight rounded-md">
          <div class=" bg-rGrayLight h-full flex flex-col flex-1 rounded-md w-full justify-around pt-10 pb-2">
             <svg width="50" height="50" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg" class="container animate-spin">
@@ -28,17 +28,34 @@
       </div>
       <div class="text-center px-14 pt-6 text-rGrayDark">{{ $t('wallet.restartBody') }}</div>
       <div class="px-14 pt-6 flex bg-white">
-        <ButtonSubmit @click="handleSubmit" :small="true" :disabled="false" class="w-44 mx-auto" >{{ $t('wallet.restart') }}</ButtonSubmit>
+        <ButtonSubmit @click="handleRestart" :small="true" :disabled="false" class="w-44 mx-auto" >{{ $t('wallet.restart') }}</ButtonSubmit>
       </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, ref, Ref } from 'vue'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
 import { useRouter } from 'vue-router'
 import { useWallet } from '@/composables'
+import { getIsUpdateDownloaded, quitAndInstall } from '@/actions/vue/general'
+
+const loading: Ref<boolean> = ref(true)
+const updateDownloaded: Ref<boolean> = ref(false)
+
+const checkDownloadCompleted = async () => {
+  // recursively check if download is complete every 2 seconds.
+  const downloadComplete = await getIsUpdateDownloaded()
+  if (downloadComplete) {
+    loading.value = false
+    updateDownloaded.value = downloadComplete
+  } else {
+    setTimeout(() => {
+      checkDownloadCompleted()
+    }, 2000)
+  }
+}
 
 const WalletUpdateModal = defineComponent({
   components: {
@@ -47,18 +64,16 @@ const WalletUpdateModal = defineComponent({
 
   setup () {
     const router = useRouter()
-    const {
-      setDisconnectDeviceModal
-    } = useWallet(router)
 
     return {
-      handleSubmit: () => {
-        setDisconnectDeviceModal(-1)
+      handleRestart: async () => {
+        await quitAndInstall()
       },
-      handleClose: () => {
-        setDisconnectDeviceModal(-1)
-      }
+      loading
     }
+  },
+  mounted () {
+    checkDownloadCompleted()
   }
 })
 
