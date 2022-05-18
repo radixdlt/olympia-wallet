@@ -84,6 +84,7 @@
                     :class="{'w-full': activeForm !== 'UNSTAKING'}"
                     :placeholder="amountPlaceholder"
                     rules="required|validAmount"
+                    @input="compareToMaxUnstakeAmount"
                     :validateOnInput="true"
                   />
                   <button
@@ -209,7 +210,7 @@ const WalletStaking = defineComponent({
       router.push('/')
       return {}
     }
-    const { activeForm, setActiveForm, activeStakes, activeUnstakes, loadingAnyStaking, maybeGetValidator, fetchValidatorsAndStakes } = useStaking(radix, activeNetwork.value)
+    const { activeForm, setActiveForm, activeStakes, activeUnstakes, loadingAnyStaking, maybeGetValidator, fetchValidatorsAndStakes, getActiveStakeAmountForValidator } = useStaking(radix, activeNetwork.value)
     const { setActiveTransactionForm, cancelTransaction } = useTransactions(radix, router, activeAddress.value, hardwareAccount.value)
     const zero = Amount.fromUnsafe(0)._unsafeUnwrap()
     const maxUnstakeMode: Ref<boolean> = ref(false)
@@ -340,6 +341,20 @@ const WalletStaking = defineComponent({
       validateField('validator')
     }
 
+    const compareToMaxUnstakeAmount = () => {
+      const safeAddress = safelyUnwrapValidator(values.validator)
+      const safeAmount = safelyUnwrapAmount(Number(values.amount))
+      if (!safeAddress || !safeAmount) return
+
+      const activeValidatorStakeAmount = getActiveStakeAmountForValidator(safeAddress)
+      const maxAmount = +asBigNumber(activeValidatorStakeAmount) as number
+      const currentValue = +asBigNumber(safeAmount) as number
+      const minDifference = maxAmount - currentValue
+      if (minDifference <= 0.000001) {
+        setMaxUnstakeOn()
+      }
+    }
+
     const handleSubmitStake = async () => {
       if (!tokenBalances.value || !nativeToken.value) return
       if (!meta.value.valid || !nativeTokenBalance.value) return
@@ -454,7 +469,8 @@ const WalletStaking = defineComponent({
       setErrors,
       setForm,
       setMaxUnstakeOff,
-      setMaxUnstakeOn
+      setMaxUnstakeOn,
+      compareToMaxUnstakeAmount
     }
   }
 })
