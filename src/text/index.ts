@@ -217,7 +217,8 @@ const messages = {
       notTopOneHundred: 'Not in top 100 validators',
       unstakeMaxDisclaimer: "You're unstaking all tokens from",
       maxUnstakeButton: 'max',
-      maxUnstakeCapitalized: 'MAX'
+      maxUnstakeCapitalized: 'MAX',
+      maxUnstakeModeEnabledWarning: 'The value you entered is within 0.000001 of the full unstakable amount, therefore, max mode has been automatically enabled on this entry.'
     },
     confirmation: {
       transferFromLabel: 'Your address',
