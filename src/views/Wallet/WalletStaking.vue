@@ -359,7 +359,6 @@ const WalletStaking = defineComponent({
       const minDifference = maxAmount - currentValue
       if (minDifference <= 0.000001) {
         setMaxUnstakeNotificationOn()
-        console.log('showMaxUnstakeNotification ', showMaxUnstakeNotification.value)
         setMaxUnstakeOn()
       }
     }
