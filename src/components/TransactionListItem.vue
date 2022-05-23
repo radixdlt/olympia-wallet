@@ -96,6 +96,7 @@ import ActionListItemStakeTokens from '@/components/ActionListItemStakeTokens.vu
 import ActionListItemUnstakeTokens from '@/components/ActionListItemUnstakeTokens.vue'
 import ActionListItemTransferTokens from '@/components/ActionListItemTransferTokens.vue'
 import ActionListItemOther from '@/components/ActionListItemOther.vue'
+import { decodeMessage, isEncrypted } from '@/helpers/message'
 
 export default defineComponent({
   components: {
