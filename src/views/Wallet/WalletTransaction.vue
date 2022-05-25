@@ -74,6 +74,7 @@
                   class="border-t-0 border-r-0 border-l-0 py-2 border-rBlack focus:ring-0 focus:outline-none focus:border-rGreen"
                   v-model="currency"
                   v-if="tokenOptions"
+                  v-on:change="newTokenSelected = true"
                 >
                   <option
                     v-for="token in tokenOptions"
@@ -171,6 +172,7 @@ const WalletTransaction = defineComponent({
     const currency: Ref<string | null> = ref(null)
     const tokenOptions: Ref<TokenOption[]> = ref([])
     const hiddenTokens: Ref<string[]> = ref([])
+    const newTokenSelected: Ref<boolean> = ref(false)
     const tokenBalances: Ref<AccountBalancesEndpoint.DecodedResponse | null> = ref(null)
 
     /* ------
@@ -223,7 +225,7 @@ const WalletTransaction = defineComponent({
 
     // reset currency when required state has loaded. Especially necessary when switching account
     watch([nativeToken, tokenBalances], ([nt, tb]) => {
-      if (tb && nt) {
+      if (tb && nt && !newTokenSelected.value) {
         setXRDByDefault(nt)
       }
     })
@@ -344,6 +346,7 @@ const WalletTransaction = defineComponent({
       networkPreamble,
       selectedCurrency,
       tokenBalances,
+      newTokenSelected,
       tokenOptions,
       values,
 
