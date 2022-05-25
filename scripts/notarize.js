@@ -9,10 +9,10 @@ exports.default = async function notarizing (context) {
   const appName = context.packager.appInfo.productFilename
 
   return await notarize({
+    ascProvider: process.env.APPLE_TEAM_ID,
     appBundleId: 'com.radixdlt.olympia-wallet',
     appPath: `${appOutDir}/${appName}.app`,
     appleId: process.env.APPLE_ID,
-    appleIdPassword: process.env.APPLE_ID_PASSWORD,
-    teamId: process.env.APPLE_TEAM_ID
+    appleIdPassword: process.env.APPLE_ID_PASSWORD
   })
 }
