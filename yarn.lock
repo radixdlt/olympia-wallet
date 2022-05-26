@@ -1533,10 +1533,10 @@
     prelude-ts "^1.0.2"
     rxjs "7.0.0"
 
-"@radixdlt/application@4.0.15":
-  version "4.0.15"
-  resolved "https://registry.yarnpkg.com/@radixdlt/application/-/application-4.0.15.tgz#91e41c282495d516f7d52c3e89184b9194875aa9"
-  integrity sha512-NL3pCE2A4fqJ4S86D2iuBaThwJF+8wr4KEdyToFVxIls4R7i3qE92SwWk2Wh4/h3qcVoMMHmjrgsdEAXt9+lDQ==
+"@radixdlt/application@4.0.17":
+  version "4.0.17"
+  resolved "https://registry.yarnpkg.com/@radixdlt/application/-/application-4.0.17.tgz#c9f1c5b0dba3c0d8ecbbc37124ba9f7ad3ee6354"
+  integrity sha512-Akpi23+4d7cIu4I/qUUzgrgIOFgz1fPIZ/iCJ8Z483EIOvOIDWJS9FdK1AnpPZ022boWsGvMY6U5h8FdDQO7UA==
   dependencies:
     "@open-rpc/mock-server" "1.7.2"
     "@open-rpc/schema-utils-js" "1.14.3"

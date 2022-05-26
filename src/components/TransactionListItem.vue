@@ -58,9 +58,9 @@
           <span v-else-if="customTxnDisplayType === 'COMPLEX'">{{ $t('history.complexTransaction') }}</span>
         </div>
       </div>
-      <div v-if="messageState" class="text-sm px-3 py-2 bg-rGrayLightest bg-opacity-60 flex items-center">
+      <div v-if="transaction.message" class="text-sm px-3 py-2 bg-rGrayLightest bg-opacity-60 flex items-center">
         <div class="h-5 w-6 flex items-center justify-center -ml-1 mr-1">
-          <svg width="10" height="12" viewBox="0 0 10 12" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-5" v-if="showMessageLock">
+          <svg width="10" height="12" viewBox="0 0 10 12" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-5" v-if="messageIsEncrypted">
             <path d="M2.04883 4.93512V3.79987C2.04883 2.25355 3.30238 1 4.8487 1C6.39502 1 7.64857 2.25355 7.64857 3.79987V4.93512" stroke="#7A99AC" stroke-width="1.5" stroke-miterlimit="10"/>
             <path d="M1 11.4001V4.84473H2.13447H7.58739H8.72185V11.0556H2.60558" stroke="#7A99AC" stroke-width="1.5" stroke-miterlimit="10"/>
           </svg>
@@ -71,10 +71,7 @@
             <line x1="6.2002" y1="9" x2="13.7002" y2="9" stroke="#7A99AC"/>
           </svg>
         </div>
-
-        <span v-if="messageState == 'plaintext'" class="select-text">{{ transaction.message }}</span>
-        <span v-if="messageState == 'decrypted'" class="select-text">{{decryptedMessage}}</span>
-        <button v-if="messageState == 'encrypted'" class="text-rGreen underline hover:text-rGreenDark transition-colors" @click="decrypt">{{ $t('history.clickToDecryptLabel') }}</button>
+        <transaction-message v-if="transaction.message" :message="transaction.message" :decryptedMessage="decryptedMessage" @decrypt="decrypt"/>
       </div>
      </div>
     <div class="bg-rGrayLightest flex items-center justify-center px-3">
@@ -89,20 +86,23 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, PropType } from 'vue'
+import { computed, ComputedRef, defineComponent, PropType, toRef } from 'vue'
 import { ExecutedTransaction, AccountAddressT, Token, ExecutedAction, ActionType, Message } from '@radixdlt/application'
 import { DateTime } from 'luxon'
 import ActionListItemStakeTokens from '@/components/ActionListItemStakeTokens.vue'
 import ActionListItemUnstakeTokens from '@/components/ActionListItemUnstakeTokens.vue'
 import ActionListItemTransferTokens from '@/components/ActionListItemTransferTokens.vue'
 import ActionListItemOther from '@/components/ActionListItemOther.vue'
+import TransactionMessage from './TransactionMessage.vue'
+import { isEncrypted } from '@/helpers/message'
 
 export default defineComponent({
   components: {
     ActionListItemStakeTokens,
     ActionListItemTransferTokens,
     ActionListItemUnstakeTokens,
-    ActionListItemOther
+    ActionListItemOther,
+    TransactionMessage
   },
 
   props: {
@@ -170,27 +170,23 @@ export default defineComponent({
       return 'DEFAULT'
     })
 
+    const transaction = toRef(props, 'transaction')
+
+    const sentAt = computed(() => {
+      return DateTime.fromJSDate(transaction.value.sentAt).toLocaleString(DateTime.DATETIME_SHORT)
+    })
+
+    const messageIsEncrypted = computed(() => {
+      if (!transaction.value.message) return false
+      return isEncrypted(transaction.value.message)
+    })
+
     return {
       customTxnDisplayType,
       explorerUrl,
-      relatedActions
-    }
-  },
-
-  computed: {
-    sentAt (): string {
-      return DateTime.fromJSDate(this.transaction.sentAt).toLocaleString(DateTime.DATETIME_SHORT)
-    },
-
-    showMessageLock (): boolean {
-      return this.messageState === 'decrypted' || this.messageState === 'encrypted'
-    },
-
-    messageState (): string | null {
-      if (!this.transaction.message) { return null }
-      if (this.decryptedMessage) { return 'decrypted' }
-      if (Message.isEncrypted(this.transaction.message)) { return 'encrypted' }
-      return 'plaintext'
+      relatedActions,
+      sentAt,
+      messageIsEncrypted
     }
   },
 
