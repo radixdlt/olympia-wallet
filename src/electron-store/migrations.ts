@@ -61,6 +61,8 @@ const migrations = {
     }
     // --------------------------------------------Hidden Accounts-------------------------------------------------
     if (!store.get('hiddenAccounts')) store.set('hiddenAccounts', [])
+    
+    if (!store.get('update-downloaded')) store.set('update-downloaded', false)
   }
 }
 

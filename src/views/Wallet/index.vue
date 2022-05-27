@@ -25,6 +25,7 @@
     <wallet-hide-account-modal v-if="showHideAccountModal"/>
     <wallet-disconnect-device-modal v-if="showDisconnectDeviceModal"/>
     <wallet-new-device-popup v-if="showNewDevicePopup"/>
+    <wallet-update-modal v-if="updateInProcess"/>
   </div>
 </template>
 
@@ -38,6 +39,7 @@ import WalletLedgerVerifyAddressModal from '@/views/Wallet/WalletLedgerVerifyAdd
 import WalletLedgerDeleteModal from '@/views/Wallet/WalletLedgerDeleteModal.vue'
 import WalletHideAccountModal from '@/views/Wallet/WalletHideAccountModal.vue'
 import WalletDisconnectDeviceModal from '@/views/Wallet/WalletDisconnectDeviceModal.vue'
+import WalletUpdateModal from '@/views/Wallet/WalletUpdateModal.vue'
 import WalletNewDevicePopup from '@/views/Wallet/WalletNewDevicePopup.vue'
 import { useRouter, onBeforeRouteUpdate, onBeforeRouteLeave, useRoute } from 'vue-router'
 import { useTransactions, useWallet } from '@/composables'
@@ -52,7 +54,8 @@ const WalletIndex = defineComponent({
     WalletHideAccountModal,
     WalletDisconnectDeviceModal,
     WalletNewDevicePopup,
-    WalletLoading
+    WalletLoading,
+    WalletUpdateModal
   },
 
   setup () {
@@ -73,7 +76,8 @@ const WalletIndex = defineComponent({
       showLedgerVerify,
       setActiveAddress,
       walletLoaded,
-      waitUntilAllLoaded
+      waitUntilAllLoaded,
+      updateInProcess
     } = useWallet(router)
 
     watch(
@@ -117,7 +121,8 @@ const WalletIndex = defineComponent({
       showNewDevicePopup,
       showLedgerVerify,
       isTestNet,
-      walletLoaded
+      walletLoaded,
+      updateInProcess
     }
   }
 })

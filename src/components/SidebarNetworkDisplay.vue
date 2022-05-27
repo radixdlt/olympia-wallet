@@ -7,7 +7,7 @@
       <p
         v-if="updateAvailable"
         class="ml-2 text-white text-xxs rounded b-solid border border-rGreen px-1 cursor-pointer"
-        @click="downloadLatestVersion"
+        @click="downloadUpdate"
       >
         {{ $t('wallet.update') }}
       </p>
@@ -32,17 +32,24 @@ import { downloadLatestVersion } from '@/actions/vue/general'
 export default defineComponent({
   setup () {
     const router = useRouter()
-    const { activeNetwork, updateAvailable, versionNumber } = useWallet(router)
+    const { activeNetwork, updateAvailable, versionNumber, setUpdateInProcess } = useWallet(router)
 
     const lowercaseNetwork: ComputedRef<string | undefined> = computed(() =>
       activeNetwork.value?.toUpperCase()
     )
 
+    const downloadUpdate = () => {
+      downloadLatestVersion()
+      setUpdateInProcess(true)
+    }
+
     return {
       lowercaseNetwork,
       updateAvailable,
       versionNumber,
-      downloadLatestVersion
+      downloadLatestVersion,
+      setUpdateInProcess,
+      downloadUpdate
     }
   }
 })
