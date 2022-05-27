@@ -172,6 +172,7 @@ const WalletTransaction = defineComponent({
     const tokenOptions: Ref<TokenOption[]> = ref([])
     const hiddenTokens: Ref<string[]> = ref([])
     const tokenBalances: Ref<AccountBalancesEndpoint.DecodedResponse | null> = ref(null)
+    const nativeTokenLoaded: Ref<boolean> = ref(false)
 
     /* ------
      *  Lifecycle Events
@@ -223,8 +224,9 @@ const WalletTransaction = defineComponent({
 
     // reset currency when required state has loaded. Especially necessary when switching account
     watch([nativeToken, tokenBalances], ([nt, tb]) => {
-      if (tb && nt) {
+      if (tb && nt && !nativeTokenLoaded.value) {
         setXRDByDefault(nt)
+        nativeTokenLoaded.value = true
       }
     })
 
