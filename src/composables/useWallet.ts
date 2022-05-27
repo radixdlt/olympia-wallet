@@ -595,6 +595,7 @@ export default function useWallet (router: Router): useWalletInterface {
     walletLoaded,
     async updateConnection (url: string): Promise<void> {
       await persistNodeUrl(url)
+      await router.push('/')
       refreshApp()
     },
 
