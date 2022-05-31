@@ -185,7 +185,7 @@ const WalletHistory = defineComponent({
       fetchTransactions()
     }, { immediate: true })
 
-    watch((displayLedgerErrorModal), () => {
+    watch((hardwareInteractionState), () => {
       console.log(hardwareError)
       hardwareInteractionState.value = ''
     })
