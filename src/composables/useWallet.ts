@@ -335,6 +335,7 @@ const createNewHardwareAccount = async () => {
     }
     hardwareInteractionState.value = ''
   } catch (err) {
+    console.log('This is where the incorrect modal is being triggered i believe')
     hardwareError.value = err as Error
   }
 }

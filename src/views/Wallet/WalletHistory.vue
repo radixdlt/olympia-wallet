@@ -119,6 +119,8 @@ const WalletHistory = defineComponent({
       explorerUrlBase,
       hardwareAccount,
       nativeToken,
+      hardwareError,
+      hardwareInteractionState,
       radix,
       verifyHardwareWalletAddress
     } = useWallet(router)
@@ -183,6 +185,11 @@ const WalletHistory = defineComponent({
       fetchTransactions()
     }, { immediate: true })
 
+    watch((displayLedgerErrorModal), () => {
+      console.log(hardwareError)
+      hardwareInteractionState.value = ''
+    })
+
     // Fetch initial history on route load
     onMounted(() => {
       resetHistory()
@@ -205,6 +212,7 @@ const WalletHistory = defineComponent({
       loadingHistory,
       nativeToken,
       nextPage,
+      hardwareError,
       previousPage,
       resetHistory,
       shouldShowDecryptModal,
