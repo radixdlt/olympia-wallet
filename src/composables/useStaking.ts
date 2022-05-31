@@ -21,8 +21,6 @@ const maybeFetchValidators = async (radix: ReturnType<typeof Radix.create>, netw
 }
 
 const fetchStakesForAddress = async (radix: ReturnType<typeof Radix.create>, address: AccountAddressT) => {
-  loadingStakes.value = true
-  loadingUnstakes.value = true
   activeStakes.value = await firstValueFrom(radix.ledger.stakesForAddress(address))
   activeUnstakes.value = await firstValueFrom(radix.ledger.unstakesForAddress(address))
   loadingStakes.value = false
