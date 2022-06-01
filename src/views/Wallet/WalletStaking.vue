@@ -223,6 +223,7 @@ const WalletStaking = defineComponent({
     const tokenBalances: Ref<AccountBalancesEndpoint.DecodedResponse | null> = ref(null)
     const nativeTokenBalance: Ref<Decoded.TokenAmount | null> = ref(null)
     const showMaxUnstakeNotification: Ref<boolean> = ref(false)
+    const showMaxUnstakeOverageNotification: Ref<boolean> = ref(false)
 
     /* ------
      *  Side Effects
@@ -363,6 +364,8 @@ const WalletStaking = defineComponent({
         setMaxUnstakeOn()
       } else if (minDifference < 0) {
         console.log('amount greater than auto max unstaking criteria')
+        setMaxUnstakeNotificationOn()
+        setMaxUnstakeOn()
       }
     }
 
@@ -442,6 +445,14 @@ const WalletStaking = defineComponent({
       showMaxUnstakeNotification.value = false
     }
 
+    const setMaxUnstakeOverageNotifcationOn = () => {
+      
+    }
+
+    const setMaxUnstakeOverageNotifcationOff = () => {
+      
+    }
+
     const handleSubmitStakeForm = () => {
       if (maxUnstakeMode.value && activeForm.value === 'UNSTAKING') {
         handleMaxSubmitUnstake()
@@ -480,6 +491,7 @@ const WalletStaking = defineComponent({
       values,
       xrdBalance,
       showMaxUnstakeNotification,
+      showMaxUnstakeOverageNotification,
 
       // methods
       handleSubmitStakeForm,
