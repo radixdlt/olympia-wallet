@@ -16,10 +16,6 @@
         </div>
       </div>
     </div>
-    <wallet-ledger-disconnected-modal
-      :shouldShow="displayLedgerErrorModal"
-      :handleClose="closeLedgerErrorModal"
-    />
     <div class="text-rBlack py-6 min-h-full text-sm">
       <div v-if="loadingHistory || !nativeToken" class="p-4 flex items-center justify-center">
         <loading-icon class="text-rGrayDark" />
@@ -96,7 +92,6 @@ import { computed, ComputedRef, defineComponent, onMounted, watch } from 'vue'
 import TransactionListItem from '@/components/TransactionListItem.vue'
 import LoadingIcon from '@/components/LoadingIcon.vue'
 import ClickToCopy from '@/components/ClickToCopy.vue'
-import WalletLedgerDisconnectedModal from '@/views/Wallet/WalletLedgerDisconnectedModal.vue'
 import { useWallet, useHistory } from '@/composables'
 import { useRouter, onBeforeRouteLeave } from 'vue-router'
 import WalletLedgerVerifyDecryptModal from './WalletLedgerVerifyDecryptModal.vue'
@@ -107,7 +102,6 @@ const WalletHistory = defineComponent({
     LoadingIcon,
     ClickToCopy,
     TransactionListItem,
-    WalletLedgerDisconnectedModal,
     WalletLedgerVerifyDecryptModal
   },
 
@@ -119,6 +113,7 @@ const WalletHistory = defineComponent({
       explorerUrlBase,
       hardwareAccount,
       nativeToken,
+      hardwareError,
       radix,
       verifyHardwareWalletAddress
     } = useWallet(router)
@@ -131,7 +126,6 @@ const WalletHistory = defineComponent({
       canGoBack,
       canGoNext,
       decryptedMessages,
-      displayLedgerErrorModal,
       fetchTransactions,
       loadingHistory,
       transactions,
@@ -157,11 +151,6 @@ const WalletHistory = defineComponent({
     const shouldShowDecryptModal: ComputedRef<boolean> = computed(() =>
       isDecrypting.value && !!activeAddress.value && !!hardwareAccount.value && activeAddress.value === hardwareAccount.value.address
     )
-
-    const closeLedgerErrorModal = () => {
-      // switchAccount(localAccounts.value[0])
-      displayLedgerErrorModal.value = false
-    }
 
     const activateThenDecrypt = async (data: ExecutedTransaction) => {
       activateAccount((client) => {
@@ -198,13 +187,12 @@ const WalletHistory = defineComponent({
       canGoBack,
       canGoNext,
       decryptMessage,
-      displayLedgerErrorModal,
       explorerUrlBase,
       decryptedMessages,
-      closeLedgerErrorModal,
       loadingHistory,
       nativeToken,
       nextPage,
+      hardwareError,
       previousPage,
       resetHistory,
       shouldShowDecryptModal,

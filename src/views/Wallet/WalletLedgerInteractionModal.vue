@@ -1,19 +1,7 @@
 <template>
   <div class="fixed w-screen h-screen z-20 flex items-center justify-center bg-translucent-black">
     <div class="h-modalSmall bg-white rounded-md py-7 px-7 w-full max-w-lg absolute top-1/2 left-1/2 transform -translate-x-1/3 -translate-y-1/2">
-      <div v-if="hardwareError">
-        <div class="text-center">
-          <div class="text-center mt-8 text-rRed text-lg">
-            Unable to Connect to Ledger
-          </div>
-          <div class="text-center mt-4 text-rBlack text-sm px-8">
-            We were unable to derive your wallet. Please ensure your Ledger is connected and the Radix application is open.
-          </div>
-
-          <button @click="close()" class="block m-auto pt-4"> Close this </button>
-        </div>
-      </div>
-      <div v-else>
+      <div>
         <div class="mt-16">
           <svg width="40" height="40" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" class="container animate-spin">
             <path fill-rule="evenodd" clip-rule="evenodd" d="M77.8789 52.8857C72.5168 68.6526 57.5862 80.0002 40.0001 80.0002C29.2115 80.0002 19.417 75.7265 12.2241 68.7838L14.9924 65.9158C21.4721 72.1701 30.2851 76.0141 40.0001 76.0141C55.8278 76.0141 69.2758 65.8025 74.1051 51.6023L77.8789 52.8857Z" fill="#052CC0"/>
@@ -44,7 +32,6 @@ const WalletLedgerInteractionModal = defineComponent({
     const {
       activeAddress,
       hardwareAccount,
-      hardwareError,
       hideLedgerInteraction,
       radix
     } = useWallet(router)
@@ -52,7 +39,6 @@ const WalletLedgerInteractionModal = defineComponent({
     const { cancelTransaction } = useTransactions(radix, router, activeAddress.value, hardwareAccount.value)
 
     return {
-      hardwareError,
       hideLedgerInteraction,
       close () {
         hideLedgerInteraction()

@@ -1,5 +1,5 @@
 <template>
-  <div class="fixed w-screen h-screen z-20 flex items-center justify-center bg-translucent-black">
+  <div class="fixed w-screen h-screen z-40 flex items-center justify-center bg-translucent-black">
     <div class="h-modalSmall bg-white rounded-md w-full max-w-lg absolute top-1/2 left-1/2 transform -translate-x-1/3 -translate-y-1/2">
       <div class="border bg-rGrayLight">
         <div class="flex items-center justify-center pt-8">
@@ -39,8 +39,6 @@ const WalletDisconnectDeviceModal = defineComponent({
     const {
       setDisconnectDeviceModal,
       forgetDevice,
-      connectHardwareWallet,
-      hardwareError,
       hideLedgerInteraction
     } = useWallet(router)
 
@@ -52,8 +50,6 @@ const WalletDisconnectDeviceModal = defineComponent({
       handleClose: () => {
         setDisconnectDeviceModal(-1)
       },
-      connectHardwareWallet,
-      hardwareError,
       hideLedgerInteraction
     }
   }

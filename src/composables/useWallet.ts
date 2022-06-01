@@ -167,6 +167,7 @@ interface useWalletInterface {
   waitUntilAllLoaded: () => Promise<any>;
   walletLoaded: () => void;
   createNewHardwareAccount: () => void;
+  closeLedgerErrorModal: () => void;
 }
 
 const walletLoaded = async () => {
@@ -274,10 +275,10 @@ const accountNameFor = (accountAddress: AccountAddressT): string => {
 
 const setShowNewDevicePopup = (val: boolean) => { showNewDevicePopup.value = val }
 
+const closeLedgerErrorModal = () => { hardwareError.value = null }
+
 const createNewHardwareAccount = async () => {
   if (!activeNetwork.value) return
-  hardwareError.value = null
-  hardwareInteractionState.value = 'DERIVING'
   try {
     const wallet = await firstValueFrom(radix.__wallet)
     const connectedDeviceAccount = await firstValueFrom(wallet.deriveHWAccount({
@@ -290,6 +291,8 @@ const createNewHardwareAccount = async () => {
       alsoSwitchTo: false,
       verificationPrompt: false
     }))
+    hardwareError.value = null
+    hardwareInteractionState.value = 'DERIVING'
     const hardwareDevice = hardwareDevices.value.find((hw) => hw.addresses.find((addr) => addr.address.equals(connectedDeviceAccount.address)))
     let newHardwareDevices
     if (hardwareDevice) {
@@ -335,16 +338,15 @@ const createNewHardwareAccount = async () => {
     }
     hardwareInteractionState.value = ''
   } catch (err) {
+    hardwareInteractionState.value = ''
     hardwareError.value = err as Error
   }
 }
 
 const connectHardwareWallet = async (hwaddr: HardwareAddress) => {
-  hardwareError.value = null
-  hardwareInteractionState.value = 'DERIVING'
-
   try {
     // const wallet = await firstValueFrom(radix.__wallet)
+    hardwareError.value = null
     const hwAccount: AccountT = await firstValueFrom(radix.deriveHWAccount({
       keyDerivation: HDPathRadix.create({
         address: { index: hwaddr.index, isHardened: true }
@@ -355,6 +357,7 @@ const connectHardwareWallet = async (hwaddr: HardwareAddress) => {
       alsoSwitchTo: true,
       verificationPrompt: false
     }))
+    hardwareInteractionState.value = 'DERIVING'
     if (!hardwareAddress.value && activeNetwork.value) {
       // saveAccountName(hwAccount.address.toString(), 'Hardware Account')
       hardwareAddress.value = hwAccount.address.toString()
@@ -364,7 +367,7 @@ const connectHardwareWallet = async (hwaddr: HardwareAddress) => {
     hardwareAccount.value = hwAccount
     hardwareInteractionState.value = ''
   } catch (err) {
-    hardwareInteractionState.value = 'error'
+    hardwareInteractionState.value = ''
     hardwareError.value = err as Error
   }
 }
@@ -619,6 +622,7 @@ export default function useWallet (router: Router): useWalletInterface {
     }),
 
     activateAccount,
-    createNewHardwareAccount
+    createNewHardwareAccount,
+    closeLedgerErrorModal
   }
 }

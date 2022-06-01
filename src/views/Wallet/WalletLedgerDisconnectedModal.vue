@@ -1,6 +1,6 @@
 <template>
   <AppModal
-    :visible="shouldShow"
+    :visible="true"
     :title="$t('wallet.ledgerModal.title')"
   >
     <template v-slot:icon>
@@ -29,10 +29,6 @@ const WalletLedgerDisconnectedModal = defineComponent({
     AppButtonCancel
   },
   props: {
-    shouldShow: {
-      type: Boolean,
-      required: true
-    },
     handleClose: {
       type: Function,
       required: true
