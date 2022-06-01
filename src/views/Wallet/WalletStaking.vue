@@ -100,7 +100,10 @@
                   <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path fill-rule="evenodd" clip-rule="evenodd" d="M14 7C14 10.866 10.866 14 7 14C3.13401 14 0 10.866 0 7C0 3.13401 3.13401 0 7 0C10.866 0 14 3.13401 14 7ZM7.875 3.5C7.875 3.98325 7.48325 4.375 7 4.375C6.51675 4.375 6.125 3.98325 6.125 3.5C6.125 3.01675 6.51675 2.625 7 2.625C7.48325 2.625 7.875 3.01675 7.875 3.5ZM6.125 6.125C5.64175 6.125 5.25 6.51675 5.25 7C5.25 7.48325 5.64175 7.875 6.125 7.875V10.5C6.125 10.9832 6.51675 11.375 7 11.375H7.875C8.35825 11.375 8.75 10.9832 8.75 10.5C8.75 10.0168 8.35825 9.625 7.875 9.625V7C7.875 6.51675 7.48325 6.125 7 6.125H6.125Z" fill="#052CC0"/>
                   </svg>
-                  <span class=" text-xs text-rBlue flex-1 ">{{$t('staking.maxUnstakeModeEnabledNotification')}}</span>
+                  <span v-if="showMaxUnstakeOverageNotification" class=" text-xs text-rBlue flex-1 ">
+                    {{$t('staking.maxUnstakeModeOverageNotification')}}
+                  </span>
+                  <span v-else class=" text-xs text-rBlue flex-1 ">{{$t('staking.maxUnstakeModeEnabledNotification')}}</span>
                 </div>
               </div>
             </div>
@@ -223,6 +226,7 @@ const WalletStaking = defineComponent({
     const tokenBalances: Ref<AccountBalancesEndpoint.DecodedResponse | null> = ref(null)
     const nativeTokenBalance: Ref<Decoded.TokenAmount | null> = ref(null)
     const showMaxUnstakeNotification: Ref<boolean> = ref(false)
+    const showMaxUnstakeOverageNotification: Ref<boolean> = ref(false)
 
     /* ------
      *  Side Effects
@@ -357,9 +361,16 @@ const WalletStaking = defineComponent({
       const maxAmount = +asBigNumber(activeValidatorStakeAmount) as number
       const currentValue = +asBigNumber(safeAmount) as number
       const minDifference = maxAmount - currentValue
+
       if (minDifference <= 0.000001) {
         setMaxUnstakeNotificationOn()
         setMaxUnstakeOn()
+
+        if (minDifference < 0) {
+          setMaxUnstakeOverageNotifcationOn()
+        } else {
+          setMaxUnstakeOverageNotifcationOff()
+        }
       }
     }
 
@@ -439,6 +450,14 @@ const WalletStaking = defineComponent({
       showMaxUnstakeNotification.value = false
     }
 
+    const setMaxUnstakeOverageNotifcationOn = () => {
+      showMaxUnstakeOverageNotification.value = true
+    }
+
+    const setMaxUnstakeOverageNotifcationOff = () => {
+      showMaxUnstakeOverageNotification.value = false
+    }
+
     const handleSubmitStakeForm = () => {
       if (maxUnstakeMode.value && activeForm.value === 'UNSTAKING') {
         handleMaxSubmitUnstake()
@@ -477,6 +496,7 @@ const WalletStaking = defineComponent({
       values,
       xrdBalance,
       showMaxUnstakeNotification,
+      showMaxUnstakeOverageNotification,
 
       // methods
       handleSubmitStakeForm,
