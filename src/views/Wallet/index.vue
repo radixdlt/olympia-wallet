@@ -46,7 +46,7 @@ import WalletDisconnectDeviceModal from '@/views/Wallet/WalletDisconnectDeviceMo
 import WalletUpdateModal from '@/views/Wallet/WalletUpdateModal.vue'
 import WalletNewDevicePopup from '@/views/Wallet/WalletNewDevicePopup.vue'
 import WalletLedgerDisconnectedModal from '@/views/Wallet/WalletLedgerDisconnectedModal.vue'
-import { useRouter, onBeforeRouteUpdate, onBeforeRouteLeave, useRoute } from 'vue-router'
+import { useRouter, onBeforeRouteUpdate, useRoute } from 'vue-router'
 import { useTransactions, useWallet } from '@/composables'
 
 const WalletIndex = defineComponent({
@@ -132,7 +132,7 @@ const WalletIndex = defineComponent({
       isTestNet,
       walletLoaded,
       updateInProcess,
-      closeLedgerErrorModal,
+      closeLedgerErrorModal
     }
   }
 })
