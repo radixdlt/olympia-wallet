@@ -279,8 +279,6 @@ const closeLedgerErrorModal = () => { hardwareError.value = null }
 
 const createNewHardwareAccount = async () => {
   if (!activeNetwork.value) return
-  hardwareError.value = null
-  hardwareInteractionState.value = 'DERIVING'
   try {
     const wallet = await firstValueFrom(radix.__wallet)
     const connectedDeviceAccount = await firstValueFrom(wallet.deriveHWAccount({
@@ -293,6 +291,8 @@ const createNewHardwareAccount = async () => {
       alsoSwitchTo: false,
       verificationPrompt: false
     }))
+    hardwareError.value = null
+    hardwareInteractionState.value = 'DERIVING'
     const hardwareDevice = hardwareDevices.value.find((hw) => hw.addresses.find((addr) => addr.address.equals(connectedDeviceAccount.address)))
     let newHardwareDevices
     if (hardwareDevice) {
