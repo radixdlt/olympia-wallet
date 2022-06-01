@@ -55,6 +55,7 @@
               <div class="flex-1 flex items-start pr-8">
                 <div class="flex flex-col flex-1 mr-3">
                   <FormField
+                    v-if="selectedCurrency"
                     type="number"
                     name="amount"
                     label="Amount"
@@ -165,14 +166,12 @@ const WalletTransaction = defineComponent({
     const { errors, values, meta, setErrors, resetForm } = useForm<TransactionForm>()
     const { activeAddress, activateAccount, hardwareAccount, nativeToken, networkPreamble, radix, verifyHardwareWalletAddress } = useWallet(router)
     const { t } = useI18n({ useScope: 'global' })
-    const { tokenBalanceFor, tokenInfoFor } = useTokenBalances(radix)
+    const { tokenInfoFor, fetchBalancesForAddress, tokenBalances, tokenBalanceFor, tokenBalanceForByString } = useTokenBalances(radix)
     const { cancelTransaction, setActiveTransactionForm, transferTokens } = useTransactions(radix, router, activeAddress.value, hardwareAccount.value)
     transfer = transferTokens
     const currency: Ref<string | null> = ref(null)
     const tokenOptions: Ref<TokenOption[]> = ref([])
     const hiddenTokens: Ref<string[]> = ref([])
-    const tokenBalances: Ref<AccountBalancesEndpoint.DecodedResponse | null> = ref(null)
-    const nativeTokenLoaded: Ref<boolean> = ref(false)
 
     /* ------
      *  Lifecycle Events
@@ -186,19 +185,15 @@ const WalletTransaction = defineComponent({
 
     setActiveTransactionForm('transaction')
 
-    const fetchBalances = async (addr: AccountAddressT) => {
-      tokenBalances.value = await firstValueFrom(radix.ledger.tokenBalancesForAddress(addr))
-    }
-
     const fetchAndRefreshAccountData = async (addr: AccountAddressT) => {
       if (refreshSub.value) {
         refreshSub.value.unsubscribe()
         refreshSub.value = null
       }
 
-      await fetchBalances(addr)
+      await fetchBalancesForAddress(addr)
       refreshSub.value = interval(15000).subscribe(() => {
-        fetchBalances(addr)
+        fetchBalancesForAddress(addr)
       })
     }
 
@@ -213,22 +208,15 @@ const WalletTransaction = defineComponent({
       setActiveTransactionForm('transaction')
     })
 
-    watch((activeAddress), (newActiveAddress, oldActiveAddress) => {
+    watch((activeAddress), async (newActiveAddress, oldActiveAddress) => {
       if (!newActiveAddress) return
       if (oldActiveAddress && newActiveAddress.equals(oldActiveAddress)) return
       // Update balances when active address changes
-      fetchAndRefreshAccountData(newActiveAddress)
+      await fetchAndRefreshAccountData(newActiveAddress)
+      if (nativeToken.value) setXRDByDefault(nativeToken.value)
       const { transferTokens } = useTransactions(radix, router, newActiveAddress, hardwareAccount.value)
       transfer = transferTokens
     }, { immediate: true })
-
-    // reset currency when required state has loaded. Especially necessary when switching account
-    watch([nativeToken, tokenBalances], ([nt, tb]) => {
-      if (tb && nt && !nativeTokenLoaded.value) {
-        setXRDByDefault(nt)
-        nativeTokenLoaded.value = true
-      }
-    })
 
     onBeforeRouteLeave(() => {
       if (refreshSub.value) {
@@ -246,10 +234,8 @@ const WalletTransaction = defineComponent({
     })
 
     const selectedCurrency: ComputedRef<Decoded.TokenAmount | null> = computed(() => {
-      if (!tokenBalances.value || tokenBalances.value.account_balances.liquid_balances.length <= 0) return null
-
-      const selectedCurrency = tokenBalances.value.account_balances.liquid_balances.find((tokenBalance) => tokenBalance.token_identifier.rri.toString() === currency.value)
-      return selectedCurrency || tokenBalances.value.account_balances.liquid_balances[0]
+      if (!tokenBalances.value || tokenBalances.value.account_balances.liquid_balances.length <= 0 || !currency.value) return null
+      return tokenBalanceForByString(currency.value)
     })
 
     const amountPlaceholder: ComputedRef<string> = computed(() => {
@@ -275,7 +261,6 @@ const WalletTransaction = defineComponent({
       if (!tokenBalances.value || tokenBalances.value.account_balances.liquid_balances.length === 0) return
       const nativeTokenBalance = tokenBalanceFor(nativeToken)
       const balances = tokenBalances.value ? tokenBalances.value.account_balances.liquid_balances : []
-
       currency.value = nativeTokenBalance ? nativeTokenBalance.token_identifier.rri.toString() : balances[0].token_identifier.rri.toString()
 
       const nativeTb = balances.find((b) => b.token_identifier.rri.equals(nativeToken.rri))
