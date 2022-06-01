@@ -20,7 +20,11 @@
 
     <wallet-confirm-transaction-modal v-if="shouldShowConfirmation" />
     <wallet-ledger-verify-address-modal v-if="showLedgerVerify" />
-    <wallet-ledger-interaction-modal v-if="hardwareInteractionState && hardwareInteractionState.length > 0" />
+    <wallet-ledger-interaction-modal v-if="hardwareInteractionState && hardwareInteractionState.length > 0 && hardwareInteractionState != 'error'" />
+    <wallet-ledger-disconnected-modal
+      :handleClose="closeLedgerErrorModal"
+      :hardwareError="hardwareError"
+      v-if="hardwareError"/>
     <wallet-ledger-delete-modal v-if="showDeleteHWWalletPrompt" />
     <wallet-hide-account-modal v-if="showHideAccountModal"/>
     <wallet-disconnect-device-modal v-if="showDisconnectDeviceModal"/>
@@ -41,6 +45,7 @@ import WalletHideAccountModal from '@/views/Wallet/WalletHideAccountModal.vue'
 import WalletDisconnectDeviceModal from '@/views/Wallet/WalletDisconnectDeviceModal.vue'
 import WalletUpdateModal from '@/views/Wallet/WalletUpdateModal.vue'
 import WalletNewDevicePopup from '@/views/Wallet/WalletNewDevicePopup.vue'
+import WalletLedgerDisconnectedModal from '@/views/Wallet/WalletLedgerDisconnectedModal.vue'
 import { useRouter, onBeforeRouteUpdate, onBeforeRouteLeave, useRoute } from 'vue-router'
 import { useTransactions, useWallet } from '@/composables'
 
@@ -55,7 +60,8 @@ const WalletIndex = defineComponent({
     WalletDisconnectDeviceModal,
     WalletNewDevicePopup,
     WalletLoading,
-    WalletUpdateModal
+    WalletUpdateModal,
+    WalletLedgerDisconnectedModal
   },
 
   setup () {
@@ -77,7 +83,9 @@ const WalletIndex = defineComponent({
       setActiveAddress,
       walletLoaded,
       waitUntilAllLoaded,
-      updateInProcess
+      updateInProcess,
+      hardwareError,
+      closeLedgerErrorModal
     } = useWallet(router)
 
     watch(
@@ -113,6 +121,7 @@ const WalletIndex = defineComponent({
     return {
       hardwareInteractionState,
       hasWallet,
+      hardwareError,
       activeNetwork,
       shouldShowConfirmation,
       showDeleteHWWalletPrompt,
@@ -122,7 +131,8 @@ const WalletIndex = defineComponent({
       showLedgerVerify,
       isTestNet,
       walletLoaded,
-      updateInProcess
+      updateInProcess,
+      closeLedgerErrorModal,
     }
   }
 })
