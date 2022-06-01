@@ -2,7 +2,7 @@
   <div class=" bg-sidebar border-transparent border-l-4 text" :class="{'': isActiveAccount}">
     <div class="flex flex-row mb-4 justify-between" v-if="addressVal">
       <div class="flex flex-row">
-        <div class="leading-snug text-rGreen text-lg hover:text-rGreen transition-colors cursor-pointer w-36 flex">
+        <div class="leading-snug text-rGreen text-lg hover:text-rGreen transition-colors cursor-pointer w-40 flex">
           <div class="truncate">{{ nickName }}</div>
           <div class="my-auto pl-2">
             <svg width="8" height="8" viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg">

@@ -2,7 +2,7 @@
   <div class="px-5 bg-sidebar border-transparent border-l-4 group" :class="{'border-rGreen': isActiveAccount}">
     <div class="flex flex-row mb-4 justify-between" v-if="addressVal">
       <div class="flex flex-row">
-        <div class="leading-snug text-rGrayDark hover:text-rGreen transition-colors cursor-pointer w-36 truncate">{{ nickName }}</div>
+        <div class="leading-snug text-rGrayDark hover:text-rGreen transition-colors cursor-pointer w-40 truncate">{{ nickName }}</div>
       </div>
       <div v-if="shouldShowEdit" @click.stop="editName" class="z-20 hidden group-hover:block text-rGrayDark hover:text-rGreen transition-colors cursor-pointer flex items-center justify-center  pt-2 z-20">
         <svg width="12" height="12" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
