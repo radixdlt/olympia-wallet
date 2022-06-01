@@ -359,14 +359,16 @@ const WalletStaking = defineComponent({
       const maxAmount = +asBigNumber(activeValidatorStakeAmount) as number
       const currentValue = +asBigNumber(safeAmount) as number
       const minDifference = maxAmount - currentValue
-      if (minDifference <= 0.000001 && minDifference > 0) {
+
+      if (minDifference <= 0.000001) {
         setMaxUnstakeNotificationOn()
         setMaxUnstakeOn()
-        setMaxUnstakeOverageNotifcationOff()
-      } else if (minDifference < 0) {
-        setMaxUnstakeNotificationOn()
-        setMaxUnstakeOn()
-        setMaxUnstakeOverageNotifcationOn()
+
+        if (minDifference < 0) {
+          setMaxUnstakeOverageNotifcationOn()
+        } else {
+          setMaxUnstakeOverageNotifcationOff()
+        }
       }
     }
 
