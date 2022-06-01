@@ -121,7 +121,7 @@
               />
             </div>
           </div>
-        <div class="border-t border-rGray border-opacity-50 mx-4 mt-6 pb-2" ></div>
+        <div v-if="hardwareDevices.length" class="border-t border-rGray border-opacity-50 mx-4 mt-6 pb-2" ></div>
         <div @click="createNewHardwareAccount" class="my-4 pb-6 mx-auto text-center cursor-pointer hover:text-rGreen transition-colors">
           {{ $t('wallet.navAddHWAccount') }}
         </div>
