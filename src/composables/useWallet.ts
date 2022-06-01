@@ -346,6 +346,7 @@ const createNewHardwareAccount = async () => {
 const connectHardwareWallet = async (hwaddr: HardwareAddress) => {
   try {
     // const wallet = await firstValueFrom(radix.__wallet)
+    hardwareError.value = null
     const hwAccount: AccountT = await firstValueFrom(radix.deriveHWAccount({
       keyDerivation: HDPathRadix.create({
         address: { index: hwaddr.index, isHardened: true }
@@ -356,7 +357,6 @@ const connectHardwareWallet = async (hwaddr: HardwareAddress) => {
       alsoSwitchTo: true,
       verificationPrompt: false
     }))
-    hardwareError.value = null
     hardwareInteractionState.value = 'DERIVING'
     if (!hardwareAddress.value && activeNetwork.value) {
       // saveAccountName(hwAccount.address.toString(), 'Hardware Account')
