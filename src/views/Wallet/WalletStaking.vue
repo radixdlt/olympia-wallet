@@ -357,9 +357,12 @@ const WalletStaking = defineComponent({
       const maxAmount = +asBigNumber(activeValidatorStakeAmount) as number
       const currentValue = +asBigNumber(safeAmount) as number
       const minDifference = maxAmount - currentValue
-      if (minDifference <= 0.000001) {
+      if (minDifference <= 0.000001 && minDifference > 0) {
+        console.log('amount meets auto max unstaking criteria')
         setMaxUnstakeNotificationOn()
         setMaxUnstakeOn()
+      } else if (minDifference < 0) {
+        console.log('amount greater than auto max unstaking criteria')
       }
     }
 
