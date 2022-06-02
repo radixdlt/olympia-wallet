@@ -44,6 +44,7 @@
           </div>
           <div class="pt-3 pb-6 px-4 text-sm border-b border-rGray">
             <div class="text-rGrayDark mb-2">{{ $t('staking.validatorLabel')}}</div>
+            <!-- how can I access the value of this form field? -->
             <FormField
               name="validator"
               type="text"
@@ -88,11 +89,12 @@
                     @input="compareToMaxUnstakeAmount"
                     :validateOnInput="true"
                   />
+                  <!-- i was to set :disabled= whatever the value of the address form field is -->
                   <button
                     @click.prevent="setMaxUnstakeOn"
                     v-if="activeForm == 'UNSTAKING'"
                     class="rounded border border-rGreen text-rGreen w-2/12 h-full ml-6"
-                    :disabled="address"
+                    :disabled="address.value"
                   >
                     {{ $t('staking.maxUnstakeButton') }}
                   </button>
