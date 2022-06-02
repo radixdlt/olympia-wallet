@@ -14,15 +14,16 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, toRefs } from 'vue'
 import { useField } from 'vee-validate'
 
 const FormField = defineComponent({
   setup (props) {
-    const { checked, handleChange } = useField(props.name, props.rules, {
+    const { name, value } = toRefs(props)
+    const { checked, handleChange } = useField(name, props.rules, {
       // Will make the checkbox set its value to true/false if it was checked or not
       type: 'checkbox',
-      valueProp: props.value,
+      valueProp: value,
       initialValue: false,
       uncheckedValue: false
     })

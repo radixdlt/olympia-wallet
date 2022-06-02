@@ -101,7 +101,12 @@
                       :rules="{}"
                     />
                   </div>
-                  <FormCheckbox name="encrypt" label="Encrypt" :value="true" />
+                  <Field v-slot="{ field }" name="encrypt" type="checkbox" :value="true" :initial-value="false">
+                    <label class="flex items-center space-x-2">
+                      <input type="checkbox" name="encrypt" v-bind="field" :value="true" />
+                      <span>Encrypt</span>
+                    </label>
+                  </Field>
                 </div>
                 <FormErrorMessage name="message" class="text-sm text-red-400" />
               </div>
@@ -118,9 +123,9 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, Ref, ref, ComputedRef, computed, watch, onMounted, onUnmounted } from 'vue'
-import { useForm } from 'vee-validate'
-import { interval, Subscription, firstValueFrom } from 'rxjs'
+import { defineComponent, Ref, ref, ComputedRef, computed, watch, onMounted } from 'vue'
+import { useForm, Field } from 'vee-validate'
+import { interval, Subscription } from 'rxjs'
 import { safelyUnwrapAddress, safelyUnwrapAmount, validateAmountOfType, validateGreaterThanZero } from '@/helpers/validateRadixTypes'
 import { Radix, AccountAddressT, AmountOrUnsafeInput, Token, TransferTokensInput, MessageInTransaction } from '@radixdlt/application'
 import { asBigNumber } from '@/components/BigAmount.vue'
@@ -129,11 +134,10 @@ import FormErrorMessage from '@/components/FormErrorMessage.vue'
 import FormField from '@/components/FormField.vue'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
 import LoadingIcon from '@/components/LoadingIcon.vue'
-import FormCheckbox from '@/components/FormCheckbox.vue'
 import { useTransactions, useTokenBalances, useWallet } from '@/composables'
 import { useRouter, onBeforeRouteLeave } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { AccountBalancesEndpoint, Decoded } from '@radixdlt/application/dist/api/open-api/_types'
+import { Decoded } from '@radixdlt/application/dist/api/open-api/_types'
 import { getHiddenTokens } from '@/actions/vue/data-store'
 
 interface TransactionForm {
@@ -155,7 +159,7 @@ const WalletTransaction = defineComponent({
   components: {
     ButtonSubmit,
     ClickToCopy,
-    FormCheckbox,
+    Field,
     FormField,
     FormErrorMessage,
     LoadingIcon
@@ -167,7 +171,7 @@ const WalletTransaction = defineComponent({
     const { activeAddress, activateAccount, hardwareAccount, nativeToken, networkPreamble, radix, verifyHardwareWalletAddress } = useWallet(router)
     const { t } = useI18n({ useScope: 'global' })
     const { tokenInfoFor, fetchBalancesForAddress, tokenBalances, tokenBalanceFor, tokenBalanceForByString } = useTokenBalances(radix)
-    const { cancelTransaction, setActiveTransactionForm, transferTokens } = useTransactions(radix, router, activeAddress.value, hardwareAccount.value)
+    const { cancelTransaction, userDidCancel, setActiveTransactionForm, transferTokens } = useTransactions(radix, router, activeAddress.value, hardwareAccount.value)
     transfer = transferTokens
     const currency: Ref<string | null> = ref(null)
     const tokenOptions: Ref<TokenOption[]> = ref([])
@@ -181,6 +185,14 @@ const WalletTransaction = defineComponent({
         hiddenTokens.value = res
       })
       if (nativeToken.value) setXRDByDefault(nativeToken.value)
+    })
+
+    const cancelSub = userDidCancel.subscribe((val) => {
+      if (val) {
+        const existingEncrypt = values.encrypt
+        resetForm()
+        values.encrypt = existingEncrypt
+      }
     })
 
     setActiveTransactionForm('transaction')
@@ -219,6 +231,7 @@ const WalletTransaction = defineComponent({
     }, { immediate: true })
 
     onBeforeRouteLeave(() => {
+      cancelSub.unsubscribe()
       if (refreshSub.value) {
         refreshSub.value.unsubscribe()
         refreshSub.value = null
