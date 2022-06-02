@@ -51,6 +51,7 @@
               :placeholder="$t('staking.validatorPlaceholder')"
               rules="required|validValidator"
               :validateOnInput="true"
+              ref="address"
             />
             <FormErrorMessage name="validator" class="text-sm text-red-400" />
           </div>
@@ -91,6 +92,7 @@
                     @click.prevent="setMaxUnstakeOn"
                     v-if="activeForm == 'UNSTAKING'"
                     class="rounded border border-rGreen text-rGreen w-2/12 h-full ml-6"
+                    :disabled="address"
                   >
                     {{ $t('staking.maxUnstakeButton') }}
                   </button>
@@ -413,6 +415,7 @@ const WalletStaking = defineComponent({
 
     const handleMaxSubmitUnstake = () => {
       const safeAddress = safelyUnwrapValidator(values.validator)
+      console.log(safeAddress)
       if (!safeAddress) return
       const safeOneHundredPercent = safelyUnwrapAmount(Number('0.0000000000000001'))
       if (!safeOneHundredPercent) return
