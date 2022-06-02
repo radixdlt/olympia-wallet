@@ -48,6 +48,7 @@ interface useTransactionsInterface {
   readonly transactionErrorMessage: Ref<string | null>;
   readonly pendingTransactions: Ref<Array<TransactionIntent>>;
   readonly shouldShowMaxUnstakeConfirmation: Ref<boolean>;
+  readonly userDidCancel: Subject<boolean>;
 
   cancelTransaction: () => void;
   confirmTransaction: () => void;
@@ -109,7 +110,6 @@ userDidCancel.subscribe((didCancel: boolean) => {
 })
 
 const cancelTransaction = () => {
-  console.log('cancel')
   userDidCancel.next(true)
 }
 
@@ -307,6 +307,7 @@ export default function useTransactions (radix: ReturnType<typeof Radix.create>,
     transactionFee,
     transactionErrorMessage,
     pendingTransactions,
+    userDidCancel,
 
     cancelTransaction,
     confirmTransaction,

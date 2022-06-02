@@ -22,7 +22,7 @@
     <wallet-ledger-verify-address-modal v-if="showLedgerVerify" />
     <wallet-ledger-interaction-modal v-if="hardwareInteractionState && hardwareInteractionState.length > 0 && hardwareInteractionState != 'error'" />
     <wallet-ledger-disconnected-modal
-      :handleClose="closeLedgerErrorModal"
+      :handleClose="closeModal"
       :hardwareError="hardwareError"
       v-if="hardwareError"/>
     <wallet-ledger-delete-modal v-if="showDeleteHWWalletPrompt" />
@@ -104,7 +104,7 @@ const WalletIndex = defineComponent({
       return true
     })
 
-    const { shouldShowConfirmation } = useTransactions(radix, router, activeAddress.value, hardwareAccount.value)
+    const { shouldShowConfirmation, cancelTransaction } = useTransactions(radix, router, activeAddress.value, hardwareAccount.value)
 
     // Return home if wallet is undefined
     if (!hasWallet.value) router.push('/')
@@ -117,6 +117,11 @@ const WalletIndex = defineComponent({
     const isTestNet = computed(() => {
       return activeNetwork.value && activeNetwork.value !== 'mainnet'
     })
+
+    const closeModal = () => {
+      closeLedgerErrorModal()
+      cancelTransaction()
+    }
 
     return {
       hardwareInteractionState,
@@ -132,7 +137,7 @@ const WalletIndex = defineComponent({
       isTestNet,
       walletLoaded,
       updateInProcess,
-      closeLedgerErrorModal
+      closeModal
     }
   }
 })
