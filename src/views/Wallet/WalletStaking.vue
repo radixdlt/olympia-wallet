@@ -164,7 +164,6 @@ import { useRouter, onBeforeRouteLeave } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { interval, Subscription, firstValueFrom } from 'rxjs'
 import { Decoded, AccountBalancesEndpoint } from '@radixdlt/application/dist/api/open-api/_types'
-import { truncateRRIStringForDisplay } from '@/helpers/formatter'
 
 interface StakeForm {
   validator: string;
