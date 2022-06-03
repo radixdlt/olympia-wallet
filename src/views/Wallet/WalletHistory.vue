@@ -164,9 +164,14 @@ const WalletHistory = defineComponent({
     }
 
     // Fetch new history when active account changes
-    watch((activeAddress), () => {
-      if (activeAddress.value) {
-        updateActiveAccount(activeAddress.value)
+    watch((activeAddress), (newAddress, oldAddress) => {
+      if (!newAddress) return
+      if (newAddress && oldAddress && !newAddress.equals(oldAddress)) {
+        leavingHistory()
+        updateActiveAccount(newAddress)
+      }
+      if (newAddress && oldAddress && newAddress.equals(oldAddress)) {
+        return
       }
       resetHistory()
       fetchTransactions()
