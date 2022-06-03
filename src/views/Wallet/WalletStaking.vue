@@ -52,7 +52,6 @@
               :placeholder="$t('staking.validatorPlaceholder')"
               rules="required|validValidator"
               :validateOnInput="true"
-              ref="address"
             />
             <FormErrorMessage name="validator" class="text-sm text-red-400" />
           </div>
@@ -94,7 +93,7 @@
                     @click.prevent="setMaxUnstakeOn"
                     v-if="activeForm == 'UNSTAKING'"
                     class="rounded border border-rGreen text-rGreen w-2/12 h-full ml-6"
-                    :disabled="address.value"
+                    :disabled="formValidatorName == ''"
                   >
                     {{ $t('staking.maxUnstakeButton') }}
                   </button>
@@ -166,6 +165,7 @@ import { useRouter, onBeforeRouteLeave } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { interval, Subscription, firstValueFrom } from 'rxjs'
 import { Decoded, AccountBalancesEndpoint } from '@radixdlt/application/dist/api/open-api/_types'
+import { truncateRRIStringForDisplay } from '@/helpers/formatter'
 
 interface StakeForm {
   validator: string;
@@ -417,7 +417,6 @@ const WalletStaking = defineComponent({
 
     const handleMaxSubmitUnstake = () => {
       const safeAddress = safelyUnwrapValidator(values.validator)
-      console.log(safeAddress)
       if (!safeAddress) return
       const safeOneHundredPercent = safelyUnwrapAmount(Number('0.0000000000000001'))
       if (!safeOneHundredPercent) return
