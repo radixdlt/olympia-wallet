@@ -93,6 +93,7 @@
                     @click.prevent="setMaxUnstakeOn"
                     v-if="activeForm == 'UNSTAKING'"
                     class="rounded border border-rGreen text-rGreen w-2/12 h-full ml-6"
+                    :class="formValidatorName == '' && 'bg-rGray text-rGrayDark cursor-not-allowed border border-rGray'"
                     :disabled="formValidatorName == ''"
                   >
                     {{ $t('staking.maxUnstakeButton') }}
