@@ -83,7 +83,7 @@ const wallet: Ref<WalletT | null> = ref(null)
 const latestAddress: Ref<string> = ref('')
 const loadingLatestAddress: Ref<boolean> = ref(true)
 
-const hardwareWalletLedger = HardwareWalletLedger.create({
+const hardwareWalletConnection = HardwareWalletLedger.create({
   send: sendAPDU
 })
 
@@ -141,7 +141,7 @@ interface useWalletInterface {
 
   accountNameFor: (address: AccountAddressT) => string;
   accountRenamed: (newName: string) => void;
-  activateAccount: (x: (client: ReturnType<typeof Radix.create>) => void) => Promise<AccountT | false>;
+  activateAccount: (callback?: (client: ReturnType<typeof Radix.create>) => void) => Promise<AccountT | false>;
   addAccount: () => Promise<AccountT | false>;
   connectHardwareWallet: (address: HardwareAddress) => Promise<void>;
   createWallet: (mnemonic: MnemomicT, pass: string, network: Network) => Promise<WalletT>;
@@ -288,10 +288,11 @@ const createNewHardwareAccount = async () => {
       keyDerivation: HDPathRadix.create({
         address: { index: 0, isHardened: true }
       }),
-      hardwareWalletConnection: hardwareWalletLedger,
+      hardwareWalletConnection,
       alsoSwitchTo: false,
       verificationPrompt: false
     }))
+    console.log(connectedDeviceAccount)
     hardwareError.value = null
     hardwareInteractionState.value = 'DERIVING'
     const hardwareDevice = hardwareDevices.value.find((hw) => hw.addresses.find((addr) => addr.address.equals(connectedDeviceAccount.address)))
@@ -303,7 +304,7 @@ const createNewHardwareAccount = async () => {
         keyDerivation: HDPathRadix.create({
           address: { index: newIndex, isHardened: true }
         }),
-        hardwareWalletConnection: hardwareWalletLedger,
+        hardwareWalletConnection,
         alsoSwitchTo: false,
         verificationPrompt: false
       }))
@@ -349,7 +350,7 @@ const connectHardwareWallet = async (hwaddr: HardwareAddress) => {
       keyDerivation: HDPathRadix.create({
         address: { index: hwaddr.index, isHardened: true }
       }),
-      hardwareWalletConnection: hardwareWalletLedger,
+      hardwareWalletConnection,
       alsoSwitchTo: true,
       verificationPrompt: false
     }))
@@ -368,12 +369,13 @@ const connectHardwareWallet = async (hwaddr: HardwareAddress) => {
   }
 }
 
-const verifyHardwareWalletAddress = () => {
-  radix.displayAddressForActiveHWAccountOnHWDeviceForVerification()
-    .subscribe({
-      error: (e) => { ledgerVerifyError.value = e }
-    })
+const verifyHardwareWalletAddress = async () => {
   showLedgerVerify.value = true
+  try {
+    await firstValueFrom(radix.displayAddressForActiveHWAccountOnHWDeviceForVerification())
+  } catch (e) {
+    ledgerVerifyError.value = e as Error
+  }
 }
 
 const setHideAccountModal = (val: boolean) => { showHideAccountModal.value = val }
