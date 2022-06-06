@@ -9,7 +9,6 @@
             <click-to-copy
               :address="activeAddress.toString()"
               :checkForHardwareAddress=true
-              @verifyHardwareAddress="verifyHardwareWalletAddress()"
             />
           </div>
         </div>
@@ -152,7 +151,6 @@ const WalletOverview = defineComponent({
       explorerUrlBase,
       nativeToken,
       radix,
-      verifyHardwareWalletAddress,
       hasWallet
     } = useWallet(router)
 
@@ -258,8 +256,7 @@ const WalletOverview = defineComponent({
       createRRIUrl,
       handleHideToken,
       handleRequestHideToken,
-      truncateRRIStringForDisplay,
-      verifyHardwareWalletAddress
+      truncateRRIStringForDisplay
     }
   }
 })

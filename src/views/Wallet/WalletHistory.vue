@@ -10,7 +10,6 @@
             <click-to-copy
               :address="activeAddress.toString()"
               :checkForHardwareAddress=true
-              @verifyHardwareAddress="verifyHardwareWalletAddress"
             />
           </div>
         </div>
@@ -114,8 +113,7 @@ const WalletHistory = defineComponent({
       hardwareAccount,
       nativeToken,
       hardwareError,
-      radix,
-      verifyHardwareWalletAddress
+      radix
     } = useWallet(router)
 
     if (!activeAddress.value) {
@@ -201,8 +199,7 @@ const WalletHistory = defineComponent({
       previousPage,
       resetHistory,
       shouldShowDecryptModal,
-      transactionsWithMessages,
-      verifyHardwareWalletAddress
+      transactionsWithMessages
     }
   }
 })
