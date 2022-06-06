@@ -89,6 +89,8 @@ const hardwareWalletConnection = HardwareWalletLedger.create({
 
 const setWallet = (newWallet: WalletT) => {
   wallet.value = newWallet
+  radix.__reset()
+  radix.__withWallet(newWallet)
   return wallet.value
 }
 
@@ -283,8 +285,9 @@ const closeLedgerErrorModal = () => { hardwareError.value = null }
 
 const createNewHardwareAccount = async () => {
   if (!activeNetwork.value) return
+  const wallet = await firstValueFrom(radix.__wallet)
   try {
-    const connectedDeviceAccount = await firstValueFrom(radix.deriveHWAccount({
+    const connectedDeviceAccount = await firstValueFrom(wallet.deriveHWAccount({
       keyDerivation: HDPathRadix.create({
         address: { index: 0, isHardened: true }
       }),
@@ -292,7 +295,6 @@ const createNewHardwareAccount = async () => {
       alsoSwitchTo: false,
       verificationPrompt: false
     }))
-    console.log(connectedDeviceAccount)
     hardwareError.value = null
     hardwareInteractionState.value = 'DERIVING'
     const hardwareDevice = hardwareDevices.value.find((hw) => hw.addresses.find((addr) => addr.address.equals(connectedDeviceAccount.address)))
@@ -300,7 +302,7 @@ const createNewHardwareAccount = async () => {
     if (hardwareDevice) {
       const addressIndexes = hardwareDevice.addresses.map((a) => a.index)
       const newIndex = Math.max(...addressIndexes) + 1
-      const newAccount = await firstValueFrom(radix.deriveHWAccount({
+      const newAccount = await firstValueFrom(wallet.deriveHWAccount({
         keyDerivation: HDPathRadix.create({
           address: { index: newIndex, isHardened: true }
         }),
@@ -336,6 +338,7 @@ const createNewHardwareAccount = async () => {
       setShowNewDevicePopup(true)
     }
     hardwareInteractionState.value = ''
+    radix.__withWallet(wallet)
   } catch (err) {
     hardwareInteractionState.value = ''
     hardwareError.value = err as Error
@@ -344,9 +347,9 @@ const createNewHardwareAccount = async () => {
 
 const connectHardwareWallet = async (hwaddr: HardwareAddress) => {
   try {
-    // const wallet = await firstValueFrom(radix.__wallet)
+    const wallet = await firstValueFrom(radix.__wallet)
     hardwareError.value = null
-    const hwAccount: AccountT = await firstValueFrom(radix.deriveHWAccount({
+    const hwAccount: AccountT = await firstValueFrom(wallet.deriveHWAccount({
       keyDerivation: HDPathRadix.create({
         address: { index: hwaddr.index, isHardened: true }
       }),
@@ -363,6 +366,7 @@ const connectHardwareWallet = async (hwaddr: HardwareAddress) => {
     activeAccount.value = hwAccount
     hardwareAccount.value = hwAccount
     hardwareInteractionState.value = ''
+    radix.__withWallet(wallet)
   } catch (err) {
     hardwareInteractionState.value = ''
     hardwareError.value = err as Error
