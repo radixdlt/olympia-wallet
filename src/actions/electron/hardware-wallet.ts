@@ -9,7 +9,6 @@ export const sendAPDU = async (event: IpcMainInvokeEvent, apdu: APDU) => {
   if (paths.length === 0) throw Error('No device found.')
   if (paths.length > 1) throw Error('Too Many Devices Enabled')
   if (lastAPDU && lastAPDU === apdu) {
-    console.warn('duplicate message', apdu)
     return
   }
   let result
@@ -19,7 +18,6 @@ export const sendAPDU = async (event: IpcMainInvokeEvent, apdu: APDU) => {
     lastAPDU = apdu
     await transport.close()
   } catch (e) {
-    console.log('hi there', e)
     throw e
   }
 
