@@ -8,9 +8,7 @@
       <path d="M0 0V-1H-2.28018L-0.735634 0.677379L0 0ZM17.8453 19.38H18.8453V18.9897L18.5809 18.7026L17.8453 19.38ZM0 1H17.8453V-1H0V1ZM18.5809 18.7026L0.735634 -0.677379L-0.735634 0.677379L17.1097 20.0574L18.5809 18.7026ZM18.8453 144V19.38H16.8453V144H18.8453ZM23.8453 149C21.0839 149 18.8453 146.761 18.8453 144H16.8453C16.8453 147.866 19.9793 151 23.8453 151V149ZM334 149H23.8453V151H334V149ZM339 144C339 146.761 336.761 149 334 149V151C337.866 151 341 147.866 341 144H339ZM339 6V144H341V6H339ZM334 1C336.761 1 339 3.23858 339 6H341C341 2.134 337.866 -1 334 -1V1ZM18.7845 1H334V-1H18.7845V1ZM17.8453 1H18.7845V-1H17.8453V1Z" fill="#7A99AC" mask="url(#path-1-inside-1_65_4)"/>
     </svg>
     <p class="ml-4 pb-12 w-60 text-center fixed text-rGrayDark">{{ $t('wallet.newHardwareAccountBody') }}</p>
-    <div class="fixed bg-rGreen z-40 mt-20 border-2 py-2 px-14 rounded-md">
-      <AppButtonSubmit @click="handleClose" class="text-white">{{ $t('wallet.newHardwareAccountConfirm') }}</AppButtonSubmit>
-    </div>
+    <AppButtonSubmit @click="handleClose" class="fixed mt-20 w-32 text-white hover:bg-rGreen">{{ $t('wallet.newHardwareAccountConfirm') }}</AppButtonSubmit>
   </div>
 </template>
 
