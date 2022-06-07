@@ -9,7 +9,6 @@
             <click-to-copy
               :address="activeAddress.toString()"
               :checkForHardwareAddress=true
-              @verifyHardwareAddress="verifyHardwareAddress()"
             />
           </div>
         </div>
@@ -168,7 +167,7 @@ const WalletTransaction = defineComponent({
   setup () {
     const router = useRouter()
     const { errors, values, meta, setErrors, resetForm } = useForm<TransactionForm>()
-    const { activeAddress, activateAccount, hardwareAccount, nativeToken, networkPreamble, radix, verifyHardwareWalletAddress } = useWallet(router)
+    const { activeAddress, activateAccount, hardwareAccount, nativeToken, networkPreamble, radix } = useWallet(router)
     const { t } = useI18n({ useScope: 'global' })
     const { tokenInfoFor, fetchBalancesForAddress, tokenBalances, tokenBalanceFor, tokenBalanceForByString } = useTokenBalances(radix)
     const { cancelTransaction, userDidCancel, setActiveTransactionForm, transferTokens } = useTransactions(radix, router, activeAddress.value, hardwareAccount.value)
@@ -352,8 +351,7 @@ const WalletTransaction = defineComponent({
       handleSubmit,
       loadedAllData,
       setErrors,
-      tokenInfoFor,
-      verifyHardwareWalletAddress
+      tokenInfoFor
     }
   }
 })

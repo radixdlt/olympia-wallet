@@ -160,7 +160,6 @@ const WalletSidebarAccounts = defineComponent({
       hardwareDevices,
       derivedAccountIndex,
       activeNetwork,
-      verifyHardwareWalletAddress,
       createNewHardwareAccount,
       setDisconnectDeviceModal
     } = useWallet(router)
@@ -235,7 +234,6 @@ const WalletSidebarAccounts = defineComponent({
         router.push(`/wallet/${account.address.toString()}/account-edit-name`)
       },
       connectHardwareWallet,
-      verifyHardwareWalletAddress,
       createNewHardwareAccount,
       isActiveDevice (hardwareDevice: HardwareDevice) {
         return !!hardwareDevice.addresses.find((hwaddr) => {

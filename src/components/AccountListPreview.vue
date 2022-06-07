@@ -31,7 +31,6 @@
         :address="addressVal"
         :checkForHardwareAddress=true
         class="hover:text-rGreen active:text-rGreenDark"
-        @verifyHardwareAddress="verifyHardwareWalletAddress()"
       />
     </div>
   </div>
@@ -64,7 +63,7 @@ const AccountListPreview = defineComponent({
 
   setup (props) {
     const router = useRouter()
-    const { accountNameFor, activeAddress, verifyHardwareWalletAddress } = useWallet(router)
+    const { accountNameFor, activeAddress } = useWallet(router)
 
     const { setState } = useSidebar()
     const address = toRef(props, 'address')
@@ -91,8 +90,7 @@ const AccountListPreview = defineComponent({
       }),
       activeAddress,
       editName,
-      isActiveAccount,
-      verifyHardwareWalletAddress
+      isActiveAccount
     }
   }
 })

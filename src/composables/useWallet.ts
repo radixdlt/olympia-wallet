@@ -83,12 +83,14 @@ const wallet: Ref<WalletT | null> = ref(null)
 const latestAddress: Ref<string> = ref('')
 const loadingLatestAddress: Ref<boolean> = ref(true)
 
-const hardwareWalletLedger = HardwareWalletLedger.create({
+const hardwareWalletConnection = HardwareWalletLedger.create({
   send: sendAPDU
 })
 
 const setWallet = (newWallet: WalletT) => {
   wallet.value = newWallet
+  radix.__reset()
+  radix.__withWallet(newWallet)
   return wallet.value
 }
 
@@ -141,7 +143,7 @@ interface useWalletInterface {
 
   accountNameFor: (address: AccountAddressT) => string;
   accountRenamed: (newName: string) => void;
-  activateAccount: (x: (client: ReturnType<typeof Radix.create>) => void) => Promise<AccountT | false>;
+  activateAccount: (callback?: (client: ReturnType<typeof Radix.create>) => void) => Promise<AccountT | false>;
   addAccount: () => Promise<AccountT | false>;
   connectHardwareWallet: (address: HardwareAddress) => Promise<void>;
   createWallet: (mnemonic: MnemomicT, pass: string, network: Network) => Promise<WalletT>;
@@ -283,12 +285,13 @@ const closeLedgerErrorModal = () => { hardwareError.value = null }
 
 const createNewHardwareAccount = async () => {
   if (!activeNetwork.value) return
+  const wallet = await firstValueFrom(radix.__wallet)
   try {
-    const connectedDeviceAccount = await firstValueFrom(radix.deriveHWAccount({
+    const connectedDeviceAccount = await firstValueFrom(wallet.deriveHWAccount({
       keyDerivation: HDPathRadix.create({
         address: { index: 0, isHardened: true }
       }),
-      hardwareWalletConnection: hardwareWalletLedger,
+      hardwareWalletConnection,
       alsoSwitchTo: false,
       verificationPrompt: false
     }))
@@ -299,11 +302,11 @@ const createNewHardwareAccount = async () => {
     if (hardwareDevice) {
       const addressIndexes = hardwareDevice.addresses.map((a) => a.index)
       const newIndex = Math.max(...addressIndexes) + 1
-      const newAccount = await firstValueFrom(radix.deriveHWAccount({
+      const newAccount = await firstValueFrom(wallet.deriveHWAccount({
         keyDerivation: HDPathRadix.create({
           address: { index: newIndex, isHardened: true }
         }),
-        hardwareWalletConnection: hardwareWalletLedger,
+        hardwareWalletConnection,
         alsoSwitchTo: false,
         verificationPrompt: false
       }))
@@ -335,6 +338,7 @@ const createNewHardwareAccount = async () => {
       setShowNewDevicePopup(true)
     }
     hardwareInteractionState.value = ''
+    radix.__withWallet(wallet)
   } catch (err) {
     hardwareInteractionState.value = ''
     hardwareError.value = err as Error
@@ -343,13 +347,13 @@ const createNewHardwareAccount = async () => {
 
 const connectHardwareWallet = async (hwaddr: HardwareAddress) => {
   try {
-    // const wallet = await firstValueFrom(radix.__wallet)
+    const wallet = await firstValueFrom(radix.__wallet)
     hardwareError.value = null
-    const hwAccount: AccountT = await firstValueFrom(radix.deriveHWAccount({
+    const hwAccount: AccountT = await firstValueFrom(wallet.deriveHWAccount({
       keyDerivation: HDPathRadix.create({
         address: { index: hwaddr.index, isHardened: true }
       }),
-      hardwareWalletConnection: hardwareWalletLedger,
+      hardwareWalletConnection,
       alsoSwitchTo: true,
       verificationPrompt: false
     }))
@@ -362,18 +366,20 @@ const connectHardwareWallet = async (hwaddr: HardwareAddress) => {
     activeAccount.value = hwAccount
     hardwareAccount.value = hwAccount
     hardwareInteractionState.value = ''
+    radix.__withWallet(wallet)
   } catch (err) {
     hardwareInteractionState.value = ''
     hardwareError.value = err as Error
   }
 }
 
-const verifyHardwareWalletAddress = () => {
-  radix.displayAddressForActiveHWAccountOnHWDeviceForVerification()
-    .subscribe({
-      error: (e) => { ledgerVerifyError.value = e }
-    })
+const verifyHardwareWalletAddress = async () => {
   showLedgerVerify.value = true
+  try {
+    await firstValueFrom(radix.displayAddressForActiveHWAccountOnHWDeviceForVerification())
+  } catch (e) {
+    ledgerVerifyError.value = e as Error
+  }
 }
 
 const setHideAccountModal = (val: boolean) => { showHideAccountModal.value = val }
