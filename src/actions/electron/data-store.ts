@@ -80,7 +80,7 @@ export const getHardwareDeviceAccounts = (event: IpcMainInvokeEvent, network: st
 }
 
 export const resetStore = (event: IpcMainInvokeEvent) => {
-  console.log('resetStore called here ', store);
+  console.log(' resetStore called in src/actions/electron/data-store ', store)
   return store.clear()
 }
 
