@@ -79,9 +79,12 @@ export const getHardwareDeviceAccounts = (event: IpcMainInvokeEvent, network: st
   return hardwareStoreList
 }
 
-export const resetStore = (event: IpcMainInvokeEvent) => {
+export const resetStore = (event: IpcMainInvokeEvent): void => {
   console.log(' resetStore called in src/actions/electron/data-store ', store)
-  return store.clear()
+  const acceptedTos = store.get('acceptedTos', false)
+  store.clear()
+  store.set('acceptedTos', acceptedTos)
+  return
 }
 
 export const persistNodeSelection = (event: IpcMainInvokeEvent, data: string): void => {
