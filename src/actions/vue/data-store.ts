@@ -58,7 +58,6 @@ export const getHardwareDevices = async (network: Network): Promise<HardwareDevi
 }
 
 export const resetStore = (): Promise<string> => new Promise((resolve) => {
-  console.log('other resetStore called in src/actions/vue/data-store')
   resolve(window.ipcRenderer.invoke('reset-store'))
 })
 
