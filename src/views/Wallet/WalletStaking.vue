@@ -476,7 +476,6 @@ const WalletStaking = defineComponent({
     })
 
     const emptyFormValidatorName: ComputedRef<boolean> = computed(() => {
-      console.log(!!formValidatorName.value)
       return !formValidatorName.value
     })
 
