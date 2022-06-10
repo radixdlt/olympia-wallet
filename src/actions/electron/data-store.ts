@@ -79,8 +79,11 @@ export const getHardwareDeviceAccounts = (event: IpcMainInvokeEvent, network: st
   return hardwareStoreList
 }
 
-export const resetStore = (event: IpcMainInvokeEvent) => {
-  return store.clear()
+export const resetStore = (event: IpcMainInvokeEvent): void => {
+  const acceptedTos = store.get('acceptedTos', false)
+  store.clear()
+  store.set('acceptedTos', acceptedTos)
+  return
 }
 
 export const persistNodeSelection = (event: IpcMainInvokeEvent, data: string): void => {
