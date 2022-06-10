@@ -90,7 +90,8 @@
                   <button
                     @click.prevent="setMaxUnstakeOn"
                     v-if="activeForm == 'UNSTAKING'"
-                    class="rounded border border-rGreen text-rGreen w-2/12 h-full ml-6"
+                    :class="{'rounded border border-rGreen text-rGreen w-2/12 h-full ml-6': true, 'bg-rGray text-rGrayDark cursor-not-allowed border border-rGray': emptyFormValidatorName}"
+                    :disabled="emptyFormValidatorName"
                   >
                     {{ $t('staking.maxUnstakeButton') }}
                   </button>
@@ -475,6 +476,10 @@ const WalletStaking = defineComponent({
       return v ? v.name : ''
     })
 
+    const emptyFormValidatorName: ComputedRef<boolean> = computed(() => {
+      return !formValidatorName.value
+    })
+
     return {
       activeForm,
       activeAddress,
@@ -482,6 +487,7 @@ const WalletStaking = defineComponent({
       errors,
       explorerUrl,
       explorerUrlBase,
+      emptyFormValidatorName,
       formValidatorName,
       hasTokenBalances,
       loadedAllData,
