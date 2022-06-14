@@ -356,7 +356,7 @@ const WalletStaking = defineComponent({
     const compareToMaxUnstakeAmount = () => {
       if (activeForm.value === 'STAKING') return
       const safeAddress = safelyUnwrapValidator(values.validator)
-      const safeAmount = safelyUnwrapAmount(Number(values.amount))
+      const safeAmount = safelyUnwrapAmount(values.amount)
       if (!safeAddress || !safeAmount) return
 
       const activeValidatorStakeAmount = getActiveStakeAmountForValidator(safeAddress)
