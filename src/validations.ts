@@ -51,7 +51,7 @@ defineRule('validAmount', (amountString: string) => {
   const amountMatch = /^\d*\.?\d*$/
   const amount = Number(amountString)
   if (amount && amountString.match(amountMatch)) {
-    const safeAmount = safelyUnwrapAmount(amount)
+    const safeAmount = safelyUnwrapAmount(amountString)
     return !!safeAmount
   }
   return false

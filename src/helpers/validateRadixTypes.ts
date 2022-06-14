@@ -19,7 +19,7 @@ export const safelyUnwrapValidator = (validatorString: string): ValidatorAddress
   return validatorAddressRes.value
 }
 
-export const safelyUnwrapAmount = (amount: number): AmountT | null => {
+export const safelyUnwrapAmount = (amount: string): AmountT | null => {
   const bigAmount = new BigNumber(amount)
   const amountInput = bigAmount.shiftedBy(18) // Atto
   const amountResult = Amount.fromUnsafe(amountInput.toFixed())
