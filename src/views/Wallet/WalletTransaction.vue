@@ -166,10 +166,10 @@ const WalletTransaction = defineComponent({
   setup () {
     const router = useRouter()
     const { errors, values, meta, setErrors, resetForm } = useForm<TransactionForm>()
-    const { activeAddress, activateAccount, hardwareAccount, nativeToken, networkPreamble, radix } = useWallet(router)
+    const { activeAddress, activateAccount, hardwareDevices, nativeToken, networkPreamble, radix } = useWallet(router)
     const { t } = useI18n({ useScope: 'global' })
     const { tokenInfoFor, fetchBalancesForAddress, tokenBalances, tokenBalanceFor, tokenBalanceForByString } = useTokenBalances(radix)
-    const { cancelTransaction, userDidCancel, setActiveTransactionForm } = useTransactions(radix, router, activeAddress.value, hardwareAccount.value)
+    const { cancelTransaction, userDidCancel, setActiveTransactionForm } = useTransactions(radix, router, activeAddress.value, hardwareDevices.value)
     const currency: Ref<string | null> = ref(null)
     const tokenOptions: Ref<TokenOption[]> = ref([])
     const hiddenTokens: Ref<string[]> = ref([])
@@ -323,7 +323,7 @@ const WalletTransaction = defineComponent({
       try {
         const { client, account } = await activateAccount()
         if (!account) return
-        const { transferTokens } = useTransactions(client, router, account.address, account)
+        const { transferTokens } = useTransactions(client, router, account.address, hardwareDevices.value)
         transferTokens(client, transferData, messageData, currencyVal)
       } catch (e) {
         cancelTransaction()

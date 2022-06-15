@@ -31,12 +31,12 @@ const WalletLedgerInteractionModal = defineComponent({
     const router = useRouter()
     const {
       activeAddress,
-      hardwareAccount,
+      hardwareDevices,
       hideLedgerInteraction,
       radix
     } = useWallet(router)
 
-    const { cancelTransaction } = useTransactions(radix, router, activeAddress.value, hardwareAccount.value)
+    const { cancelTransaction } = useTransactions(radix, router, activeAddress.value, hardwareDevices.value)
 
     return {
       hideLedgerInteraction,

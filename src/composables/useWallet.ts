@@ -60,7 +60,6 @@ const activeNetwork: Ref<Network | null> = ref(null)
 const connected = ref(false)
 const derivedAccountIndex: Ref<number> = ref(0)
 const hardwareAccount: Ref<AccountT | null> = ref(null)
-const hardwareAddress: Ref<string> = ref('')
 const hardwareDevices: Ref<HardwareDevice[]> = ref([])
 const hardwareError: Ref<Error | null> = ref(null)
 const hardwareInteractionState: Ref<string> = ref('')
@@ -118,8 +117,6 @@ interface useWalletInterface {
   readonly connected: ComputedRef<boolean>;
   readonly derivedAccountIndex: Ref<number>;
   readonly explorerUrlBase: ComputedRef<string>;
-  readonly hardwareAccount: Ref<AccountT | null>;
-  readonly hardwareAddress: Ref<string | null>;
   readonly hardwareDevices: Ref<HardwareDevice[]>;
   readonly hardwareError: Ref<Error | null>;
   readonly hardwareInteractionState: Ref<string>;
@@ -318,7 +315,6 @@ const createNewHardwareAccount = async () => {
           addresses: [...hardwareDevice.addresses, { name: 'New Hardware Account', address: newAccount.address, index: newIndex }]
         }
       })
-      hardwareAddress.value = newAccount.address.toString()
       activeAccount.value = newAccount
       hardwareAccount.value = newAccount
       hardwareDevices.value = newHardwareDevices
@@ -328,7 +324,6 @@ const createNewHardwareAccount = async () => {
       const newAddr = connectedDeviceAccount.address.toString()
       const deviceNumber = hardwareDevices.value.length + 1
       const newHardwareDevices = [...hardwareDevices.value, { name: `Hardware Device ${deviceNumber}`, addresses: [{ name: newAddr, address: connectedDeviceAccount.address, index: 0 }] }]
-      hardwareAddress.value = newAddr
       activeAccount.value = connectedDeviceAccount
       hardwareAccount.value = connectedDeviceAccount
       hardwareDevices.value = newHardwareDevices
@@ -358,10 +353,6 @@ const connectHardwareWallet = async (hwaddr: HardwareAddress) => {
       verificationPrompt: false
     }))
     hardwareInteractionState.value = 'DERIVING'
-    if (!hardwareAddress.value && activeNetwork.value) {
-      // saveAccountName(hwAccount.address.toString(), 'Hardware Account')
-      hardwareAddress.value = hwAccount.address.toString()
-    }
     activeAddress.value = hwAccount.address
     activeAccount.value = hwAccount
     hardwareAccount.value = hwAccount
@@ -513,8 +504,6 @@ export default function useWallet (router: Router): useWalletInterface {
     explorerUrlBase: computed(() => explorerUrlBase.value),
     derivedAccountIndex,
     deviceRenamed,
-    hardwareAccount,
-    hardwareAddress,
     hardwareError,
     hardwareDevices,
     hardwareInteractionState,

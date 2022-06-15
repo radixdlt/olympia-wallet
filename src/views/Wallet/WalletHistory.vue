@@ -95,6 +95,7 @@ import { useWallet, useHistory } from '@/composables'
 import { useRouter, onBeforeRouteLeave } from 'vue-router'
 import WalletLedgerVerifyDecryptModal from './WalletLedgerVerifyDecryptModal.vue'
 import { ExecutedTransaction } from '@radixdlt/application'
+import { HardwareAddress } from '@/services/_types'
 
 const WalletHistory = defineComponent({
   components: {
@@ -110,7 +111,7 @@ const WalletHistory = defineComponent({
       activeAddress,
       activateAccount,
       explorerUrlBase,
-      hardwareAccount,
+      hardwareDevices,
       nativeToken,
       hardwareError,
       radix
@@ -146,9 +147,17 @@ const WalletHistory = defineComponent({
       })
     })
 
-    const shouldShowDecryptModal: ComputedRef<boolean> = computed(() =>
-      isDecrypting.value && !!activeAddress.value && !!hardwareAccount.value && activeAddress.value === hardwareAccount.value.address
-    )
+    const shouldShowDecryptModal: ComputedRef<boolean> = computed(() => {
+      if (!activeAddress.value) return false
+      const hardwareAddress =
+        hardwareDevices.value
+          .flatMap((device) => device.addresses)
+          .find((addr: HardwareAddress) => {
+            if (!activeAddress.value) return false
+            return addr.address.equals(activeAddress.value)
+          })
+      return isDecrypting.value && !!activeAddress.value && !!hardwareAddress && activeAddress.value.equals(hardwareAddress.address)
+    })
 
     const activateThenDecrypt = async (data: ExecutedTransaction) => {
       try {

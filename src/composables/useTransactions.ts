@@ -26,6 +26,7 @@ import {
 import { Router } from 'vue-router'
 import { useErrors } from '.'
 import { Decoded } from '@radixdlt/application/dist/api/open-api/_types'
+import { HardwareAddress, HardwareDevice } from '@/services/_types'
 
 export interface PendingTransaction extends TransactionStateSuccess {
   actions: IntendedAction[]
@@ -127,11 +128,19 @@ const cleanupInputs = () => {
 const cleanupTransactionSubs = () => {
   transactionErrorMessage.value = null
 }
-export default function useTransactions (radix: ReturnType<typeof Radix.create>, router: Router, activeAddress: AccountAddressT | null, hardwareAccount: AccountT | null): useTransactionsInterface {
+export default function useTransactions (radix: ReturnType<typeof Radix.create>, router: Router, activeAddress: AccountAddressT | null, hardwareDevices: HardwareDevice[]): useTransactionsInterface {
   const { setError } = useErrors(radix)
 
   const confirmTransaction = () => {
-    if (activeAddress && hardwareAccount && activeAddress === hardwareAccount.address) {
+    const hardwareAddress =
+      hardwareDevices
+        .flatMap((device) => device.addresses)
+        .find((addr: HardwareAddress) => {
+          if (!activeAddress) return false
+          return addr.address.equals(activeAddress)
+        })
+
+    if (activeAddress && hardwareAddress && activeAddress === hardwareAddress.address) {
       ledgerState.value = 'hw-signing'
     }
     userDidConfirm.next(true)

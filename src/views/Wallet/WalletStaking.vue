@@ -210,8 +210,8 @@ const WalletStaking = defineComponent({
       activeAddress,
       activateAccount,
       explorerUrlBase,
-      hardwareAccount,
       activeNetwork,
+      hardwareDevices,
       nativeToken,
       radix
     } = useWallet(router)
@@ -221,7 +221,7 @@ const WalletStaking = defineComponent({
       return {}
     }
     const { activeForm, setActiveForm, activeStakes, activeUnstakes, loadingAnyStaking, maybeGetValidator, fetchValidatorsAndStakes, getActiveStakeAmountForValidator } = useStaking(radix, activeNetwork.value)
-    const { setActiveTransactionForm, cancelTransaction } = useTransactions(radix, router, activeAddress.value, hardwareAccount.value)
+    const { setActiveTransactionForm, cancelTransaction } = useTransactions(radix, router, activeAddress.value, hardwareDevices.value)
     const zero = Amount.fromUnsafe(0)._unsafeUnwrap()
     const maxUnstakeMode: Ref<boolean> = ref(false)
     const tokenBalances: Ref<AccountBalancesEndpoint.DecodedResponse | null> = ref(null)
@@ -263,7 +263,7 @@ const WalletStaking = defineComponent({
       if (!newActiveAddress) return
       if (oldActiveAddress && newActiveAddress.equals(oldActiveAddress)) return
       await fetchAndRefreshData(newActiveAddress)
-      const { stakeTokens, unstakeTokens } = useTransactions(radix, router, newActiveAddress, hardwareAccount.value)
+      const { stakeTokens, unstakeTokens } = useTransactions(radix, router, newActiveAddress, hardwareDevices.value)
       stake = stakeTokens
       unstake = unstakeTokens
     }, { immediate: true })

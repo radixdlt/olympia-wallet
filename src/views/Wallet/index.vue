@@ -19,7 +19,7 @@
     </div>
 
     <wallet-confirm-transaction-modal v-if="shouldShowConfirmation" />
-    <wallet-ledger-verify-address-modal v-if="showLedgerVerify" />
+    <wallet-ledger-verify-address-modal v-if="showLedgerVerify && !hardwareError" />
     <wallet-ledger-interaction-modal v-if="hardwareInteractionState && hardwareInteractionState.length > 0 && hardwareInteractionState != 'error'" />
     <wallet-ledger-disconnected-modal
       :handleClose="closeModal"
@@ -71,7 +71,7 @@ const WalletIndex = defineComponent({
     const {
       activeAddress,
       activeNetwork,
-      hardwareAccount,
+      hardwareDevices,
       hardwareInteractionState,
       hasWallet,
       radix,
@@ -104,7 +104,7 @@ const WalletIndex = defineComponent({
       return true
     })
 
-    const { shouldShowConfirmation, cancelTransaction } = useTransactions(radix, router, activeAddress.value, hardwareAccount.value)
+    const { shouldShowConfirmation, cancelTransaction } = useTransactions(radix, router, activeAddress.value, hardwareDevices.value)
 
     // Return home if wallet is undefined
     if (!hasWallet.value) router.push('/')
