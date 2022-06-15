@@ -11,16 +11,15 @@ const canGoNext: Ref<boolean> = ref(false)
 const loadingHistory: Ref<boolean> = ref(true)
 
 const activeCursor: Ref<string> = ref('')
-
 const transactions: Ref<SimpleExecutedTransaction[]> = ref([])
 
 const isDecrypting: Ref<boolean> = ref(false)
+let transactionSub: Subscription | null
 
+const activeAddress: Ref<AccountAddressT | null> = ref(null)
 export default function useHistory (radix: ReturnType<typeof Radix.create>, address: AccountAddressT) {
-  let transactionSub: Subscription | null
-  const activeAddress: Ref<AccountAddressT> = ref(address)
-
   const fetchTransactions = async (cursor?: string) => {
+    if (!activeAddress.value) return
     const params = { size: PAGE_SIZE, address: activeAddress.value, cursor }
     const data = await firstValueFrom(radix.ledger.transactionHistory(params))
     transactions.value = data.transactions

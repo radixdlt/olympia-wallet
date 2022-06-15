@@ -87,12 +87,12 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, onMounted, watch } from 'vue'
+import { computed, ComputedRef, defineComponent, onBeforeUnmount, onMounted, watch } from 'vue'
 import TransactionListItem from '@/components/TransactionListItem.vue'
 import LoadingIcon from '@/components/LoadingIcon.vue'
 import ClickToCopy from '@/components/ClickToCopy.vue'
 import { useWallet, useHistory } from '@/composables'
-import { useRouter, onBeforeRouteLeave } from 'vue-router'
+import { useRouter } from 'vue-router'
 import WalletLedgerVerifyDecryptModal from './WalletLedgerVerifyDecryptModal.vue'
 import { ExecutedTransaction } from '@radixdlt/application'
 import { HardwareAddress } from '@/services/_types'
@@ -172,15 +172,13 @@ const WalletHistory = defineComponent({
     }
 
     // Fetch new history when active account changes
-    watch((activeAddress), (newAddress, oldAddress) => {
-      if (!newAddress) return
-      if (newAddress && oldAddress && !newAddress.equals(oldAddress)) {
+    watch((activeAddress), (newAddress) => {
+      if (newAddress) {
         leavingHistory()
-        updateActiveAccount(newAddress)
-      }
-      if (newAddress && oldAddress && newAddress.equals(oldAddress)) {
+      } else {
         return
       }
+      updateActiveAccount(newAddress)
       resetHistory()
       fetchTransactions()
     }, { immediate: true })
@@ -190,7 +188,7 @@ const WalletHistory = defineComponent({
       resetHistory()
     })
 
-    onBeforeRouteLeave(() => {
+    onBeforeUnmount(() => {
       leavingHistory()
     })
 
