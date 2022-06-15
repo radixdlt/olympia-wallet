@@ -143,7 +143,7 @@ interface useWalletInterface {
 
   accountNameFor: (address: AccountAddressT) => string;
   accountRenamed: (newName: string) => void;
-  activateAccount: (callback?: (client: ReturnType<typeof Radix.create>) => void) => Promise<AccountT | false>;
+  activateAccount: () => Promise<{account: AccountT | false, client: ReturnType<typeof Radix.create>}>;
   addAccount: () => Promise<AccountT | false>;
   connectHardwareWallet: (address: HardwareAddress) => Promise<void>;
   createWallet: (mnemonic: MnemomicT, pass: string, network: Network) => Promise<WalletT>;
@@ -169,7 +169,7 @@ interface useWalletInterface {
   setWallet: (newWallet: WalletT) => WalletT;
   switchAddress: (address: AccountAddressT) => void;
   updateConnection: (n: string) => Promise<void>;
-  verifyHardwareWalletAddress: () => void;
+  verifyHardwareWalletAddress: (client: ReturnType<typeof Radix.create>) => Promise<void>;
   waitUntilAllLoaded: () => Promise<any>;
   walletLoaded: () => void;
   createNewHardwareAccount: () => void;
@@ -373,10 +373,10 @@ const connectHardwareWallet = async (hwaddr: HardwareAddress) => {
   }
 }
 
-const verifyHardwareWalletAddress = async () => {
+const verifyHardwareWalletAddress = async (client: ReturnType<typeof Radix.create>) => {
   showLedgerVerify.value = true
   try {
-    await firstValueFrom(radix.displayAddressForActiveHWAccountOnHWDeviceForVerification())
+    await firstValueFrom(client.displayAddressForActiveHWAccountOnHWDeviceForVerification())
   } catch (e) {
     ledgerVerifyError.value = e as Error
   }
@@ -428,8 +428,8 @@ const hideLedgerVerify = () => {
   showLedgerVerify.value = false
 }
 
-const activateAccount = (callback?: (client: ReturnType<typeof Radix.create>) => void) : Promise<AccountT | false> => {
-  if (!activeAddress.value || !accounts.value || !activeAccount.value) return Promise.resolve(false)
+const activateAccount = async () : Promise<{account: AccountT | false, client: ReturnType<typeof Radix.create>}> => {
+  if (!activeAddress.value || !accounts.value || !activeAccount.value) throw Error('Invalid Active Address')
   const currentAddress = activeAddress.value
   const localAccount = accounts.value?.all.find((account: AccountT) => {
     if (!activeAddress.value) return false
@@ -438,11 +438,9 @@ const activateAccount = (callback?: (client: ReturnType<typeof Radix.create>) =>
 
   if (localAccount) {
     radix.switchAccount({ toAccount: localAccount })
-    return firstValueFrom(radix.activeAccount).then((account) => {
-      activeAccount.value = account
-      if (callback) callback(radix)
-      return account
-    })
+    const newAccount = await firstValueFrom(radix.activeAccount)
+    activeAccount.value = newAccount
+    return { account: newAccount, client: radix }
   }
 
   const hardwareAddress =
@@ -452,19 +450,17 @@ const activateAccount = (callback?: (client: ReturnType<typeof Radix.create>) =>
         if (!activeAddress.value) return false
         return addr.address.equals(activeAddress.value)
       })
-  if (!hardwareAddress) return Promise.resolve(false)
-  return connectHardwareWallet(hardwareAddress).then(() => {
-    if (!activeAccount.value) return false
-    if (!activeAccount.value.address.equals(hardwareAddress.address)) {
-      hardwareError.value = new Error('Unable to activate the correct account')
-      activeAddress.value = currentAddress
-      // activateAccount()
-      hardwareInteractionState.value = 'error'
-      return false
-    }
-    if (callback) callback(radix)
-    return activeAccount.value
-  })
+  if (!hardwareAddress) throw Error('Invalid Address')
+
+  await connectHardwareWallet(hardwareAddress)
+  if (!activeAccount.value || !activeAccount.value.address.equals(hardwareAddress.address)) {
+    hardwareError.value = new Error('Unable to activate the correct account')
+    activeAddress.value = currentAddress
+    hardwareInteractionState.value = 'error'
+    return { client: radix, account: false }
+  }
+
+  return { account: activeAccount.value, client: radix }
 }
 
 export default function useWallet (router: Router): useWalletInterface {

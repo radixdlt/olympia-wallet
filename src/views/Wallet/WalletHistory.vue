@@ -151,14 +151,15 @@ const WalletHistory = defineComponent({
     )
 
     const activateThenDecrypt = async (data: ExecutedTransaction) => {
-      activateAccount((client) => {
+      try {
+        const { client } = await activateAccount()
         decryptMessage(client, data)
-      }).catch((e) => {
+      } catch (e) {
         if (!activeAddress.value) return
         updateActiveAccount(activeAddress.value)
         resetHistory()
         fetchTransactions()
-      })
+      }
     }
 
     // Fetch new history when active account changes

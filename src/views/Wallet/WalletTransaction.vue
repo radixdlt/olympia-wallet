@@ -151,7 +151,6 @@ type TokenOption = {
   data: Token | null
 }
 
-let transfer: (client: ReturnType<typeof Radix.create>, input: TransferTokensInput, message: MessageInTransaction, sc: Decoded.TokenAmount) => void
 const refreshSub: Ref<Subscription | null> = ref(null)
 
 const WalletTransaction = defineComponent({
@@ -170,8 +169,7 @@ const WalletTransaction = defineComponent({
     const { activeAddress, activateAccount, hardwareAccount, nativeToken, networkPreamble, radix } = useWallet(router)
     const { t } = useI18n({ useScope: 'global' })
     const { tokenInfoFor, fetchBalancesForAddress, tokenBalances, tokenBalanceFor, tokenBalanceForByString } = useTokenBalances(radix)
-    const { cancelTransaction, userDidCancel, setActiveTransactionForm, transferTokens } = useTransactions(radix, router, activeAddress.value, hardwareAccount.value)
-    transfer = transferTokens
+    const { cancelTransaction, userDidCancel, setActiveTransactionForm } = useTransactions(radix, router, activeAddress.value, hardwareAccount.value)
     const currency: Ref<string | null> = ref(null)
     const tokenOptions: Ref<TokenOption[]> = ref([])
     const hiddenTokens: Ref<string[]> = ref([])
@@ -225,8 +223,6 @@ const WalletTransaction = defineComponent({
       // Update balances when active address changes
       await fetchAndRefreshAccountData(newActiveAddress)
       if (nativeToken.value) setXRDByDefault(nativeToken.value)
-      const { transferTokens } = useTransactions(radix, router, newActiveAddress, hardwareAccount.value)
-      transfer = transferTokens
     }, { immediate: true })
 
     onBeforeRouteLeave(() => {
@@ -311,24 +307,28 @@ const WalletTransaction = defineComponent({
         })
         return
       }
-      if (safeAddress && safeAddress) {
-        const transferData = {
-          to_account: safeAddress,
-          amount: safeAmount as AmountOrUnsafeInput,
-          tokenIdentifier: token.rri.toString()
-        }
-        const messageData = {
-          plaintext: values.message,
-          encrypt: values.encrypt
-        }
-        const currencyVal = selectedCurrency.value
-        activateAccount((client: ReturnType<typeof Radix.create>) => {
-          transfer(client, transferData, messageData, currencyVal)
-        }).catch((e) => {
-          cancelTransaction()
-          if (!activeAddress.value) return
-          fetchAndRefreshAccountData(activeAddress.value)
-        })
+      if (!safeAddress || !safeAddress) return
+
+      const transferData = {
+        to_account: safeAddress,
+        amount: safeAmount as AmountOrUnsafeInput,
+        tokenIdentifier: token.rri.toString()
+      }
+      const messageData = {
+        plaintext: values.message,
+        encrypt: values.encrypt
+      }
+
+      const currencyVal = selectedCurrency.value
+      try {
+        const { client, account } = await activateAccount()
+        if (!account) return
+        const { transferTokens } = useTransactions(client, router, account.address, account)
+        transferTokens(client, transferData, messageData, currencyVal)
+      } catch (e) {
+        cancelTransaction()
+        if (!activeAddress.value) return
+        fetchAndRefreshAccountData(activeAddress.value)
       }
     }
 

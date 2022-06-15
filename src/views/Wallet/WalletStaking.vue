@@ -402,33 +402,34 @@ const WalletStaking = defineComponent({
         amount: safeAmount,
         tokenIdentifier: nativeToken.value?.rri
       }
-      activateAccount((client: ReturnType<typeof Radix.create>) => {
+
+      try {
+        const { client } = await activateAccount()
         activeForm.value === 'STAKING'
           ? stake(client, data as StakeTokensInput)
           : unstake(client, data as UnstakeTokensInput)
-      }).catch((e) => {
+      } catch (e) {
         cancelTransaction()
         if (!activeAddress.value) return
         fetchAndRefreshData(activeAddress.value)
-      })
+      }
     }
 
-    const handleMaxSubmitUnstake = () => {
-      const safeAddress = safelyUnwrapValidator(values.validator)
-      if (!safeAddress) return
-
-      activateAccount((client) => {
-        if (!nativeToken.value) return
+    const handleMaxSubmitUnstake = async () => {
+      try {
+        const safeAddress = safelyUnwrapValidator(values.validator)
+        if (!nativeToken.value || !safeAddress) return
+        const { client } = await activateAccount()
         unstake(client, {
           from_validator: safeAddress,
           unstake_percentage: 100,
-          tokenIdentifier: nativeToken.value.rri
+          tokenIdentifier: nativeToken.value?.rri
         })
-      }).catch((e) => {
+      } catch (e) {
         cancelTransaction()
         if (!activeAddress.value) return
         fetchAndRefreshData(activeAddress.value)
-      })
+      }
     }
 
     const setMaxUnstakeOn = () => {

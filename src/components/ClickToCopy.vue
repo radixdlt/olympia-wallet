@@ -37,8 +37,8 @@ const ClickToCopy = defineComponent({
     const copyText = async () => {
       if (checkForHardwareAddress.value && potentialHWAddress && activeAddress.value?.toString() === address.value) {
         try {
-          const activeAccount = await activateAccount()
-          verifyHardwareWalletAddress()
+          const { client } = await activateAccount()
+          verifyHardwareWalletAddress(client)
         } catch {
           toast.error('Unable to connect to Ledger')
         }
