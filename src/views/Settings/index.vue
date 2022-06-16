@@ -32,6 +32,7 @@
             </div>
           </template>
           <settings-select-node v-if="activeTab === 'nodes'" />
+          <settings-select-decimal v-if="activeTab === 'display'" />
         </tabs-content>
       </div>
     </div>
@@ -49,6 +50,7 @@ import SettingsRevealMnemonic from './SettingsRevealMnemonic.vue'
 import SettingsResetPassword from './SettingsResetPassword.vue'
 import SettingsSelectNode from './SettingsSelectNode.vue'
 import SettingsTokens from './SettingsTokens.vue'
+import SettingsSelectDecimal from './SettingsSelectDecimal.vue'
 import WalletLayout from '@/components/WalletLayout.vue'
 import { Ref, ref } from '@nopr3d/vue-next-rx'
 import { useSettingsTab, useWallet } from '@/composables'
@@ -61,6 +63,7 @@ const SettingsIndex = defineComponent({
     SettingsResetPassword,
     SettingsResetPin,
     SettingsRevealMnemonic,
+    SettingsSelectDecimal,
     SettingsSelectNode,
     SettingsTokens,
     TabsContent,
