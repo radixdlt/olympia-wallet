@@ -20,11 +20,11 @@
           <a class="text-rBlue" href="mailto:hello@radixdlt.com">hello@radixdlt.com</a>
           {{ $t('apiErrors.contactCopyTwo') }}
         </p>
-        <p class="mb-2 flex justify-between">
+        <p class="mb-2 flex justify-between" v-if="error.details.type">
           <span class="flex-1">Error: {{ error.details.type }}</span>
           <click-to-copy :address="error.details.type" />
         </p>
-        <p class="mb-5 flex justify-between">
+        <p class="mb-5 flex justify-between" v-if="error.trace_id">
           <span class="flex-1">Trace ID: {{ error.trace_id }}</span>
           <click-to-copy :address="error.trace_id" />
         </p>

@@ -47,7 +47,7 @@ import WalletUpdateModal from '@/views/Wallet/WalletUpdateModal.vue'
 import WalletNewDevicePopup from '@/views/Wallet/WalletNewDevicePopup.vue'
 import WalletLedgerDisconnectedModal from '@/views/Wallet/WalletLedgerDisconnectedModal.vue'
 import { useRouter, onBeforeRouteUpdate, useRoute } from 'vue-router'
-import { useTransactions, useWallet } from '@/composables'
+import { useWallet } from '@/composables'
 
 const WalletIndex = defineComponent({
   components: {
@@ -69,9 +69,7 @@ const WalletIndex = defineComponent({
     const route = useRoute()
 
     const {
-      activeAddress,
       activeNetwork,
-      hardwareDevices,
       hardwareInteractionState,
       hasWallet,
       radix,
@@ -85,7 +83,9 @@ const WalletIndex = defineComponent({
       waitUntilAllLoaded,
       updateInProcess,
       hardwareError,
-      closeLedgerErrorModal
+      closeLedgerErrorModal,
+      shouldShowConfirmation,
+      cancelTransaction
     } = useWallet(router)
 
     watch(
@@ -103,8 +103,6 @@ const WalletIndex = defineComponent({
       await waitUntilAllLoaded()
       return true
     })
-
-    const { shouldShowConfirmation, cancelTransaction } = useTransactions(radix, router, activeAddress.value, hardwareDevices.value)
 
     // Return home if wallet is undefined
     if (!hasWallet.value) router.push('/')

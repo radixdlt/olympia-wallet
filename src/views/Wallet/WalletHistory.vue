@@ -109,7 +109,7 @@ const WalletHistory = defineComponent({
     const router = useRouter()
     const {
       activeAddress,
-      activateAccount,
+      decryptMessage,
       explorerUrlBase,
       hardwareDevices,
       nativeToken,
@@ -128,14 +128,14 @@ const WalletHistory = defineComponent({
       fetchTransactions,
       loadingHistory,
       transactions,
-      decryptMessage,
       leavingHistory,
       nextPage,
       previousPage,
       resetHistory,
       updateActiveAccount,
-      isDecrypting
-    } = useHistory(radix, activeAddress.value)
+      isDecrypting,
+      pushMsg
+    } = useHistory(radix)
 
     const transactionsWithMessages = computed(() => {
       return transactions.value.map((tx) => {
@@ -161,8 +161,8 @@ const WalletHistory = defineComponent({
 
     const activateThenDecrypt = async (data: ExecutedTransaction) => {
       try {
-        const { client } = await activateAccount()
-        decryptMessage(client, data)
+        const msg = await decryptMessage(data)
+        pushMsg(data, msg)
       } catch (e) {
         if (!activeAddress.value) return
         updateActiveAccount(activeAddress.value)

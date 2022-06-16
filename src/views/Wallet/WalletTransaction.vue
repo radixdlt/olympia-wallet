@@ -126,14 +126,14 @@ import { defineComponent, Ref, ref, ComputedRef, computed, watch, onMounted } fr
 import { useForm, Field } from 'vee-validate'
 import { interval, Subscription } from 'rxjs'
 import { safelyUnwrapAddress, safelyUnwrapAmount, validateAmountOfType, validateGreaterThanZero } from '@/helpers/validateRadixTypes'
-import { Radix, AccountAddressT, AmountOrUnsafeInput, Token, TransferTokensInput, MessageInTransaction } from '@radixdlt/application'
+import { AccountAddressT, AmountOrUnsafeInput, Token } from '@radixdlt/application'
 import { asBigNumber } from '@/components/BigAmount.vue'
 import ClickToCopy from '@/components/ClickToCopy.vue'
 import FormErrorMessage from '@/components/FormErrorMessage.vue'
 import FormField from '@/components/FormField.vue'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
 import LoadingIcon from '@/components/LoadingIcon.vue'
-import { useTransactions, useTokenBalances, useWallet } from '@/composables'
+import { useTokenBalances, useWallet } from '@/composables'
 import { useRouter, onBeforeRouteLeave } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { Decoded } from '@radixdlt/application/dist/api/open-api/_types'
@@ -166,10 +166,9 @@ const WalletTransaction = defineComponent({
   setup () {
     const router = useRouter()
     const { errors, values, meta, setErrors, resetForm } = useForm<TransactionForm>()
-    const { activeAddress, activateAccount, hardwareDevices, nativeToken, networkPreamble, radix } = useWallet(router)
+    const { transferTokens, cancelTransaction, userDidCancel, setActiveTransactionForm, activeAddress, nativeToken, networkPreamble, radix } = useWallet(router)
     const { t } = useI18n({ useScope: 'global' })
     const { tokenInfoFor, fetchBalancesForAddress, tokenBalances, tokenBalanceFor, tokenBalanceForByString } = useTokenBalances(radix)
-    const { cancelTransaction, userDidCancel, setActiveTransactionForm } = useTransactions(radix, router, activeAddress.value, hardwareDevices.value)
     const currency: Ref<string | null> = ref(null)
     const tokenOptions: Ref<TokenOption[]> = ref([])
     const hiddenTokens: Ref<string[]> = ref([])
@@ -321,10 +320,7 @@ const WalletTransaction = defineComponent({
 
       const currencyVal = selectedCurrency.value
       try {
-        const { client, account } = await activateAccount()
-        if (!account) return
-        const { transferTokens } = useTransactions(client, router, account.address, hardwareDevices.value)
-        transferTokens(client, transferData, messageData, currencyVal)
+        await transferTokens(transferData, messageData, currencyVal)
       } catch (e) {
         cancelTransaction()
         if (!activeAddress.value) return
