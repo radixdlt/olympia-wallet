@@ -306,7 +306,8 @@ const messages = {
       tabTitlePin: 'Change PIN',
       tabTitleMnemonic: 'Reveal Seed Phrase',
       tabTitleTokens: 'Tokens',
-      tabTitleGateway: 'Choose Gateway'
+      tabTitleGateway: 'Choose Gateway',
+      tabTitleDisplay: 'Display'
     },
     errors: {
       hardwareMismatchTitle: 'Hardware Wallet Account Mismatch',
