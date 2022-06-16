@@ -8,6 +8,7 @@
           <tabs-tab :isActive="activeTab === 'mnemonic'" @click="() => handleClickTab('mnemonic')" :isDisabled="!connected">{{ $t('settings.tabTitleMnemonic') }}</tabs-tab>
           <tabs-tab :isActive="activeTab === 'tokens'" @click="() => handleClickTab('tokens')">{{ $t('settings.tabTitleTokens') }}</tabs-tab>
           <tabs-tab :isActive="activeTab === 'nodes'" @click="() => handleClickTab('nodes')">{{ $t('settings.tabTitleGateway') }}</tabs-tab>
+          <tabs-tab :isActive="activeTab === 'display'" @click="() => handleClickTab('display')">{{ $t('settings.tabTitleDisplay') }}</tabs-tab>
         </div>
         <tabs-content :leftTabIsActive="activeTab === 'password'">
           <settings-reset-password
