@@ -39,6 +39,7 @@
 <script lang="ts">
 import { defineComponent, Ref, ref } from 'vue'
 import AppRadioIndicator from '@/components/AppRadioIndicator.vue'
+import { store } from '@/actions/electron/data-store'
 
 // state to toggle which radio is selected
 const selectedDecimalType: Ref<string> = ref('')
@@ -46,6 +47,7 @@ const selectedDecimalType: Ref<string> = ref('')
 const handleSelectDecimal = (decimalType:string) => {
   selectedDecimalType.value = decimalType
   // send type to wallet.json
+  store.set('decimalType', decimalType)
 }
 
 export default defineComponent({
