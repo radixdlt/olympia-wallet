@@ -34,6 +34,17 @@ const numberFormatUSA = {
   suffix: ''
 }
 
+const numberFormatEUROPE = {
+  prefix: '',
+  decimalSeparator: ',',
+  groupSeparator: '.',
+  groupSize: 3,
+  secondaryGroupSize: 0,
+  fractionGroupSeparator: ' ',
+  fractionGroupSize: 0,
+  suffix: ''
+}
+
 // internal format used so BigNumber can read in its own output
 const internalFormat = {
   prefix: '',
