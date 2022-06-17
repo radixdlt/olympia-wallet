@@ -43,8 +43,8 @@ import AppRadioIndicator from '@/components/AppRadioIndicator.vue'
 // state to toggle which radio is selected
 const selectedDecimalType: Ref<string> = ref('')
 
-const handleSelectDecimal = (decimal:string) => {
-  selectedDecimalType.value = decimal
+const handleSelectDecimal = (decimalType:string) => {
+  selectedDecimalType.value = decimalType
   // send type to wallet.json
 }
 
