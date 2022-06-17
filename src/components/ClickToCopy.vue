@@ -30,15 +30,14 @@ const ClickToCopy = defineComponent({
   setup (props) {
     const toast = useToast()
     const router = useRouter()
-    const { activeAddress, activateAccount, verifyHardwareWalletAddress, hardwareDevices } = useWallet(router)
+    const { activeAddress, verifyHardwareWalletAddress, hardwareDevices } = useWallet(router)
     const { address, checkForHardwareAddress } = toRefs(props)
     const potentialHWAddress = hardwareDevices.value.flatMap((v) => v.addresses).find((a) => a.address.toString() === address.value)
 
     const copyText = async () => {
       if (checkForHardwareAddress.value && potentialHWAddress && activeAddress.value?.toString() === address.value) {
         try {
-          const { client } = await activateAccount()
-          verifyHardwareWalletAddress(client)
+          verifyHardwareWalletAddress()
         } catch {
           toast.error('Unable to connect to Ledger')
         }

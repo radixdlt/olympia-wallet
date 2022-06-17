@@ -1,33 +1,46 @@
 import { ref, computed, Ref, ComputedRef } from 'vue'
+import { Router } from 'vue-router'
+
 import {
   AccountAddress,
   AccountAddressT,
   AccountsT,
   AccountT,
+  AmountT,
   ErrorT,
   ErrorCategory,
   HDPathRadix,
   HRP,
+  ManualUserConfirmTX,
+  MessageInTransaction,
   MnemomicT,
   Network,
   Radix,
   SigningKeychain,
   SigningKeychainT,
+  StakeTokensInput,
+  UnstakeTokensInput,
+  TransferTokensInput,
+  TransactionStateSuccess,
+  TransactionStateUpdate,
+  IntendedAction,
   Token,
-  WalletErrorCause,
   WalletT,
-  walletError
+  walletError,
+  ExecutedTransaction
 } from '@radixdlt/application'
+import { Decoded } from '@radixdlt/application/dist/api/open-api/_types'
+
+import { interval, ReplaySubject, merge, Subscription, Subject, firstValueFrom, zip } from 'rxjs'
+import { mergeMap, take, filter, mapTo } from 'rxjs/operators'
+
 import { HardwareAddress, HardwareDevice } from '@/services/_types'
 import { AccountName } from '@/actions/electron/data-store'
-import { Router } from 'vue-router'
-import { Subscription, Subject, firstValueFrom, zip } from 'rxjs'
 import { touchKeystore, hasKeystore, initWallet as createNewWallet, storePin } from '@/actions/vue/create-wallet'
 import {
   getDerivedAccountsIndex,
   getHardwareDevices,
   resetStore,
-  saveAccountName,
   saveDerivedAccountsIndex,
   saveLatestAccountAddress,
   saveHardwareDevices,
@@ -36,19 +49,27 @@ import {
   persistNodeSelection,
   fetchSelectedNodeFromStore
 } from '@/actions/vue/data-store'
+
 import {
   getVersionNumber,
   getIsUpdateAvailable,
   refreshApp
 } from '@/actions/vue/general'
+
 import { sha256Twice } from '@radixdlt/crypto'
 
 import { sendAPDU } from '@/actions/vue/hardware-wallet'
 import { HardwareWalletLedger } from '@radixdlt/hardware-ledger'
 import { defaultNetwork } from '@/helpers/network'
 import router from '@/router'
+import useErrors from './useErrors'
+
+export interface PendingTransaction extends TransactionStateSuccess {
+  actions: IntendedAction[]
+}
 
 const radix = Radix.create()
+const { setError } = useErrors(radix)
 
 export type WalletError = ErrorT<ErrorCategory.WALLET>
 
@@ -59,7 +80,6 @@ const activeAddress: Ref<AccountAddressT | null> = ref(null)
 const activeNetwork: Ref<Network | null> = ref(null)
 const connected = ref(false)
 const derivedAccountIndex: Ref<number> = ref(0)
-const hardwareAccount: Ref<AccountT | null> = ref(null)
 const hardwareDevices: Ref<HardwareDevice[]> = ref([])
 const hardwareError: Ref<Error | null> = ref(null)
 const hardwareInteractionState: Ref<string> = ref('')
@@ -81,7 +101,21 @@ const updateInProcess: Ref<boolean> = ref(false)
 const wallet: Ref<WalletT | null> = ref(null)
 const latestAddress: Ref<string> = ref('')
 const loadingLatestAddress: Ref<boolean> = ref(true)
+const transactionSubs = new Subscription()
 
+const activeMessage: Ref<string> = ref('')
+const activeMessageInTransaction: Ref<MessageInTransaction | null> = ref(null)
+const activeTransactionForm: Ref<string | null> = ref(null)
+
+const selectedCurrency: Ref<Decoded.TokenAmount | null> = ref(null)
+const shouldShowConfirmation: Ref<boolean> = ref(false)
+const shouldShowMaxUnstakeConfirmation: Ref<boolean> = ref(false)
+const confirmationMode: Ref<string | null> = ref(null)
+const stakeInput: Ref<StakeTokensInput | null> = ref(null)
+const unstakeInput: Ref<UnstakeTokensInput | null> = ref(null)
+const transactionErrorMessage: Ref<string | null> = ref(null)
+const transactionFee: Ref<AmountT | null> = ref(null)
+const transferInput: Ref<TransferTokensInput | null> = ref(null)
 const hardwareWalletConnection = HardwareWalletLedger.create({
   send: sendAPDU
 })
@@ -92,8 +126,6 @@ const setWallet = (newWallet: WalletT) => {
   radix.__withWallet(newWallet)
   return wallet.value
 }
-
-const subs = new Subscription()
 
 const createWallet = (mnemonic: MnemomicT, pass: string, network: Network) => {
   const newWalletPromise = createNewWallet(mnemonic, pass, network)
@@ -109,6 +141,230 @@ const createWallet = (mnemonic: MnemomicT, pass: string, network: Network) => {
 }
 
 const setPin = (pin: string) => storePin(pin)
+// can be building, confirm, submitting
+const transactionState: Ref<string> = ref('PENDING')
+const ledgerState: Ref<string> = ref('')
+const transactionError: Ref<Error | null> = ref(null)
+const userDidConfirm = new Subject<boolean>()
+const userDidCancel = new Subject<boolean>()
+const userConfirmation = new ReplaySubject<ManualUserConfirmTX>()
+
+userConfirmation
+  .pipe(
+    mergeMap((txnToConfirm) =>
+      merge(userDidConfirm.pipe(mapTo(true)), userDidCancel.pipe(mapTo(false))).pipe(
+        take(1),
+        filter((didConfirm) => didConfirm),
+        mapTo(txnToConfirm.confirm)
+      )
+    )
+  )
+  .subscribe((txnToConfirm) => {
+    txnToConfirm()
+  })
+
+userDidCancel.subscribe((didCancel: boolean) => {
+  if (didCancel) {
+    cleanupTransactionSubs()
+    shouldShowConfirmation.value = false
+    shouldShowMaxUnstakeConfirmation.value = false
+    activeMessage.value = ''
+    ledgerState.value = ''
+    transactionState.value = 'PENDING'
+    hardwareError.value = null
+    hardwareInteractionState.value = ''
+  }
+})
+
+const cancelTransaction = () => {
+  userDidCancel.next(true)
+}
+
+const setActiveTransactionForm = (val: string) => {
+  activeTransactionForm.value = val
+}
+
+const cleanupInputs = () => {
+  transferInput.value = null
+  stakeInput.value = null
+  unstakeInput.value = null
+}
+
+const confirmTransaction = () => {
+  const hardwareAddress =
+    hardwareDevices.value
+      .flatMap((device) => device.addresses)
+      .find((addr: HardwareAddress) => {
+        if (!activeAddress.value) return false
+        return addr.address.equals(activeAddress.value)
+      })
+
+  if (activeAddress.value && hardwareAddress && activeAddress.value?.equals(hardwareAddress.address)) {
+    ledgerState.value = 'hw-signing'
+  }
+  userDidConfirm.next(true)
+}
+
+// Cleanup subscriptions on cancel and complete
+const cleanupTransactionSubs = () => {
+  transactionErrorMessage.value = null
+}
+
+// After a transaction is completed, cleanup subs and input fields.
+// Navigate user to history view
+const handleTransactionCompleted = () => {
+  shouldShowConfirmation.value = false
+  shouldShowMaxUnstakeConfirmation.value = false
+  cleanupTransactionSubs()
+  activeMessage.value = ''
+  ledgerState.value = ''
+  transactionState.value = 'PENDING'
+
+  router.push(`/wallet/${activeAddress.value?.toString()}/history`)
+}
+
+// Handle information returned from lifecycle event for Transfer, Stake, and Unstake actions
+//  - update transactionState for confirmation modal
+//  - update fee to display to the user
+//  - handle error if it is returned
+const handleTransactionLifecycleEvent = (txState: TransactionStateUpdate) => {
+  transactionState.value = txState.eventUpdateType
+  // To Do:
+  // Add pending transactions to list
+
+  const t: any = txState
+  if (t.transactionState && t.transactionState.fee) transactionFee.value = t.transactionState.fee
+  if (t.error) {
+    cancelTransaction()
+  }
+}
+
+const errorHandler = (err: any) => {
+  // To Do: Nicely handle hardware device error when full error is returned from API
+  // For now: pattern match on transaction errors that return a "No device found" string or "DisconnectedDevice"
+  if (err.toString().indexOf('Error: No device found') >= 0 || err.toString().indexOf('DisconnectedDevice') >= 0) {
+    setError({
+      ...err,
+      type: 'HARDWARE',
+      error: {
+        category: ''
+      }
+    })
+    cancelTransaction()
+    // Catch encypted message is too long error
+  } else if (err.toString().indexOf('Plaintext is too long') >= 0) {
+    setError({
+      ...err,
+      type: 'api',
+      error: {
+        details: {
+          type: 'MessageTooLongError'
+        }
+      }
+    })
+    cancelTransaction()
+  } else if (err.toString().indexOf('Error: Failed to sign tx with Ledger') >= 0 && err.toString().includes('(0x6985')) {
+    setError({
+      ...err,
+      type: 'HARDWARE',
+      error: {
+        category: 'UserRejectedSignature'
+      }
+    })
+    cancelTransaction()
+  } else if (err.toString().indexOf('Error: Failed to sign tx with Ledger') >= 0 && err.toString().includes('(0x530c')) {
+    setError({
+      ...err,
+      type: 'HARDWARE',
+      error: {
+        category: 'SignatureTimedOut'
+      }
+    })
+    cancelTransaction()
+  } else if (err.toString().indexOf('(denied by the user') >= 0) {
+    cancelTransaction()
+  } else {
+    const apiError = { ...err, type: 'api' }
+    setError(apiError)
+    cancelTransaction()
+  }
+}
+
+// call transferTokens() with built options and subscribe to confirmation and results
+const transferTokens = async (transferTokensInput: TransferTokensInput, message: MessageInTransaction, sc: Decoded.TokenAmount) => {
+  await activateAccount()
+  cleanupInputs()
+  transferInput.value = transferTokensInput
+  selectedCurrency.value = sc
+  activeMessage.value = message.plaintext
+  activeMessageInTransaction.value = message
+  confirmationMode.value = 'transfer'
+
+  const { events, completion } = radix.transferTokens({
+    transferInput: transferTokensInput,
+    userConfirmation,
+    pollTXStatusTrigger: interval(1000),
+    message
+  })
+
+  shouldShowConfirmation.value = true
+
+  transactionSubs.add(
+    completion.subscribe(handleTransactionCompleted, errorHandler)
+  )
+  transactionSubs.add(
+    events.subscribe(handleTransactionLifecycleEvent, errorHandler)
+  )
+}
+
+// call unstakeTokens() with built options and subscribe to confirmation and results
+const unstakeTokens = async (unstakeTokensInput: UnstakeTokensInput) => {
+  await activateAccount()
+  cleanupInputs()
+  unstakeInput.value = unstakeTokensInput
+  confirmationMode.value = 'unstake'
+
+  const { completion, events } = await radix.unstakeTokens({
+    unstakeInput: unstakeTokensInput,
+    userConfirmation,
+    pollTXStatusTrigger: interval(1000)
+  })
+
+  shouldShowConfirmation.value = true
+  if (unstakeInput.value.unstake_percentage) {
+    shouldShowMaxUnstakeConfirmation.value = true
+  }
+
+  transactionSubs.add(
+    completion.subscribe(handleTransactionCompleted, errorHandler)
+  )
+  transactionSubs.add(
+    events.subscribe(handleTransactionLifecycleEvent, errorHandler)
+  )
+}
+
+// call stakeTokens() with built options and subscribe to confirmation and results
+const stakeTokens = async (stakeTokensInput: StakeTokensInput) => {
+  await activateAccount()
+  cleanupInputs()
+  stakeInput.value = stakeTokensInput
+  confirmationMode.value = 'stake'
+
+  const { completion, events } = await radix.stakeTokens({
+    stakeInput: stakeTokensInput,
+    userConfirmation,
+    pollTXStatusTrigger: interval(1000)
+  })
+
+  shouldShowConfirmation.value = true
+
+  transactionSubs.add(
+    completion.subscribe(handleTransactionCompleted, errorHandler)
+  )
+  transactionSubs.add(
+    events.subscribe(handleTransactionLifecycleEvent, errorHandler)
+  )
+}
 
 interface useWalletInterface {
   readonly accounts: Ref<AccountsT | null>;
@@ -130,6 +386,7 @@ interface useWalletInterface {
   readonly showHideAccountModal: Ref<boolean>;
   readonly showDisconnectDeviceModal: ComputedRef<boolean>;
   readonly showNewDevicePopup: Ref<boolean>;
+  readonly shouldShowMaxUnstakeConfirmation: Ref<boolean>;
   readonly showLedgerVerify: Ref<boolean>;
   readonly switching: ComputedRef<boolean>;
   readonly updateAvailable: Ref<boolean>;
@@ -137,13 +394,34 @@ interface useWalletInterface {
   readonly versionNumber: Ref<string>;
   readonly walletHasLoaded: ComputedRef<boolean>;
   readonly loadingLatestAddress: ComputedRef<boolean>;
+  readonly activeMessageInTransaction: Ref<MessageInTransaction | null>;
+  readonly activeTransactionForm: Ref<string | null>;
+  readonly confirmationMode: Ref<string | null>;
+  readonly selectedCurrency: Ref<Decoded.TokenAmount | null>;
+  readonly shouldShowConfirmation: Ref<boolean>;
+  readonly stakeInput: Ref<StakeTokensInput | null>;
+  readonly unstakeInput: Ref<UnstakeTokensInput | null>;
+  readonly transactionState: Ref<string>;
+  readonly ledgerState: Ref<string>;
+  readonly transactionError: Ref<Error | null>;
+  readonly transferInput: Ref<TransferTokensInput | null>;
+  readonly transactionFee: Ref<AmountT | null>;
+  readonly transactionErrorMessage: Ref<string | null>;
+  readonly userDidCancel: Subject<boolean>;
+
+  cancelTransaction: () => void;
+  confirmTransaction: () => void;
+  setActiveTransactionForm: (val: string) => void;
+  stakeTokens: (input: StakeTokensInput) => void;
+  transferTokens: (input: TransferTokensInput, message: MessageInTransaction, sc: Decoded.TokenAmount) => void;
+  unstakeTokens: (input: UnstakeTokensInput) => void;
 
   accountNameFor: (address: AccountAddressT) => string;
   accountRenamed: (newName: string) => void;
-  activateAccount: () => Promise<{account: AccountT | false, client: ReturnType<typeof Radix.create>}>;
   addAccount: () => Promise<AccountT | false>;
   connectHardwareWallet: (address: HardwareAddress) => Promise<void>;
   createWallet: (mnemonic: MnemomicT, pass: string, network: Network) => Promise<WalletT>;
+  decryptMessage: (tx: ExecutedTransaction) => Promise<string>;
   deviceRenamed: () => void;
   hideLedgerVerify: () => void;
   hideLedgerInteraction: () => void;
@@ -166,7 +444,7 @@ interface useWalletInterface {
   setWallet: (newWallet: WalletT) => WalletT;
   switchAddress: (address: AccountAddressT) => void;
   updateConnection: (n: string) => Promise<void>;
-  verifyHardwareWalletAddress: (client: ReturnType<typeof Radix.create>) => Promise<void>;
+  verifyHardwareWalletAddress: () => Promise<void>;
   waitUntilAllLoaded: () => Promise<any>;
   walletLoaded: () => void;
   createNewHardwareAccount: () => void;
@@ -177,8 +455,6 @@ const walletLoaded = async () => {
   wallet.value = await firstValueFrom(radix.__wallet)
   hasWallet.value = true
 }
-
-const invalidPasswordError: Ref<WalletError | null> = ref(null)
 
 // Disable errors sink for now in favor of API errors
 // radix.errors
@@ -316,7 +592,6 @@ const createNewHardwareAccount = async () => {
         }
       })
       activeAccount.value = newAccount
-      hardwareAccount.value = newAccount
       hardwareDevices.value = newHardwareDevices
       saveHardwareDevices(activeNetwork.value, newHardwareDevices)
       router.push(`/wallet/${newAccount.address.toString()}`)
@@ -325,7 +600,6 @@ const createNewHardwareAccount = async () => {
       const deviceNumber = hardwareDevices.value.length + 1
       const newHardwareDevices = [...hardwareDevices.value, { name: `Hardware Device ${deviceNumber}`, addresses: [{ name: newAddr, address: connectedDeviceAccount.address, index: 0 }] }]
       activeAccount.value = connectedDeviceAccount
-      hardwareAccount.value = connectedDeviceAccount
       hardwareDevices.value = newHardwareDevices
       saveHardwareDevices(activeNetwork.value, newHardwareDevices)
       hardwareDevices.value = await getHardwareDevices(activeNetwork.value)
@@ -341,36 +615,43 @@ const createNewHardwareAccount = async () => {
 }
 
 const connectHardwareWallet = async (hwaddr: HardwareAddress) => {
+  console.log('connecting')
   try {
-    const wallet = await firstValueFrom(radix.__wallet)
     hardwareError.value = null
-    const hwAccount: AccountT = await firstValueFrom(wallet.deriveHWAccount({
+    const hwAccount: AccountT = await firstValueFrom(radix.deriveHWAccount({
       keyDerivation: HDPathRadix.create({
         address: { index: hwaddr.index, isHardened: true }
       }),
       hardwareWalletConnection,
-      alsoSwitchTo: true,
+      alsoSwitchTo: false,
       verificationPrompt: false
     }))
+    radix.switchAccount({ toAccount: hwAccount })
+    console.log('connected to ', hwAccount.address.toString())
     hardwareInteractionState.value = 'DERIVING'
     activeAddress.value = hwAccount.address
     activeAccount.value = hwAccount
-    hardwareAccount.value = hwAccount
     hardwareInteractionState.value = ''
-    radix.__withWallet(wallet)
   } catch (err) {
     hardwareInteractionState.value = ''
     hardwareError.value = err as Error
   }
 }
 
-const verifyHardwareWalletAddress = async (client: ReturnType<typeof Radix.create>) => {
+const verifyHardwareWalletAddress = async () => {
+  await activateAccount()
   showLedgerVerify.value = true
   try {
-    await firstValueFrom(client.displayAddressForActiveHWAccountOnHWDeviceForVerification())
+    await firstValueFrom(radix.displayAddressForActiveHWAccountOnHWDeviceForVerification())
   } catch (e) {
     ledgerVerifyError.value = e as Error
   }
+}
+
+const decryptMessage = async (tx: ExecutedTransaction): Promise<string> => {
+  await activateAccount()
+  const msg = await firstValueFrom(radix.decryptTransaction(tx))
+  return msg
 }
 
 const setHideAccountModal = (val: boolean) => { showHideAccountModal.value = val }
@@ -393,7 +674,7 @@ const hashNodeUrl = async (url:string, signingKeychain: SigningKeychainT): Promi
 const persistNodeUrl = async (url: string): Promise<void> => {
   if (!signingKeychain.value) return
   const hash = await hashNodeUrl(url, signingKeychain.value)
-  const saveToStore = await persistNodeSelection(url, hash)
+  await persistNodeSelection(url, hash)
 }
 
 const fetchSavedNodeUrl = async (signingKeychain: SigningKeychainT): Promise<string> => {
@@ -402,7 +683,7 @@ const fetchSavedNodeUrl = async (signingKeychain: SigningKeychainT): Promise<str
     // set a default node, one did not exist.
     const defaultToMainnet = 'https://mainnet.radixdlt.com'
     const hash = await hashNodeUrl(defaultToMainnet, signingKeychain)
-    const saveToStore = await persistNodeSelection(defaultToMainnet, hash)
+    await persistNodeSelection(defaultToMainnet, hash)
     return defaultToMainnet
   }
   const rehash = await hashNodeUrl(selectedNode, signingKeychain)
@@ -419,8 +700,12 @@ const hideLedgerVerify = () => {
   showLedgerVerify.value = false
 }
 
-const activateAccount = async () : Promise<{account: AccountT | false, client: ReturnType<typeof Radix.create>}> => {
+const isActivating: Ref<boolean> = ref(false)
+
+const activateAccount = async () : Promise<void> => {
+  if (isActivating.value) return Promise.resolve()
   if (!activeAddress.value || !accounts.value || !activeAccount.value) throw Error('Invalid Active Address')
+  isActivating.value = true
   const currentAddress = activeAddress.value
   const localAccount = accounts.value?.all.find((account: AccountT) => {
     if (!activeAddress.value) return false
@@ -431,7 +716,8 @@ const activateAccount = async () : Promise<{account: AccountT | false, client: R
     radix.switchAccount({ toAccount: localAccount })
     const newAccount = await firstValueFrom(radix.activeAccount)
     activeAccount.value = newAccount
-    return { account: newAccount, client: radix }
+    isActivating.value = false
+    return
   }
 
   const hardwareAddress =
@@ -448,10 +734,10 @@ const activateAccount = async () : Promise<{account: AccountT | false, client: R
     hardwareError.value = new Error('Unable to activate the correct account')
     activeAddress.value = currentAddress
     hardwareInteractionState.value = 'error'
-    return { client: radix, account: false }
+    isActivating.value = false
+    return
   }
-
-  return { account: activeAccount.value, client: radix }
+  isActivating.value = false
 }
 
 export default function useWallet (router: Router): useWalletInterface {
@@ -518,6 +804,21 @@ export default function useWallet (router: Router): useWalletInterface {
     showDisconnectDeviceModal: computed(() => hardwareDeviceIndexToForget.value >= 0),
     showNewDevicePopup,
     showLedgerVerify,
+    activeMessageInTransaction,
+    activeTransactionForm,
+    confirmationMode,
+    ledgerState,
+    selectedCurrency,
+    shouldShowConfirmation,
+    shouldShowMaxUnstakeConfirmation,
+    stakeInput,
+    unstakeInput,
+    transactionError,
+    transactionState,
+    transferInput,
+    transactionFee,
+    transactionErrorMessage,
+    userDidCancel,
     connected: computed(() => connected.value),
     switching: computed(() => switching.value),
     radix,
@@ -559,6 +860,13 @@ export default function useWallet (router: Router): useWalletInterface {
       router.push(`/${nextRoute}`)
     },
 
+    cancelTransaction,
+    confirmTransaction,
+    setActiveTransactionForm,
+    stakeTokens,
+    transferTokens,
+    unstakeTokens,
+    decryptMessage,
     accountNameFor,
     accountRenamed,
     addAccount,
@@ -608,7 +916,6 @@ export default function useWallet (router: Router): useWalletInterface {
       }
     }),
 
-    activateAccount,
     createNewHardwareAccount,
     closeLedgerErrorModal
   }

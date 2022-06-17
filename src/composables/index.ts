@@ -6,7 +6,6 @@ import useSettingsTab from './useSettingsTab'
 import useSidebar from './useSidebar'
 import useStaking from './useStaking'
 import useTokenBalances from './useTokenBalances'
-import useTransactions from './useTransactions'
 import useWallet from './useWallet'
 
 export {
@@ -18,6 +17,5 @@ export {
   useSidebar,
   useStaking,
   useTokenBalances,
-  useTransactions,
   useWallet
 }

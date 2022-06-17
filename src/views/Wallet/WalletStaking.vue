@@ -146,8 +146,8 @@
 </template>
 
 <script lang="ts">
-import { AccountAddressT, Amount, AmountT, Radix, StakeTokensInput, TokenBalance, UnstakeTokensInput, ValidatorAddressT } from '@radixdlt/application'
-import { computed, defineComponent, ComputedRef, onMounted, onUnmounted, watch, Ref, ref } from 'vue'
+import { AccountAddressT, Amount, AmountT, StakeTokensInput, UnstakeTokensInput, ValidatorAddressT } from '@radixdlt/application'
+import { computed, defineComponent, ComputedRef, watch, Ref, ref } from 'vue'
 import { useForm } from 'vee-validate'
 import StakeListItem from '@/components/StakeListItem.vue'
 import { safelyUnwrapAmount, safelyUnwrapValidator, validateAmountOfType, validateGreaterThanZero } from '@/helpers/validateRadixTypes'
@@ -158,7 +158,7 @@ import FormField from '@/components/FormField.vue'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
 import { asBigNumber } from '@/components/BigAmount.vue'
 import LoadingIcon from '@/components/LoadingIcon.vue'
-import { useStaking, useTransactions, useTokenBalances, useWallet } from '@/composables'
+import { useStaking, useWallet } from '@/composables'
 import { useRouter, onBeforeRouteLeave } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { interval, Subscription, firstValueFrom } from 'rxjs'
@@ -170,9 +170,9 @@ interface StakeForm {
 }
 const refreshSub: Ref<Subscription | null> = ref(null)
 
-const uniqBy = (arr: any[], predicate: (item: any) => string) => {
+const uniqBy = (arr: ValidatorAddressT[], predicate: (item: ValidatorAddressT) => string) => {
   if (!Array.isArray(arr)) { return [] }
-  const cb = typeof predicate === 'function' ? predicate : (o: any) => o[predicate]
+  const cb = typeof predicate === 'function' ? predicate : (o: ValidatorAddressT) => o[predicate]
 
   const pickedObjects = arr
     .filter(item => item)
@@ -187,9 +187,6 @@ const uniqBy = (arr: any[], predicate: (item: any) => string) => {
 
   return [...pickedObjects]
 }
-
-let stake: (client: ReturnType<typeof Radix.create>, input: StakeTokensInput) => void
-let unstake: (client: ReturnType<typeof Radix.create>, input: UnstakeTokensInput) => void
 
 const WalletStaking = defineComponent({
   components: {
@@ -208,12 +205,14 @@ const WalletStaking = defineComponent({
     const { errors, values, meta, setErrors, resetForm, validateField } = useForm<StakeForm>()
     const {
       activeAddress,
-      activateAccount,
       explorerUrlBase,
       activeNetwork,
-      hardwareDevices,
       nativeToken,
-      radix
+      radix,
+      setActiveTransactionForm,
+      cancelTransaction,
+      stakeTokens,
+      unstakeTokens
     } = useWallet(router)
 
     if (!activeNetwork.value || !nativeToken.value) {
@@ -221,7 +220,6 @@ const WalletStaking = defineComponent({
       return {}
     }
     const { activeForm, setActiveForm, activeStakes, activeUnstakes, loadingAnyStaking, maybeGetValidator, fetchValidatorsAndStakes, getActiveStakeAmountForValidator } = useStaking(radix, activeNetwork.value)
-    const { setActiveTransactionForm, cancelTransaction } = useTransactions(radix, router, activeAddress.value, hardwareDevices.value)
     const zero = Amount.fromUnsafe(0)._unsafeUnwrap()
     const maxUnstakeMode: Ref<boolean> = ref(false)
     const tokenBalances: Ref<AccountBalancesEndpoint.DecodedResponse | null> = ref(null)
@@ -263,9 +261,6 @@ const WalletStaking = defineComponent({
       if (!newActiveAddress) return
       if (oldActiveAddress && newActiveAddress.equals(oldActiveAddress)) return
       await fetchAndRefreshData(newActiveAddress)
-      const { stakeTokens, unstakeTokens } = useTransactions(radix, router, newActiveAddress, hardwareDevices.value)
-      stake = stakeTokens
-      unstake = unstakeTokens
     }, { immediate: true })
 
     onBeforeRouteLeave(() => {
@@ -404,10 +399,9 @@ const WalletStaking = defineComponent({
       }
 
       try {
-        const { client } = await activateAccount()
         activeForm.value === 'STAKING'
-          ? stake(client, data as StakeTokensInput)
-          : unstake(client, data as UnstakeTokensInput)
+          ? await stakeTokens(data as StakeTokensInput)
+          : await unstakeTokens(data as UnstakeTokensInput)
       } catch (e) {
         cancelTransaction()
         if (!activeAddress.value) return
@@ -419,8 +413,7 @@ const WalletStaking = defineComponent({
       try {
         const safeAddress = safelyUnwrapValidator(values.validator)
         if (!nativeToken.value || !safeAddress) return
-        const { client } = await activateAccount()
-        unstake(client, {
+        await unstakeTokens({
           from_validator: safeAddress,
           unstake_percentage: 100,
           tokenIdentifier: nativeToken.value?.rri
