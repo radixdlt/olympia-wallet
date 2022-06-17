@@ -7,9 +7,10 @@
                     <div class="flex-grow">
                         <div class="flex items-center">
                             <AppRadioIndicator
-                            :enabled="isActive"
-                            :disabled="loading"
+                            :enabled="selectedDecimalType === 'us'"
+                            :disabled="selectedDecimalType !== 'us'"
                             class="mr-2 cursor-pointer"
+                            @click="handleSelectDecimal('us')"
                             />
                             <div class="flex gap-4">
                               <span>{{ $t('settings.usLabel') }}</span>
@@ -18,9 +19,10 @@
                         </div>
                         <div class="flex items-center">
                             <AppRadioIndicator
-                            :enabled="isActive"
-                            :disabled="loading"
+                            :enabled="selectedDecimalType === 'europe'"
+                            :disabled="selectedDecimalType !== 'europe'"
                             class="mr-2 cursor-pointer"
+                            @click="handleSelectDecimal('europe')"
                             />
                             <div class="">
                               <span class="mr-4">{{ $t('settings.europeLabel') }}</span>
@@ -38,18 +40,19 @@
 import { defineComponent, Ref, ref } from 'vue'
 import AppRadioIndicator from '@/components/AppRadioIndicator.vue'
 
-//state to toggle which radio is selected
-const isSelected: Ref<boolean> = ref(false)
+// state to toggle which radio is selected
+const selectedDecimalType: Ref<string> = ref('')
 
-const handleSelectDecimalDisplay = () => {
-  isSelected.value = true
+const handleSelectDecimal = (decimal:string) => {
+  selectedDecimalType.value = decimal
 }
 
 export default defineComponent({
   components: { AppRadioIndicator },
   setup () {
     return {
-      isSelected
+      selectedDecimalType,
+      handleSelectDecimal
     }
   }
 })
