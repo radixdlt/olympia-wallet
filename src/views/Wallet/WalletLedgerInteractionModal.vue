@@ -23,20 +23,16 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { useRouter } from 'vue-router'
-import { useWallet, useTransactions } from '@/composables'
+import { useWallet } from '@/composables'
 
 const WalletLedgerInteractionModal = defineComponent({
 
   setup () {
     const router = useRouter()
     const {
-      activeAddress,
-      hardwareAccount,
       hideLedgerInteraction,
-      radix
+      cancelTransaction
     } = useWallet(router)
-
-    const { cancelTransaction } = useTransactions(radix, router, activeAddress.value, hardwareAccount.value)
 
     return {
       hideLedgerInteraction,

@@ -11,16 +11,32 @@ const canGoNext: Ref<boolean> = ref(false)
 const loadingHistory: Ref<boolean> = ref(true)
 
 const activeCursor: Ref<string> = ref('')
-
 const transactions: Ref<SimpleExecutedTransaction[]> = ref([])
 
 const isDecrypting: Ref<boolean> = ref(false)
+let transactionSub: Subscription | null
 
-export default function useHistory (radix: ReturnType<typeof Radix.create>, address: AccountAddressT) {
-  let transactionSub: Subscription | null
-  const activeAddress: Ref<AccountAddressT> = ref(address)
+const activeAddress: Ref<AccountAddressT | null> = ref(null)
 
+interface useHistoryInterface {
+  canGoBack: ComputedRef<boolean>;
+  canGoNext: Ref<boolean>;
+  decryptedMessages: Ref<{id: string, message: string}[]>;
+  isDecrypting: Ref<boolean>;
+  loadingHistory: Ref<boolean>;
+  transactions: Ref<SimpleExecutedTransaction[]>;
+  pushMsg: (tx: ExecutedTransaction, msg: string) => void;
+  fetchTransactions: (cursor?: string) => Promise<void>;
+  leavingHistory: () => void;
+  nextPage: () => void;
+  previousPage: () => void;
+  resetHistory: () => void;
+  updateActiveAccount: (addr: AccountAddressT) => void;
+}
+
+export default function useHistory (radix: ReturnType<typeof Radix.create>): useHistoryInterface {
   const fetchTransactions = async (cursor?: string) => {
+    if (!activeAddress.value) return
     const params = { size: PAGE_SIZE, address: activeAddress.value, cursor }
     const data = await firstValueFrom(radix.ledger.transactionHistory(params))
     transactions.value = data.transactions
@@ -52,13 +68,8 @@ export default function useHistory (radix: ReturnType<typeof Radix.create>, addr
     activeAddress.value = addr
   }
 
-  const decryptMessage = (client: ReturnType<typeof Radix.create>, tx: ExecutedTransaction) => {
-    isDecrypting.value = true
-    firstValueFrom(client.decryptTransaction(tx))
-      .then((val) => {
-        decryptedMessages.value.push({ id: tx.txID.toString(), message: val })
-      })
-      .finally(() => { isDecrypting.value = false })
+  const pushMsg = (tx: ExecutedTransaction, msg: string) => {
+    decryptedMessages.value.push({ id: tx.txID.toString(), message: msg })
   }
 
   const previousPage = () => {
@@ -85,7 +96,7 @@ export default function useHistory (radix: ReturnType<typeof Radix.create>, addr
     decryptedMessages,
     loadingHistory,
     transactions,
-    decryptMessage,
+    pushMsg,
     fetchTransactions,
     leavingHistory,
     nextPage,

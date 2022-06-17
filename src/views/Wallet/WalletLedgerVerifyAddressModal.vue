@@ -2,18 +2,7 @@
   <div class="fixed w-screen h-screen z-20 flex items-center justify-center bg-translucent-black left-0 top-0">
     <div class="bg-white rounded-md py-7 px-7 w-full max-w-3xl absolute top-1/2 left-1/2 transform -translate-x-1/3 -translate-y-1/2">
       <h3 class="font-medium text-rBlack mb-2 w-full">Verify Hardware Wallet Address</h3>
-      <div v-if="hardwareAddress !== activeAddress.toString()">
-        <div class="py-2 mb-9">{{ $t('hardware.disclaimer') }}</div>
-        <div class="flex items-center">
-          <div
-            class="text-rGrayDark text-base p-3 mx-auto cursor-pointer"
-            @click="hideLedgerVerify()"
-          >
-            {{ $t('hardware.buttonDismiss') }}
-          </div>
-        </div>
-      </div>
-      <div v-else>
+      <div>
         <div v-if="shouldShowError" class="text-rRed">{{ $t('hardware.error') }}</div>
         <div v-else-if="!isMainnet" class="py-2 text-rRed">{{ $t('hardware.nonMainnetDisclaimer') }}</div>
         <div v-else class="text-rBlack">{{ $t('hardware.verificationMessage') }}</div>
@@ -22,8 +11,8 @@
             <div class="py-5 flex items-center">
               <div class="w-20 text-right text-rGrayDark mr-4">{{ $t('hardware.labelAddress') }}</div>
               <div class="flex-1 flex">
-                {{ hardwareAddress }}
-                <click-to-copy :address="hardwareAddress" class="hover:text-rGreen active:text-rGreenDark ml-1" />
+                {{ activeAddress?.toString() }}
+                <click-to-copy :address="activeAddress?.toString()" class="hover:text-rGreen active:text-rGreenDark ml-1" />
               </div>
             </div>
           </div>
@@ -61,16 +50,21 @@ const WalletLedgerVerifyAddressModal = defineComponent({
   setup () {
     const toast = useToast()
     const router = useRouter()
-    const { hardwareAddress, hardwareError, hideLedgerVerify, activeAddress, activeNetwork } = useWallet(router)
+    const { hardwareError, hideLedgerVerify, activeAddress, activeNetwork } = useWallet(router)
     const isMainnet: ComputedRef<boolean> = computed(() => activeNetwork.value === Network.MAINNET)
+
+    const copyText = () => {
+      if (!activeAddress.value) return
+      copyToClipboard(activeAddress.toString())
+      toast.success('Copied to Clipboard')
+    }
 
     return {
       activeAddress,
       isMainnet,
-      hardwareAddress,
       hardwareError,
       hideLedgerVerify,
-      toast
+      copyText
     }
   },
 
@@ -78,15 +72,6 @@ const WalletLedgerVerifyAddressModal = defineComponent({
     shouldShowError (): boolean {
       if (!this.hardwareError) { return false }
       return this.hardwareError.message.includes('No device found')
-    }
-  },
-
-  methods: {
-    copyText () {
-      if (this.hardwareAddress) {
-        copyToClipboard(this.hardwareAddress)
-        this.toast.success('Copied to Clipboard')
-      }
     }
   }
 })

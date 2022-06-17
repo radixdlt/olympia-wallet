@@ -87,14 +87,15 @@
 </template>
 
 <script lang="ts">
-import { computed, ComputedRef, defineComponent, onMounted, watch } from 'vue'
+import { computed, ComputedRef, defineComponent, onBeforeUnmount, onMounted, watch } from 'vue'
 import TransactionListItem from '@/components/TransactionListItem.vue'
 import LoadingIcon from '@/components/LoadingIcon.vue'
 import ClickToCopy from '@/components/ClickToCopy.vue'
 import { useWallet, useHistory } from '@/composables'
-import { useRouter, onBeforeRouteLeave } from 'vue-router'
+import { useRouter } from 'vue-router'
 import WalletLedgerVerifyDecryptModal from './WalletLedgerVerifyDecryptModal.vue'
 import { ExecutedTransaction } from '@radixdlt/application'
+import { HardwareAddress } from '@/services/_types'
 
 const WalletHistory = defineComponent({
   components: {
@@ -108,9 +109,9 @@ const WalletHistory = defineComponent({
     const router = useRouter()
     const {
       activeAddress,
-      activateAccount,
+      decryptMessage,
       explorerUrlBase,
-      hardwareAccount,
+      hardwareDevices,
       nativeToken,
       hardwareError,
       radix
@@ -127,14 +128,14 @@ const WalletHistory = defineComponent({
       fetchTransactions,
       loadingHistory,
       transactions,
-      decryptMessage,
       leavingHistory,
       nextPage,
       previousPage,
       resetHistory,
       updateActiveAccount,
-      isDecrypting
-    } = useHistory(radix, activeAddress.value)
+      isDecrypting,
+      pushMsg
+    } = useHistory(radix)
 
     const transactionsWithMessages = computed(() => {
       return transactions.value.map((tx) => {
@@ -146,31 +147,38 @@ const WalletHistory = defineComponent({
       })
     })
 
-    const shouldShowDecryptModal: ComputedRef<boolean> = computed(() =>
-      isDecrypting.value && !!activeAddress.value && !!hardwareAccount.value && activeAddress.value === hardwareAccount.value.address
-    )
+    const shouldShowDecryptModal: ComputedRef<boolean> = computed(() => {
+      if (!activeAddress.value) return false
+      const hardwareAddress =
+        hardwareDevices.value
+          .flatMap((device) => device.addresses)
+          .find((addr: HardwareAddress) => {
+            if (!activeAddress.value) return false
+            return addr.address.equals(activeAddress.value)
+          })
+      return isDecrypting.value && !!activeAddress.value && !!hardwareAddress && activeAddress.value.equals(hardwareAddress.address)
+    })
 
     const activateThenDecrypt = async (data: ExecutedTransaction) => {
-      activateAccount((client) => {
-        decryptMessage(client, data)
-      }).catch((e) => {
+      try {
+        const msg = await decryptMessage(data)
+        pushMsg(data, msg)
+      } catch (e) {
         if (!activeAddress.value) return
         updateActiveAccount(activeAddress.value)
         resetHistory()
         fetchTransactions()
-      })
+      }
     }
 
     // Fetch new history when active account changes
-    watch((activeAddress), (newAddress, oldAddress) => {
-      if (!newAddress) return
-      if (newAddress && oldAddress && !newAddress.equals(oldAddress)) {
+    watch((activeAddress), (newAddress) => {
+      if (newAddress) {
         leavingHistory()
-        updateActiveAccount(newAddress)
-      }
-      if (newAddress && oldAddress && newAddress.equals(oldAddress)) {
+      } else {
         return
       }
+      updateActiveAccount(newAddress)
       resetHistory()
       fetchTransactions()
     }, { immediate: true })
@@ -180,7 +188,7 @@ const WalletHistory = defineComponent({
       resetHistory()
     })
 
-    onBeforeRouteLeave(() => {
+    onBeforeUnmount(() => {
       leavingHistory()
     })
 

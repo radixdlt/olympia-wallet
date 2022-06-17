@@ -154,13 +154,13 @@
 import { Amount, AmountT, AmountOrUnsafeInput, Token } from '@radixdlt/application'
 import { defineComponent, ref, onMounted, onUnmounted, computed, ComputedRef } from 'vue'
 import { useForm } from 'vee-validate'
-import { merge, interval, Subscription } from 'rxjs'
+import { Subscription } from 'rxjs'
 import BigAmount from '@/components/BigAmount.vue'
 import PinInput from '@/components/PinInput.vue'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
 import { validatePin } from '@/actions/vue/create-wallet'
 import { useRouter } from 'vue-router'
-import { useHomeModal, useTransactions, useWallet, useTokenBalances } from '@/composables'
+import { useHomeModal, useWallet, useTokenBalances } from '@/composables'
 import { useI18n } from 'vue-i18n'
 
 interface ConfirmationForm {
@@ -185,30 +185,9 @@ const WalletConfirmTransactionModal = defineComponent({
     const { t } = useI18n({ useScope: 'global' })
     const {
       activeAddress,
-      hardwareAccount,
       nativeToken,
       radix,
-      reset
-    } = useWallet(router)
-    const { tokenBalances, tokenBalanceFor, tokenInfoFor } = useTokenBalances(radix)
-
-    const updateObservable = merge(
-      radix.activeAccount,
-      interval(15000)
-    )
-
-    const subs = new Subscription()
-    const loading = ref(true)
-
-    subs.add(radix.activeAddress.subscribe(() => {
-      loading.value = true
-    }))
-
-    onUnmounted(() => {
-      subs.unsubscribe()
-    })
-
-    const {
+      reset,
       activeMessageInTransaction,
       cancelTransaction,
       confirmationMode,
@@ -221,7 +200,19 @@ const WalletConfirmTransactionModal = defineComponent({
       transactionState,
       transferInput,
       selectedCurrency
-    } = useTransactions(radix, router, activeAddress.value, hardwareAccount.value)
+    } = useWallet(router)
+    const { tokenBalances, tokenBalanceFor, tokenInfoFor } = useTokenBalances(radix)
+
+    const subs = new Subscription()
+    const loading = ref(true)
+
+    subs.add(radix.activeAddress.subscribe(() => {
+      loading.value = true
+    }))
+
+    onUnmounted(() => {
+      subs.unsubscribe()
+    })
 
     const selectedCurrencyToken: ComputedRef<Token | null> = computed(() => {
       return selectedCurrency.value ? tokenInfoFor(selectedCurrency.value.token_identifier.rri) : null
