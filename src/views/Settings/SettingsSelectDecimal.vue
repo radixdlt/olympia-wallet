@@ -14,7 +14,7 @@
                             />
                             <div class="flex gap-4">
                               <span>{{ $t('settings.usLabel') }}</span>
-                              <span>example: 1,000,000.50</span>
+                              <span>{{ $t('settings.usLabelExample')}}</span>
                             </div>
                         </div>
                         <div class="flex items-center">
@@ -26,7 +26,7 @@
                             />
                             <div class="">
                               <span class="mr-4">{{ $t('settings.europeLabel') }}</span>
-                              <span>example: 1.000.000,50</span>
+                              <span>{{ $t('settings.europeLabelExample')}}</span>
                             </div>
                         </div>
                     </div>
@@ -45,6 +45,7 @@ const selectedDecimalType: Ref<string> = ref('')
 
 const handleSelectDecimal = (decimal:string) => {
   selectedDecimalType.value = decimal
+  // send type to wallet.json
 }
 
 export default defineComponent({
