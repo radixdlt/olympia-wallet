@@ -47,7 +47,7 @@ const selectedDecimalType: Ref<string> = ref('')
 const handleSelectDecimal = (decimalType:string) => {
   selectedDecimalType.value = decimalType
   // send type to wallet.json
-  store.set('decimalType', decimalType)
+  // store.set('decimalType', decimalType)
 }
 
 export default defineComponent({

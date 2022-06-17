@@ -157,3 +157,13 @@ export const unhideAccount = (event: IpcMainInvokeEvent, accountAddress: string)
   store.set('hiddenAccounts', hiddenAccounts)
   return hiddenAccounts
 }
+
+// get decimal type from store default US?
+export const getDecimalType = (event: IpcMainInvokeEvent, decimalType: string): string => {
+  return store.get('decimalType') as string
+}
+
+// set decimal type from store
+export const setDecimalType = (event: IpcMainInvokeEvent, value: string): void => {
+  store.set('decimalType', value)
+}
