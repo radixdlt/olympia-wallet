@@ -1,6 +1,6 @@
 <template>
-    <div class="bg-white flex flex-col rounded-md w-full">
-        <div class="pt-6 px-6 pb-4 rounded-md ">
+    <div class="bg-white flex flex-col rounded-md w-full mb-72">
+        <div class="pt-6 px-6 pb-4 rounded-md">
             <div class=" flex flex-col text-rGrayDark text-sm gap-4">
                 <p>{{ $t('settings.changeRegionalDecimalLabel') }}</p>
                 <div class="flex flex-row items-center gap-4 mb-8">
