@@ -112,6 +112,7 @@ const createWallet = (mnemonic: MnemomicT, pass: string, network: Network) => {
 }
 
 const setPin = (pin: string) => storePin(pin)
+
 const decimalType: Ref<string> = ref('us')
 getDecimalType().then((val) => { decimalType.value = val })
 
