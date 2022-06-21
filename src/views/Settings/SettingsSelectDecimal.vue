@@ -1,33 +1,33 @@
 <template>
-    <div class="bg-white flex flex-col w-full rounded-md">
+    <div class="bg-white flex flex-col rounded-md w-full ">
         <div class="pt-6 px-6 pb-4">
-            <div class="text-rGrayDark text-sm mb-7 w-full max-w-xl">
+            <div class=" flex flex-col text-rGrayDark text-sm mb-7 gap-4">
                 <p>{{ $t('settings.changeRegionalDecimalLabel') }}</p>
                 <div class="flex flex-row items-center gap-4 mb-8">
-                    <div class="flex-grow">
-                        <div class="flex items-center">
-                            <AppRadioIndicator
+                    <div class="flex flex-col gap-4 w-full">
+                        <div class="flex items-center w-full">
+                          <AppRadioIndicator
                             :enabled="decimalType === 'us'"
                             :disabled="decimalType !== 'us'"
-                            class="mr-2 cursor-pointer"
+                            class="mr-2 cursor-pointer "
                             @click="setDecimalType('us')"
                             />
-                            <div class="flex gap-4">
-                              <span>{{ $t('settings.usLabel') }}</span>
-                              <span>{{ $t('settings.usLabelExample')}}</span>
-                            </div>
+                          <span >{{ $t('settings.usLabel') }}</span>
+                          <div class="flex gap-4 w-5/6 ml-20">
+                            <span class="">{{ $t('settings.usLabelExample')}}</span>
+                          </div>
                         </div>
                         <div class="flex items-center">
-                            <AppRadioIndicator
-                            :enabled="decimalType === 'europe'"
-                            :disabled="decimalType !== 'europe'"
-                            class="mr-2 cursor-pointer"
-                            @click="setDecimalType('europe')"
-                            />
-                            <div class="">
-                              <span class="mr-4">{{ $t('settings.europeLabel') }}</span>
-                              <span>{{ $t('settings.europeLabelExample')}}</span>
-                            </div>
+                          <AppRadioIndicator
+                          :enabled="decimalType === 'europe'"
+                          :disabled="decimalType !== 'europe'"
+                          class="mr-2 cursor-pointer"
+                          @click="setDecimalType('europe')"
+                          />
+                          <span class="mr-2">{{ $t('settings.europeLabel') }}</span>
+                          <div class="flex gap-4 w-5/6 ml-11">
+                            <span>{{ $t('settings.europeLabelExample')}}</span>
+                          </div>
                         </div>
                     </div>
                 </div>
