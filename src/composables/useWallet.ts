@@ -228,6 +228,7 @@ const handleTransactionCompleted = () => {
 //  - update fee to display to the user
 //  - handle error if it is returned
 const handleTransactionLifecycleEvent = (txState: TransactionStateUpdate) => {
+  console.log('state update', txState)
   transactionState.value = txState.eventUpdateType
   // To Do:
   // Add pending transactions to list
@@ -615,7 +616,6 @@ const createNewHardwareAccount = async () => {
 }
 
 const connectHardwareWallet = async (hwaddr: HardwareAddress) => {
-  console.log('connecting')
   try {
     hardwareError.value = null
     const hwAccount: AccountT = await firstValueFrom(radix.deriveHWAccount({
@@ -623,10 +623,9 @@ const connectHardwareWallet = async (hwaddr: HardwareAddress) => {
         address: { index: hwaddr.index, isHardened: true }
       }),
       hardwareWalletConnection,
-      alsoSwitchTo: false,
+      alsoSwitchTo: true,
       verificationPrompt: false
     }))
-    radix.switchAccount({ toAccount: hwAccount })
     console.log('connected to ', hwAccount.address.toString())
     hardwareInteractionState.value = 'DERIVING'
     activeAddress.value = hwAccount.address
