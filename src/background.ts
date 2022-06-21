@@ -33,7 +33,9 @@ import {
   hideAccount,
   unhideAccount,
   getDecimalType,
-  setDecimalType
+  setDecimalType,
+  setDecimalTypeToUs,
+  setDecimalTypeToEurope
 } from './actions/electron/data-store'
 import { getIsUpdateAvailable, getIsUpdateDownloaded } from './actions/electron/general'
 import { sendAPDU } from './actions/electron/hardware-wallet'
@@ -179,6 +181,9 @@ ipcMain.handle('hide-accounts', hideAccount)
 ipcMain.handle('unhide-accounts', unhideAccount)
 ipcMain.handle('get-decimal-type', getDecimalType)
 ipcMain.handle('set-decimal-type', setDecimalType)
+
+ipcMain.handle('set-decimal-type-to-us', setDecimalTypeToUs)
+ipcMain.handle('set-decimal-type-to-europe', setDecimalTypeToEurope)
 // Exit cleanly on request from parent process in development mode.
 if (isDevelopment) {
   if (process.platform === 'win32') {

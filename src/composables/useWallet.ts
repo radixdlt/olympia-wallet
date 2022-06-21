@@ -34,7 +34,9 @@ import {
   getAccountNames,
   getLatestAccountAddress,
   persistNodeSelection,
-  fetchSelectedNodeFromStore
+  fetchSelectedNodeFromStore,
+  setDecimalType,
+  getDecimalType
 } from '@/actions/vue/data-store'
 import {
   getVersionNumber,
@@ -110,6 +112,13 @@ const createWallet = (mnemonic: MnemomicT, pass: string, network: Network) => {
 }
 
 const setPin = (pin: string) => storePin(pin)
+const decimalType: Ref<string> = ref('us')
+getDecimalType().then((val) => { decimalType.value = val })
+
+const handleDecimalType = (newDecimalType: string) => {
+  decimalType.value = newDecimalType
+  setDecimalType(newDecimalType)
+}
 
 interface useWalletInterface {
   readonly accounts: Ref<AccountsT | null>;
@@ -117,6 +126,7 @@ interface useWalletInterface {
   readonly activeNetwork: Ref<Network | null>;
   readonly connected: ComputedRef<boolean>;
   readonly derivedAccountIndex: Ref<number>;
+  readonly decimalType: Ref<string>;
   readonly explorerUrlBase: ComputedRef<string>;
   readonly hardwareAccount: Ref<AccountT | null>;
   readonly hardwareAddress: Ref<string | null>;
@@ -174,6 +184,7 @@ interface useWalletInterface {
   walletLoaded: () => void;
   createNewHardwareAccount: () => void;
   closeLedgerErrorModal: () => void;
+  setDecimalType: (decimalType: string) => void;
 }
 
 const walletLoaded = async () => {
@@ -515,6 +526,7 @@ export default function useWallet (router: Router): useWalletInterface {
     activeAddress,
     activeNetwork,
     explorerUrlBase: computed(() => explorerUrlBase.value),
+    decimalType,
     derivedAccountIndex,
     deviceRenamed,
     hardwareAccount,
@@ -625,6 +637,7 @@ export default function useWallet (router: Router): useWalletInterface {
 
     activateAccount,
     createNewHardwareAccount,
-    closeLedgerErrorModal
+    closeLedgerErrorModal,
+    setDecimalType: handleDecimalType
   }
 }

@@ -12,11 +12,13 @@
 
 <script lang="ts">
 import { copyToClipboard } from '@/actions/vue/create-wallet'
-import { defineComponent, PropType } from 'vue'
+import { defineComponent, PropType, computed, ComputedRef, toRef } from 'vue'
 import { AmountT } from '@radixdlt/application'
 import BigNumber from 'bignumber.js'
 import { useToast } from 'vue-toastification'
 import { useI18n } from 'vue-i18n'
+import { useWallet } from '@/composables'
+import { useRouter } from 'vue-router'
 
 BigNumber.set({
   ROUNDING_MODE: BigNumber.ROUND_HALF_UP,
@@ -57,7 +59,7 @@ const internalFormat = {
   suffix: ''
 }
 
-const formattBigNumber = (x: BigNumber, showFull = false, format: BigNumber.Format = numberFormatUSA) => {
+const formattBigNumber = (x: BigNumber, showFull = false, fmtString: string) => {
   /*
   1000000000000 => 1,000,000,000,000
   1000000000000.59 => 1,000,000,000,000.6
@@ -76,6 +78,8 @@ const formattBigNumber = (x: BigNumber, showFull = false, format: BigNumber.Form
   const ipLength = integerPart.toFixed().length
   var internallyFormatted = '0'
   var decimalPlaces
+
+  const format = fmtString === 'us' ? numberFormatUSA : numberFormatEUROPE
 
   if (x.isZero()) {
     return '0'
@@ -108,11 +112,11 @@ const formattBigNumber = (x: BigNumber, showFull = false, format: BigNumber.Form
   return z.toFormat(format)
 }
 
-export const asBigNumber = (amount: AmountT, showFull = false) : string => {
+export const asBigNumber = (amount: AmountT, showFull = false, displayFormat = 'us') : string => {
   const bigNumber = new BigNumber(amount.toString())
   const shiftedAmount = bigNumber.shiftedBy(-18) // Atto
 
-  return formattBigNumber(shiftedAmount, showFull)
+  return formattBigNumber(shiftedAmount, showFull, displayFormat)
 }
 
 const BigAmount = defineComponent({
@@ -128,28 +132,31 @@ const BigAmount = defineComponent({
     }
   },
 
-  setup () {
+  setup (props) {
     const toast = useToast()
     const { t } = useI18n({ useScope: 'global' })
-    return { toast }
-  },
+    const router = useRouter()
+    const { decimalType } = useWallet(router)
+    const amount = toRef(props, 'amount')
 
-  computed: {
-    numberForDisplay (): string {
-      return asBigNumber(this.amount, false)
-    },
+    const numberForDisplay: ComputedRef<string> = computed(() => {
+      if (!amount.value) return ''
+      return asBigNumber(amount.value as AmountT, false, decimalType.value)
+    })
 
-    fullNumber (): string {
-      return asBigNumber(this.amount, true)
-    }
-  },
+    const fullNumber: ComputedRef<string> = computed(() => {
+      if (!amount.value) return ''
+      return asBigNumber(amount.value as AmountT, true, decimalType.value)
+    })
 
-  methods: {
-    copyText () {
-      const value = asBigNumber(this.amount, true).replaceAll(',', '')
-      this.toast.success('Copied to Clipboard')
+    const copyText = () => {
+      if (!amount.value) return
+      const value = asBigNumber(amount.value as AmountT, true, decimalType.value).replaceAll(',', '')
+      toast.success('Copied to Clipboard')
       copyToClipboard(value)
     }
+
+    return { decimalType, numberForDisplay, fullNumber, copyText }
   }
 })
 

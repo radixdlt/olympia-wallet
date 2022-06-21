@@ -7,10 +7,10 @@
                     <div class="flex-grow">
                         <div class="flex items-center">
                             <AppRadioIndicator
-                            :enabled="selectedDecimalType === 'us'"
-                            :disabled="selectedDecimalType !== 'us'"
+                            :enabled="decimalType === 'us'"
+                            :disabled="decimalType !== 'us'"
                             class="mr-2 cursor-pointer"
-                            @click="handleSelectDecimal('us')"
+                            @click="setDecimalType('us')"
                             />
                             <div class="flex gap-4">
                               <span>{{ $t('settings.usLabel') }}</span>
@@ -19,10 +19,10 @@
                         </div>
                         <div class="flex items-center">
                             <AppRadioIndicator
-                            :enabled="selectedDecimalType === 'europe'"
-                            :disabled="selectedDecimalType !== 'europe'"
+                            :enabled="decimalType === 'europe'"
+                            :disabled="decimalType !== 'europe'"
                             class="mr-2 cursor-pointer"
-                            @click="handleSelectDecimal('europe')"
+                            @click="setDecimalType('europe')"
                             />
                             <div class="">
                               <span class="mr-4">{{ $t('settings.europeLabel') }}</span>
@@ -37,25 +37,20 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, Ref, ref } from 'vue'
+import { defineComponent } from 'vue'
 import AppRadioIndicator from '@/components/AppRadioIndicator.vue'
-import { setDecimalType } from '@/actions/vue/data-store'
-
-// state to toggle which radio is selected
-const selectedDecimalType: Ref<string> = ref('')
-
-const handleSelectDecimal = (decimalType:string) => {
-  selectedDecimalType.value = decimalType
-  // invoke setDecimalType to send type to wallet.json
-  setDecimalType(decimalType)
-}
+import { useWallet } from '@/composables'
+import { useRouter } from 'vue-router'
 
 export default defineComponent({
   components: { AppRadioIndicator },
   setup () {
+    const router = useRouter()
+    const { decimalType, setDecimalType } = useWallet(router)
+
     return {
-      selectedDecimalType,
-      handleSelectDecimal
+      decimalType,
+      setDecimalType
     }
   }
 })
