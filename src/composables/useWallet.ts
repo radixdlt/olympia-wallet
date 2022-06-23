@@ -292,56 +292,57 @@ const errorHandler = (err: any) => {
 }
 
 // call transferTokens() with built options and subscribe to confirmation and results
-const transferTokens = async (transferTokensInput: TransferTokensInput, message: MessageInTransaction, sc: Decoded.TokenAmount) => {
-  await activateAccount()
-  cleanupInputs()
-  transferInput.value = transferTokensInput
-  selectedCurrency.value = sc
-  activeMessage.value = message.plaintext
-  activeMessageInTransaction.value = message
-  confirmationMode.value = 'transfer'
+const transferTokens = (transferTokensInput: TransferTokensInput, message: MessageInTransaction, sc: Decoded.TokenAmount) => {
+  activateAccount().then(() => {
+    cleanupInputs()
+    transferInput.value = transferTokensInput
+    selectedCurrency.value = sc
+    activeMessage.value = message.plaintext
+    activeMessageInTransaction.value = message
+    confirmationMode.value = 'transfer'
 
-  const { events, completion } = radix.transferTokens({
-    transferInput: transferTokensInput,
-    userConfirmation,
-    pollTXStatusTrigger: interval(1000),
-    message
+    const { events, completion } = radix.transferTokens({
+      transferInput: transferTokensInput,
+      userConfirmation,
+      pollTXStatusTrigger: interval(1000),
+      message
+    })
+
+    shouldShowConfirmation.value = true
+
+    transactionSubs.add(
+      completion.subscribe(handleTransactionCompleted, errorHandler)
+    )
+    transactionSubs.add(
+      events.subscribe(handleTransactionLifecycleEvent, errorHandler)
+    )
   })
-
-  shouldShowConfirmation.value = true
-
-  transactionSubs.add(
-    completion.subscribe(handleTransactionCompleted, errorHandler)
-  )
-  transactionSubs.add(
-    events.subscribe(handleTransactionLifecycleEvent, errorHandler)
-  )
 }
 
 // call unstakeTokens() with built options and subscribe to confirmation and results
-const unstakeTokens = async (unstakeTokensInput: UnstakeTokensInput) => {
-  await activateAccount()
-  cleanupInputs()
-  unstakeInput.value = unstakeTokensInput
-  confirmationMode.value = 'unstake'
+const unstakeTokens = (unstakeTokensInput: UnstakeTokensInput) => {
+  return activateAccount().then(() => {
+    cleanupInputs()
+    unstakeInput.value = unstakeTokensInput
+    confirmationMode.value = 'unstake'
+    return radix.unstakeTokens({
+      unstakeInput: unstakeTokensInput,
+      userConfirmation,
+      pollTXStatusTrigger: interval(1000)
+    })
+  }).then(({ completion, events }) => {
+    shouldShowConfirmation.value = true
+    if (unstakeInput.value?.unstake_percentage) {
+      shouldShowMaxUnstakeConfirmation.value = true
+    }
 
-  const { completion, events } = await radix.unstakeTokens({
-    unstakeInput: unstakeTokensInput,
-    userConfirmation,
-    pollTXStatusTrigger: interval(1000)
+    transactionSubs.add(
+      completion.subscribe(handleTransactionCompleted, errorHandler)
+    )
+    transactionSubs.add(
+      events.subscribe(handleTransactionLifecycleEvent, errorHandler)
+    )
   })
-
-  shouldShowConfirmation.value = true
-  if (unstakeInput.value.unstake_percentage) {
-    shouldShowMaxUnstakeConfirmation.value = true
-  }
-
-  transactionSubs.add(
-    completion.subscribe(handleTransactionCompleted, errorHandler)
-  )
-  transactionSubs.add(
-    events.subscribe(handleTransactionLifecycleEvent, errorHandler)
-  )
 }
 
 // call stakeTokens() with built options and subscribe to confirmation and results
@@ -420,7 +421,6 @@ interface useWalletInterface {
   accountNameFor: (address: AccountAddressT) => string;
   accountRenamed: (newName: string) => void;
   addAccount: () => Promise<AccountT | false>;
-  connectHardwareWallet: (address: HardwareAddress) => Promise<void>;
   createWallet: (mnemonic: MnemomicT, pass: string, network: Network) => Promise<WalletT>;
   decryptMessage: (tx: ExecutedTransaction) => Promise<string>;
   deviceRenamed: () => void;
@@ -613,42 +613,35 @@ const createNewHardwareAccount = async () => {
   }
 }
 
-const connectHardwareWallet = async (hwaddr: HardwareAddress) => {
-  try {
-    hardwareError.value = null
-    const hwAccount: AccountT = await firstValueFrom(radix.deriveHWAccount({
-      keyDerivation: HDPathRadix.create({
-        address: { index: hwaddr.index, isHardened: true }
-      }),
-      hardwareWalletConnection,
-      alsoSwitchTo: true,
-      verificationPrompt: false
-    }))
-    console.log('connected to ', hwAccount.address.toString())
-    hardwareInteractionState.value = 'DERIVING'
-    activeAddress.value = hwAccount.address
-    activeAccount.value = hwAccount
-    hardwareInteractionState.value = ''
-  } catch (err) {
-    hardwareInteractionState.value = ''
-    hardwareError.value = err as Error
-  }
+const connectHardwareWallet = async (hwaddr: HardwareAddress): Promise<AccountT> => {
+  hardwareError.value = null
+  hardwareInteractionState.value = 'DERIVING'
+  const hwAccount: AccountT = await firstValueFrom(radix.deriveHWAccount({
+    keyDerivation: HDPathRadix.create({
+      address: { index: hwaddr.index, isHardened: true }
+    }),
+    hardwareWalletConnection,
+    alsoSwitchTo: true,
+    verificationPrompt: false
+  }))
+  console.log('connected to ', hwAccount.address.toString())
+  hardwareInteractionState.value = ''
+  return hwAccount
 }
 
-const verifyHardwareWalletAddress = async () => {
-  await activateAccount()
-  showLedgerVerify.value = true
-  try {
-    await firstValueFrom(radix.displayAddressForActiveHWAccountOnHWDeviceForVerification())
-  } catch (e) {
+const verifyHardwareWalletAddress = () => {
+  return activateAccount().then(() => {
+    showLedgerVerify.value = true
+    return firstValueFrom(radix.displayAddressForActiveHWAccountOnHWDeviceForVerification())
+  }).catch((e) => {
     ledgerVerifyError.value = e as Error
-  }
+  })
 }
 
 const decryptMessage = async (tx: ExecutedTransaction): Promise<string> => {
-  await activateAccount()
-  const msg = await firstValueFrom(radix.decryptTransaction(tx))
-  return msg
+  return activateAccount().then(() => {
+    return firstValueFrom(radix.decryptTransaction(tx))
+  }).then((msg) => msg)
 }
 
 const setHideAccountModal = (val: boolean) => { showHideAccountModal.value = val }
@@ -699,11 +692,10 @@ const hideLedgerVerify = () => {
 
 const isActivating: Ref<boolean> = ref(false)
 
-const activateAccount = async () : Promise<void> => {
-  if (isActivating.value) return Promise.resolve()
+const activateAccount = async () : Promise<AccountT> => {
+  if (isActivating.value) return Promise.reject(Error('Already Activating'))
   if (!activeAddress.value || !accounts.value || !activeAccount.value) throw Error('Invalid Active Address')
   isActivating.value = true
-  const currentAddress = activeAddress.value
   const localAccount = accounts.value?.all.find((account: AccountT) => {
     if (!activeAddress.value) return false
     return account.address.equals(activeAddress.value) && account.signingKey.isLocalHDSigningKey
@@ -714,7 +706,7 @@ const activateAccount = async () : Promise<void> => {
     const newAccount = await firstValueFrom(radix.activeAccount)
     activeAccount.value = newAccount
     isActivating.value = false
-    return
+    return newAccount
   }
 
   const hardwareAddress =
@@ -726,15 +718,17 @@ const activateAccount = async () : Promise<void> => {
       })
   if (!hardwareAddress) throw Error('Invalid Address')
 
-  await connectHardwareWallet(hardwareAddress)
-  if (!activeAccount.value || !activeAccount.value.address.equals(hardwareAddress.address)) {
+  const acct = await connectHardwareWallet(hardwareAddress)
+  if (!acct.address.equals(hardwareAddress.address)) {
     hardwareError.value = new Error('Unable to activate the correct account')
-    activeAddress.value = currentAddress
     hardwareInteractionState.value = 'error'
     isActivating.value = false
-    return
+    throw Error('Invalid Hardware Device')
+  } else {
+    activeAccount.value = acct
   }
   isActivating.value = false
+  return activeAccount.value
 }
 
 export default function useWallet (router: Router): useWalletInterface {
@@ -867,7 +861,6 @@ export default function useWallet (router: Router): useWalletInterface {
     accountNameFor,
     accountRenamed,
     addAccount,
-    connectHardwareWallet,
     createWallet,
     hideLedgerInteraction,
     hideLedgerVerify,
