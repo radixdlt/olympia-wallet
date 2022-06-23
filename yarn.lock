@@ -1514,10 +1514,10 @@
     node-ipc "^9.1.1"
     ws "^7.3.1"
 
-"@radixdlt/account@^3.0.8":
-  version "3.0.8"
-  resolved "https://registry.yarnpkg.com/@radixdlt/account/-/account-3.0.8.tgz#17144801feb3e8ab3fc92ca019f1d5f8cbbc5c6c"
-  integrity sha512-VDUrBqYq55/o7xImzRqh9B3WGkSeffr5rhvIqXlpw6x1DFsede66fPra5RQSCXMhiwrJXMLruTfBsF4JRhQRtA==
+"@radixdlt/account@^3.0.9":
+  version "3.0.9"
+  resolved "https://registry.yarnpkg.com/@radixdlt/account/-/account-3.0.9.tgz#aa246ac514c6f530f72dcd8c6e7d0e637f0c83ce"
+  integrity sha512-dE5SJDzuPI9zn5wYoihJYPvA24IOZRmN5p4JhIM9yL6HAym+LnbmTwXUMMAhiCTVYAyalNNxVPisSn7ewUoXjw==
   dependencies:
     "@radixdlt/crypto" "^2.1.12"
     "@radixdlt/data-formats" "1.0.30"
@@ -1572,16 +1572,16 @@
     neverthrow "^4.0.1"
     ramda "^0.27.1"
 
-"@radixdlt/hardware-ledger@^2.1.31":
-  version "2.1.31"
-  resolved "https://registry.yarnpkg.com/@radixdlt/hardware-ledger/-/hardware-ledger-2.1.31.tgz#a2a4fdbe3d9d15691ea2b5a7c005dddfd69c0f08"
-  integrity sha512-R9xWZFyUzPVR+jOQ58REkCNo6mDmd0I36IqNKnYMVrgQEv2HVwjUT/aKvjMhNtKtNVI3zKbaNNKQgKyb8jTJOg==
+"@radixdlt/hardware-ledger@^2.1.33":
+  version "2.1.33"
+  resolved "https://registry.yarnpkg.com/@radixdlt/hardware-ledger/-/hardware-ledger-2.1.33.tgz#ff9c6bb6fef4c35eb1d0297baa94caa3aa2cf633"
+  integrity sha512-rDp/EicxmW/nAlN+4d33YTREVQmxNHZO8YXzKOj8VerBggSBTS6cgXLRfYE2IihUPY20V/Ci4zpMr8dPiGJ8Aw==
   dependencies:
     "@ledgerhq/hw-transport-node-hid" "^6.2.0"
     "@radixdlt/crypto" "^2.1.12"
     "@radixdlt/hardware-wallet" "^2.1.15"
     "@radixdlt/primitives" "^3.0.7"
-    "@radixdlt/tx-parser" "^2.1.17"
+    "@radixdlt/tx-parser" "^2.1.18"
     "@radixdlt/util" "1.0.29"
     neverthrow "4.0.1"
     prelude-ts "^1.0.2"
@@ -1634,12 +1634,12 @@
     long "^4.0.0"
     neverthrow "^4.0.1"
 
-"@radixdlt/tx-parser@^2.1.17":
-  version "2.1.17"
-  resolved "https://registry.yarnpkg.com/@radixdlt/tx-parser/-/tx-parser-2.1.17.tgz#ce33e55aafd42ca9a218011d4052a30e4f76370e"
-  integrity sha512-2Z5ZBX/14tBFZwNF8dZU916a1CLJwOVvLw57L/IAMvL+EMI9/dguYsv+f12mGggd3NhJsWtt9/hdWFUxHZ640g==
+"@radixdlt/tx-parser@^2.1.18":
+  version "2.1.18"
+  resolved "https://registry.yarnpkg.com/@radixdlt/tx-parser/-/tx-parser-2.1.18.tgz#0bbd3a84d480e6ef3b03fc724c2336542d647b94"
+  integrity sha512-twtuW5NoVVJ7RfXV99i1tHuoPGhswmMAiDwBxFPEcq2ow444m9siYjuUrFtiv7/fZqyEfK7mHsJs5ZNbDBIInQ==
   dependencies:
-    "@radixdlt/account" "^3.0.8"
+    "@radixdlt/account" "^3.0.9"
     "@radixdlt/crypto" "^2.1.12"
     "@radixdlt/primitives" "^3.0.7"
     "@radixdlt/uint256" "1.1.0"

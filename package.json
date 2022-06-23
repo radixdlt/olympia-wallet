@@ -22,7 +22,7 @@
     "@nopr3d/vue-next-rx": "^1.0.6",
     "@radixdlt/application": "4.0.18",
     "@radixdlt/crypto": "^2.1.12",
-    "@radixdlt/hardware-ledger": "^2.1.31",
+    "@radixdlt/hardware-ledger": "^2.1.33",
     "@radixdlt/networking": "^2.1.14",
     "@tailwindcss/forms": "^0.2.1",
     "@tailwindcss/postcss7-compat": "^2.0.2",
