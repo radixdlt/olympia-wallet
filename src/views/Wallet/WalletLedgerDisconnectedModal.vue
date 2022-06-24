@@ -11,7 +11,7 @@
       </svg>
     </template>
     <template v-slot:content>
-      <p class="mb-5">{{ $t('wallet.ledgerModal.content') }}</p>
+      <p class="mb-5">{{ $t('wallet.ledgerModal.disconnectedContent') }}</p>
       <div class="flex flex-row space-x-5 justify-center">
         <AppButtonCancel @click="handleClose" class="w-44">{{ $t('wallet.ledgerModal.buttonText') }}</AppButtonCancel>
       </div>
