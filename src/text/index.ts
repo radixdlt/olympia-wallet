@@ -137,6 +137,7 @@ const messages = {
       ledgerModal: {
         title: 'Ledger Device Disconnected',
         content: 'Unable to decrypt message. Ensure your device is connected or switch accounts to continue.',
+        disconnectedContent: 'Unable to connect to the active account.  Ensure the correct ledger device is connected and active or switch accounts to continue.',
         buttonText: 'Dismiss'
       },
       hardwareWalletAccounts: 'Hardware Wallet Accounts:'
