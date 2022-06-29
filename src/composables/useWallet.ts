@@ -701,12 +701,6 @@ const activateAccount = async () : Promise<AccountT> => {
   if (isActivating.value) return Promise.reject(Error('Already Activating'))
   if (!activeAddress.value || !accounts.value || !activeAccount.value) throw Error('Invalid Active Address')
   isActivating.value = true
-  if (activeAccount.value.address.equals(activeAddress.value)) {
-    await delay(1000)
-    isActivating.value = false
-    return activeAccount.value
-  }
-
   const localAccount = accounts.value?.all.find((account: AccountT) => {
     if (!activeAddress.value) return false
     return account.address.equals(activeAddress.value) && account.signingKey.isLocalHDSigningKey
