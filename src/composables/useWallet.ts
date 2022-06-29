@@ -624,6 +624,7 @@ const connectHardwareWallet = async (hwaddr: HardwareAddress): Promise<AccountT>
     alsoSwitchTo: true,
     verificationPrompt: false
   }))
+  await delay(3000)
   console.log('connected to ', hwAccount.address.toString())
   hardwareInteractionState.value = ''
   return hwAccount
@@ -700,6 +701,12 @@ const activateAccount = async () : Promise<AccountT> => {
   if (isActivating.value) return Promise.reject(Error('Already Activating'))
   if (!activeAddress.value || !accounts.value || !activeAccount.value) throw Error('Invalid Active Address')
   isActivating.value = true
+  if (activeAccount.value.address.equals(activeAddress.value)) { 
+    await delay(1000)
+    isActivating.value = false
+    return activeAccount.value
+  }
+
   const localAccount = accounts.value?.all.find((account: AccountT) => {
     if (!activeAddress.value) return false
     return account.address.equals(activeAddress.value) && account.signingKey.isLocalHDSigningKey
@@ -732,7 +739,6 @@ const activateAccount = async () : Promise<AccountT> => {
     activeAccount.value = acct
   }
   isActivating.value = false
-  await delay(3000)
   return activeAccount.value
 }
 
