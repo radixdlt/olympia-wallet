@@ -692,6 +692,10 @@ const hideLedgerVerify = () => {
 
 const isActivating: Ref<boolean> = ref(false)
 
+const delay = async (ms: integer) : Promise<void> => {
+  return await new Promise(resolve => setTimeout(resolve, ms))
+}
+
 const activateAccount = async () : Promise<AccountT> => {
   if (isActivating.value) return Promise.reject(Error('Already Activating'))
   if (!activeAddress.value || !accounts.value || !activeAccount.value) throw Error('Invalid Active Address')
@@ -728,6 +732,7 @@ const activateAccount = async () : Promise<AccountT> => {
     activeAccount.value = acct
   }
   isActivating.value = false
+  await delay(3000)
   return activeAccount.value
 }
 
