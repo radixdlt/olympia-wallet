@@ -692,7 +692,7 @@ const hideLedgerVerify = () => {
 
 const isActivating: Ref<boolean> = ref(false)
 
-const delay = async (ms: integer) : Promise<void> => {
+const delay = async (ms: number) : Promise<void> => {
   return await new Promise(resolve => setTimeout(resolve, ms))
 }
 
