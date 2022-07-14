@@ -41,14 +41,16 @@ const WalletHideAccountModal = defineComponent({
     const {
       setDisconnectDeviceModal,
       showHideAccountModal,
-      setHideAccountModal
+      setHideAccountModal,
+      accountToBeHiddenAddress
     } = useWallet(router)
 
     return {
       handleSubmit: () => {
         // setDisconnectDeviceModal(-1)
-        setHideAccountModal(true)
-        // add account address to wa
+        setHideAccountModal(false)
+        console.log('submit button clicked---> ', accountToBeHiddenAddress)
+        // get active account address from useWallet and pass in to next function that handles adding to wallet.json
       },
       handleClose: () => {
         setHideAccountModal(false)

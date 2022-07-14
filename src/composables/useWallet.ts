@@ -74,6 +74,7 @@ const { setError } = useErrors(radix)
 export type WalletError = ErrorT<ErrorCategory.WALLET>
 
 const accountNames: Ref<AccountName[]> = ref([])
+const accountToBeHiddenAddress: Ref<string> = ref('')
 const accounts: Ref<AccountsT | null> = ref(null)
 const activeAccount: Ref<AccountT | null> = ref(null)
 const activeAddress: Ref<AccountAddressT | null> = ref(null)
@@ -370,6 +371,7 @@ const stakeTokens = async (stakeTokensInput: StakeTokensInput) => {
 
 interface useWalletInterface {
   readonly accounts: Ref<AccountsT | null>;
+  readonly accountToBeHiddenAddress: Ref<string>;
   readonly activeAddress: Ref<AccountAddressT | null>;
   readonly activeNetwork: Ref<Network | null>;
   readonly connected: ComputedRef<boolean>;
@@ -450,6 +452,7 @@ interface useWalletInterface {
   walletLoaded: () => void;
   createNewHardwareAccount: () => void;
   closeLedgerErrorModal: () => void;
+  setActiveAccountAddress:(address: string) => void;
 }
 
 const walletLoaded = async () => {
@@ -646,6 +649,11 @@ const decryptMessage = async (tx: ExecutedTransaction): Promise<string> => {
 
 const setHideAccountModal = (val: boolean) => { showHideAccountModal.value = val }
 
+const setActiveAccountAddress = (address: string) => {
+  accountToBeHiddenAddress.value = address
+  console.log('inside use wallet address is ---> ', accountToBeHiddenAddress)
+}
+
 const setUpdateInProcess = (val: boolean) => {
   updateInProcess.value = val
 }
@@ -776,6 +784,7 @@ export default function useWallet (router: Router): useWalletInterface {
 
   return {
     accounts,
+    accountToBeHiddenAddress,
     activeAddress,
     activeNetwork,
     explorerUrlBase: computed(() => explorerUrlBase.value),
@@ -867,6 +876,7 @@ export default function useWallet (router: Router): useWalletInterface {
     initWallet,
     persistNodeUrl,
     setActiveAddress,
+    setActiveAccountAddress,
     setHideAccountModal,
     setDisconnectDeviceModal,
     forgetDevice,
