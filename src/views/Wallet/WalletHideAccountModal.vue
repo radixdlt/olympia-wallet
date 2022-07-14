@@ -40,6 +40,7 @@ const WalletHideAccountModal = defineComponent({
     const router = useRouter()
     const {
       setDisconnectDeviceModal,
+      showHideAccountModal,
       setHideAccountModal
     } = useWallet(router)
 
@@ -47,11 +48,10 @@ const WalletHideAccountModal = defineComponent({
       handleSubmit: () => {
         // setDisconnectDeviceModal(-1)
         setHideAccountModal(true)
-        // add account address to wallet.json
+        // add account address to wa
       },
       handleClose: () => {
-        // setDisconnectDeviceModal(-1)
-        setHideAccountModal(true)
+        setHideAccountModal(false)
       }
     }
   }
