@@ -50,7 +50,10 @@ import {
   fetchSelectedNodeFromStore,
   setDecimalType,
   getDecimalType,
-  saveAccountName
+  saveAccountName,
+  getHiddenAccounts,
+  setHiddenAccounts,
+  updateHiddenAccounts
 } from '@/actions/vue/data-store'
 
 import {
@@ -79,6 +82,8 @@ const { setError } = useErrors(radix)
 export type WalletError = ErrorT<ErrorCategory.WALLET>
 
 const accountNames: Ref<AccountName[]> = ref([])
+const accountToBeHiddenAddress: Ref<string> = ref('')
+const accountToBeHiddenNickname: Ref<string> = ref('')
 const accounts: Ref<AccountsT | null> = ref(null)
 const activeAccount: Ref<AccountT | null> = ref(null)
 const activeAddress: Ref<AccountAddressT | null> = ref(null)
@@ -408,8 +413,31 @@ const handleDecimalType = (newDecimalType: AmountFormats) => {
   setDecimalType(newDecimalType)
 }
 
+const hiddenAccounts: Ref<string []> = ref([])
+
+// get hiddenAccounts
+const fetchHiddenAccountsFromElectron = async () => {
+  hiddenAccounts.value = await getHiddenAccounts()
+}
+
+fetchHiddenAccountsFromElectron()
+
+// handleHiddenAccounts
+const handleHiddenAccounts = async (newAcctToHide: string, newAcctNickname: string) => {
+  await setHiddenAccounts(newAcctToHide, newAcctNickname)
+  await fetchHiddenAccountsFromElectron()
+}
+
+// handle showAccounts function goes here
+const handleShowAccounts = async (acctToShow: string) => {
+  await updateHiddenAccounts(acctToShow)
+  await fetchHiddenAccountsFromElectron()
+}
+
 interface useWalletInterface {
   readonly accounts: Ref<AccountsT | null>;
+  readonly accountToBeHiddenAddress: Ref<string>;
+  readonly accountToBeHiddenNickname: Ref<string>;
   readonly activeAddress: Ref<AccountAddressT | null>;
   readonly activeNetwork: Ref<Network | null>;
   readonly connected: ComputedRef<boolean>;
@@ -421,6 +449,8 @@ interface useWalletInterface {
   readonly hardwareInteractionState: Ref<string>;
   readonly hasWallet: Ref<boolean>;
   readonly ledgerVerifyError: Ref<boolean>;
+  readonly hiddenAccounts: ComputedRef<string []>;
+  // readonly ledgerVerifyError: Ref<Error | null>;
   readonly nativeToken: Ref<Token | null>;
   readonly networkPreamble: ComputedRef<string>;
   readonly nodeUrl: ComputedRef<string | null>;
@@ -496,6 +526,10 @@ interface useWalletInterface {
   closeLedgerErrorModal: () => void;
   setDecimalType: (decimalType: AmountFormats) => void;
   activeAddresIsSoftwareAccount: () => void;
+  // setDecimalType: (decimalType: string) => void;
+  setActiveAccountAddress:(address: string, nickname: string) => void;
+  handleHiddenAccounts: (acctToHide: string, acctNickNameToHide: string) => void;
+  handleShowAccounts: (acctToShow: string) => void;
 }
 
 const walletLoaded = async () => {
@@ -722,6 +756,12 @@ const decryptMessage = async (tx: ExecutedTransaction): Promise<string> => {
 
 const setHideAccountModal = (val: boolean) => { showHideAccountModal.value = val }
 
+const setActiveAccountAddress = (addr: string, acctNickName: string) => {
+  // console.log(addr, acctNickName)
+  accountToBeHiddenAddress.value = addr
+  accountToBeHiddenNickname.value = acctNickName
+}
+
 const setUpdateInProcess = (val: boolean) => {
   updateInProcess.value = val
 }
@@ -862,6 +902,8 @@ export default function useWallet (router: Router): useWalletInterface {
 
   return {
     accounts,
+    accountToBeHiddenAddress,
+    accountToBeHiddenNickname,
     activeAddress,
     activeNetwork,
     explorerUrlBase: computed(() => explorerUrlBase.value),
@@ -871,7 +913,10 @@ export default function useWallet (router: Router): useWalletInterface {
     hardwareError,
     hardwareDevices,
     hardwareInteractionState,
+    handleHiddenAccounts,
+    handleShowAccounts,
     hasWallet,
+    hiddenAccounts: computed(() => hiddenAccounts.value),
     ledgerVerifyError,
     loadingLatestAddress: computed(() => loadingLatestAddress.value),
     nativeToken,
@@ -957,6 +1002,7 @@ export default function useWallet (router: Router): useWalletInterface {
     activeAddresIsSoftwareAccount,
     persistNodeUrl,
     setActiveAddress,
+    setActiveAccountAddress,
     setHideAccountModal,
     setDisconnectDeviceModal,
     forgetDevice,

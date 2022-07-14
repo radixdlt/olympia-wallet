@@ -164,7 +164,8 @@ const WalletSidebarAccounts = defineComponent({
       derivedAccountIndex,
       activeNetwork,
       createNewHardwareAccount,
-      setDisconnectDeviceModal
+      setDisconnectDeviceModal,
+      hiddenAccounts
     } = useWallet(router)
 
     const { setState } = useSidebar()
@@ -176,7 +177,21 @@ const WalletSidebarAccounts = defineComponent({
     const localAccounts: ComputedRef<AccountT[]> = computed(() => {
       if (!accounts.value) return []
       return accounts.value.all.filter((account: AccountT) => {
-        return account.signingKey.isLocalHDSigningKey
+        const isLocalAccount = account.signingKey.isLocalHDSigningKey
+        // flatten array of objects
+        const newArr = hiddenAccounts.value.flatMap(acct => Object.values(acct))
+        const isHidden = newArr.includes(account.address.toString())
+        return isLocalAccount && !isHidden
+      })
+    })
+
+    const nonHiddenHardwareDevices: ComputedRef<HardwareDevice[]> = computed(() => {
+      return hardwareDevices.value.map((hwDevice: HardwareDevice) => {
+        const availableAddresses = hwDevice.addresses.filter((hwAddr) => {
+          const newArr = hiddenAccounts.value.flatMap(acct => Object.values(acct))
+          return !newArr.includes(hwAddr.address.toString())
+        })
+        return { ...hwDevice, addresses: availableAddresses }
       })
     })
 
@@ -194,6 +209,7 @@ const WalletSidebarAccounts = defineComponent({
       showSoftwareAccounts,
       showHardwareAccounts,
       localAccounts,
+      nonHiddenHardwareDevices,
       handleAccountEditName,
       setState,
       addSoftwareAccount () {

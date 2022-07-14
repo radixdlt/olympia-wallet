@@ -2,6 +2,7 @@ import { IpcMainInvokeEvent } from 'electron/main'
 import Store from 'electron-store'
 import migrations from '@/electron-store/migrations'
 import { HardwareDevice } from '@/services/_types'
+import { add } from '@/helpers/arithmetic';
 
 type MaybeString = string | null;
 export type AccountName = { address: string; name: string; }
@@ -147,10 +148,19 @@ export const getHiddenAccounts = (): string[] => {
   return hiddenAccounts
 }
 
-export const hideAccount = (event: IpcMainInvokeEvent, accountAddress: string): string[] => {
+export const setHiddenAccounts = (event: IpcMainInvokeEvent, data: string): void => {
+  const { address, nickname } = JSON.parse(data)
   const hiddenAccounts = store.get('hiddenAccounts', []) as string[]
-  store.set('hiddenAccounts', [...hiddenAccounts, accountAddress])
-  return [...hiddenAccounts, accountAddress]
+  store.set('hiddenAccounts', [...hiddenAccounts, { address, nickname }])
+}
+
+// show hidden accounts
+export const updateHiddenAccounts = (event: IpcMainInvokeEvent, accountAddress: string): void => {
+  const hiddenAccounts = store.get('hiddenAccounts', []) as string []
+  const filteredHiddenAccounts = hiddenAccounts.filter(hiddenAccount => {
+    return hiddenAccount.address !== accountAddress
+  })
+  store.set('hiddenAccounts', filteredHiddenAccounts)
 }
 
 export const unhideAccount = (event: IpcMainInvokeEvent, accountAddress: string): string[] => {

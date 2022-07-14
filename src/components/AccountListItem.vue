@@ -52,7 +52,7 @@ const AccountListItem = defineComponent({
 
   setup (props) {
     const router = useRouter()
-    const { accountNameFor, activeAddress, setHideAccountModal } = useWallet(router)
+    const { accountNameFor, activeAddress, setHideAccountModal, setActiveAccountAddress } = useWallet(router)
 
     const address = toRef(props, 'address')
 
@@ -61,8 +61,9 @@ const AccountListItem = defineComponent({
       router.push(`/wallet/${address.value?.toString()}/account-edit-name`)
     }
 
-    const hideAccount = () => {
+    const hideAccount = (addr: string, acctNickName: string) => {
       setHideAccountModal(true)
+      setActiveAccountAddress(addr, acctNickName)
     }
 
     const addressVal: ComputedRef<string> = computed(() => address.value.toString())

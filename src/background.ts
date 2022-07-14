@@ -30,10 +30,11 @@ import {
   getHiddenTokens,
   unhideTokenType,
   getHiddenAccounts,
-  hideAccount,
-  unhideAccount,
   getDecimalType,
-  setDecimalType
+  setDecimalType,
+  setHiddenAccounts,
+  updateHiddenAccounts,
+  unhideAccount
 } from './actions/electron/data-store'
 import { getIsUpdateAvailable, getIsUpdateDownloaded } from './actions/electron/general'
 import { sendAPDU } from './actions/electron/hardware-wallet'
@@ -175,7 +176,8 @@ ipcMain.handle('quit-and-install', quitAndInstall)
 ipcMain.handle('get-accepted-tos', getAcceptedTos)
 ipcMain.handle('set-accepted-tos', setAcceptedTos)
 ipcMain.handle('get-hidden-accounts', getHiddenAccounts)
-ipcMain.handle('hide-accounts', hideAccount)
+ipcMain.handle('set-hidden-accounts', setHiddenAccounts)
+ipcMain.handle('update-hidden-accounts', updateHiddenAccounts)
 ipcMain.handle('unhide-accounts', unhideAccount)
 ipcMain.handle('get-decimal-type', getDecimalType)
 ipcMain.handle('set-decimal-type', setDecimalType)
