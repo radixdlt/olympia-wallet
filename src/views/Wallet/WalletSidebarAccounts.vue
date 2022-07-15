@@ -190,6 +190,7 @@ const WalletSidebarAccounts = defineComponent({
 
     console.log('filtered localAccounts --->', localAccounts.value)
     console.log('hidden accounts --> ', hiddenAccounts.value)
+    console.log('non hidden hardware devices --> ', nonHiddenHardwareDevices.value)
 
     const handleAccountEditName = (device: any) => {
       setState(false)
