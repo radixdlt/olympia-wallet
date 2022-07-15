@@ -68,11 +68,11 @@ const AccountListItem = defineComponent({
       router.push(`/wallet/${address.value?.toString()}/account-edit-name`)
     }
 
-    const hideAccount = (address: string) => {
+    const hideAccount = (addr: string) => {
       setHideAccountModal(true)
       // send the adddress to wallet.json if the user confirms hiding account
-      console.log(address)
-      setActiveAccountAddress(address)
+      console.log(addr)
+      setActiveAccountAddress(addr)
     }
 
     const addressVal: ComputedRef<string> = computed(() => address.value.toString())

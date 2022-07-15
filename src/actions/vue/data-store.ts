@@ -112,6 +112,7 @@ export const getHiddenAccounts = (): Promise<string[]> => new Promise((resolve) 
 })
 
 export const hideAccount = async (address: string): Promise<string[]> => {
+  console.log('vue/data-store --->', address)
   const newHiddenTokens = await window.ipcRenderer.invoke('hide-account', address)
   return newHiddenTokens
 }

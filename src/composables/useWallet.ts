@@ -649,9 +649,8 @@ const decryptMessage = async (tx: ExecutedTransaction): Promise<string> => {
 
 const setHideAccountModal = (val: boolean) => { showHideAccountModal.value = val }
 
-const setActiveAccountAddress = (address: string) => {
-  accountToBeHiddenAddress.value = address
-  console.log('inside use wallet address is ---> ', accountToBeHiddenAddress)
+const setActiveAccountAddress = (addr: string) => {
+  accountToBeHiddenAddress.value = addr
 }
 
 const setUpdateInProcess = (val: boolean) => {
