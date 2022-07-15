@@ -30,12 +30,13 @@ import {
   getHiddenTokens,
   unhideTokenType,
   getHiddenAccounts,
-  hideAccount,
+  setHiddenAccounts,
   unhideAccount
 } from './actions/electron/data-store'
 import { getIsUpdateAvailable, getIsUpdateDownloaded } from './actions/electron/general'
 import { sendAPDU } from './actions/electron/hardware-wallet'
 import { checkForUpdates, downloadUpdate, quitAndInstall } from './updater'
+// import { setHiddenAccounts } from './actions/vue/data-store'
 
 const pkg = require('../package.json')
 
@@ -173,7 +174,9 @@ ipcMain.handle('quit-and-install', quitAndInstall)
 ipcMain.handle('get-accepted-tos', getAcceptedTos)
 ipcMain.handle('set-accepted-tos', setAcceptedTos)
 ipcMain.handle('get-hidden-accounts', getHiddenAccounts)
-ipcMain.handle('hide-accounts', hideAccount)
+ipcMain.handle('set-hidden-accounts', setHiddenAccounts)
+// ipcMain.handle('set-hidden-accounts', setHiddenAccounts)
+// ipcMain.handle('hide-accounts', hideAccount)
 ipcMain.handle('unhide-accounts', unhideAccount)
 // Exit cleanly on request from parent process in development mode.
 if (isDevelopment) {

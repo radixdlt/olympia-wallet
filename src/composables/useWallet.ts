@@ -47,7 +47,10 @@ import {
   getAccountNames,
   getLatestAccountAddress,
   persistNodeSelection,
-  fetchSelectedNodeFromStore
+  fetchSelectedNodeFromStore,
+  getHiddenAccounts,
+  setHiddenAccounts
+  // hideAccount
 } from '@/actions/vue/data-store'
 
 import {
@@ -85,6 +88,7 @@ const hardwareDevices: Ref<HardwareDevice[]> = ref([])
 const hardwareError: Ref<Error | null> = ref(null)
 const hardwareInteractionState: Ref<string> = ref('')
 const hasWallet = ref(false)
+// const hiddenAccounts: Ref<string []> = ref([])
 const ledgerVerifyError: Ref<Error | null> = ref(null)
 const nativeToken: Ref<Token | null> = ref(null)
 const nodeUrl: Ref<string | null> = ref(null)
@@ -369,6 +373,30 @@ const stakeTokens = async (stakeTokensInput: StakeTokensInput) => {
   )
 }
 
+const hiddenAccounts: Ref<string []> = ref([])
+
+// get hiddenAccounts
+
+const fetchHiddenAccountsFromElectron = async () => {
+  hiddenAccounts.value = await getHiddenAccounts()
+}
+// }
+// getHiddenAccounts().then((val) => {
+//   console.log('previous value of hidden accounts', val)
+//   hiddenAccounts.value = val
+//   console.log('updated value or hidden accounts', hiddenAccounts.value)
+// })
+
+fetchHiddenAccountsFromElectron()
+console.log('hidden accounts ---> ', hiddenAccounts.value)
+
+// handleHiddenAccounts
+const handleHiddenAccounts = async (newAcctToHide: string) => {
+  console.log(newAcctToHide)
+  await setHiddenAccounts(newAcctToHide)
+  await fetchHiddenAccountsFromElectron()
+}
+
 interface useWalletInterface {
   readonly accounts: Ref<AccountsT | null>;
   readonly accountToBeHiddenAddress: Ref<string>;
@@ -381,6 +409,7 @@ interface useWalletInterface {
   readonly hardwareError: Ref<Error | null>;
   readonly hardwareInteractionState: Ref<string>;
   readonly hasWallet: Ref<boolean>;
+  readonly hiddenAccounts: ComputedRef<string []>;
   readonly ledgerVerifyError: Ref<Error | null>;
   readonly nativeToken: Ref<Token | null>;
   readonly networkPreamble: ComputedRef<string>;
@@ -453,6 +482,7 @@ interface useWalletInterface {
   createNewHardwareAccount: () => void;
   closeLedgerErrorModal: () => void;
   setActiveAccountAddress:(address: string) => void;
+  handleHiddenAccounts: (acctToHide: string) => void;
 }
 
 const walletLoaded = async () => {
@@ -792,7 +822,9 @@ export default function useWallet (router: Router): useWalletInterface {
     hardwareError,
     hardwareDevices,
     hardwareInteractionState,
+    handleHiddenAccounts,
     hasWallet,
+    hiddenAccounts: computed(() => hiddenAccounts.value),
     ledgerVerifyError,
     loadingLatestAddress: computed(() => loadingLatestAddress.value),
     nativeToken,

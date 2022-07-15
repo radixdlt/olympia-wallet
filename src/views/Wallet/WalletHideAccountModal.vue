@@ -29,7 +29,7 @@ import ButtonSubmit from '@/components/ButtonSubmit.vue'
 import { useRouter } from 'vue-router'
 import { useWallet } from '@/composables'
 import AppButtonCancel from '@/components/AppButtonCancel.vue'
-import { hideAccount } from '@/actions/vue/data-store'
+// import { hideAccount } from '@/actions/vue/data-store'
 
 const WalletHideAccountModal = defineComponent({
   components: {
@@ -43,7 +43,8 @@ const WalletHideAccountModal = defineComponent({
       setDisconnectDeviceModal,
       showHideAccountModal,
       setHideAccountModal,
-      accountToBeHiddenAddress
+      accountToBeHiddenAddress,
+      handleHiddenAccounts
     } = useWallet(router)
 
     return {
@@ -52,7 +53,8 @@ const WalletHideAccountModal = defineComponent({
         setHideAccountModal(false)
         console.log('submit button clicked---> ', accountToBeHiddenAddress.value)
         // get active account address from useWallet and pass in to next function that handles adding to wallet.json
-        hideAccount(accountToBeHiddenAddress.value)
+        // hideAccount(accountToBeHiddenAddress.value)
+        handleHiddenAccounts(accountToBeHiddenAddress.value)
       },
       handleClose: () => {
         setHideAccountModal(false)
