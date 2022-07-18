@@ -171,7 +171,6 @@ const WalletSidebarAccounts = defineComponent({
 
     const localAccounts: ComputedRef<AccountT[]> = computed(() => {
       if (!accounts.value) return []
-      // console.log('inside local accounts -->', hiddenAccounts.value)
       return accounts.value.all.filter((account: AccountT) => {
         const isLocalAccount = account.signingKey.isLocalHDSigningKey
         const isHidden = hiddenAccounts.value.includes(account.address.toString())
@@ -182,15 +181,11 @@ const WalletSidebarAccounts = defineComponent({
     const nonHiddenHardwareDevices: ComputedRef<HardwareDevice[]> = computed(() => {
       return hardwareDevices.value.map((hwDevice: HardwareDevice) => {
         const availableAddresses = hwDevice.addresses.filter((hwAddr) => {
-          return !hiddenAccounts.value.includes(hwAddr.toString())
+          return !hiddenAccounts.value.includes(hwAddr.address.toString())
         })
         return { ...hwDevice, addresses: availableAddresses }
       })
     })
-
-    console.log('filtered localAccounts --->', localAccounts.value)
-    console.log('hidden accounts --> ', hiddenAccounts.value)
-    console.log('non hidden hardware devices --> ', nonHiddenHardwareDevices.value)
 
     const handleAccountEditName = (device: any) => {
       setState(false)
