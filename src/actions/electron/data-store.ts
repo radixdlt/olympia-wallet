@@ -152,13 +152,13 @@ export const setHiddenAccounts = (event: IpcMainInvokeEvent, accountAddress: str
   console.log('new address added to wallet.json --->', hiddenAccounts)
 }
 
-// this is like a getter or setter????
-// export const hideAccount = (event: IpcMainInvokeEvent, accountAddress: string): string[] => {
-//   const hiddenAccounts = store.get('hiddenAccounts', []) as string[]
-//   store.set('hiddenAccounts', [...hiddenAccounts, accountAddress])
-//   console.log('hidden accounts electron/data-store --->', hiddenAccounts)
-//   return [...hiddenAccounts, accountAddress]
-// }
+export const updateHiddenAccounts = (event: IpcMainInvokeEvent, accountAddress: string): void => {
+  const hiddenAccounts = store.get('hiddenAccounts', []) as string []
+  const filteredHiddenAccounts = hiddenAccounts.filter(hiddenAccount => {
+    return hiddenAccount !== accountAddress
+  })
+  store.set('hiddenAccounts', filteredHiddenAccounts)
+}
 
 export const unhideAccount = (event: IpcMainInvokeEvent, accountAddress: string): string[] => {
   let hiddenAccounts = store.get('hiddenAccounts', []) as string[]

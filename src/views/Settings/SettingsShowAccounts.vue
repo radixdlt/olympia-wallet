@@ -2,13 +2,9 @@
   <div class="bg-white flex flex-col rounded-md w-full h-96">
     <div class="pt-6 px-6 rounded-md">
       <p>Hidden Accounts Go Here</p>
-      <!-- import hiddenAccounts array, -->
-      <!-- loop through each address and display it to the screen with some way to select it,  -->
       <p v-for="account in hiddenAccounts" :key="account" @click="showAccount(account)" class="cursor-pointer">
         {{ account }}
       </p>
-      <!-- once selected update set new hidden accounts array,  -->
-      <!-- then get the updated array to auto update the ui  -->
     </div>
   </div>
 </template>
@@ -24,7 +20,14 @@ export default defineComponent({
     const { hiddenAccounts } = useWallet(router)
 
     const showAccount = (account: string) => {
-      console.log(account)
+      console.log('before filtering --->', hiddenAccounts.value, account)
+      // remove the selected account from hidden account
+      const filteredHiddenAccounts = hiddenAccounts.value.filter((hiddenAccount: string) => {
+        console.log(hiddenAccount, account, hiddenAccount === account)
+        return hiddenAccount !== account
+      })
+      console.log('after filtering--->', filteredHiddenAccounts)
+      // set hidden accounts to remaining accounts
     }
     return {
       hiddenAccounts,

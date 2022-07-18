@@ -116,11 +116,10 @@ export const setHiddenAccounts = (address: string): Promise<string> => new Promi
   resolve(window.ipcRenderer.invoke('set-hidden-accounts', address))
 })
 
-// export const hideAccount = async (address: string): Promise<string[]> => {
-//   console.log('vue/data-store --->', address)
-//   const newHiddenTokens = await window.ipcRenderer.invoke('hide-accounts', address)
-//   return newHiddenTokens
-// }
+// update hidden accounts
+export const updateHiddenAccounts = (address: string): Promise<string> => new Promise((resolve) => {
+  resolve(window.ipcRenderer.invoke('update-hidden-accounts', address))
+})
 
 export const unhideAccount = async (address: string): Promise<string[]> => {
   const newHiddenTokens = await window.ipcRenderer.invoke('unhide-accounts', address)
