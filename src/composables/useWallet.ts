@@ -388,6 +388,8 @@ const handleHiddenAccounts = async (newAcctToHide: string) => {
   await fetchHiddenAccountsFromElectron()
 }
 
+// handle showAccounts function goes here
+
 interface useWalletInterface {
   readonly accounts: Ref<AccountsT | null>;
   readonly accountToBeHiddenAddress: Ref<string>;
