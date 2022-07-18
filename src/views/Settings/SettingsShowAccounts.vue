@@ -4,7 +4,7 @@
       <p>Hidden Accounts Go Here</p>
       <!-- import hiddenAccounts array, -->
       <!-- loop through each address and display it to the screen with some way to select it,  -->
-      <p v-for="account in hiddenAccounts" :key="account">
+      <p v-for="account in hiddenAccounts" :key="account" @click="showAccount(account)" class="cursor-pointer">
         {{ account }}
       </p>
       <!-- once selected update set new hidden accounts array,  -->
@@ -22,8 +22,13 @@ export default defineComponent({
   setup () {
     const router = useRouter()
     const { hiddenAccounts } = useWallet(router)
+
+    const showAccount = (account: string) => {
+      console.log(account)
+    }
     return {
-      hiddenAccounts
+      hiddenAccounts,
+      showAccount
     }
   }
 })
