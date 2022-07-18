@@ -376,23 +376,14 @@ const stakeTokens = async (stakeTokensInput: StakeTokensInput) => {
 const hiddenAccounts: Ref<string []> = ref([])
 
 // get hiddenAccounts
-
 const fetchHiddenAccountsFromElectron = async () => {
   hiddenAccounts.value = await getHiddenAccounts()
 }
-// }
-// getHiddenAccounts().then((val) => {
-//   console.log('previous value of hidden accounts', val)
-//   hiddenAccounts.value = val
-//   console.log('updated value or hidden accounts', hiddenAccounts.value)
-// })
 
 fetchHiddenAccountsFromElectron()
-console.log('hidden accounts ---> ', hiddenAccounts.value)
 
 // handleHiddenAccounts
 const handleHiddenAccounts = async (newAcctToHide: string) => {
-  console.log(newAcctToHide)
   await setHiddenAccounts(newAcctToHide)
   await fetchHiddenAccountsFromElectron()
 }
