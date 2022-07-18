@@ -1514,14 +1514,14 @@
     node-ipc "^9.1.1"
     ws "^7.3.1"
 
-"@radixdlt/account@^3.0.9":
-  version "3.0.9"
-  resolved "https://registry.yarnpkg.com/@radixdlt/account/-/account-3.0.9.tgz#aa246ac514c6f530f72dcd8c6e7d0e637f0c83ce"
-  integrity sha512-dE5SJDzuPI9zn5wYoihJYPvA24IOZRmN5p4JhIM9yL6HAym+LnbmTwXUMMAhiCTVYAyalNNxVPisSn7ewUoXjw==
+"@radixdlt/account@^3.0.10":
+  version "3.0.10"
+  resolved "https://registry.yarnpkg.com/@radixdlt/account/-/account-3.0.10.tgz#aae197c73f7312c8aa531f2335a4f128dfd17fa8"
+  integrity sha512-IWZ7WxMQoKHaDbYFFTYog4yQdNgZvQqwO6pcdhF6W6XJFjZjeGgsuOstmhTNlqHYINJ3ZvJp6zqYoh68VOIMbA==
   dependencies:
-    "@radixdlt/crypto" "^2.1.12"
+    "@radixdlt/crypto" "^2.1.13"
     "@radixdlt/data-formats" "1.0.30"
-    "@radixdlt/hardware-wallet" "^2.1.15"
+    "@radixdlt/hardware-wallet" "^2.1.16"
     "@radixdlt/primitives" "^3.0.7"
     "@radixdlt/uint256" "1.1.0"
     "@radixdlt/util" "1.0.29"
@@ -1547,10 +1547,10 @@
     ramda "^0.27.1"
     rxjs "7.0.0"
 
-"@radixdlt/crypto@^2.1.12":
-  version "2.1.12"
-  resolved "https://registry.yarnpkg.com/@radixdlt/crypto/-/crypto-2.1.12.tgz#0301d0239434a99470faf1beef06abc51b6ab9f3"
-  integrity sha512-5TbQqn1Nw5WhI1SFdixkIIpQrL1IOBrIEjBu6aq9VfJx51zMKv1/6PMBql+7wFpzbwcLbuGEnzg0HIy2JP2MTA==
+"@radixdlt/crypto@^2.1.13":
+  version "2.1.13"
+  resolved "https://registry.yarnpkg.com/@radixdlt/crypto/-/crypto-2.1.13.tgz#e299d81fe4618795a1ee8d7cd7a5cfc50f4d938a"
+  integrity sha512-av/eD9Ac0ZflFcujUzQVi85OWKlHwD1S46bq4g3ReszWhFq8OYNR86kVUG/aURe4eoL6MzH5HsIMCJgx7i4BmA==
   dependencies:
     "@radixdlt/data-formats" "1.0.30"
     "@radixdlt/primitives" "^3.0.7"
@@ -1572,28 +1572,28 @@
     neverthrow "^4.0.1"
     ramda "^0.27.1"
 
-"@radixdlt/hardware-ledger@^2.1.33":
-  version "2.1.33"
-  resolved "https://registry.yarnpkg.com/@radixdlt/hardware-ledger/-/hardware-ledger-2.1.33.tgz#ff9c6bb6fef4c35eb1d0297baa94caa3aa2cf633"
-  integrity sha512-rDp/EicxmW/nAlN+4d33YTREVQmxNHZO8YXzKOj8VerBggSBTS6cgXLRfYE2IihUPY20V/Ci4zpMr8dPiGJ8Aw==
+"@radixdlt/hardware-ledger@^2.1.34":
+  version "2.1.34"
+  resolved "https://registry.yarnpkg.com/@radixdlt/hardware-ledger/-/hardware-ledger-2.1.34.tgz#1b137bff4c5118fcaf8e4169bfc4f859943945ad"
+  integrity sha512-ZhrPbhRt2OXJF4xNU6nS4/hsqnQG2usL1QRkMvxnIJ80xPNIO6U0gLGReyifMRPTXFG5/V7Le9vtMj8sFnm+iw==
   dependencies:
     "@ledgerhq/hw-transport-node-hid" "^6.2.0"
-    "@radixdlt/crypto" "^2.1.12"
-    "@radixdlt/hardware-wallet" "^2.1.15"
+    "@radixdlt/crypto" "^2.1.13"
+    "@radixdlt/hardware-wallet" "^2.1.16"
     "@radixdlt/primitives" "^3.0.7"
-    "@radixdlt/tx-parser" "^2.1.18"
+    "@radixdlt/tx-parser" "^2.1.19"
     "@radixdlt/util" "1.0.29"
     neverthrow "4.0.1"
     prelude-ts "^1.0.2"
     rxjs "7.0.0"
     uuid "^8.3.2"
 
-"@radixdlt/hardware-wallet@^2.1.15":
-  version "2.1.15"
-  resolved "https://registry.yarnpkg.com/@radixdlt/hardware-wallet/-/hardware-wallet-2.1.15.tgz#94e9d7b62628606939e0ee8117082402d93eefc9"
-  integrity sha512-cETv7ijFAruBneLmqBsG0pe2c2VebpR5UYWxLfNGD+bq13gAVvnldGDy0StZE6kCBkVG4KUQJM5NySE2hM0MVA==
+"@radixdlt/hardware-wallet@^2.1.16":
+  version "2.1.16"
+  resolved "https://registry.yarnpkg.com/@radixdlt/hardware-wallet/-/hardware-wallet-2.1.16.tgz#92d626f82079bb1cdc9a9645a6028ea0d89d8d6e"
+  integrity sha512-WlWVeH8PDSD+hd6UAsW6a29wC4NzJjBxI0QPfglUQlV4OQrXTInXSQj5Lu3fnwXBjS4ak7VflQPDrKfNPJQBBw==
   dependencies:
-    "@radixdlt/crypto" "^2.1.12"
+    "@radixdlt/crypto" "^2.1.13"
     "@radixdlt/primitives" "^3.0.7"
     "@radixdlt/util" "1.0.29"
     neverthrow "4.0.1"
@@ -1634,13 +1634,13 @@
     long "^4.0.0"
     neverthrow "^4.0.1"
 
-"@radixdlt/tx-parser@^2.1.18":
-  version "2.1.18"
-  resolved "https://registry.yarnpkg.com/@radixdlt/tx-parser/-/tx-parser-2.1.18.tgz#0bbd3a84d480e6ef3b03fc724c2336542d647b94"
-  integrity sha512-twtuW5NoVVJ7RfXV99i1tHuoPGhswmMAiDwBxFPEcq2ow444m9siYjuUrFtiv7/fZqyEfK7mHsJs5ZNbDBIInQ==
+"@radixdlt/tx-parser@^2.1.19":
+  version "2.1.19"
+  resolved "https://registry.yarnpkg.com/@radixdlt/tx-parser/-/tx-parser-2.1.19.tgz#749710d39d94ce33446f2964de2b250853a7df98"
+  integrity sha512-pive/WxxV2fbD6/7TcAITVMTSYDPl4M7e1nPdyEjFBNeUNi6pJjz/HM8V0n9O2fZt2zrR9TnahJcU1Ix3HbPFA==
   dependencies:
-    "@radixdlt/account" "^3.0.9"
-    "@radixdlt/crypto" "^2.1.12"
+    "@radixdlt/account" "^3.0.10"
+    "@radixdlt/crypto" "^2.1.13"
     "@radixdlt/primitives" "^3.0.7"
     "@radixdlt/uint256" "1.1.0"
     "@radixdlt/util" "1.0.29"
