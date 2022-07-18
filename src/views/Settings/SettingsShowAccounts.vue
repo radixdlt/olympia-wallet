@@ -4,6 +4,9 @@
             <p>Hidden Accounts Go Here</p>
             <!-- import hiddenAccounts array, -->
             <!-- loop through each address and display it to the screen with some way to select it,  -->
+            <p v-for="account in hiddenAccounts" :key="account">
+              {{ account }}
+            </p>
             <!-- once selected update set new hidden accounts array,  -->
             <!-- then get the updated array to auto update the ui  -->
         </div>
@@ -12,10 +15,16 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { useWallet } from '@/composables'
+import { useRouter } from 'vue-router'
 
 export default defineComponent({
   setup () {
-    return {}
+    const router = useRouter()
+    const { hiddenAccounts } = useWallet(router)
+    return {
+      hiddenAccounts
+    }
   }
 })
 </script>
