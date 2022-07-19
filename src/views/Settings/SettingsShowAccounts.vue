@@ -2,9 +2,17 @@
   <div class="bg-white flex flex-col rounded-md w-full h-96">
     <div class="pt-6 px-6 rounded-md">
       <p>{{ $t('settings.hiddenAccountsLabel') }}</p>
-      <p v-for="account in hiddenAccounts" :key="account" @click="showAccount(account)" class="cursor-pointer">
-        {{ account }}
-      </p>
+      <div v-if="hiddenAccounts.length">
+        <p v-for="account in hiddenAccounts" :key="account" @click="showAccount(account)" class="cursor-pointer">
+          {{ account }}
+        </p>
+      </div>
+      <div v-else>
+        <p>There are no hidden accounts to display</p>
+      </div>
+    </div>
+    <div>
+      <p></p>
     </div>
   </div>
 </template>
