@@ -51,7 +51,6 @@ import {
   getHiddenAccounts,
   setHiddenAccounts,
   updateHiddenAccounts
-  // hideAccount
 } from '@/actions/vue/data-store'
 
 import {
@@ -89,7 +88,6 @@ const hardwareDevices: Ref<HardwareDevice[]> = ref([])
 const hardwareError: Ref<Error | null> = ref(null)
 const hardwareInteractionState: Ref<string> = ref('')
 const hasWallet = ref(false)
-// const hiddenAccounts: Ref<string []> = ref([])
 const ledgerVerifyError: Ref<Error | null> = ref(null)
 const nativeToken: Ref<Token | null> = ref(null)
 const nodeUrl: Ref<string | null> = ref(null)

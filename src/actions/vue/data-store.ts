@@ -112,11 +112,10 @@ export const getHiddenAccounts = (): Promise<string[]> => new Promise((resolve) 
 })
 
 export const setHiddenAccounts = (address: string): Promise<string> => new Promise((resolve) => {
-  console.log('address sent to electron')
   resolve(window.ipcRenderer.invoke('set-hidden-accounts', address))
 })
 
-// update hidden accounts
+// show hidden accounts
 export const updateHiddenAccounts = (address: string): Promise<string> => new Promise((resolve) => {
   resolve(window.ipcRenderer.invoke('update-hidden-accounts', address))
 })

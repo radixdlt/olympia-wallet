@@ -308,7 +308,8 @@ const messages = {
       tabTitleMnemonic: 'Reveal Seed Phrase',
       tabTitleTokens: 'Tokens',
       tabTitleGateway: 'Choose Gateway',
-      tabTitleShowAccounts: 'Show Accounts'
+      tabTitleShowAccounts: 'Show Accounts',
+      hiddenAccountsLabel: 'Hidden Accounts'
     },
     errors: {
       hardwareMismatchTitle: 'Hardware Wallet Account Mismatch',

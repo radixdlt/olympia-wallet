@@ -37,8 +37,6 @@ import {
 import { getIsUpdateAvailable, getIsUpdateDownloaded } from './actions/electron/general'
 import { sendAPDU } from './actions/electron/hardware-wallet'
 import { checkForUpdates, downloadUpdate, quitAndInstall } from './updater'
-// import { updateHiddenAccounts } from './actions/vue/data-store'
-// import { setHiddenAccounts } from './actions/vue/data-store'
 
 const pkg = require('../package.json')
 

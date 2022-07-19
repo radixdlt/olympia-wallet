@@ -70,8 +70,6 @@ const AccountListItem = defineComponent({
 
     const hideAccount = (addr: string) => {
       setHideAccountModal(true)
-      // send the adddress to wallet.json if the user confirms hiding account
-      // console.log(addr)
       setActiveAccountAddress(addr)
     }
 
