@@ -49,7 +49,8 @@ import {
   persistNodeSelection,
   fetchSelectedNodeFromStore,
   getHiddenAccounts,
-  setHiddenAccounts
+  setHiddenAccounts,
+  updateHiddenAccounts
   // hideAccount
 } from '@/actions/vue/data-store'
 
@@ -389,6 +390,10 @@ const handleHiddenAccounts = async (newAcctToHide: string) => {
 }
 
 // handle showAccounts function goes here
+const handleShowAccounts = async (acctToShow: string) => {
+  await updateHiddenAccounts(acctToShow)
+  await fetchHiddenAccountsFromElectron()
+}
 
 interface useWalletInterface {
   readonly accounts: Ref<AccountsT | null>;
@@ -476,6 +481,7 @@ interface useWalletInterface {
   closeLedgerErrorModal: () => void;
   setActiveAccountAddress:(address: string) => void;
   handleHiddenAccounts: (acctToHide: string) => void;
+  handleShowAccounts: (acctToShow: string) => void;
 }
 
 const walletLoaded = async () => {
@@ -816,6 +822,7 @@ export default function useWallet (router: Router): useWalletInterface {
     hardwareDevices,
     hardwareInteractionState,
     handleHiddenAccounts,
+    handleShowAccounts,
     hasWallet,
     hiddenAccounts: computed(() => hiddenAccounts.value),
     ledgerVerifyError,

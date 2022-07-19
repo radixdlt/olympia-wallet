@@ -17,16 +17,17 @@ import { useRouter } from 'vue-router'
 export default defineComponent({
   setup () {
     const router = useRouter()
-    const { hiddenAccounts } = useWallet(router)
+    const { hiddenAccounts, handleShowAccounts } = useWallet(router)
 
     const showAccount = (account: string) => {
-      console.log('before filtering --->', hiddenAccounts.value, account)
+      handleShowAccounts(account)
+      // console.log('before filtering --->', hiddenAccounts.value, account)
       // remove the selected account from hidden account
-      const filteredHiddenAccounts = hiddenAccounts.value.filter((hiddenAccount: string) => {
-        console.log(hiddenAccount, account, hiddenAccount === account)
-        return hiddenAccount !== account
-      })
-      console.log('after filtering--->', filteredHiddenAccounts)
+      // const filteredHiddenAccounts = hiddenAccounts.value.filter((hiddenAccount: string) => {
+      //   console.log(hiddenAccount, account, hiddenAccount === account)
+      //   return hiddenAccount !== account
+      // })
+      // console.log('after filtering--->', filteredHiddenAccounts)
       // set hidden accounts to remaining accounts
     }
     return {
