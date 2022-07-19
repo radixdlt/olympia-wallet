@@ -10,7 +10,7 @@
           <path class="stroke-current" d="M0 9.99999L2.7429 9.87776L0.0850602 7.22003L0 9.99999Z" fill="white"/>
         </svg>
       </div>
-      <div @click="hideAccount" class="hidden text-rGrayDark hover:text-rGreen transition-colors cursor-pointer flex items-center justify-center pt-1">
+      <div @click="hideAccount(addressVal)" class=" text-rGrayDark hover:text-rGreen transition-colors cursor-pointer flex items-center justify-center pt-1">
         <svg class="" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path class="stroke-current" d="M6.25909 2.91429C6.66583 2.81909 7.08226 2.77149 7.5 2.77248C11.6364 2.77248 14 7.49975 14 7.49975C13.6413 8.17079 13.2135 8.80255 12.7236 9.38475M11.01 11.0097C9.99989 11.7797 8.76993 12.2063 7.5 12.227C3.36364 12.227 1 7.49975 1 7.49975C1.73503 6.12996 2.75449 4.9332 3.99 3.98975L11.01 11.0097Z" stroke="#7A99AC" stroke-linecap="round" stroke-linejoin="round"/>
           <path class="stroke-current" d="M1 1L14 14" stroke="#7A99AC" stroke-linecap="round" stroke-linejoin="round"/>
@@ -57,7 +57,7 @@ const AccountListItem = defineComponent({
 
   setup (props) {
     const router = useRouter()
-    const { accountNameFor, activeAddress, setHideAccountModal } = useWallet(router)
+    const { accountNameFor, activeAddress, setHideAccountModal, setActiveAccountAddress } = useWallet(router)
 
     const { setState } = useSidebar()
     const address = toRef(props, 'address')
@@ -67,8 +67,10 @@ const AccountListItem = defineComponent({
       router.push(`/wallet/${address.value?.toString()}/account-edit-name`)
     }
 
-    const hideAccount = () => {
+    // make this a helper so it can be used here and account list item"
+    const hideAccount = (address: string) => {
       setHideAccountModal(true)
+      setActiveAccountAddress(address)
     }
 
     const addressVal: ComputedRef<string> = computed(() => address.value.toString())

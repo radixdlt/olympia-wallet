@@ -8,6 +8,7 @@
           <tabs-tab :isActive="activeTab === 'mnemonic'" @click="() => handleClickTab('mnemonic')" :isDisabled="!connected">{{ $t('settings.tabTitleMnemonic') }}</tabs-tab>
           <tabs-tab :isActive="activeTab === 'tokens'" @click="() => handleClickTab('tokens')">{{ $t('settings.tabTitleTokens') }}</tabs-tab>
           <tabs-tab :isActive="activeTab === 'nodes'" @click="() => handleClickTab('nodes')">{{ $t('settings.tabTitleGateway') }}</tabs-tab>
+          <tabs-tab :isActive="activeTab === 'showAccounts'" @click="() => handleClickTab('showAccounts')">{{ $t('settings.tabTitleShowAccounts')}}</tabs-tab>
         </div>
         <tabs-content :leftTabIsActive="activeTab === 'password'">
           <settings-reset-password
@@ -31,6 +32,7 @@
             </div>
           </template>
           <settings-select-node v-if="activeTab === 'nodes'" />
+          <settings-show-accounts v-if="activeTab === 'showAccounts'"/>
         </tabs-content>
       </div>
     </div>
@@ -48,6 +50,7 @@ import SettingsRevealMnemonic from './SettingsRevealMnemonic.vue'
 import SettingsResetPassword from './SettingsResetPassword.vue'
 import SettingsSelectNode from './SettingsSelectNode.vue'
 import SettingsTokens from './SettingsTokens.vue'
+import SettingsShowAccounts from './SettingsShowAccounts.vue'
 import WalletLayout from '@/components/WalletLayout.vue'
 import { Ref, ref } from '@nopr3d/vue-next-rx'
 import { useSettingsTab, useWallet } from '@/composables'
@@ -61,6 +64,7 @@ const SettingsIndex = defineComponent({
     SettingsResetPin,
     SettingsRevealMnemonic,
     SettingsSelectNode,
+    SettingsShowAccounts,
     SettingsTokens,
     TabsContent,
     TabsTab,

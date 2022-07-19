@@ -68,8 +68,8 @@
           <span class="text-white ml-2"> {{ $t('wallet.hardwareWallets') }} </span>
         </div>
         <div class="border-t border-rGray border-opacity-50 my-6"></div>
-        <div v-if="hardwareDevices" class="mt-2 -my-2 ">
-          <div v-for="(hardwareDevice, i) in hardwareDevices" :key="i">
+        <div v-if="nonHiddenHardwareDevices" class="mt-2 -my-2 ">
+          <div v-for="(hardwareDevice, i) in nonHiddenHardwareDevices" :key="i">
             <div class="flex justify-between group">
               <a class="flex cursor-pointer">
                 <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-rGreen" :class="{'fill-current': isActiveDevice(hardwareDevice)}">
@@ -159,7 +159,8 @@ const WalletSidebarAccounts = defineComponent({
       derivedAccountIndex,
       activeNetwork,
       createNewHardwareAccount,
-      setDisconnectDeviceModal
+      setDisconnectDeviceModal,
+      hiddenAccounts
     } = useWallet(router)
 
     const { setState } = useSidebar()
@@ -171,7 +172,18 @@ const WalletSidebarAccounts = defineComponent({
     const localAccounts: ComputedRef<AccountT[]> = computed(() => {
       if (!accounts.value) return []
       return accounts.value.all.filter((account: AccountT) => {
-        return account.signingKey.isLocalHDSigningKey
+        const isLocalAccount = account.signingKey.isLocalHDSigningKey
+        const isHidden = hiddenAccounts.value.includes(account.address.toString())
+        return isLocalAccount && !isHidden
+      })
+    })
+
+    const nonHiddenHardwareDevices: ComputedRef<HardwareDevice[]> = computed(() => {
+      return hardwareDevices.value.map((hwDevice: HardwareDevice) => {
+        const availableAddresses = hwDevice.addresses.filter((hwAddr) => {
+          return !hiddenAccounts.value.includes(hwAddr.address.toString())
+        })
+        return { ...hwDevice, addresses: availableAddresses }
       })
     })
 
@@ -190,6 +202,7 @@ const WalletSidebarAccounts = defineComponent({
       showSoftwareAccounts,
       showHardwareAccounts,
       localAccounts,
+      nonHiddenHardwareDevices,
       handleAccountEditName,
       setState,
       addSoftwareAccount () {

@@ -30,7 +30,8 @@ import {
   getHiddenTokens,
   unhideTokenType,
   getHiddenAccounts,
-  hideAccount,
+  setHiddenAccounts,
+  updateHiddenAccounts,
   unhideAccount
 } from './actions/electron/data-store'
 import { getIsUpdateAvailable, getIsUpdateDownloaded } from './actions/electron/general'
@@ -173,7 +174,8 @@ ipcMain.handle('quit-and-install', quitAndInstall)
 ipcMain.handle('get-accepted-tos', getAcceptedTos)
 ipcMain.handle('set-accepted-tos', setAcceptedTos)
 ipcMain.handle('get-hidden-accounts', getHiddenAccounts)
-ipcMain.handle('hide-accounts', hideAccount)
+ipcMain.handle('set-hidden-accounts', setHiddenAccounts)
+ipcMain.handle('update-hidden-accounts', updateHiddenAccounts)
 ipcMain.handle('unhide-accounts', unhideAccount)
 // Exit cleanly on request from parent process in development mode.
 if (isDevelopment) {

@@ -307,7 +307,10 @@ const messages = {
       tabTitlePin: 'Change PIN',
       tabTitleMnemonic: 'Reveal Seed Phrase',
       tabTitleTokens: 'Tokens',
-      tabTitleGateway: 'Choose Gateway'
+      tabTitleGateway: 'Choose Gateway',
+      tabTitleShowAccounts: 'Show Accounts',
+      hiddenAccountsLabel: 'Hidden Accounts',
+      noAccountsToShowMessage: 'There are no hidden accounts to show'
     },
     errors: {
       hardwareMismatchTitle: 'Hardware Wallet Account Mismatch',
