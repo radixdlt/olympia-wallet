@@ -309,7 +309,8 @@ const messages = {
       tabTitleTokens: 'Tokens',
       tabTitleGateway: 'Choose Gateway',
       tabTitleShowAccounts: 'Show Accounts',
-      hiddenAccountsLabel: 'Hidden Accounts'
+      hiddenAccountsLabel: 'Hidden Accounts',
+      noAccountsToShowMessage: 'There are no hidden accounts to show'
     },
     errors: {
       hardwareMismatchTitle: 'Hardware Wallet Account Mismatch',
