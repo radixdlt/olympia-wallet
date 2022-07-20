@@ -81,8 +81,10 @@ export const getHardwareDeviceAccounts = (event: IpcMainInvokeEvent, network: st
 
 export const resetStore = (event: IpcMainInvokeEvent): void => {
   const acceptedTos = store.get('acceptedTos', false)
+  const decimalType = store.get('decimalType', 'us')
   store.clear()
   store.set('acceptedTos', acceptedTos)
+  store.set('decimalType', decimalType)
   return
 }
 
@@ -156,4 +158,12 @@ export const unhideAccount = (event: IpcMainInvokeEvent, accountAddress: string)
   hiddenAccounts = hiddenAccounts.filter((t: string) => t !== accountAddress)
   store.set('hiddenAccounts', hiddenAccounts)
   return hiddenAccounts
+}
+
+export const getDecimalType = (event: IpcMainInvokeEvent, decimalType: string): string => {
+  return store.get('decimalType', 'us') as string
+}
+
+export const setDecimalType = (event: IpcMainInvokeEvent, value: string): void => {
+  store.set('decimalType', value)
 }

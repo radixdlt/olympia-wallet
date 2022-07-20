@@ -283,6 +283,11 @@ const messages = {
       newPasswordLabel: 'Enter New Password',
       confirmPasswordLabel: 'Confirm New Password',
       changePasswordLabel: 'Change password',
+      changeRegionalDecimalLabel: 'Change regional display of decimal markers:',
+      usLabel: 'US',
+      usLabelExample: 'example: 1,000,000.50',
+      europeLabel: 'Europe',
+      europeLabelExample: 'example: 1.000.000,50',
       passwordRequiredLabel: 'Enter your password',
       passwordPlaceholder: 'password',
       accessSettingsButton: 'Access Settings',
@@ -317,7 +322,8 @@ const messages = {
       tabTitlePin: 'Change PIN',
       tabTitleMnemonic: 'Reveal Seed Phrase',
       tabTitleTokens: 'Tokens',
-      tabTitleGateway: 'Choose Gateway'
+      tabTitleGateway: 'Choose Gateway',
+      tabTitleDisplay: 'Display'
     },
     errors: {
       hardwareMismatchTitle: 'Hardware Wallet Account Mismatch',

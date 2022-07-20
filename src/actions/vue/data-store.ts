@@ -120,3 +120,11 @@ export const unhideAccount = async (address: string): Promise<string[]> => {
   const newHiddenTokens = await window.ipcRenderer.invoke('unhide-account', address)
   return newHiddenTokens
 }
+
+export const getDecimalType = (): Promise<string> => new Promise((resolve) => {
+  resolve(window.ipcRenderer.invoke('get-decimal-type'))
+})
+
+export const setDecimalType = (value: string): Promise<string> => new Promise((resolve) => {
+  resolve(window.ipcRenderer.invoke('set-decimal-type', value))
+})
