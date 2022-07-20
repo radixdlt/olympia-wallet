@@ -649,6 +649,7 @@ const verifyHardwareWalletAddress = () => {
     return firstValueFrom(radix.displayAddressForActiveHWAccountOnHWDeviceForVerification())
   }).catch((e) => {
     ledgerVerifyError.value = e as Error
+    hideLedgerVerify()
   })
 }
 
