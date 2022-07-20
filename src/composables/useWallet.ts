@@ -32,7 +32,7 @@ import {
 import { Decoded } from '@radixdlt/application/dist/api/open-api/_types'
 
 import { interval, ReplaySubject, merge, Subscription, Subject, firstValueFrom, zip } from 'rxjs'
-import { mergeMap, take, filter, mapTo } from 'rxjs/operators'
+import { mergeMap, take, filter, mapTo, first } from 'rxjs/operators'
 
 import { HardwareAddress, HardwareDevice } from '@/services/_types'
 import { AccountName } from '@/actions/electron/data-store'
@@ -316,6 +316,8 @@ const transferTokens = (transferTokensInput: TransferTokensInput, message: Messa
     transactionSubs.add(
       events.subscribe(handleTransactionLifecycleEvent, errorHandler)
     )
+  }).catch((e) => {
+    cleanupInputs()
   })
 }
 
@@ -342,30 +344,35 @@ const unstakeTokens = (unstakeTokensInput: UnstakeTokensInput) => {
     transactionSubs.add(
       events.subscribe(handleTransactionLifecycleEvent, errorHandler)
     )
+  }).catch(() => {
+    cleanupInputs()
   })
 }
 
 // call stakeTokens() with built options and subscribe to confirmation and results
 const stakeTokens = async (stakeTokensInput: StakeTokensInput) => {
-  await activateAccount()
-  cleanupInputs()
-  stakeInput.value = stakeTokensInput
-  confirmationMode.value = 'stake'
+  return activateAccount().then(async () => {
+    cleanupInputs()
+    stakeInput.value = stakeTokensInput
+    confirmationMode.value = 'stake'
 
-  const { completion, events } = await radix.stakeTokens({
-    stakeInput: stakeTokensInput,
-    userConfirmation,
-    pollTXStatusTrigger: interval(1000)
+    const { completion, events } = await radix.stakeTokens({
+      stakeInput: stakeTokensInput,
+      userConfirmation,
+      pollTXStatusTrigger: interval(1000)
+    })
+
+    shouldShowConfirmation.value = true
+
+    transactionSubs.add(
+      completion.subscribe(handleTransactionCompleted, errorHandler)
+    )
+    transactionSubs.add(
+      events.subscribe(handleTransactionLifecycleEvent, errorHandler)
+    )
+  }).catch(() => {
+    cleanupInputs()
   })
-
-  shouldShowConfirmation.value = true
-
-  transactionSubs.add(
-    completion.subscribe(handleTransactionCompleted, errorHandler)
-  )
-  transactionSubs.add(
-    events.subscribe(handleTransactionLifecycleEvent, errorHandler)
-  )
 }
 
 interface useWalletInterface {
@@ -613,20 +620,27 @@ const createNewHardwareAccount = async () => {
   }
 }
 
-const connectHardwareWallet = async (hwaddr: HardwareAddress): Promise<AccountT> => {
+const connectHardwareWallet = async (hwaddr: HardwareAddress): Promise<AccountT | null> => {
   hardwareError.value = null
   hardwareInteractionState.value = 'DERIVING'
-  const hwAccount: AccountT = await firstValueFrom(radix.deriveHWAccount({
-    keyDerivation: HDPathRadix.create({
-      address: { index: hwaddr.index, isHardened: true }
-    }),
-    hardwareWalletConnection,
-    alsoSwitchTo: true,
-    verificationPrompt: false
-  }))
-  console.log('connected to ', hwAccount.address.toString())
-  hardwareInteractionState.value = ''
-  return hwAccount
+
+  try {
+    const hwAccount: AccountT = await firstValueFrom(radix.deriveHWAccount({
+      keyDerivation: HDPathRadix.create({
+        address: { index: hwaddr.index, isHardened: true }
+      }),
+      hardwareWalletConnection,
+      alsoSwitchTo: true,
+      verificationPrompt: false
+    }))
+    console.log('connected to ', hwAccount.address.toString())
+    hardwareInteractionState.value = ''
+    return hwAccount
+  } catch (e) {
+    hardwareInteractionState.value = ''
+    hardwareError.value = e as Error
+    return activeAccount.value
+  }
 }
 
 const verifyHardwareWalletAddress = () => {
@@ -640,8 +654,15 @@ const verifyHardwareWalletAddress = () => {
 
 const decryptMessage = async (tx: ExecutedTransaction): Promise<string> => {
   return activateAccount().then(() => {
+    hardwareInteractionState.value = 'DECRYPTING'
     return firstValueFrom(radix.decryptTransaction(tx))
-  }).then((msg) => msg)
+  }).then((msg: string) => {
+    hardwareInteractionState.value = ''
+    return msg
+  }).catch((e) => {
+    console.error(e)
+    return ''
+  })
 }
 
 const setHideAccountModal = (val: boolean) => { showHideAccountModal.value = val }
@@ -692,9 +713,9 @@ const hideLedgerVerify = () => {
 
 const isActivating: Ref<boolean> = ref(false)
 
-const activateAccount = async () : Promise<AccountT> => {
+const activateAccount = async () : Promise<AccountT | null> => {
   if (isActivating.value) return Promise.reject(Error('Already Activating'))
-  if (!activeAddress.value || !accounts.value || !activeAccount.value) throw Error('Invalid Active Address')
+  if (!activeAddress.value || !accounts.value || !activeAccount.value) return Promise.reject(Error('Invalid Active Address'))
   isActivating.value = true
   const localAccount = accounts.value?.all.find((account: AccountT) => {
     if (!activeAddress.value) return false
@@ -719,14 +740,19 @@ const activateAccount = async () : Promise<AccountT> => {
   if (!hardwareAddress) throw Error('Invalid Address')
 
   const acct = await connectHardwareWallet(hardwareAddress)
+  if (!acct) {
+    isActivating.value = false
+    return null
+  }
+
   if (!acct.address.equals(hardwareAddress.address)) {
     hardwareError.value = new Error('Unable to activate the correct account')
     hardwareInteractionState.value = 'error'
     isActivating.value = false
-    throw Error('Invalid Hardware Device')
-  } else {
-    activeAccount.value = acct
+    return Promise.reject(Error('Invalid Hardware Device'))
   }
+
+  activeAccount.value = acct
   isActivating.value = false
   return activeAccount.value
 }
