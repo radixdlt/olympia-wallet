@@ -9,10 +9,10 @@
             <path fill-rule="evenodd" clip-rule="evenodd" d="M38.0078 0H40.0008C62.0924 0 80.0008 17.9088 80.0008 40V41.993H38.0078V0ZM41.9939 4.04026V38.007H75.9606C74.9622 19.7039 60.2972 5.03859 41.9939 4.04026Z" fill="#00C389"/>
           </svg>
           <div class="text-center mt-8 text-rGrayDark text-lg">
-            Deriving Account...
+            {{interactionTitle}}
           </div>
           <div class="text-center mt-4 text-rBlack text-sm">
-            Please complete the process on your Ledger device.
+            {{interactionBody}}
           </div>
         </div>
       </div>
@@ -21,21 +21,36 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { computed, defineComponent, ComputedRef } from 'vue'
 import { useRouter } from 'vue-router'
 import { useWallet } from '@/composables'
+import { useI18n } from 'vue-i18n'
 
 const WalletLedgerInteractionModal = defineComponent({
 
   setup () {
     const router = useRouter()
+    const { t } = useI18n()
     const {
       hideLedgerInteraction,
-      cancelTransaction
+      cancelTransaction,
+      hardwareInteractionState
     } = useWallet(router)
+
+    const interactionTitle: ComputedRef<string> = computed(() => {
+      if (hardwareInteractionState.value === '') return ''
+      return t(`wallet.ledgerInteractionState.${hardwareInteractionState.value}.title`)
+    })
+
+    const interactionBody: ComputedRef<string> = computed(() => {
+      if (hardwareInteractionState.value === '') return ''
+      return t(`wallet.ledgerInteractionState.${hardwareInteractionState.value}.body`)
+    })
 
     return {
       hideLedgerInteraction,
+      interactionTitle,
+      interactionBody,
       close () {
         hideLedgerInteraction()
         cancelTransaction()

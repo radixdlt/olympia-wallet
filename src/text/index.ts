@@ -140,6 +140,16 @@ const messages = {
         disconnectedContent: 'Unable to connect to the active account.  Ensure the correct ledger device is connected and active or switch accounts to continue.',
         buttonText: 'Dismiss'
       },
+      ledgerInteractionState: {
+        DERIVING: {
+          title: 'Deriving Account',
+          body: 'Please complete the process on your Ledger device.'
+        },
+        DECRYPTING: {
+          title: 'Decrypting Message',
+          body: 'Please confirm the decryption on your Ledger device before continuing'
+        }
+      },
       hardwareWalletAccounts: 'Hardware Wallet Accounts:'
     },
     hardware: {
