@@ -160,7 +160,7 @@ export const setHiddenAccounts = (event: IpcMainInvokeEvent, data: string): void
 export const updateHiddenAccounts = (event: IpcMainInvokeEvent, accountAddress: string): void => {
   const hiddenAccounts = store.get('hiddenAccounts', []) as string []
   const filteredHiddenAccounts = hiddenAccounts.filter(hiddenAccount => {
-    return hiddenAccount !== accountAddress
+    return hiddenAccount.address !== accountAddress
   })
   store.set('hiddenAccounts', filteredHiddenAccounts)
 }

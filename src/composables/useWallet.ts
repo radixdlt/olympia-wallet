@@ -391,6 +391,7 @@ const handleHiddenAccounts = async (newAcctToHide: string, newAcctNickname: stri
 
 // handle showAccounts function goes here
 const handleShowAccounts = async (acctToShow: string) => {
+  console.log(acctToShow)
   await updateHiddenAccounts(acctToShow)
   await fetchHiddenAccountsFromElectron()
 }
