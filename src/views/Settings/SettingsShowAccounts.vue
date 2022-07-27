@@ -9,9 +9,9 @@
         <div class="flex flex-col gap-4">
           <div v-for="account in hiddenAccounts" :key="account" class="p-6 items-center justify-between flex cursor-pointer border rounded-md">
             <div class="flex flex-col gap-2">
-              <span class="text-sm">acct  name</span>
+              <span class="text-sm">{{ account.nickname }}</span>
               <span class="flex items-center gap-1 text-xs text-rBlue">
-              {{ account }}
+              {{ account.address }}
               <click-to-copy
                 :address="account"
                 :checkForHardwareAddress=true
