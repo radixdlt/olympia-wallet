@@ -41,13 +41,14 @@ const WalletHideAccountModal = defineComponent({
     const {
       setHideAccountModal,
       accountToBeHiddenAddress,
+      accountToBeHiddenNickname,
       handleHiddenAccounts
     } = useWallet(router)
 
     return {
       handleSubmit: () => {
         setHideAccountModal(false)
-        handleHiddenAccounts(accountToBeHiddenAddress.value)
+        handleHiddenAccounts(accountToBeHiddenAddress.value, accountToBeHiddenNickname.value)
       },
       handleClose: () => {
         setHideAccountModal(false)

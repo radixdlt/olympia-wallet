@@ -78,6 +78,7 @@ export type WalletError = ErrorT<ErrorCategory.WALLET>
 
 const accountNames: Ref<AccountName[]> = ref([])
 const accountToBeHiddenAddress: Ref<string> = ref('')
+const accountToBeHiddenNickname: Ref<string> = ref('')
 const accounts: Ref<AccountsT | null> = ref(null)
 const activeAccount: Ref<AccountT | null> = ref(null)
 const activeAddress: Ref<AccountAddressT | null> = ref(null)
@@ -382,8 +383,9 @@ const fetchHiddenAccountsFromElectron = async () => {
 fetchHiddenAccountsFromElectron()
 
 // handleHiddenAccounts
-const handleHiddenAccounts = async (newAcctToHide: string) => {
-  await setHiddenAccounts(newAcctToHide)
+const handleHiddenAccounts = async (newAcctToHide: string, newAcctNickname: string) => {
+  console.log(newAcctToHide, newAcctNickname)
+  await setHiddenAccounts(newAcctToHide, newAcctNickname)
   await fetchHiddenAccountsFromElectron()
 }
 
@@ -396,6 +398,7 @@ const handleShowAccounts = async (acctToShow: string) => {
 interface useWalletInterface {
   readonly accounts: Ref<AccountsT | null>;
   readonly accountToBeHiddenAddress: Ref<string>;
+  readonly accountToBeHiddenNickname: Ref<string>;
   readonly activeAddress: Ref<AccountAddressT | null>;
   readonly activeNetwork: Ref<Network | null>;
   readonly connected: ComputedRef<boolean>;
@@ -477,8 +480,8 @@ interface useWalletInterface {
   walletLoaded: () => void;
   createNewHardwareAccount: () => void;
   closeLedgerErrorModal: () => void;
-  setActiveAccountAddress:(address: string) => void;
-  handleHiddenAccounts: (acctToHide: string) => void;
+  setActiveAccountAddress:(address: string, nickname: string) => void;
+  handleHiddenAccounts: (acctToHide: string, acctNickNameToHide: string) => void;
   handleShowAccounts: (acctToShow: string) => void;
 }
 
@@ -676,8 +679,10 @@ const decryptMessage = async (tx: ExecutedTransaction): Promise<string> => {
 
 const setHideAccountModal = (val: boolean) => { showHideAccountModal.value = val }
 
-const setActiveAccountAddress = (addr: string) => {
+const setActiveAccountAddress = (addr: string, acctNickName: string) => {
+  console.log(addr, acctNickName)
   accountToBeHiddenAddress.value = addr
+  accountToBeHiddenNickname.value = acctNickName
 }
 
 const setUpdateInProcess = (val: boolean) => {
@@ -811,6 +816,7 @@ export default function useWallet (router: Router): useWalletInterface {
   return {
     accounts,
     accountToBeHiddenAddress,
+    accountToBeHiddenNickname,
     activeAddress,
     activeNetwork,
     explorerUrlBase: computed(() => explorerUrlBase.value),

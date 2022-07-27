@@ -71,7 +71,7 @@ const AccountListItem = defineComponent({
     const hideAccount = (addr: string, acctNickName: string) => {
       console.log(acctNickName)
       setHideAccountModal(true)
-      setActiveAccountAddress(addr)
+      setActiveAccountAddress(addr, acctNickName)
     }
 
     const addressVal: ComputedRef<string> = computed(() => address.value.toString())
