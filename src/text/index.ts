@@ -308,9 +308,11 @@ const messages = {
       tabTitleMnemonic: 'Reveal Seed Phrase',
       tabTitleTokens: 'Tokens',
       tabTitleGateway: 'Choose Gateway',
-      tabTitleShowAccounts: 'Show Accounts',
+      tabTitleShowAccounts: 'Accounts',
       hiddenAccountsLabel: 'Hidden Accounts',
-      noAccountsToShowMessage: 'There are no hidden accounts to show'
+      noAccountsToShowMessageTop: 'You have hidden the accounts below from display in the navigation sidebar.',
+      noAccountsToShowMessageBottom: 'You may choose to unhide them if you wish to see them listed in the sidebar again.',
+      unhideAccountBtnText: 'unhide account'
     },
     errors: {
       hardwareMismatchTitle: 'Hardware Wallet Account Mismatch',

@@ -1,14 +1,17 @@
 <template>
   <div class="bg-white flex flex-col rounded-md w-full h-96">
     <div class="pt-6 px-6 rounded-md">
-      <div v-if="hiddenAccounts.length">
-        <p>{{ $t('settings.hiddenAccountsLabel') }}</p>
-        <p v-for="account in hiddenAccounts" :key="account" @click="showAccount(account)" class="cursor-pointer">
-          {{ account }}
-        </p>
+      <div class="text-rGrayDark">
+        <p>{{ $t('settings.noAccountsToShowMessageTop') }}</p>
+        <p>{{ $t('settings.noAccountsToShowMessageBottom') }}</p>
       </div>
-      <div v-else>
-        <p>{{ $t('settings.noAccountsToShowMessage') }}</p>
+      <div v-if="hiddenAccounts.length">
+        <div>
+           <!-- <p>{{ $t('settings.hiddenAccountsLabel') }}</p> -->
+           <p v-for="account in hiddenAccounts" :key="account" @click="showAccount(account)" class="cursor-pointer">
+          {{ account }}
+           </p>
+        </div>
       </div>
     </div>
     <div>
@@ -21,6 +24,7 @@
 import { defineComponent } from 'vue'
 import { useWallet } from '@/composables'
 import { useRouter } from 'vue-router'
+import ClickToCopy from '@/components/ClickToCopy.vue'
 
 export default defineComponent({
   setup () {
