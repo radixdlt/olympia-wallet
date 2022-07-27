@@ -681,7 +681,7 @@ const decryptMessage = async (tx: ExecutedTransaction): Promise<string> => {
 const setHideAccountModal = (val: boolean) => { showHideAccountModal.value = val }
 
 const setActiveAccountAddress = (addr: string, acctNickName: string) => {
-  console.log(addr, acctNickName)
+  // console.log(addr, acctNickName)
   accountToBeHiddenAddress.value = addr
   accountToBeHiddenNickname.value = acctNickName
 }

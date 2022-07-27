@@ -173,7 +173,9 @@ const WalletSidebarAccounts = defineComponent({
       if (!accounts.value) return []
       return accounts.value.all.filter((account: AccountT) => {
         const isLocalAccount = account.signingKey.isLocalHDSigningKey
-        const isHidden = hiddenAccounts.value.includes(account.address.toString())
+        // flatten array of objects
+        const newArr = hiddenAccounts.value.flatMap(acct => Object.values(acct))
+        const isHidden = newArr.includes(account.address.toString())
         return isLocalAccount && !isHidden
       })
     })
@@ -181,7 +183,8 @@ const WalletSidebarAccounts = defineComponent({
     const nonHiddenHardwareDevices: ComputedRef<HardwareDevice[]> = computed(() => {
       return hardwareDevices.value.map((hwDevice: HardwareDevice) => {
         const availableAddresses = hwDevice.addresses.filter((hwAddr) => {
-          return !hiddenAccounts.value.includes(hwAddr.address.toString())
+          const newArr = hiddenAccounts.value.flatMap(acct => Object.values(acct))
+          return !newArr.includes(hwAddr.address.toString())
         })
         return { ...hwDevice, addresses: availableAddresses }
       })
