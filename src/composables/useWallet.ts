@@ -384,14 +384,12 @@ fetchHiddenAccountsFromElectron()
 
 // handleHiddenAccounts
 const handleHiddenAccounts = async (newAcctToHide: string, newAcctNickname: string) => {
-  console.log(newAcctToHide, newAcctNickname)
   await setHiddenAccounts(newAcctToHide, newAcctNickname)
   await fetchHiddenAccountsFromElectron()
 }
 
 // handle showAccounts function goes here
 const handleShowAccounts = async (acctToShow: string) => {
-  console.log(acctToShow)
   await updateHiddenAccounts(acctToShow)
   await fetchHiddenAccountsFromElectron()
 }

@@ -1,7 +1,7 @@
 <template>
   <div class="bg-white flex flex-col rounded-md w-full h-full p-10">
     <div class="rounded-md">
-      <div class="text-rGrayDark mb-5">
+      <div class="text-rGrayDark mb-6 text-sm">
         <p>{{ $t('settings.noAccountsToShowMessageTop') }}</p>
         <p>{{ $t('settings.noAccountsToShowMessageBottom') }}</p>
       </div>
@@ -46,7 +46,6 @@ import ClickToCopy from '@/components/ClickToCopy.vue'
 
 export default defineComponent({
   components: {
-    // ButtonSubmit,
     ClickToCopy
   },
 

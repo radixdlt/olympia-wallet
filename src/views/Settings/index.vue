@@ -34,6 +34,7 @@
           <settings-select-node v-if="activeTab === 'nodes'" />
           <settings-show-accounts v-if="activeTab === 'showAccounts'"/>
         </tabs-content>
+        <wallet-hide-account-modal v-if="showHideAccountModal" class="absolute top-0 left-0" />
       </div>
     </div>
   </WalletLayout>
@@ -56,6 +57,7 @@ import { Ref, ref } from '@nopr3d/vue-next-rx'
 import { useSettingsTab, useWallet } from '@/composables'
 import { useRouter } from 'vue-router'
 import LoadingIcon from '@/components/LoadingIcon.vue'
+import WalletHideAccountModal from '@/views/Wallet/WalletHideAccountModal.vue'
 
 const SettingsIndex = defineComponent({
   components: {
@@ -68,7 +70,8 @@ const SettingsIndex = defineComponent({
     SettingsTokens,
     TabsContent,
     TabsTab,
-    WalletLayout
+    WalletLayout,
+    WalletHideAccountModal
   },
 
   setup () {
@@ -76,7 +79,7 @@ const SettingsIndex = defineComponent({
     const mnemonic: Ref<MnemomicT | null> = ref(null)
     const userRequestedMnemonic = new Subject<boolean>()
     const router = useRouter()
-    const { connected, radix, activeAddress } = useWallet(router)
+    const { connected, radix, activeAddress, showHideAccountModal } = useWallet(router)
     const { activeTab, setTab } = useSettingsTab()
 
     // Only fetch mnemonic if user confirms pin
@@ -108,7 +111,8 @@ const SettingsIndex = defineComponent({
       unsetMnemonic,
       handleClickTab,
       activeTab,
-      setTab
+      setTab,
+      showHideAccountModal
     }
   }
 })
