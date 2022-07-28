@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white flex flex-col rounded-md w-full h-full p-10">
+  <div :class="{'bg-white flex flex-col rounded-md w-full h-96 p-10': !hiddenAccounts.length, 'bg-white flex flex-col rounded-md w-full min-h-full p-10': hiddenAccounts.length}">
     <div class="rounded-md">
       <div v-if="hiddenAccounts.length" class="text-rGrayDark mb-6 text-sm">
         <p>{{ $t('settings.accountsToShowMessageTop') }}</p>
