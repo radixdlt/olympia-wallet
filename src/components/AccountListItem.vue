@@ -69,7 +69,6 @@ const AccountListItem = defineComponent({
     }
 
     const hideAccount = (addr: string, acctNickName: string) => {
-      console.log(acctNickName)
       setHideAccountModal(true)
       setActiveAccountAddress(addr, acctNickName)
     }

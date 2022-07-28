@@ -112,7 +112,6 @@ export const getHiddenAccounts = (): Promise<string[]> => new Promise((resolve) 
 })
 
 export const setHiddenAccounts = (address: string, nickname: string): Promise<string> => new Promise((resolve) => {
-  console.log('address->', address, 'nickname->', nickname)
   resolve(window.ipcRenderer.invoke('set-hidden-accounts', JSON.stringify({ address, nickname })))
 })
 

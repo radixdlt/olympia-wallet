@@ -145,7 +145,6 @@ const WalletSidebarAccounts = defineComponent({
   components: {
     AccountListItem,
     HardwareAccountListItem
-    // ClickToCopy
   },
 
   setup () {

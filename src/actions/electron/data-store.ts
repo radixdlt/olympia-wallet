@@ -143,26 +143,19 @@ export const getHiddenTokens = (): string[] => {
 
 export const getHiddenAccounts = (): string[] => {
   const hiddenAccounts = store.get('hiddenAccounts', []) as string[]
-  console.log('gethiddenAccounts in use wallet returns -->', hiddenAccounts)
   return hiddenAccounts
 }
 
 export const setHiddenAccounts = (event: IpcMainInvokeEvent, data: string): void => {
   const { address, nickname } = JSON.parse(data)
-  // console.log('address-->', accountAddress, 'nickname--->', accountNickName)
   const hiddenAccounts = store.get('hiddenAccounts', []) as string[]
-  // const newAcct = { address: address, nickname: nickname }
   store.set('hiddenAccounts', [...hiddenAccounts, { address, nickname }])
-  // store.set('hiddenAccounts', [...hiddenAccounts, accountAddress])
 }
 
 // show hidden accounts
 export const updateHiddenAccounts = (event: IpcMainInvokeEvent, accountAddress: string): void => {
-  console.log(accountAddress)
   const hiddenAccounts = store.get('hiddenAccounts', []) as string []
-  console.log(hiddenAccounts)
   const filteredHiddenAccounts = hiddenAccounts.filter(hiddenAccount => {
-    console.log(hiddenAccount)
     return hiddenAccount.address !== accountAddress
   })
   store.set('hiddenAccounts', filteredHiddenAccounts)
