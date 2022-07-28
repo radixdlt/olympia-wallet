@@ -1,9 +1,12 @@
 <template>
   <div class="bg-white flex flex-col rounded-md w-full h-full p-10">
     <div class="rounded-md">
-      <div class="text-rGrayDark mb-6 text-sm">
-        <p>{{ $t('settings.noAccountsToShowMessageTop') }}</p>
-        <p>{{ $t('settings.noAccountsToShowMessageBottom') }}</p>
+      <div v-if="hiddenAccounts.length" class="text-rGrayDark mb-6 text-sm">
+        <p>{{ $t('settings.accountsToShowMessageTop') }}</p>
+        <p>{{ $t('settings.accountsToShowMessageBottom') }}</p>
+      </div>
+      <div v-else class="text-rGrayDark mb-6 text-sm">
+        <p>{{ $t('settings.noAccountsToShowMessage') }}</p>
       </div>
       <div v-if="hiddenAccounts.length">
         <div class="flex flex-col gap-4">
