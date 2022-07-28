@@ -13,7 +13,7 @@
               <span class="flex items-center gap-1 text-xs text-rBlue">
               {{ account.address }}
               <click-to-copy
-                :address="account"
+                :address="account.address"
                 :checkForHardwareAddress=true
                 class="hover:text-rGreen active:text-rGreenDark text-rGrayDark"
               />
