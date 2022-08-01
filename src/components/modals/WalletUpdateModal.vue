@@ -1,6 +1,6 @@
 <template>
   <div class="fixed w-screen h-screen z-20 flex items-center justify-center bg-translucent-black">
-    <div class="h-modalSmall bg-rGrayLight rounded-md w-full h-full max-w-lg absolute top-1/2 left-1/2 transform -translate-x-1/3 -translate-y-1/2" v-if="loading">
+    <div class="bg-rGrayLight rounded-md w-full h-full max-w-lg absolute top-1/2 left-1/2 transform -translate-x-1/3 -translate-y-1/2" v-if="loading">
       <div class="bg-rGrayLight rounded-md">
          <div class=" bg-rGrayLight h-full flex flex-col flex-1 rounded-md w-full justify-around pt-10 pb-2">
             <svg width="50" height="50" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg" class="container animate-spin">
@@ -14,7 +14,7 @@
       </div>
       <div class="text-center px-20 pt-6 text-rGrayDark">{{ $t('wallet.downloadingUpdateBody') }}</div>
     </div>
-    <div class="h-modalSmall bg-white rounded-md w-full h-full max-w-lg absolute top-1/2 left-1/2 transform -translate-x-1/3 -translate-y-1/2" v-else>
+    <div class="bg-white rounded-md w-full h-full max-w-lg absolute top-1/2 left-1/2 transform -translate-x-1/3 -translate-y-1/2" v-else>
       <div class="bg-rGrayLight">
         <div class="pt-10">
           <svg width="50" height="50" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg" class="mx-auto pt">
@@ -37,8 +37,6 @@
 <script lang="ts">
 import { defineComponent, ref, Ref } from 'vue'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
-import { useRouter } from 'vue-router'
-import { useWallet } from '@/composables'
 import { getIsUpdateDownloaded, quitAndInstall } from '@/actions/vue/general'
 
 const loading: Ref<boolean> = ref(true)
@@ -63,8 +61,6 @@ const WalletUpdateModal = defineComponent({
   },
 
   setup () {
-    const router = useRouter()
-
     return {
       handleRestart: async () => {
         await quitAndInstall()
