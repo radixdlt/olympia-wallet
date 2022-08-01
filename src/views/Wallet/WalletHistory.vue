@@ -93,7 +93,7 @@ import LoadingIcon from '@/components/LoadingIcon.vue'
 import ClickToCopy from '@/components/ClickToCopy.vue'
 import { useWallet, useHistory } from '@/composables'
 import { useRouter } from 'vue-router'
-import WalletLedgerVerifyDecryptModal from './WalletLedgerVerifyDecryptModal.vue'
+import WalletLedgerVerifyDecryptModal from '@/components/modals/WalletLedgerVerifyDecryptModal.vue'
 import { ExecutedTransaction } from '@radixdlt/application'
 import { HardwareAddress } from '@/services/_types'
 

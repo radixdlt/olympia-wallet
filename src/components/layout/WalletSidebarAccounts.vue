@@ -136,7 +136,6 @@ import { defineComponent, ref, Ref, computed, ComputedRef } from 'vue'
 import { AccountT } from '@radixdlt/application'
 import AccountListItem from '@/components/AccountListItem.vue'
 import HardwareAccountListItem from '@/components/HardwareAccountListItem.vue'
-// import ClickToCopy from '@/components/ClickToCopy.vue'
 import { useWallet, useSidebar } from '@/composables'
 import { useRouter } from 'vue-router'
 import { HardwareDevice } from '@/services/_types'
@@ -145,7 +144,6 @@ const WalletSidebarAccounts = defineComponent({
   components: {
     AccountListItem,
     HardwareAccountListItem
-    // ClickToCopy
   },
 
   setup () {
