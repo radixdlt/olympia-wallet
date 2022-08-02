@@ -5,13 +5,11 @@
     </div>
 
     <div
-      class="flex flex-col text-white hover:text-rGreen transition-colors cursor-pointer mb-2 px-5"
+      class="flex flex-col text-white hover:text-rGreen transition-colors cursor-pointer mb-2 px-5 bg-primaryAccount"
       @click="setState(true)"
     >
       <div class="relative py-3">
         <account-list-preview :address="activeAddress" v-if="activeAddress"/>
-        <div class="absolute bg-gradient-to-r from-blueEnd to-transparent inset-0 w-full h-full z-10 -mx-8 opacity-40">
-        </div>
       </div>
     </div>
 

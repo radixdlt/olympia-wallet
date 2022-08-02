@@ -1,8 +1,8 @@
 import { AccountAddressT, HRP, ValidatorAddressT } from '@radixdlt/application'
 
-export const formatWalletAddressForDisplay = function (address: AccountAddressT): string {
+export const formatWalletAddressForDisplay = function (address: AccountAddressT, prefixLength = 3, suffixLength = 9): string {
   const s = address.toString()
-  return s.substring(0, 3) + '...' + s.substring(s.length - 9)
+  return s.substring(0, prefixLength) + '...' + s.substring(s.length - suffixLength)
 }
 
 export const formatValidatorAddressForDisplay = function (address: ValidatorAddressT): string {
@@ -34,7 +34,7 @@ export const parseUnderscoresToSpaces = function (message: string): string {
 
 const getSortedHRPKeys = function (): string[] {
   const allHRPKeys = []
-  for (const [key, val] of Object.entries(HRP)) {
+  for (const val of Object.values(HRP)) {
     allHRPKeys.push(val.RRI_suffix)
   }
   allHRPKeys.sort(function (a, b) {
@@ -46,12 +46,12 @@ const getSortedHRPKeys = function (): string[] {
 const getCorrectRRISuffixFromHRP = function (hrpKeys: string[], rriString: string): string {
   // Using regex /${suffix}/.exec(rriString) to return the right suffix
   const rriStringMatchHRPKey = hrpKeys.filter((suffix) => {
-    return rriString.match(suffix)! != null
+    return rriString.match(suffix)
   })
   return rriStringMatchHRPKey[0]
 }
 
 const getRRIPrefixLength = function (rriSuffix: string, rriString: string): number {
-  const match = rriString.match(rriSuffix)!
-  return match.index! + rriSuffix.length
+  const match = rriString.match(rriSuffix)
+  return (match?.index || 0) + rriSuffix.length
 }
