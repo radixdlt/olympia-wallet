@@ -182,9 +182,8 @@ const WalletSidebarAccounts = defineComponent({
     })
 
     const handleAccountEditName = (device: any) => {
-      setState(false)
       const firstAccount = device.addresses[0].address?.toString()
-      router.push({ name: 'device-edit-name', params: { firstAccount } })
+      router.push({ name: 'device-edit-name', params: { activeAddress: firstAccount } })
     }
 
     return {

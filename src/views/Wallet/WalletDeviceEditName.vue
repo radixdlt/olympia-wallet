@@ -21,12 +21,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, watch } from 'vue'
 import { saveDeviceName, getHardwareDevices } from '@/actions/vue/data-store'
 import { ref } from '@nopr3d/vue-next-rx'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
 import { useWallet } from '@/composables'
-import { useRouter, useRoute } from 'vue-router'
+import { useRouter } from 'vue-router'
 
 const WalletDeviceEditName = defineComponent({
   components: {
@@ -36,52 +36,46 @@ const WalletDeviceEditName = defineComponent({
   setup () {
     const name = ref('')
     const router = useRouter()
-    const route = useRoute()
 
     const { activeAddress, deviceRenamed, activeNetwork } = useWallet(router)
     if (!activeAddress.value) {
       return
     }
+
     const allDevices = async () => {
       if (!activeNetwork.value) return
       const devices = await getHardwareDevices(activeNetwork.value)
       return devices
     }
 
-    const selectedDeviceIndex = async () => {
+    const selectedDevice = async () => {
       const devices = await allDevices()
       if (!devices) return
-      for (const device of devices) {
-        if (device.addresses[0].address.toString() === route.params.firstAccount) {
-          return devices.indexOf(device)
-        }
-      }
-    }
-
-    const selectedDeviceName = async () => {
-      const devices = await allDevices()
-      if (!devices) return
-      for (const device of devices) {
-        if (device.addresses[0].address.toString() === route.params.firstAccount) {
-          return device.name
-        }
-      }
-    }
-    // Update input value if active address changes
-    selectedDeviceName()
-      .then((deviceName) => {
-        if (!deviceName) return
-        name.value = deviceName
+      return devices.find((device) => {
+        if (!activeAddress.value) return false
+        return device.addresses[0].address.equals(activeAddress.value)
       })
-    // name.value = storedName
+    }
 
-    const handleSubmit = () => {
-      selectedDeviceIndex()
-        .then((idx) => {
-          if (!activeNetwork.value || idx === undefined) return
-          saveDeviceName(idx, activeNetwork.value, name.value)
-          deviceRenamed()
-        })
+    watch((activeAddress), async (newActiveAddress, oldActiveAddress) => {
+      if (!newActiveAddress) return
+      if (oldActiveAddress && newActiveAddress.equals(oldActiveAddress)) return
+      const device = await selectedDevice()
+      if (!device) return
+      name.value = device.name
+    }, { immediate: true })
+
+    const handleSubmit = async () => {
+      const device = await selectedDevice()
+      const devices = await allDevices()
+      if (!devices || !device || !activeNetwork.value) return
+      const idx = devices.findIndex((d) => {
+        return d.addresses[0].address.equals(device.addresses[0].address)
+      })
+      if (idx < 0) return
+
+      await saveDeviceName(idx, activeNetwork.value, name.value)
+      deviceRenamed()
     }
 
     return { name, handleSubmit }
