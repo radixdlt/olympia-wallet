@@ -21,7 +21,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, watch } from 'vue'
 import { saveAccountName } from '@/actions/vue/data-store'
 import { ref } from '@nopr3d/vue-next-rx'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
@@ -42,9 +42,11 @@ const AccountEditName = defineComponent({
       return
     }
 
-    // Update input value if active address changes
-    const storedName = accountNameFor(activeAddress.value)
-    name.value = storedName
+    watch((activeAddress), (newActiveAddress, oldActiveAddress) => {
+      if (!newActiveAddress) return
+      if (oldActiveAddress && newActiveAddress.equals(oldActiveAddress)) return
+      name.value = accountNameFor(newActiveAddress)
+    }, { immediate: true })
 
     const handleSubmit = () => {
       if (!activeAddress.value) return
