@@ -1,12 +1,11 @@
 import { AccountName, SelectedNode } from '../electron/data-store'
 import { AccountAddress, Network, ResourceIdentifierT } from '@radixdlt/application'
 import { HardwareAddress, EncodedHardwareAddress, HardwareDevice, EncodedHardwareDevice } from '@/services/_types'
-import { resolveComponent } from 'vue'
 export const saveAccountName = (accountAddress: string, prettyName: string): Promise<string> => new Promise((resolve) => {
   resolve(window.ipcRenderer.invoke('save-account-name', JSON.stringify({ accountAddress, prettyName })))
 })
 
-export const saveDeviceName = (deviceIndex: number | undefined, network: string, prettyName: string): Promise<string> => new Promise((resolve) => {
+export const saveDeviceName = (deviceIndex: number, network: string, prettyName: string): Promise<string> => new Promise((resolve) => {
   resolve(window.ipcRenderer.invoke('save-device-name', JSON.stringify({ network, deviceIndex, prettyName })))
 })
 
@@ -34,7 +33,7 @@ export const getDerivedAccountsIndex = (network: Network): Promise<string> => ne
   resolve(window.ipcRenderer.invoke('get-num-accounts', String(network)))
 })
 
-export const saveHardwareDevices = async (network: Network, hardwareDevices: HardwareDevice[]) => new Promise((resolve) => {
+export const saveHardwareDevices = async (network: Network, hardwareDevices: HardwareDevice[]): Promise<void> => new Promise((resolve) => {
   const data = hardwareDevices.map((hw: HardwareDevice) => {
     return {
       name: hw.name,
