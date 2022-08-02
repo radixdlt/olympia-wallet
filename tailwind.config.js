@@ -4,6 +4,9 @@ module.exports = {
   darkMode: false, // or 'media' or 'class'
   theme: {
     extend: {
+      backgroundImage: {
+        'primaryAccount': "linear-gradient(90deg, rgba(6, 15, 143, 0.4) 28.49%, rgba(5, 44, 192, 0.4) 100%);"
+      },
       colors: {
         rBlue: '#052CC0',
         rBlueDark: '#060F8F',
