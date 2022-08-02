@@ -90,10 +90,10 @@ const messages = {
     },
     wallet: {
       addressLabel: 'Address:',
-      back: 'back',
+      back: 'Back',
       addAccount: '+ Add Account',
       addSoftwareAccount: '+ Add Software Account',
-      softwareWallets: 'Software Wallets',
+      softwareWallets: 'Software Wallet',
       hardwareWallets: 'Hardware Wallets',
       chooseAnAccount: 'Choose an account:',
       balancesHeading: 'XRD Balances',
