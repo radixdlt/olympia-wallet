@@ -19,14 +19,6 @@
             <path class="stroke-current" d="M0 9.99999L2.7429 9.87776L0.0850602 7.22003L0 9.99999Z" fill="white"/>
           </svg>
         </div>
-        <!-- click to copy icon -->
-        <div class="text-xs text-rGrayDark pt-2">
-          <click-to-copy
-            :address="addressVal"
-            :checkForHardwareAddress=true
-            class="hover:text-rGreen active:text-rGreenDark mb-2"
-          />
-        </div>
         <!-- eye icon -->
         <div @click="hideAccount(addressVal, nickName)" class="text-rGrayDark hover:text-rGreen transition-colors cursor-pointer flex items-center justify-center pt-1">
           <svg class="" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -36,8 +28,15 @@
             <path class="stroke-current" d="M6.9314 5.0655C7.34303 4.96937 7.77232 4.97919 8.17913 5.09404C8.58594 5.20888 8.95698 5.425 9.25758 5.72219C9.55818 6.01939 9.77851 6.38795 9.89798 6.79342C10.0175 7.1989 10.0322 7.62805 9.94073 8.04075" stroke="#7A99AC" stroke-linecap="round"/>
           </svg>
         </div>
+        <div class="text-xs text-rGrayDark pt-2">
+          <click-to-copy
+            :address="addressVal"
+            :checkForHardwareAddress=true
+            class="hover:text-rGreen active:text-rGreenDark mb-2"
+          />
+        </div>
+      </div>
     </div>
-  </div>
   </div>
 </template>
 
