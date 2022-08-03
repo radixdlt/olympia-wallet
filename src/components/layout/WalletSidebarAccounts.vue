@@ -76,8 +76,8 @@
             <path class="stroke-current" d="M1.5 10.5L5 7" stroke="#F2F2FC" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </div>
-        <div v-if="hardwareDevices.length > 0 && showHardwareAccounts">
-          <div v-for="(hardwareDevice, i) in hardwareDevices" :key="i">
+        <div v-if="hardwareDevices.length > 0">
+          <div v-for="(hardwareDevice, i) in nonHiddenHardwareDevices" :key="i">
             <div>
               <div class="flex items-center justify-between group py-5 mx-4 px-1">
                 <div class="flex cursor-pointer items-center">
@@ -186,6 +186,7 @@ const WalletSidebarAccounts = defineComponent({
     })
 
     const nonHiddenHardwareDevices: ComputedRef<HardwareDevice[]> = computed(() => {
+      console.log('here')
       return hardwareDevices.value.map((hwDevice: HardwareDevice) => {
         const availableAddresses = hwDevice.addresses.filter((hwAddr) => {
           const newArr = hiddenAccounts.value.flatMap(acct => Object.values(acct))
