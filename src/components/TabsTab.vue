@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex items-center justify-center py-5 -mb-px relative z-20 cursor-pointer px-5"
+    class="flex items-center justify-center py-5 -mb-px relative z-20 cursor-pointer px-5 text-sm"
     :class="{
       'bg-white border-t border-r border-l border-rGray rounded-t-md -mx-px font-medium': isActive,
       'opacity-50 cursor-not-allowed': isDisabled
