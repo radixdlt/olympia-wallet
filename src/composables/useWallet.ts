@@ -424,6 +424,7 @@ fetchHiddenAccountsFromElectron()
 
 // handleHiddenAccounts
 const handleHiddenAccounts = async (newAcctToHide: string, newAcctNickname: string) => {
+  console.log(newAcctToHide, newAcctNickname)
   await setHiddenAccounts(newAcctToHide, newAcctNickname)
   await fetchHiddenAccountsFromElectron()
 }
