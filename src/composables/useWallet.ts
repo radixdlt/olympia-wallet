@@ -574,7 +574,10 @@ const accountNameFor = (accountAddress: AccountAddressT): string => {
 
 const setShowNewDevicePopup = (val: boolean) => { showNewDevicePopup.value = val }
 
-const closeLedgerErrorModal = () => { hardwareError.value = null }
+const closeLedgerErrorModal = () => {
+  showLedgerVerify.value = false
+  hardwareError.value = null
+}
 
 const createNewHardwareAccount = async () => {
   if (!activeNetwork.value) return
@@ -649,9 +652,11 @@ const connectHardwareWallet = async (hwaddr: HardwareAddress): Promise<AccountT 
     hardwareInteractionState.value = ''
     return hwAccount
   } catch (e) {
+    console.error(e, 'error from connect hw')
     hardwareInteractionState.value = ''
     hardwareError.value = e as Error
-    return activeAccount.value
+    showLedgerVerify.value = false
+    return null
   }
 }
 
