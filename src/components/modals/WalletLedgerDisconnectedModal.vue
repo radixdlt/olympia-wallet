@@ -25,7 +25,7 @@ import AppButtonCancel from '@/components/AppButtonCancel.vue'
 import AppModal from '@/components/AppModal.vue'
 import { useI18n } from 'vue-i18n'
 
-type ledgerMessages = 'notFound' | 'incorrectAccount' | 'unknownError'
+type ledgerMessages = 'notFound' | 'incorrectAccount' | 'tooManyDevices' | 'unknownError'
 
 const determineMessage = (e: Error): ledgerMessages => {
   if (e.message.includes('No device found')) {
@@ -35,6 +35,11 @@ const determineMessage = (e: Error): ledgerMessages => {
   if (e.message.includes('Unable to activate the correct account')) {
     return 'incorrectAccount'
   }
+
+  if (e.message.includes('Too Many Devices Enabled')) {
+    return 'tooManyDevices'
+  }
+
   return 'unknownError'
 }
 
