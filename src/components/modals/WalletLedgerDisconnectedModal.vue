@@ -1,7 +1,7 @@
 <template>
   <AppModal
     :visible="true"
-    :title="$t('wallet.ledgerModal.title')"
+    :title="titleCopy"
   >
     <template v-slot:icon>
       <svg width="50" height="50" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg" class="transform rotate-45">
@@ -11,7 +11,7 @@
       </svg>
     </template>
     <template v-slot:content>
-      <p class="mb-5">{{ $t('wallet.ledgerModal.disconnectedContent') }}</p>
+      <p class="mb-5">{{ descriptionCopy }}</p>
       <div class="flex flex-row space-x-5 justify-center">
         <AppButtonCancel @click="handleClose" class="w-44">{{ $t('wallet.ledgerModal.buttonText') }}</AppButtonCancel>
       </div>
@@ -20,9 +20,29 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, toRef, watch, Ref, ref, computed } from 'vue'
 import AppButtonCancel from '@/components/AppButtonCancel.vue'
 import AppModal from '@/components/AppModal.vue'
+import { useI18n } from 'vue-i18n'
+
+type ledgerMessages = 'notFound' | 'incorrectAccount' | 'tooManyDevices' | 'unknownError'
+
+const determineMessage = (e: Error): ledgerMessages => {
+  if (e.message.includes('No device found')) {
+    return 'notFound'
+  }
+
+  if (e.message.includes('Unable to activate the correct account')) {
+    return 'incorrectAccount'
+  }
+
+  if (e.message.includes('Too Many Devices Enabled')) {
+    return 'tooManyDevices'
+  }
+
+  return 'unknownError'
+}
+
 const WalletLedgerDisconnectedModal = defineComponent({
   components: {
     AppModal,
@@ -32,7 +52,26 @@ const WalletLedgerDisconnectedModal = defineComponent({
     handleClose: {
       type: Function,
       required: true
+    },
+    hardwareError: {
+      type: Error,
+      required: true
     }
+  },
+
+  setup (props) {
+    const { t } = useI18n()
+
+    const error = toRef(props, 'hardwareError')
+    const msgType: Ref<ledgerMessages> = ref('unknownError')
+    watch((error), (error) => {
+      msgType.value = determineMessage(error)
+    }, { immediate: true })
+
+    const titleCopy = computed(() => t(`wallet.ledgerErrorModal.${msgType.value}.title`))
+    const descriptionCopy = computed(() => t(`wallet.ledgerErrorModal.${msgType.value}.description`))
+
+    return { titleCopy, descriptionCopy }
   }
 })
 export default WalletLedgerDisconnectedModal

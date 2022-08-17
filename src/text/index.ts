@@ -140,6 +140,24 @@ const messages = {
         disconnectedContent: 'Unable to connect to the active account.  Ensure the correct ledger device is connected and active or switch accounts to continue.',
         buttonText: 'Dismiss'
       },
+      ledgerErrorModal: {
+        notFound: {
+          title: 'Ledger Device Disconnected',
+          description: 'Unable to connect to the active account.  Ensure the correct ledger device is connected and active or switch accounts to continue.'
+        },
+        incorrectAccount: {
+          title: 'Incorrect Ledger Device Connected',
+          description: 'The connected ledger does not contain the active account.  Ensure a single ledger device is connected and active or switch accounts to continue.'
+        },
+        tooManyDevices: {
+          title: 'Multiple Ledger Devices Connected',
+          description: 'Please ensure you only have one Ledger device connected to continue.'
+        },
+        unknownError: {
+          title: 'Unknown Ledger Error',
+          description: 'Ensure your device is connected and retry the action.'
+        }
+      },
       ledgerInteractionState: {
         DERIVING: {
           title: 'Deriving Account',
