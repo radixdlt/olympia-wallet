@@ -56,7 +56,7 @@
     "vue-toastification": "^2.0.0-rc.1"
   },
   "devDependencies": {
-    "@actions/core": "^1.5.0",
+    "@actions/core": "^1.9.1",
     "@babel/plugin-proposal-nullish-coalescing-operator": "^7.13.8",
     "@babel/plugin-proposal-optional-chaining": "^7.13.8",
     "@types/chai": "^4.2.11",
