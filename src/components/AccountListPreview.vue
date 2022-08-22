@@ -58,7 +58,7 @@ const AccountListPreview = defineComponent({
     }
 
     const addressVal: ComputedRef<string> = computed(() => address.value.toString())
-    const displayAddress: ComputedRef<string> = computed(() => formatWalletAddressForDisplay(address.value, 12, 12))
+    const displayAddress: ComputedRef<string> = computed(() => formatWalletAddressForDisplay(address.value))
 
     const isActiveAccount: ComputedRef<boolean> = computed(() => {
       return address.value.toString() === activeAddress.value?.toString()
