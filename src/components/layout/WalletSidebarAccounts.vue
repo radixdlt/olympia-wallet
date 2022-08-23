@@ -63,7 +63,7 @@
           <div class="pl-2 text-sm">
             {{ $t('wallet.hardwareWallets') }}
           </div>
-          <svg v-if="showHardwareAccounts" @click="toggleShowHardwareAccounts" width="17" height="17" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <svg v-if="showHardwareAccounts" @click="toggleShowHardwareAccounts" class="ml-auto" width="17" height="17" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path class="stroke-current" d="M2 7H5V10" stroke="#F2F2FC" stroke-linecap="round" stroke-linejoin="round"/>
             <path class="stroke-current" d="M10 5H7V2" stroke="#F2F2FC" stroke-linecap="round" stroke-linejoin="round"/>
             <path class="stroke-current" d="M7 5L10.5 1.5" stroke="#F2F2FC" stroke-linecap="round" stroke-linejoin="round"/>
