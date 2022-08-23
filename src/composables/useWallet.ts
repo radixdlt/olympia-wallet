@@ -295,7 +295,11 @@ const errorHandler = (err: any) => {
 
 // call transferTokens() with built options and subscribe to confirmation and results
 const transferTokens = (transferTokensInput: TransferTokensInput, message: MessageInTransaction, sc: Decoded.TokenAmount) => {
-  activateAccount().then(() => {
+  activateAccount().then((val) => {
+    if (!val) {
+      cancelTransaction()
+      return
+    }
     cleanupInputs()
     transferInput.value = transferTokensInput
     selectedCurrency.value = sc
@@ -319,7 +323,7 @@ const transferTokens = (transferTokensInput: TransferTokensInput, message: Messa
       events.subscribe(handleTransactionLifecycleEvent, errorHandler)
     )
   }).catch((e) => {
-    cleanupInputs()
+    // cleanupInputs()
   })
 }
 
@@ -760,7 +764,8 @@ const activateAccount = async () : Promise<AccountT | null> => {
   const acct = await connectHardwareWallet(hardwareAddress)
   if (!acct) {
     isActivating.value = false
-    return null
+    hardwareError.value = new Error('No device found')
+    return Promise.reject(Error('Invalid Hardware Device'))
   }
 
   if (!acct.address.equals(hardwareAddress.address)) {

@@ -184,11 +184,11 @@ const WalletTransaction = defineComponent({
     })
 
     const cancelSub = userDidCancel.subscribe((val) => {
-      if (val) {
-        const existingEncrypt = values.encrypt
-        resetForm()
-        values.encrypt = existingEncrypt
-      }
+      // if (val) {
+      //   const existingEncrypt = values.encrypt
+      //   resetForm()
+      //   values.encrypt = existingEncrypt
+      // }
     })
 
     setActiveTransactionForm('transaction')
