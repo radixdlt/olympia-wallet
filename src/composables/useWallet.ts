@@ -65,6 +65,7 @@ import { HardwareWalletLedger } from '@radixdlt/hardware-ledger'
 import { defaultNetwork } from '@/helpers/network'
 import router from '@/router'
 import useErrors from './useErrors'
+import { validate } from 'vee-validate'
 
 export interface PendingTransaction extends TransactionStateSuccess {
   actions: IntendedAction[]
@@ -86,7 +87,7 @@ const hardwareDevices: Ref<HardwareDevice[]> = ref([])
 const hardwareError: Ref<Error | null> = ref(null)
 const hardwareInteractionState: Ref<string> = ref('')
 const hasWallet = ref(false)
-const ledgerVerifyError: Ref<Error | null> = ref(null)
+const ledgerVerifyError: Ref<boolean> = ref(false)
 const nativeToken: Ref<Token | null> = ref(null)
 const nodeUrl: Ref<string | null> = ref(null)
 const reloadTrigger = new Subject<number>()
@@ -401,7 +402,7 @@ interface useWalletInterface {
   readonly hardwareError: Ref<Error | null>;
   readonly hardwareInteractionState: Ref<string>;
   readonly hasWallet: Ref<boolean>;
-  readonly ledgerVerifyError: Ref<Error | null>;
+  readonly ledgerVerifyError: Ref<boolean>;
   readonly nativeToken: Ref<Token | null>;
   readonly networkPreamble: ComputedRef<string>;
   readonly nodeUrl: ComputedRef<string | null>;
@@ -446,7 +447,6 @@ interface useWalletInterface {
   createWallet: (mnemonic: MnemomicT, pass: string, network: Network) => Promise<WalletT>;
   decryptMessage: (tx: ExecutedTransaction) => Promise<string>;
   deviceRenamed: () => void;
-  hideLedgerVerify: () => void;
   hideLedgerInteraction: () => void;
   initWallet: (router: Router) => void;
   loginWithWallet: (password: string) => Promise<ReturnType<typeof Radix.create>>;
@@ -456,6 +456,8 @@ interface useWalletInterface {
   resetWallet: (nextRoute: 'create-wallet' | 'restore-wallet') => void;
   setActiveAddress: (address: string) => void;
   setHideAccountModal: (val: boolean) => void;
+  setLedgerVerify: (val: boolean) => void;
+  setLedgerVerifyWrongAccount: (val: boolean) => void;
   setUpdateInProcess: (val: boolean) => void;
   setDisconnectDeviceModal: (val: number) => void;
   forgetDevice: () => void;
@@ -669,8 +671,8 @@ const verifyHardwareWalletAddress = () => {
     showLedgerVerify.value = true
     return firstValueFrom(radix.displayAddressForActiveHWAccountOnHWDeviceForVerification())
   }).catch((e) => {
-    ledgerVerifyError.value = e as Error
-    hideLedgerVerify()
+    hardwareError.value = e as Error
+    setLedgerVerify(false)
   })
 }
 
@@ -729,8 +731,13 @@ const hideLedgerInteraction = () => {
   hardwareInteractionState.value = ''
 }
 
-const hideLedgerVerify = () => {
-  showLedgerVerify.value = false
+const setLedgerVerify = (val = false) => {
+  showLedgerVerify.value = val
+}
+
+const setLedgerVerifyWrongAccount = (val: boolean) => {
+  showLedgerVerify.value = val
+  ledgerVerifyError.value = val
 }
 
 const isActivating: Ref<boolean> = ref(false)
@@ -913,13 +920,14 @@ export default function useWallet (router: Router): useWalletInterface {
     addAccount,
     createWallet,
     hideLedgerInteraction,
-    hideLedgerVerify,
     initWallet,
     persistNodeUrl,
     setActiveAddress,
     setHideAccountModal,
     setDisconnectDeviceModal,
     forgetDevice,
+    setLedgerVerify,
+    setLedgerVerifyWrongAccount,
     setShowNewDevicePopup,
     setPin,
     setWallet,

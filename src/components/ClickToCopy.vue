@@ -30,21 +30,34 @@ const ClickToCopy = defineComponent({
   setup (props) {
     const toast = useToast()
     const router = useRouter()
-    const { activeAddress, verifyHardwareWalletAddress, hardwareDevices } = useWallet(router)
+    const { activeAddress, verifyHardwareWalletAddress, hardwareDevices, setLedgerVerify, setLedgerVerifyWrongAccount } = useWallet(router)
     const { address, checkForHardwareAddress } = toRefs(props)
-    const potentialHWAddress = hardwareDevices.value.flatMap((v) => v.addresses).find((a) => a.address.toString() === address.value)
 
     const copyText = async () => {
-      if (checkForHardwareAddress.value && potentialHWAddress && activeAddress.value?.toString() === address.value) {
+      const potentialHWAddress = hardwareDevices.value.flatMap((v) => v.addresses).find((a) => a.address.toString() === address.value)
+      console.log(checkForHardwareAddress.value, potentialHWAddress?.address.toString(), activeAddress.value?.toString(), address.value)
+      if (!checkForHardwareAddress.value) {
+        copyToClipboard(address.value)
+        toast.success('Copied to Clipboard')
+        return
+      }
+
+      if (!potentialHWAddress && activeAddress.value?.toString() === address.value) {
+        copyToClipboard(address.value)
+        toast.success('Copied to Clipboard')
+        return
+      }
+
+      if (activeAddress.value?.toString() === address.value) {
         try {
-          verifyHardwareWalletAddress()
+          await verifyHardwareWalletAddress()
         } catch {
           toast.error('Unable to connect to Ledger')
         }
-      } else {
-        copyToClipboard(address.value)
-        toast.success('Copied to Clipboard')
+        return
       }
+      setLedgerVerify(true)
+      setLedgerVerifyWrongAccount(true)
     }
     return { copyText }
   }
