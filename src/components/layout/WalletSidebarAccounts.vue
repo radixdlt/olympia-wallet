@@ -111,7 +111,7 @@
                   v-for="address in hardwareDevice.addresses"
                   :key="address.toString()"
                   :address="address.address"
-                  @click="hardwareSwitch(address.address.toString())"
+                  @click="hardwareSwitch(address.address)"
                   class="mb-4"
                 />
                 <div class="mx-4 h-0 border-b border-rGrayDark"></div>
@@ -143,7 +143,7 @@
 
 <script lang="ts">
 import { defineComponent, ref, Ref, computed, ComputedRef } from 'vue'
-import { AccountT } from '@radixdlt/application'
+import { AccountAddressT, AccountT } from '@radixdlt/application'
 import AccountListItem from '@/components/AccountListItem.vue'
 import { useWallet, useSidebar } from '@/composables'
 import { useRouter } from 'vue-router'
@@ -201,6 +201,7 @@ const WalletSidebarAccounts = defineComponent({
         addAccount().then((account: AccountT | false) => {
           if (!account) return
           const name = router.currentRoute.value.name || 'WalletOverview'
+          if (name === 'Settings') { switchAddress(account.address) }
           router.push({ name, params: { activeAddress: account.address.toString() } })
         })
       },
@@ -209,9 +210,9 @@ const WalletSidebarAccounts = defineComponent({
         const name = router.currentRoute.value.name || 'WalletOverview'
         router.push({ name, params: { activeAddress: account.address.toString() } })
       },
-      hardwareSwitch (val: string) {
+      hardwareSwitch (val: AccountAddressT) {
         const name = router.currentRoute.value.name || 'WalletOverview'
-        router.push({ name, params: { activeAddress: val } })
+        router.push({ name, params: { activeAddress: val.toString() } })
       },
       toggleSoftwareAccounts () {
         showSoftwareAccounts.value = !showSoftwareAccounts.value
