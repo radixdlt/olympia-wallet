@@ -610,11 +610,11 @@ const createNewHardwareAccount = async () => {
         verificationPrompt: false
       }))
 
-      newHardwareDevices = hardwareDevices.value.map((hwd) => {
+      newHardwareDevices = hardwareDevices.value.map((hwd, index) => {
         if (hwd.name !== hardwareDevice.name) return hwd
         return {
           name: hardwareDevice.name,
-          addresses: [...hardwareDevice.addresses, { name: 'New Hardware Account', address: newAccount.address, index: newIndex }]
+          addresses: [...hardwareDevice.addresses, { address: newAccount.address, index: newIndex }]
         }
       })
       activeAccount.value = newAccount
@@ -624,7 +624,7 @@ const createNewHardwareAccount = async () => {
     } else {
       const newAddr = connectedDeviceAccount.address.toString()
       const deviceNumber = hardwareDevices.value.length + 1
-      const newHardwareDevices = [...hardwareDevices.value, { name: `Hardware Device ${deviceNumber}`, addresses: [{ name: newAddr, address: connectedDeviceAccount.address, index: 0 }] }]
+      const newHardwareDevices = [...hardwareDevices.value, { name: `Ledger ${deviceNumber}`, addresses: [{ name: newAddr, address: connectedDeviceAccount.address, index: 0 }] }]
       activeAccount.value = connectedDeviceAccount
       hardwareDevices.value = newHardwareDevices
       saveHardwareDevices(activeNetwork.value, newHardwareDevices)
