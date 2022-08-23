@@ -219,9 +219,7 @@ const WalletSidebarAccounts = defineComponent({
       toggleShowHardwareAccounts () {
         showHardwareAccounts.value = !showHardwareAccounts.value
       },
-      // take in an array of devices instead of a single device
       toggleHardwareAccounts (hardwareDevice: any) {
-        // iterate through array of hardware devices
         const index = hiddenHwAccounts.value.indexOf(hardwareDevice.name)
         if (index > -1) {
           hiddenHwAccounts.value.splice(index, 1)
@@ -229,7 +227,6 @@ const WalletSidebarAccounts = defineComponent({
           hiddenHwAccounts.value.push(hardwareDevice.name)
         }
       },
-      // change parameter to
       deviceAccountsHidden (deviceName: string) {
         const hiddenDevices = Object.values(hiddenHwAccounts.value)
         return !hiddenDevices.includes(deviceName)
@@ -246,22 +243,6 @@ const WalletSidebarAccounts = defineComponent({
         return !!hardwareDevice.addresses.find((hwaddr) => {
           if (!activeAddress.value) return false
           return hwaddr.address.equals(activeAddress.value)
-        })
-      },
-      // hide all hardware accounts
-      hideAllHardwareAccounts () {
-        // console.log(hardwareDevices.value)
-        const devices = Object.values(hardwareDevices.value)
-        console.log(devices)
-        devices.forEach(device => {
-          console.log(device)
-          // toggle hardware accounts
-          const index = hiddenHwAccounts.value.indexOf(device.name)
-          if (index > -1) {
-            hiddenHwAccounts.value.splice(index, 1)
-          } else {
-            hiddenHwAccounts.value.push(device.name)
-          }
         })
       }
     }
