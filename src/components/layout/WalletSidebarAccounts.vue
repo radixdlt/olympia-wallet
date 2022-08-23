@@ -63,27 +63,20 @@
           <div class="pl-2 text-sm">
             {{ $t('wallet.hardwareWallets') }}
           </div>
-          <!-- <span class="text-white text-sm ml-2"> {{ $t('wallet.hardwareWallets') }} </span> -->
-          <div v-if="hardwareDevices.length > 0" class="flex">
-            <div v-for="(hardwareDevice, i) in hardwareDevices" :key="i">
-              <div v-if="i === 0" @click="hideAllHardwareAccounts()" class="flex text-rGrayDark hover:text-rGreen transition-colors cursor-pointer">
-                <svg v-if="deviceAccountsHidden(hardwareDevice.name)" width="17" height="17" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path class="stroke-current" d="M2 7H5V10" stroke="#F2F2FC" stroke-linecap="round" stroke-linejoin="round"/>
-                  <path class="stroke-current" d="M10 5H7V2" stroke="#F2F2FC" stroke-linecap="round" stroke-linejoin="round"/>
-                  <path class="stroke-current" d="M7 5L10.5 1.5" stroke="#F2F2FC" stroke-linecap="round" stroke-linejoin="round"/>
-                  <path class="stroke-current" d="M1.5 10.5L5 7" stroke="#F2F2FC" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-                <svg v-else @click="!deviceAccountsHidden(hardwareDevice.name)" class="ml-auto stroke-current text-rGrayDark hover:text-rGreen transition-colors" width="15" height="15" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path class="stroke-current" d="M7.5 1.5H10.5V4.5" stroke="#F2F2FC" stroke-linecap="round" stroke-linejoin="round"/>
-                  <path class="stroke-current" d="M4.5 10.5H1.5V7.5" stroke="#F2F2FC" stroke-linecap="round" stroke-linejoin="round"/>
-                  <path class="stroke-current" d="M10.5 1.5L7 5" stroke="#F2F2FC" stroke-linecap="round" stroke-linejoin="round"/>
-                  <path class="stroke-current" d="M1.5 10.5L5 7" stroke="#F2F2FC" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-              </div>
-            </div>
-          </div>
+          <svg v-if="showHardwareAccounts" @click="toggleShowHardwareAccounts" width="17" height="17" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path class="stroke-current" d="M2 7H5V10" stroke="#F2F2FC" stroke-linecap="round" stroke-linejoin="round"/>
+            <path class="stroke-current" d="M10 5H7V2" stroke="#F2F2FC" stroke-linecap="round" stroke-linejoin="round"/>
+            <path class="stroke-current" d="M7 5L10.5 1.5" stroke="#F2F2FC" stroke-linecap="round" stroke-linejoin="round"/>
+            <path class="stroke-current" d="M1.5 10.5L5 7" stroke="#F2F2FC" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <svg v-else @click="toggleShowHardwareAccounts" class="ml-auto stroke-current text-rGrayDark hover:text-rGreen transition-colors" width="15" height="15" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path class="stroke-current" d="M7.5 1.5H10.5V4.5" stroke="#F2F2FC" stroke-linecap="round" stroke-linejoin="round"/>
+            <path class="stroke-current" d="M4.5 10.5H1.5V7.5" stroke="#F2F2FC" stroke-linecap="round" stroke-linejoin="round"/>
+            <path class="stroke-current" d="M10.5 1.5L7 5" stroke="#F2F2FC" stroke-linecap="round" stroke-linejoin="round"/>
+            <path class="stroke-current" d="M1.5 10.5L5 7" stroke="#F2F2FC" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
         </div>
-        <div v-if="hardwareDevices.length > 0">
+        <div v-if="hardwareDevices.length > 0 && showHardwareAccounts">
           <div v-for="(hardwareDevice, i) in hardwareDevices" :key="i">
             <div>
               <div class="flex items-center justify-between group py-5 mx-4 pl-1">
@@ -126,7 +119,7 @@
           </div>
         </div>
         <div v-else>
-          <div class="flex justify-center items-center px-2 border-b border-rGray border-opacity-50 py-4">
+          <div v-if="showHardwareAccounts" class="flex justify-center items-center px-2 border-b border-rGray border-opacity-50 py-4">
             <svg width="18" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M18.7382 10.6172H7.26074V19H18.7382V10.6172Z" stroke="white" stroke-width="1.5" stroke-miterlimit="10" />
               <path d="M10.6592 12.7317V16.8855" stroke="white" stroke-width="1.5" stroke-miterlimit="10" />
@@ -222,6 +215,9 @@ const WalletSidebarAccounts = defineComponent({
       },
       toggleSoftwareAccounts () {
         showSoftwareAccounts.value = !showSoftwareAccounts.value
+      },
+      toggleShowHardwareAccounts () {
+        showHardwareAccounts.value = !showHardwareAccounts.value
       },
       // take in an array of devices instead of a single device
       toggleHardwareAccounts (hardwareDevice: any) {
