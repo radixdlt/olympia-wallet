@@ -154,7 +154,7 @@ const messages = {
           description: 'Please ensure you only have one Ledger device connected to continue.'
         },
         unknownError: {
-          title: 'Unknown Ledger Error',
+          title: 'Ledger Error',
           description: 'Ensure your device is connected and retry the action.'
         }
       },
