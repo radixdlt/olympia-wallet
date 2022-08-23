@@ -48,10 +48,11 @@
         </div>
       </div>
     </div>
-
+  <!-- hardware wallets section -->
     <div class="bg-gradient-to-br from-rBlue via-rDarkblue to-rDarkblue h-full">
       <div class="border-rGray border-opacity-50">
-        <div class="flex items-center py-5 mx-4 border-b border-rGrayMed px-1">
+        <div class="flex px-6 py-4">
+        <!-- <div class="flex items-center py-5 mx-4 border-b border-rGrayMed px-1"> -->
           <svg width="28" viewBox="0 0 29 23" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M1 9.39837L1 18.2217L7.02673 18.2217L7.02673 9.39837L1 9.39837Z" stroke="white" stroke-miterlimit="10"/>
             <path d="M2.52002 15.6089L5.5063 15.6089" stroke="white" stroke-miterlimit="10"/>
@@ -61,7 +62,13 @@
             <path d="M27.7079 8.75238V5C27.7079 2.79086 25.917 1 23.7079 1H11.0349C8.82577 1 7.03491 2.79086 7.03491 5V8.75238" stroke="white"/>
             <path d="M23.0398 13.9206C23.0398 12.7695 23.9729 11.8364 25.1239 11.8364H28.5001V16.0047H25.1239C23.9729 16.0047 23.0398 15.0716 23.0398 13.9206Z" stroke="white"/>
           </svg>
-          <span class="text-white text-sm ml-2"> {{ $t('wallet.hardwareWallets') }} </span>
+          <div class="pl-2 text-sm">
+            {{ $t('wallet.hardwareWallets') }}
+          </div>
+          <!-- <span class="text-white text-sm ml-2"> {{ $t('wallet.hardwareWallets') }} </span> -->
+          <!-- put icon here -->
+          
+        <!-- </div> -->
         </div>
         <div v-if="hardwareDevices.length > 0">
           <div v-for="(hardwareDevice, i) in hardwareDevices" :key="i">
