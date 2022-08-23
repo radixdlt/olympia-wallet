@@ -40,7 +40,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onUnmounted, ComputedRef, computed } from 'vue'
+import { defineComponent, onUnmounted, watch } from 'vue'
 import { MnemomicT } from '@radixdlt/application'
 import { combineLatest, Subject, Subscription } from 'rxjs'
 import TabsTab from '@/components/TabsTab.vue'
@@ -54,7 +54,7 @@ import SettingsSelectDecimal from './SettingsSelectDecimal.vue'
 import WalletLayout from '@/components/layout/WalletLayout.vue'
 import { Ref, ref } from '@nopr3d/vue-next-rx'
 import { useSettingsTab, useWallet } from '@/composables'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import LoadingIcon from '@/components/LoadingIcon.vue'
 
 const SettingsIndex = defineComponent({
@@ -76,8 +76,20 @@ const SettingsIndex = defineComponent({
     const mnemonic: Ref<MnemomicT | null> = ref(null)
     const userRequestedMnemonic = new Subject<boolean>()
     const router = useRouter()
-    const { connected, radix, activeAddress } = useWallet(router)
+    const { connected, radix, activeAddress, setActiveAddress } = useWallet(router)
     const { activeTab, setTab } = useSettingsTab()
+    const route = useRoute()
+
+    watch(
+      () => route.params.activeAddress,
+      (addr, oldAddr) => {
+        if (!addr) return
+        if (addr === oldAddr) return
+        const id = Array.isArray(addr) ? addr[0] : addr
+        setActiveAddress(id)
+      },
+      { immediate: true }
+    )
 
     // Only fetch mnemonic if user confirms pin
     const watchUserDidRequstMnemonic = combineLatest<[MnemomicT, boolean]>([radix.revealMnemonic(), userRequestedMnemonic])
