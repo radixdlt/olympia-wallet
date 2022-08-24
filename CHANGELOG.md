@@ -1,5 +1,72 @@
 # Changelog
 
+## What's Changed
+* epic: Multiple Hardware Accounts (WIP) by @staylorwr in https://github.com/radixdlt/olympia-wallet/pull/478
+* Fix Latest builds by bumping the version by @staylorwr in https://github.com/radixdlt/olympia-wallet/pull/496
+* fix: Wallet Overview flickering and Staking Values zeroed by @staylorwr in https://github.com/radixdlt/olympia-wallet/pull/497
+* chore: fix linter after merge by @staylorwr in https://github.com/radixdlt/olympia-wallet/pull/499
+* chore: create logic to refresh app after set time and requirements by @SK-Sam in https://github.com/radixdlt/olympia-wallet/pull/474
+* feat: toggle show hide software hardware accounts by @P-v-R in https://github.com/radixdlt/olympia-wallet/pull/498
+* feat: hide/disconnect a ledger wallet by @P-v-R in https://github.com/radixdlt/olympia-wallet/pull/500
+* fix: Update wallet creation and restore for new routing by @staylorwr in https://github.com/radixdlt/olympia-wallet/pull/501
+* feat: automatically turn on max unstake mode based on user input by @artsycoder533 in https://github.com/radixdlt/olympia-wallet/pull/502
+* chore(ci): Fix Mac OS Notarization by providing the apple team id by @staylorwr in https://github.com/radixdlt/olympia-wallet/pull/503
+* chore: Upgrade Electron and Electron Latest for newer tooling by @staylorwr in https://github.com/radixdlt/olympia-wallet/pull/507
+* chore: notarize needs the team id by @staylorwr in https://github.com/radixdlt/olympia-wallet/pull/508
+* chore: notarize with apple team by @staylorwr in https://github.com/radixdlt/olympia-wallet/pull/510
+* feat: notify user when max mode enabled by @artsycoder533 in https://github.com/radixdlt/olympia-wallet/pull/505
+* feat: use new SDK to determine transaction message encryption status by @artsycoder533 in https://github.com/radixdlt/olympia-wallet/pull/506
+* fix: don't set XRD by default multiple times by @caleboller in https://github.com/radixdlt/olympia-wallet/pull/511
+* feat: better update experience by @P-v-R in https://github.com/radixdlt/olympia-wallet/pull/504
+* fix: Network Change Reset by @staylorwr in https://github.com/radixdlt/olympia-wallet/pull/512
+* fix: stake list items no longer flickering on refresh  by @P-v-R in https://github.com/radixdlt/olympia-wallet/pull/513
+* Chore: Minor UI Tweaks by @caleboller in https://github.com/radixdlt/olympia-wallet/pull/516
+* fix: tokenBalances out of sync, not selecting native token by @staylorwr in https://github.com/radixdlt/olympia-wallet/pull/515
+* feat: add check for amount greater than max by @artsycoder533 in https://github.com/radixdlt/olympia-wallet/pull/517
+* fix: multiple error pop ups when the ledger by @P-v-R in https://github.com/radixdlt/olympia-wallet/pull/514
+* chore(deps): bump path-parse from 1.0.6 to 1.0.7 by @dependabot in https://github.com/radixdlt/olympia-wallet/pull/283
+* chore(deps): bump tar from 6.1.0 to 6.1.11 by @dependabot in https://github.com/radixdlt/olympia-wallet/pull/292
+* chore: Upgrade dependencies based on yarn audit by @staylorwr in https://github.com/radixdlt/olympia-wallet/pull/519
+* chore: improve new ledger device pop up by @P-v-R in https://github.com/radixdlt/olympia-wallet/pull/520
+* fix: Reset transaction form on cancel by @staylorwr in https://github.com/radixdlt/olympia-wallet/pull/521
+* chore: remove yarn-audit-fix by @staylorwr in https://github.com/radixdlt/olympia-wallet/pull/523
+* fix: short circuit comparing amount functionality if on stake tokens view by @artsycoder533 in https://github.com/radixdlt/olympia-wallet/pull/522
+* fix: creating a new hardware device broke all hardware accounts by @staylorwr in https://github.com/radixdlt/olympia-wallet/pull/525
+* fix: History page was leaving history subscriptions active when changing active addresses by @staylorwr in https://github.com/radixdlt/olympia-wallet/pull/526
+* chore: improve new device pop up bttn hover styling by @P-v-R in https://github.com/radixdlt/olympia-wallet/pull/528
+* Verify Address and Initial HW wallet bugs by @staylorwr in https://github.com/radixdlt/olympia-wallet/pull/527
+* fix: stops user from pressing max without entering a validator address by @artsycoder533 in https://github.com/radixdlt/olympia-wallet/pull/524
+* fix: save needed value in wallet deletion process by @artsycoder533 in https://github.com/radixdlt/olympia-wallet/pull/529
+* fix: Proper precision for user-entered amounts. by @Mleekko in https://github.com/radixdlt/olympia-wallet/pull/455
+* fix: update function to pass in amount as string by @artsycoder533 in https://github.com/radixdlt/olympia-wallet/pull/530
+* fix: Unable to encrypt multiple transactions with ledger by @staylorwr in https://github.com/radixdlt/olympia-wallet/pull/531
+* fix: switch to account while deriving by @staylorwr in https://github.com/radixdlt/olympia-wallet/pull/535
+* chore: Bump SDK for latest hotfix for the hardware connection problem by @staylorwr in https://github.com/radixdlt/olympia-wallet/pull/537
+* fix: ensure the correct account is activated before moving on by @staylorwr in https://github.com/radixdlt/olympia-wallet/pull/538
+* fix: update error message when ledger is disconnected by @artsycoder533 in https://github.com/radixdlt/olympia-wallet/pull/539
+* fix: Correctly calculate shared secrets by @staylorwr in https://github.com/radixdlt/olympia-wallet/pull/542
+* fix: Watch for account activation errors by @staylorwr in https://github.com/radixdlt/olympia-wallet/pull/544
+* feat: add user option for decimal vs european style markers by @artsycoder533 in https://github.com/radixdlt/olympia-wallet/pull/532
+* fix: Remove undefined functions by @staylorwr in https://github.com/radixdlt/olympia-wallet/pull/545
+* fix: Modals were not activating in settings page by @staylorwr in https://github.com/radixdlt/olympia-wallet/pull/547
+* fix: Add better error descriptions for ledger hardware errors by @staylorwr in https://github.com/radixdlt/olympia-wallet/pull/549
+* fix: Upgrade the SDK to allow for long HRP tokens to be transfered out of ledgers by @staylorwr in https://github.com/radixdlt/olympia-wallet/pull/551
+* fix: Shortened Account Addresses have a fixed format by @staylorwr in https://github.com/radixdlt/olympia-wallet/pull/552
+* fix: Watch active address query param in settings by @staylorwr in https://github.com/radixdlt/olympia-wallet/pull/553
+* chore: Update Ledger Error Title by @staylorwr in https://github.com/radixdlt/olympia-wallet/pull/554
+* fix: Ledger Activation failure regression by @staylorwr in https://github.com/radixdlt/olympia-wallet/pull/555
+* fix: New Ledgers should be named Ledgers by @staylorwr in https://github.com/radixdlt/olympia-wallet/pull/558
+* fix: move pencil icon by @artsycoder533 in https://github.com/radixdlt/olympia-wallet/pull/557
+* fix: Update default Hardware device name when upgrading by @staylorwr in https://github.com/radixdlt/olympia-wallet/pull/556
+* change: use a single collapse icon  by @artsycoder533 in https://github.com/radixdlt/olympia-wallet/pull/559
+* fix: Click To Copy Ledger Regression by @staylorwr in https://github.com/radixdlt/olympia-wallet/pull/560
+
+## New Contributors
+* @artsycoder533 made their first contribution in https://github.com/radixdlt/olympia-wallet/pull/502
+* @Mleekko made their first contribution in https://github.com/radixdlt/olympia-wallet/pull/455
+
+**Full Changelog**: https://github.com/radixdlt/olympia-wallet/compare/v1.3.3...v1.4.0
+
 ## [1.3.3](https://www.github.com/radixdlt/olympia-wallet/compare/v1.3.2...v1.3.3) (2022-03-25)
 
 ### What's Changed
