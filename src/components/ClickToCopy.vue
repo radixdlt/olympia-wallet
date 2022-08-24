@@ -56,7 +56,6 @@ const ClickToCopy = defineComponent({
 
       if (isActiveAccount) {
         try {
-          setLedgerVerify(true)
           await verifyHardwareWalletAddress()
         } catch {
           toast.error('Unable to connect to Ledger')

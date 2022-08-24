@@ -664,8 +664,8 @@ const connectHardwareWallet = async (hwaddr: HardwareAddress): Promise<AccountT 
 const verifyHardwareWalletAddress = async () => {
   try {
     await activateAccount()
-    await firstValueFrom(radix.displayAddressForActiveHWAccountOnHWDeviceForVerification())
     setLedgerVerify(true)
+    await firstValueFrom(radix.displayAddressForActiveHWAccountOnHWDeviceForVerification())
   } catch (e) {
     hardwareError.value = e as Error
     setLedgerVerify(false)
