@@ -32,7 +32,7 @@ import {
 import { Decoded } from '@radixdlt/application/dist/api/open-api/_types'
 
 import { interval, ReplaySubject, merge, Subscription, Subject, firstValueFrom, zip } from 'rxjs'
-import { mergeMap, take, filter, mapTo, first } from 'rxjs/operators'
+import { mergeMap, take, filter, mapTo } from 'rxjs/operators'
 
 import { HardwareAddress, HardwareDevice } from '@/services/_types'
 import { AccountName } from '@/actions/electron/data-store'
@@ -86,7 +86,7 @@ const hardwareDevices: Ref<HardwareDevice[]> = ref([])
 const hardwareError: Ref<Error | null> = ref(null)
 const hardwareInteractionState: Ref<string> = ref('')
 const hasWallet = ref(false)
-const ledgerVerifyError: Ref<Error | null> = ref(null)
+const ledgerVerifyError: Ref<boolean> = ref(false)
 const nativeToken: Ref<Token | null> = ref(null)
 const nodeUrl: Ref<string | null> = ref(null)
 const reloadTrigger = new Subject<number>()
@@ -230,14 +230,12 @@ const handleTransactionCompleted = () => {
 //  - update fee to display to the user
 //  - handle error if it is returned
 const handleTransactionLifecycleEvent = (txState: TransactionStateUpdate) => {
-  console.log('state update', txState)
   transactionState.value = txState.eventUpdateType
   // To Do:
   // Add pending transactions to list
 
-  const t: any = txState
-  if (t.transactionState && t.transactionState.fee) transactionFee.value = t.transactionState.fee
-  if (t.error) {
+  if ('transactionState' in txState && txState.transactionState && 'fee' in txState.transactionState) transactionFee.value = txState.transactionState.fee
+  if ('error' in txState) {
     cancelTransaction()
   }
 }
@@ -322,8 +320,8 @@ const transferTokens = (transferTokensInput: TransferTokensInput, message: Messa
     transactionSubs.add(
       events.subscribe(handleTransactionLifecycleEvent, errorHandler)
     )
-  }).catch((e) => {
-    // cleanupInputs()
+  }).catch(() => {
+    cleanupInputs()
   })
 }
 
@@ -401,7 +399,7 @@ interface useWalletInterface {
   readonly hardwareError: Ref<Error | null>;
   readonly hardwareInteractionState: Ref<string>;
   readonly hasWallet: Ref<boolean>;
-  readonly ledgerVerifyError: Ref<Error | null>;
+  readonly ledgerVerifyError: Ref<boolean>;
   readonly nativeToken: Ref<Token | null>;
   readonly networkPreamble: ComputedRef<string>;
   readonly nodeUrl: ComputedRef<string | null>;
@@ -446,7 +444,6 @@ interface useWalletInterface {
   createWallet: (mnemonic: MnemomicT, pass: string, network: Network) => Promise<WalletT>;
   decryptMessage: (tx: ExecutedTransaction) => Promise<string>;
   deviceRenamed: () => void;
-  hideLedgerVerify: () => void;
   hideLedgerInteraction: () => void;
   initWallet: (router: Router) => void;
   loginWithWallet: (password: string) => Promise<ReturnType<typeof Radix.create>>;
@@ -456,6 +453,8 @@ interface useWalletInterface {
   resetWallet: (nextRoute: 'create-wallet' | 'restore-wallet') => void;
   setActiveAddress: (address: string) => void;
   setHideAccountModal: (val: boolean) => void;
+  setLedgerVerify: (val: boolean) => void;
+  setLedgerVerifyWrongAccount: (val: boolean) => void;
   setUpdateInProcess: (val: boolean) => void;
   setDisconnectDeviceModal: (val: number) => void;
   forgetDevice: () => void;
@@ -610,7 +609,7 @@ const createNewHardwareAccount = async () => {
         verificationPrompt: false
       }))
 
-      newHardwareDevices = hardwareDevices.value.map((hwd, index) => {
+      newHardwareDevices = hardwareDevices.value.map((hwd) => {
         if (hwd.name !== hardwareDevice.name) return hwd
         return {
           name: hardwareDevice.name,
@@ -652,11 +651,9 @@ const connectHardwareWallet = async (hwaddr: HardwareAddress): Promise<AccountT 
       alsoSwitchTo: true,
       verificationPrompt: false
     }))
-    console.log('connected to ', hwAccount.address.toString())
     hardwareInteractionState.value = ''
     return hwAccount
   } catch (e) {
-    console.error(e, 'error from connect hw')
     hardwareInteractionState.value = ''
     hardwareError.value = e as Error
     showLedgerVerify.value = false
@@ -664,14 +661,15 @@ const connectHardwareWallet = async (hwaddr: HardwareAddress): Promise<AccountT 
   }
 }
 
-const verifyHardwareWalletAddress = () => {
-  return activateAccount().then(() => {
-    showLedgerVerify.value = true
-    return firstValueFrom(radix.displayAddressForActiveHWAccountOnHWDeviceForVerification())
-  }).catch((e) => {
-    ledgerVerifyError.value = e as Error
-    hideLedgerVerify()
-  })
+const verifyHardwareWalletAddress = async () => {
+  try {
+    await activateAccount()
+    setLedgerVerify(true)
+    await firstValueFrom(radix.displayAddressForActiveHWAccountOnHWDeviceForVerification())
+  } catch (e) {
+    hardwareError.value = e as Error
+    setLedgerVerify(false)
+  }
 }
 
 const decryptMessage = async (tx: ExecutedTransaction): Promise<string> => {
@@ -681,8 +679,7 @@ const decryptMessage = async (tx: ExecutedTransaction): Promise<string> => {
   }).then((msg: string) => {
     hardwareInteractionState.value = ''
     return msg
-  }).catch((e) => {
-    console.error(e)
+  }).catch(() => {
     return ''
   })
 }
@@ -729,8 +726,12 @@ const hideLedgerInteraction = () => {
   hardwareInteractionState.value = ''
 }
 
-const hideLedgerVerify = () => {
-  showLedgerVerify.value = false
+const setLedgerVerify = (val = false) => {
+  showLedgerVerify.value = val
+}
+
+const setLedgerVerifyWrongAccount = (val: boolean) => {
+  ledgerVerifyError.value = val
 }
 
 const isActivating: Ref<boolean> = ref(false)
@@ -913,13 +914,14 @@ export default function useWallet (router: Router): useWalletInterface {
     addAccount,
     createWallet,
     hideLedgerInteraction,
-    hideLedgerVerify,
     initWallet,
     persistNodeUrl,
     setActiveAddress,
     setHideAccountModal,
     setDisconnectDeviceModal,
     forgetDevice,
+    setLedgerVerify,
+    setLedgerVerifyWrongAccount,
     setShowNewDevicePopup,
     setPin,
     setWallet,

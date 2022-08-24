@@ -1,6 +1,6 @@
 import { computed, ref, Ref } from 'vue'
-import { AccountAddressT, Radix, RadixT, ResourceIdentifierT, Token } from '@radixdlt/application'
-import { firstValueFrom, interval, Subscription } from 'rxjs'
+import { AccountAddressT, Radix, ResourceIdentifierT, Token } from '@radixdlt/application'
+import { firstValueFrom } from 'rxjs'
 import { AccountBalancesEndpoint } from '@radixdlt/application/dist/api/open-api/_types'
 
 const relatedTokens: Ref<Token[]> = ref([])
