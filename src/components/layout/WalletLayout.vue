@@ -18,6 +18,7 @@
     </div>
     <wallet-confirm-transaction-modal v-if="shouldShowConfirmation" />
     <wallet-ledger-verify-address-modal v-if="showLedgerVerify && !hardwareError" />
+    <wallet-ledger-verify-error-modal v-if="ledgerVerifyError" />
     <wallet-ledger-interaction-modal v-if="hardwareInteractionState && hardwareInteractionState.length > 0 && hardwareInteractionState != 'error'" />
     <wallet-ledger-disconnected-modal
       :handleClose="closeModal"
@@ -42,6 +43,7 @@ import WalletLedgerDeleteModal from '@/components/modals/WalletLedgerDeleteModal
 import WalletLedgerDisconnectedModal from '@/components/modals/WalletLedgerDisconnectedModal.vue'
 import WalletLedgerInteractionModal from '@/components/modals/WalletLedgerInteractionModal.vue'
 import WalletLedgerVerifyAddressModal from '@/components/modals/WalletLedgerVerifyAddressModal.vue'
+import WalletLedgerVerifyErrorModal from '@/components/modals/WalletLedgerVerifyErrorModal.vue'
 import WalletNewDeviceModal from '@/components/modals/WalletNewDeviceModal.vue'
 import WalletUpdateModal from '@/components/modals/WalletUpdateModal.vue'
 
@@ -56,6 +58,7 @@ const WalletIndex = defineComponent({
     WalletLedgerDisconnectedModal,
     WalletLedgerInteractionModal,
     WalletLedgerVerifyAddressModal,
+    WalletLedgerVerifyErrorModal,
     WalletLoading,
     WalletNewDeviceModal,
     WalletSidebar,
@@ -66,18 +69,20 @@ const WalletIndex = defineComponent({
     const router = useRouter()
     const {
       activeNetwork,
-      hasWallet,
-      radix,
-      hardwareInteractionState,
-      showDeleteHWWalletPrompt,
-      showHideAccountModal,
-      showDisconnectDeviceModal,
-      showNewDevicePopup,
-      showLedgerVerify,
-      updateInProcess,
       hardwareError,
-      closeLedgerErrorModal,
+      hardwareInteractionState,
+      hasWallet,
+      ledgerVerifyError,
+      radix,
       shouldShowConfirmation,
+      showDeleteHWWalletPrompt,
+      showDisconnectDeviceModal,
+      showHideAccountModal,
+      showLedgerVerify,
+      showNewDevicePopup,
+      updateInProcess,
+
+      closeLedgerErrorModal,
       cancelTransaction,
       walletLoaded
     } = useWallet(router)
@@ -97,18 +102,19 @@ const WalletIndex = defineComponent({
     }
 
     return {
-      hasWallet,
-      hardwareInteractionState,
       activeNetwork,
+      hardwareError,
+      hardwareInteractionState,
+      hasWallet,
+      isTestNet,
+      ledgerVerifyError,
       shouldShowConfirmation,
       showDeleteHWWalletPrompt,
-      showHideAccountModal,
       showDisconnectDeviceModal,
-      showNewDevicePopup,
+      showHideAccountModal,
       showLedgerVerify,
+      showNewDevicePopup,
       updateInProcess,
-      isTestNet,
-      hardwareError,
       walletLoaded,
       closeModal
     }

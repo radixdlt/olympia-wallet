@@ -35,29 +35,37 @@ const ClickToCopy = defineComponent({
 
     const copyText = async () => {
       const potentialHWAddress = hardwareDevices.value.flatMap((v) => v.addresses).find((a) => a.address.toString() === address.value)
-      console.log(checkForHardwareAddress.value, potentialHWAddress?.address.toString(), activeAddress.value?.toString(), address.value)
+      const isActiveAccount = activeAddress.value?.toString() === address.value
+
       if (!checkForHardwareAddress.value) {
         copyToClipboard(address.value)
         toast.success('Copied to Clipboard')
         return
       }
 
-      if (!potentialHWAddress && activeAddress.value?.toString() === address.value) {
+      if (potentialHWAddress && !isActiveAccount) {
+        setLedgerVerifyWrongAccount(true)
+        return
+      }
+
+      if (!potentialHWAddress && isActiveAccount) {
         copyToClipboard(address.value)
         toast.success('Copied to Clipboard')
         return
       }
 
-      if (activeAddress.value?.toString() === address.value) {
+      if (isActiveAccount) {
         try {
+          setLedgerVerify(true)
           await verifyHardwareWalletAddress()
         } catch {
           toast.error('Unable to connect to Ledger')
         }
         return
       }
-      setLedgerVerify(true)
-      setLedgerVerifyWrongAccount(true)
+
+      copyToClipboard(address.value)
+      toast.success('Copied to Clipboard')
     }
     return { copyText }
   }

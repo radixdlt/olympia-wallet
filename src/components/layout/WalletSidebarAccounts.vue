@@ -180,7 +180,7 @@ const WalletSidebarAccounts = defineComponent({
       })
     })
 
-    const handleAccountEditName = (device: any) => {
+    const handleAccountEditName = (device: HardwareDevice) => {
       const firstAccount = device.addresses[0].address?.toString()
       router.push({ name: 'device-edit-name', params: { activeAddress: firstAccount } })
     }
@@ -219,7 +219,7 @@ const WalletSidebarAccounts = defineComponent({
       toggleShowHardwareAccounts () {
         showHardwareAccounts.value = !showHardwareAccounts.value
       },
-      toggleHardwareAccounts (hardwareDevice: any) {
+      toggleHardwareAccounts (hardwareDevice: HardwareDevice) {
         const index = hiddenHwAccounts.value.indexOf(hardwareDevice.name)
         if (index > -1) {
           hiddenHwAccounts.value.splice(index, 1)

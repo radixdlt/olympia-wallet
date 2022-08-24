@@ -32,7 +32,7 @@ import {
 import { Decoded } from '@radixdlt/application/dist/api/open-api/_types'
 
 import { interval, ReplaySubject, merge, Subscription, Subject, firstValueFrom, zip } from 'rxjs'
-import { mergeMap, take, filter, mapTo, first } from 'rxjs/operators'
+import { mergeMap, take, filter, mapTo } from 'rxjs/operators'
 
 import { HardwareAddress, HardwareDevice } from '@/services/_types'
 import { AccountName } from '@/actions/electron/data-store'
@@ -65,7 +65,6 @@ import { HardwareWalletLedger } from '@radixdlt/hardware-ledger'
 import { defaultNetwork } from '@/helpers/network'
 import router from '@/router'
 import useErrors from './useErrors'
-import { validate } from 'vee-validate'
 
 export interface PendingTransaction extends TransactionStateSuccess {
   actions: IntendedAction[]
@@ -231,14 +230,12 @@ const handleTransactionCompleted = () => {
 //  - update fee to display to the user
 //  - handle error if it is returned
 const handleTransactionLifecycleEvent = (txState: TransactionStateUpdate) => {
-  console.log('state update', txState)
   transactionState.value = txState.eventUpdateType
   // To Do:
   // Add pending transactions to list
 
-  const t: any = txState
-  if (t.transactionState && t.transactionState.fee) transactionFee.value = t.transactionState.fee
-  if (t.error) {
+  if ('transactionState' in txState && txState.transactionState && 'fee' in txState.transactionState) transactionFee.value = txState.transactionState.fee
+  if ('error' in txState) {
     cancelTransaction()
   }
 }
@@ -323,8 +320,8 @@ const transferTokens = (transferTokensInput: TransferTokensInput, message: Messa
     transactionSubs.add(
       events.subscribe(handleTransactionLifecycleEvent, errorHandler)
     )
-  }).catch((e) => {
-    // cleanupInputs()
+  }).catch(() => {
+    cleanupInputs()
   })
 }
 
@@ -612,7 +609,7 @@ const createNewHardwareAccount = async () => {
         verificationPrompt: false
       }))
 
-      newHardwareDevices = hardwareDevices.value.map((hwd, index) => {
+      newHardwareDevices = hardwareDevices.value.map((hwd) => {
         if (hwd.name !== hardwareDevice.name) return hwd
         return {
           name: hardwareDevice.name,
@@ -654,11 +651,9 @@ const connectHardwareWallet = async (hwaddr: HardwareAddress): Promise<AccountT 
       alsoSwitchTo: true,
       verificationPrompt: false
     }))
-    console.log('connected to ', hwAccount.address.toString())
     hardwareInteractionState.value = ''
     return hwAccount
   } catch (e) {
-    console.error(e, 'error from connect hw')
     hardwareInteractionState.value = ''
     hardwareError.value = e as Error
     showLedgerVerify.value = false
@@ -666,14 +661,15 @@ const connectHardwareWallet = async (hwaddr: HardwareAddress): Promise<AccountT 
   }
 }
 
-const verifyHardwareWalletAddress = () => {
-  return activateAccount().then(() => {
-    showLedgerVerify.value = true
-    return firstValueFrom(radix.displayAddressForActiveHWAccountOnHWDeviceForVerification())
-  }).catch((e) => {
+const verifyHardwareWalletAddress = async () => {
+  try {
+    await activateAccount()
+    await firstValueFrom(radix.displayAddressForActiveHWAccountOnHWDeviceForVerification())
+    setLedgerVerify(true)
+  } catch (e) {
     hardwareError.value = e as Error
     setLedgerVerify(false)
-  })
+  }
 }
 
 const decryptMessage = async (tx: ExecutedTransaction): Promise<string> => {
@@ -683,8 +679,7 @@ const decryptMessage = async (tx: ExecutedTransaction): Promise<string> => {
   }).then((msg: string) => {
     hardwareInteractionState.value = ''
     return msg
-  }).catch((e) => {
-    console.error(e)
+  }).catch(() => {
     return ''
   })
 }
@@ -736,7 +731,6 @@ const setLedgerVerify = (val = false) => {
 }
 
 const setLedgerVerifyWrongAccount = (val: boolean) => {
-  showLedgerVerify.value = val
   ledgerVerifyError.value = val
 }
 

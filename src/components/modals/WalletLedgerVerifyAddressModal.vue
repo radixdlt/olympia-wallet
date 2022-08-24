@@ -3,12 +3,9 @@
     <div class="bg-white rounded-md py-7 px-7 w-full max-w-3xl absolute top-1/2 left-1/2 transform -translate-x-1/3 -translate-y-1/2">
       <h3 class="font-medium text-rBlack mb-2 w-full">Verify Hardware Wallet Address</h3>
       <div>
-        <div v-if="!isValidAccount" class="text-rBlack">
-          {{$t('hardware.disclaimer')}}
-        </div>
-        <div v-else-if="!isMainnet" class="py-2 text-rRed">{{ $t('hardware.nonMainnetDisclaimer') }}</div>
+        <div v-if="!isMainnet" class="py-2 text-rRed">{{ $t('hardware.nonMainnetDisclaimer') }}</div>
         <div v-else class="text-rBlack">{{ $t('hardware.verificationMessage') }}</div>
-        <div v-if="isValidAccount" class="mt-4">
+        <div class="mt-4">
           <div class="bg-translucent-gray rounded-md border border-rGray text-rBlack mb-4 w-full">
             <div class="py-5 flex items-center">
               <div class="w-20 text-right text-rGrayDark mr-4">{{ $t('hardware.labelAddress') }}</div>
@@ -21,7 +18,7 @@
         </div>
         <div class="text-center pt-4">
           <ButtonSubmit
-            @click="setLedgerVerify(false)"
+            @click="dismiss()"
             class="w-72 mx-auto mt-2"
             :disabled="false"
           >
@@ -52,19 +49,8 @@ const WalletLedgerVerifyAddressModal = defineComponent({
   setup () {
     const toast = useToast()
     const router = useRouter()
-    const { hardwareDevices, setLedgerVerify, activeAddress, activeNetwork, ledgerVerifyError } = useWallet(router)
+    const { setLedgerVerify, setLedgerVerifyWrongAccount, activeAddress, activeNetwork } = useWallet(router)
     const isMainnet: ComputedRef<boolean> = computed(() => activeNetwork.value === Network.MAINNET)
-
-    const isValidAccount: ComputedRef<boolean> = computed(() => {
-      const potentialHWAddress = hardwareDevices.value.flatMap((v) => v.addresses).find((a) => {
-        if (!activeAddress.value) return false
-        return a.address.equals(activeAddress.value)
-      })
-
-      console.log(potentialHWAddress, ledgerVerifyError.value, !!potentialHWAddress && !ledgerVerifyError.value)
-
-      return !!potentialHWAddress && !ledgerVerifyError.value
-    })
 
     const copyText = () => {
       if (!activeAddress.value) return
@@ -72,12 +58,17 @@ const WalletLedgerVerifyAddressModal = defineComponent({
       toast.success('Copied to Clipboard')
     }
 
+    const dismiss = () => {
+      setLedgerVerify(false)
+      setLedgerVerifyWrongAccount(false)
+    }
+
     return {
       activeAddress,
       isMainnet,
-      isValidAccount,
-      setLedgerVerify,
-      copyText
+      copyText,
+      dismiss,
+      setLedgerVerify
     }
   }
 })

@@ -43,7 +43,7 @@ import { defineComponent, PropType, toRef, computed, ComputedRef } from 'vue'
 import { AccountAddressT } from '@radixdlt/application'
 import ClickToCopy from '@/components/ClickToCopy.vue'
 import { formatWalletAddressForDisplay } from '@/helpers/formatter'
-import { useWallet, useSidebar } from '@/composables'
+import { useWallet } from '@/composables'
 import { useRouter } from 'vue-router'
 
 const AccountListItem = defineComponent({
@@ -62,7 +62,6 @@ const AccountListItem = defineComponent({
     const router = useRouter()
     const { accountNameFor, activeAddress, setHideAccountModal } = useWallet(router)
 
-    const { setState } = useSidebar()
     const address = toRef(props, 'address')
 
     const editName = () => {

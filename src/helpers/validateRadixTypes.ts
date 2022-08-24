@@ -24,7 +24,6 @@ export const safelyUnwrapAmount = (amount: string): AmountT | null => {
   const amountInput = bigAmount.shiftedBy(18) // Atto
   const amountResult = Amount.fromUnsafe(amountInput.toFixed())
   if (amountResult && amountResult.isErr()) {
-    console.log('Invalid amount string, did you input a number?')
     return null
   }
 
