@@ -8,7 +8,7 @@
       {{ $t('wallet.back') }}
     </div>
     <div class="bg-gradient-to-br from-rBlue via-rDarkblue to-rDarkblue">
-      <div class="flex px-6 py-4">
+      <div class="flex items-center px-5 py-4">
         <svg width="24" viewBox="0 0 26 20" fill="none" xmlns="http://www.w3.org/2000/svg">
           <rect x="1" y="1" width="24" height="18.1333" rx="2" fill="#060F8F"/>
           <path d="M21.2667 4.46667H3C1.89543 4.46667 1 5.3621 1 6.46667V17.1333C1 18.2379 1.89543 19.1333 3 19.1333H23C24.1046 19.1333 25 18.2379 25 17.1333V3C25 1.89543 24.1046 1 23 1H3C1.89543 1 1 1.89543 1 3V3.13333" stroke="white" stroke-linecap="round"/>
@@ -21,13 +21,13 @@
         <div class="pl-2 text-sm">
           {{ $t('wallet.softwareWallets') }}
         </div>
-        <svg v-if="showSoftwareAccounts" @click="toggleSoftwareAccounts" class="ml-auto mt-1 text-rGrayDark hover:text-rGreen transition-colors" width="17" height="17" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg v-if="showSoftwareAccounts" @click="toggleSoftwareAccounts" class="ml-auto text-rGrayDark hover:text-rGreen transition-colors" width="17" height="17" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path class="stroke-current" d="M2 7H5V10" stroke="#F2F2FC" stroke-linecap="round" stroke-linejoin="round"/>
           <path class="stroke-current" d="M10 5H7V2" stroke="#F2F2FC" stroke-linecap="round" stroke-linejoin="round"/>
           <path class="stroke-current" d="M7 5L10.5 1.5" stroke="#F2F2FC" stroke-linecap="round" stroke-linejoin="round"/>
           <path class="stroke-current" d="M1.5 10.5L5 7" stroke="#F2F2FC" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
-        <svg v-else @click="toggleSoftwareAccounts" class="ml-auto mt-1 stroke-current text-rGrayDark hover:text-rGreen transition-colors" width="15" height="15" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg v-else @click="toggleSoftwareAccounts" class="ml-auto stroke-current text-rGrayDark hover:text-rGreen transition-colors" width="15" height="15" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path class="stroke-current" d="M7.5 1.5H10.5V4.5" stroke="#F2F2FC" stroke-linecap="round" stroke-linejoin="round"/>
           <path class="stroke-current" d="M4.5 10.5H1.5V7.5" stroke="#F2F2FC" stroke-linecap="round" stroke-linejoin="round"/>
           <path class="stroke-current" d="M10.5 1.5L7 5" stroke="#F2F2FC" stroke-linecap="round" stroke-linejoin="round"/>
@@ -50,7 +50,7 @@
 
     <div class="bg-gradient-to-br from-rBlue via-rDarkblue to-rDarkblue h-full">
       <div class="border-rGray border-opacity-50">
-        <div class="flex items-center py-5 mx-4 border-b border-rGrayMed px-1">
+        <div class="flex items-center py-4 mx-4 border-b border-rGrayMed px-1">
           <svg width="28" viewBox="0 0 29 23" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M1 9.39837L1 18.2217L7.02673 18.2217L7.02673 9.39837L1 9.39837Z" stroke="white" stroke-miterlimit="10"/>
             <path d="M2.52002 15.6089L5.5063 15.6089" stroke="white" stroke-miterlimit="10"/>
@@ -79,7 +79,7 @@
         <div v-if="hardwareDevices.length > 0 && showHardwareAccounts">
           <div v-for="(hardwareDevice, i) in hardwareDevices" :key="i">
             <div>
-              <div class="flex items-center justify-between group py-5 mx-4 pl-1">
+              <div class="flex items-center justify-between group py-5 mx-4 px-1">
                 <div class="flex cursor-pointer items-center">
                   <svg height="18" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-rGreen" :class="{'fill-current': isActiveDevice(hardwareDevice)}">
                     <path d="M18.7382 10.6172H7.26074V19H18.7382V10.6172Z" stroke="white" stroke-width="1.5" stroke-miterlimit="10" />
@@ -88,9 +88,9 @@
                     <path d="M1.45471 18.9997H24.5453V21.4505C24.5453 23.4596 22.9165 25.0883 20.9074 25.0883H5.09253C3.08342 25.0883 1.45471 23.4596 1.45471 21.4505V18.9997Z" stroke="white" stroke-width="1.5" stroke-miterlimit="10"/>
                     <path d="M24.5449 7L1.45438 7V4.54926C1.45438 2.54016 3.08309 0.91145 5.09219 0.91145L20.9071 0.91145C22.9162 0.91145 24.5449 2.54016 24.5449 4.54926V7Z" stroke="white" stroke-width="1.5" stroke-miterlimit="10"/>
                   </svg>
-                  <span class="text-white ml-2 text-sm truncate w-26"> {{ hardwareDevice.name }} </span>
+                  <span class="text-white ml-2 text-sm truncate w-36"> {{ hardwareDevice.name }} </span>
                 </div>
-                <div class="flex flex-grow-0 items-center gap-2">
+                <div class="flex flex-grow-0 items-center gap-2 mr-1 gap-2">
                   <div @click.stop="handleAccountEditName(hardwareDevice)" class="invisible group-hover:visible text-rGrayDark hover:text-rGreen transition-colors cursor-pointer">
                     <svg width="14" height="14" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path class="stroke-current" d="M7.30515 -5.35835e-06L0.926422 6.37872L3.58423 9.03653L9.96296 2.6578L7.30515 -5.35835e-06Z" fill="white"/>
