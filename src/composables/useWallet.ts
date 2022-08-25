@@ -49,7 +49,8 @@ import {
   persistNodeSelection,
   fetchSelectedNodeFromStore,
   setDecimalType,
-  getDecimalType
+  getDecimalType,
+  saveAccountName
 } from '@/actions/vue/data-store'
 
 import {
@@ -616,6 +617,8 @@ const createNewHardwareAccount = async () => {
           addresses: [...hardwareDevice.addresses, { address: newAccount.address, index: newIndex }]
         }
       })
+      saveAccountName(newAccount.address.toString(), `Hardware Account ${newIndex + 1}`)
+      accountNames.value = await getAccountNames()
       activeAccount.value = newAccount
       hardwareDevices.value = newHardwareDevices
       saveHardwareDevices(activeNetwork.value, newHardwareDevices)
@@ -624,6 +627,8 @@ const createNewHardwareAccount = async () => {
       const newAddr = connectedDeviceAccount.address.toString()
       const deviceNumber = hardwareDevices.value.length + 1
       const newHardwareDevices = [...hardwareDevices.value, { name: `Ledger ${deviceNumber}`, addresses: [{ name: newAddr, address: connectedDeviceAccount.address, index: 0 }] }]
+      saveAccountName(connectedDeviceAccount.address.toString(), 'Hardware Account 1')
+      accountNames.value = await getAccountNames()
       activeAccount.value = connectedDeviceAccount
       hardwareDevices.value = newHardwareDevices
       saveHardwareDevices(activeNetwork.value, newHardwareDevices)
