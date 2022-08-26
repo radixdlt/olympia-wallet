@@ -19,7 +19,7 @@
     <wallet-confirm-transaction-modal v-if="shouldShowConfirmation" />
     <wallet-ledger-verify-address-modal v-if="showLedgerVerify && !hardwareError" />
     <wallet-ledger-verify-error-modal v-if="ledgerVerifyError" />
-    <wallet-ledger-interaction-modal v-if="hardwareInteractionState && hardwareInteractionState.length > 0 && hardwareInteractionState != 'error'" />
+    <wallet-ledger-interaction-modal v-if="hardwareInteractionState && hardwareInteractionState.length > 0 && hardwareInteractionState != 'error' && transactionState != 'PENDING'" />
     <wallet-ledger-disconnected-modal
       :handleClose="closeModal"
       :hardwareError="hardwareError"
@@ -81,6 +81,7 @@ const WalletIndex = defineComponent({
       showLedgerVerify,
       showNewDevicePopup,
       updateInProcess,
+      transactionState,
 
       closeLedgerErrorModal,
       cancelTransaction,
@@ -114,6 +115,7 @@ const WalletIndex = defineComponent({
       showHideAccountModal,
       showLedgerVerify,
       showNewDevicePopup,
+      transactionState,
       updateInProcess,
       walletLoaded,
       closeModal
