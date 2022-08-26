@@ -150,6 +150,7 @@ const transactionError: Ref<Error | null> = ref(null)
 const userDidConfirm = new Subject<boolean>()
 const userDidCancel = new Subject<boolean>()
 const userConfirmation = new ReplaySubject<ManualUserConfirmTX>()
+const showDerivingModal: Ref<boolean> = ref(true)
 
 userConfirmation
   .pipe(
@@ -220,7 +221,10 @@ const handleTransactionCompleted = () => {
   cleanupTransactionSubs()
   activeMessage.value = ''
   ledgerState.value = ''
-  transactionState.value = 'PENDING'
+  // is a transaction always pending after the transaction is complete ??
+  console.log('BEFORE...', transactionState.value)
+  transactionState.value = ''
+  console.log('AFTER...', transactionState.value)
 
   router.push(`/wallet/${activeAddress.value?.toString()}/history`)
 }
@@ -409,6 +413,7 @@ interface useWalletInterface {
   readonly showDisconnectDeviceModal: ComputedRef<boolean>;
   readonly showNewDevicePopup: Ref<boolean>;
   readonly shouldShowMaxUnstakeConfirmation: Ref<boolean>;
+  readonly showDerivingModal: Ref<boolean>;
   readonly showLedgerVerify: Ref<boolean>;
   readonly switching: ComputedRef<boolean>;
   readonly updateAvailable: Ref<boolean>;
@@ -853,6 +858,7 @@ export default function useWallet (router: Router): useWalletInterface {
     selectedCurrency,
     shouldShowConfirmation,
     shouldShowMaxUnstakeConfirmation,
+    showDerivingModal,
     stakeInput,
     unstakeInput,
     transactionError,
