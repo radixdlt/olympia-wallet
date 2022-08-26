@@ -281,7 +281,6 @@ const WalletTransaction = defineComponent({
     }
 
     const handleSubmit = async () => {
-      console.log('send transaction pressed')
       showDerivingModal.value = false
 
       if (!meta.value.valid || !selectedCurrency.value) return false

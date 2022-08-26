@@ -221,10 +221,8 @@ const handleTransactionCompleted = () => {
   cleanupTransactionSubs()
   activeMessage.value = ''
   ledgerState.value = ''
-  // is a transaction always pending after the transaction is complete ??
-  console.log('BEFORE...', transactionState.value)
-  transactionState.value = ''
-  console.log('AFTER...', transactionState.value)
+  transactionState.value = 'PENDING'
+  showDerivingModal.value = true
 
   router.push(`/wallet/${activeAddress.value?.toString()}/history`)
 }

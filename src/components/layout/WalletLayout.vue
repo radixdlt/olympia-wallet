@@ -82,7 +82,6 @@ const WalletIndex = defineComponent({
       showLedgerVerify,
       showNewDevicePopup,
       updateInProcess,
-      transactionState,
 
       closeLedgerErrorModal,
       cancelTransaction,
@@ -117,7 +116,6 @@ const WalletIndex = defineComponent({
       showHideAccountModal,
       showLedgerVerify,
       showNewDevicePopup,
-      transactionState,
       updateInProcess,
       walletLoaded,
       closeModal
