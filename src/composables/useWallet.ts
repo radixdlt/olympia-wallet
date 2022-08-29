@@ -176,6 +176,7 @@ userDidCancel.subscribe((didCancel: boolean) => {
     transactionState.value = 'PENDING'
     hardwareError.value = null
     hardwareInteractionState.value = ''
+    showDerivingModal.value = true
   }
 })
 
