@@ -166,7 +166,7 @@ const WalletTransaction = defineComponent({
   setup () {
     const router = useRouter()
     const { errors, values, meta, setErrors, resetForm } = useForm<TransactionForm>()
-    const { transferTokens, cancelTransaction, userDidCancel, setActiveTransactionForm, activeAddress, nativeToken, networkPreamble, radix } = useWallet(router)
+    const { transferTokens, cancelTransaction, userDidCancel, setActiveTransactionForm, activeAddress, nativeToken, networkPreamble, radix, showDerivingModal } = useWallet(router)
     const { t } = useI18n({ useScope: 'global' })
     const { tokenInfoFor, fetchBalancesForAddress, tokenBalances, tokenBalanceFor, tokenBalanceForByString } = useTokenBalances(radix)
     const currency: Ref<string | null> = ref(null)
@@ -281,6 +281,8 @@ const WalletTransaction = defineComponent({
     }
 
     const handleSubmit = async () => {
+      showDerivingModal.value = false
+
       if (!meta.value.valid || !selectedCurrency.value) return false
       const safeAddress = safelyUnwrapAddress(values.recipient, networkPreamble.value)
       const safeAmount = safelyUnwrapAmount(values.amount)

@@ -151,6 +151,7 @@ const transactionError: Ref<Error | null> = ref(null)
 const userDidConfirm = new Subject<boolean>()
 const userDidCancel = new Subject<boolean>()
 const userConfirmation = new ReplaySubject<ManualUserConfirmTX>()
+const showDerivingModal: Ref<boolean> = ref(true)
 
 userConfirmation
   .pipe(
@@ -176,6 +177,7 @@ userDidCancel.subscribe((didCancel: boolean) => {
     transactionState.value = 'PENDING'
     hardwareError.value = null
     hardwareInteractionState.value = ''
+    showDerivingModal.value = true
   }
 })
 
@@ -222,6 +224,7 @@ const handleTransactionCompleted = () => {
   activeMessage.value = ''
   ledgerState.value = ''
   transactionState.value = 'PENDING'
+  showDerivingModal.value = true
 
   router.push(`/wallet/${activeAddress.value?.toString()}/history`)
 }
@@ -410,6 +413,7 @@ interface useWalletInterface {
   readonly showDisconnectDeviceModal: ComputedRef<boolean>;
   readonly showNewDevicePopup: Ref<boolean>;
   readonly shouldShowMaxUnstakeConfirmation: Ref<boolean>;
+  readonly showDerivingModal: Ref<boolean>;
   readonly showLedgerVerify: Ref<boolean>;
   readonly switching: ComputedRef<boolean>;
   readonly updateAvailable: Ref<boolean>;
@@ -858,6 +862,7 @@ export default function useWallet (router: Router): useWalletInterface {
     selectedCurrency,
     shouldShowConfirmation,
     shouldShowMaxUnstakeConfirmation,
+    showDerivingModal,
     stakeInput,
     unstakeInput,
     transactionError,
