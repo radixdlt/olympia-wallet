@@ -119,9 +119,6 @@ const unstakeInput: Ref<UnstakeTokensInput | null> = ref(null)
 const transactionErrorMessage: Ref<string | null> = ref(null)
 const transactionFee: Ref<AmountT | null> = ref(null)
 const transferInput: Ref<TransferTokensInput | null> = ref(null)
-const hardwareWalletConnection = HardwareWalletLedger.create({
-  send: sendAPDU
-})
 
 const setWallet = (newWallet: WalletT) => {
   wallet.value = newWallet
@@ -594,7 +591,9 @@ const createNewHardwareAccount = async () => {
       keyDerivation: HDPathRadix.create({
         address: { index: 0, isHardened: true }
       }),
-      hardwareWalletConnection,
+      hardwareWalletConnection: HardwareWalletLedger.create({
+        send: sendAPDU
+      }),
       alsoSwitchTo: false,
       verificationPrompt: false
     }))
@@ -609,10 +608,14 @@ const createNewHardwareAccount = async () => {
         keyDerivation: HDPathRadix.create({
           address: { index: newIndex, isHardened: true }
         }),
-        hardwareWalletConnection,
+        hardwareWalletConnection: HardwareWalletLedger.create({
+          send: sendAPDU
+        }),
         alsoSwitchTo: false,
         verificationPrompt: false
       }))
+
+      const newAccountName = `Hardware Account ${newIndex + 1}`
 
       newHardwareDevices = hardwareDevices.value.map((hwd) => {
         if (hwd.name !== hardwareDevice.name) return hwd
@@ -656,7 +659,9 @@ const connectHardwareWallet = async (hwaddr: HardwareAddress): Promise<AccountT 
       keyDerivation: HDPathRadix.create({
         address: { index: hwaddr.index, isHardened: true }
       }),
-      hardwareWalletConnection,
+      hardwareWalletConnection: HardwareWalletLedger.create({
+        send: sendAPDU
+      }),
       alsoSwitchTo: true,
       verificationPrompt: false
     }))
