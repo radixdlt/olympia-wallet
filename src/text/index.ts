@@ -218,7 +218,8 @@ const messages = {
       enterPin: 'Enter PIN',
       buildingMessage: 'Building Transaction...',
       confirmMessage: 'Please confirm and sign the transaction on your Ledger.',
-      submittingMessage: 'Submitting Transaction...'
+      submittingMessage: 'Submitting Transaction...',
+      confirmEncryption: 'Please confirm message encryption on your Ledger'
     },
     staking: {
       currentStakesHeading: 'Current Stakes',
