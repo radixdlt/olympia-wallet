@@ -8,13 +8,15 @@ export const sendAPDU = async (event: IpcMainInvokeEvent, apdu: APDU) => {
   if (paths.length === 0) throw Error('No device found.')
   if (paths.length > 1) throw Error('Too Many Devices Enabled')
   let result
+  const transport = await TransportNodeHid.open(paths[0])
   try {
-    const transport = await TransportNodeHid.open(paths[0])
     result = await transport.send(apdu.cla, apdu.ins, apdu.p1, apdu.p2, apdu.data ? Buffer.from(apdu.data, 'hex') : undefined)
     await transport.close()
   } catch (e) {
+    await transport.close()
+    console.error(e)
     throw e
   }
-
+  await transport.close()
   return result
 }

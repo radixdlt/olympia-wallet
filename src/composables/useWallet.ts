@@ -265,7 +265,7 @@ const errorHandler = (err: any) => {
       }
     })
     cancelTransaction()
-  } else if (err.toString().indexOf('Error: Failed to sign tx with Ledger') >= 0 && err.toString().includes('(0x6985')) {
+  } else if (err.toString().indexOf('Failed to sign tx with Ledger') >= 0 && err.toString().includes('(0x6985')) {
     setError({
       ...err,
       type: 'HARDWARE',
@@ -274,7 +274,7 @@ const errorHandler = (err: any) => {
       }
     })
     cancelTransaction()
-  } else if (err.toString().indexOf('Error: Failed to sign tx with Ledger') >= 0 && err.toString().includes('(0x530c')) {
+  } else if (err.toString().indexOf('Failed to sign tx with Ledger') >= 0 && err.toString().includes('(0x530c')) {
     setError({
       ...err,
       type: 'HARDWARE',
