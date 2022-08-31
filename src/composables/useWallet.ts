@@ -120,6 +120,7 @@ const transactionErrorMessage: Ref<string | null> = ref(null)
 const transactionFee: Ref<AmountT | null> = ref(null)
 const transferInput: Ref<TransferTokensInput | null> = ref(null)
 const showLedgerInteractionModalBody: Ref<boolean> = ref(true)
+const showWalletConfirmTransactionModal: Ref<boolean> = ref(true)
 
 // check if software or hardware address
 const activeAddresIsSoftwareAccount = () => {
@@ -130,7 +131,14 @@ const activeAddresIsSoftwareAccount = () => {
       if (!activeAddress.value) return false
       return addr.address.equals(activeAddress.value)
     })
-  hardwareAddress ? showLedgerInteractionModalBody.value = true : showLedgerInteractionModalBody.value = false
+  if (hardwareAddress) {
+    showLedgerInteractionModalBody.value = true
+    showWalletConfirmTransactionModal.value = true
+  } else {
+    showLedgerInteractionModalBody.value = false
+    showWalletConfirmTransactionModal.value = false
+  }
+  // hardwareAddress ? showLedgerInteractionModalBody.value = true : showLedgerInteractionModalBody.value = false
 }
 
 const setWallet = (newWallet: WalletT) => {
@@ -424,6 +432,7 @@ interface useWalletInterface {
   readonly showNewDevicePopup: Ref<boolean>;
   readonly showLedgerInteractionModalBody: Ref<boolean>;
   readonly shouldShowMaxUnstakeConfirmation: Ref<boolean>;
+  readonly showWalletConfirmTransactionModal: Ref<boolean>;
   readonly showDerivingModal: Ref<boolean>;
   readonly showLedgerVerify: Ref<boolean>;
   readonly switching: ComputedRef<boolean>;
@@ -883,6 +892,7 @@ export default function useWallet (router: Router): useWalletInterface {
     shouldShowMaxUnstakeConfirmation,
     showDerivingModal,
     showLedgerInteractionModalBody,
+    showWalletConfirmTransactionModal,
     stakeInput,
     unstakeInput,
     transactionError,
