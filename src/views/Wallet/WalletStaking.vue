@@ -476,7 +476,6 @@ const WalletStaking = defineComponent({
       const safeAddress = safelyUnwrapValidator(values.validator)
       if (!safeAddress) return ''
       const v = maybeGetValidator(safeAddress)
-      console.log(v, v?.name)
       return v ? v.name : ''
     })
 
