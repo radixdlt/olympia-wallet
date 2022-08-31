@@ -97,7 +97,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, Ref, onMounted, watch } from 'vue'
+import { defineComponent, ref, Ref, onMounted, watch, computed, ComputedRef } from 'vue'
 import { firstValueFrom, interval, Subscription } from 'rxjs'
 import { AccountAddressT, Amount, AmountT, Token } from '@radixdlt/application'
 import BigAmount from '@/components/BigAmount.vue'
@@ -167,7 +167,13 @@ const WalletOverview = defineComponent({
     const totalXRD = ref(zero)
     const totalStakedAndUnstaked = ref(zero)
     const availablePlusStakedAndUnstakedXRD = ref(zero)
-    const otherTokenBalances: Ref<Decoded.TokenAmount[]> = ref([])
+    const allBalances: Ref<AccountBalancesEndpoint.DecodedResponse | null> = ref(null)
+
+    const otherTokenBalances: ComputedRef<Decoded.TokenAmount[]> = computed(() => {
+      if (!allBalances.value || !nativeToken.value) return []
+      return findOtherBalances(allBalances.value, nativeToken.value, hiddenTokens.value)
+    })
+
     const refreshSub: Ref<Subscription | null> = ref(null)
 
     onMounted(() => {
@@ -185,13 +191,12 @@ const WalletOverview = defineComponent({
 
     const fetchSummaries = async (addr: AccountAddressT) => {
       if (!nativeToken.value) return
-      const balances = await firstValueFrom(radix.ledger.tokenBalancesForAddress(addr))
-      await gatherRelevantTokens(radix, balances)
-      const total = calculateTotalXRD(balances, nativeToken.value)
+      allBalances.value = await firstValueFrom(radix.ledger.tokenBalancesForAddress(addr))
+      await gatherRelevantTokens(radix, allBalances.value)
+      const total = calculateTotalXRD(allBalances.value, nativeToken.value)
       totalXRD.value = total
-      totalStakedAndUnstaked.value = balances.account_balances.staked_and_unstaking_balance.value || zero
-      availablePlusStakedAndUnstakedXRD.value = add(total, balances.account_balances.staked_and_unstaking_balance.value || zero)
-      otherTokenBalances.value = findOtherBalances(balances, nativeToken.value, hiddenTokens.value)
+      totalStakedAndUnstaked.value = allBalances.value.account_balances.staked_and_unstaking_balance.value || zero
+      availablePlusStakedAndUnstakedXRD.value = add(total, allBalances.value.account_balances.staked_and_unstaking_balance.value || zero)
     }
 
     const fetchAndRefreshSummaries = async (addr: AccountAddressT) => {
