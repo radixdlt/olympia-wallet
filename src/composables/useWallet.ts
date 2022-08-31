@@ -122,7 +122,7 @@ const transferInput: Ref<TransferTokensInput | null> = ref(null)
 const showLedgerInteractionModalBody: Ref<boolean> = ref(true)
 
 // check if software or hardware address
-const isSoftwareAccount = () => {
+const activeAddresIsSoftwareAccount = () => {
   const hardwareAddress =
   hardwareDevices.value
     .flatMap((device) => device.addresses)
@@ -487,7 +487,7 @@ interface useWalletInterface {
   createNewHardwareAccount: () => void;
   closeLedgerErrorModal: () => void;
   setDecimalType: (decimalType: string) => void;
-  isSoftwareAccount: () => void;
+  activeAddresIsSoftwareAccount: () => void;
 }
 
 const walletLoaded = async () => {
@@ -945,7 +945,7 @@ export default function useWallet (router: Router): useWalletInterface {
     createWallet,
     hideLedgerInteraction,
     initWallet,
-    isSoftwareAccount,
+    activeAddresIsSoftwareAccount,
     persistNodeUrl,
     setActiveAddress,
     setHideAccountModal,
