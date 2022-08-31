@@ -130,8 +130,6 @@ const isSoftwareAccount = () => {
       if (!activeAddress.value) return false
       return addr.address.equals(activeAddress.value)
     })
-  // console.log('hardwareAddress-->', hardwareAddress?.address.toString())
-  // console.log('active address--->', activeAddress.value?.toString())
   hardwareAddress ? showLedgerInteractionModalBody.value = true : showLedgerInteractionModalBody.value = false
 }
 
