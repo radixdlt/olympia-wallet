@@ -1,7 +1,7 @@
 <template>
   <div class="fixed w-screen h-screen z-20 flex items-center justify-center bg-translucent-black">
     <div class="h-modalMedium bg-white rounded-md py-7 px-7 w-full max-w-3xl absolute top-1/2 left-1/2 transform -translate-x-1/3 -translate-y-1/2">
-     <div v-if="shouldShowEncryptionModal && showWalletConfirmTransactionModal">
+     <div v-if="shouldShowEncryptionModal && isHardwareAccount">
         <div class="bg-white h-full flex flex-col flex-1 w-full justify-around box-border mt-52">
           <svg width="40" height="40" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" class="container animate-spin">
             <path fill-rule="evenodd" clip-rule="evenodd" d="M77.8789 52.8857C72.5168 68.6526 57.5862 80.0002 40.0001 80.0002C29.2115 80.0002 19.417 75.7265 12.2241 68.7838L14.9924 65.9158C21.4721 72.1701 30.2851 76.0141 40.0001 76.0141C55.8278 76.0141 69.2758 65.8025 74.1051 51.6023L77.8789 52.8857Z" fill="#052CC0"/>
@@ -145,7 +145,7 @@
           </div>
         </div>
       </form>
-      <div v-else>
+      <div v-if="isHardwareAccount">
         <div class="bg-white h-full flex flex-col flex-1 w-full justify-around box-border mt-52">
           <svg width="40" height="40" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" class="container animate-spin">
             <path fill-rule="evenodd" clip-rule="evenodd" d="M77.8789 52.8857C72.5168 68.6526 57.5862 80.0002 40.0001 80.0002C29.2115 80.0002 19.417 75.7265 12.2241 68.7838L14.9924 65.9158C21.4721 72.1701 30.2851 76.0141 40.0001 76.0141C55.8278 76.0141 69.2758 65.8025 74.1051 51.6023L77.8789 52.8857Z" fill="#052CC0"/>
@@ -212,7 +212,7 @@ const WalletConfirmTransactionModal = defineComponent({
       transactionState,
       transferInput,
       selectedCurrency,
-      showWalletConfirmTransactionModal,
+      isHardwareAccount,
       activeAddresIsSoftwareAccount
     } = useWallet(router)
     const { tokenBalances, tokenBalanceFor, tokenInfoFor } = useTokenBalances(radix)
@@ -388,7 +388,7 @@ const WalletConfirmTransactionModal = defineComponent({
       shouldShowEncryptionModal,
       shouldShowLedgerModal,
       shouldShowMaxUnstakeConfirmation,
-      showWalletConfirmTransactionModal,
+      isHardwareAccount,
       stakeInput,
       unstakeInput,
       toContent,

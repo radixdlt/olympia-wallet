@@ -105,11 +105,9 @@ const wallet: Ref<WalletT | null> = ref(null)
 const latestAddress: Ref<string> = ref('')
 const loadingLatestAddress: Ref<boolean> = ref(true)
 const transactionSubs = new Subscription()
-
 const activeMessage: Ref<string> = ref('')
 const activeMessageInTransaction: Ref<MessageInTransaction | null> = ref(null)
 const activeTransactionForm: Ref<string | null> = ref(null)
-
 const selectedCurrency: Ref<Decoded.TokenAmount | null> = ref(null)
 const shouldShowConfirmation: Ref<boolean> = ref(false)
 const shouldShowMaxUnstakeConfirmation: Ref<boolean> = ref(false)
@@ -120,7 +118,7 @@ const transactionErrorMessage: Ref<string | null> = ref(null)
 const transactionFee: Ref<AmountT | null> = ref(null)
 const transferInput: Ref<TransferTokensInput | null> = ref(null)
 const showLedgerInteractionModalBody: Ref<boolean> = ref(true)
-const showWalletConfirmTransactionModal: Ref<boolean> = ref(true)
+const isHardwareAccount: Ref<boolean> = ref(false)
 
 // check if software or hardware address
 const activeAddresIsSoftwareAccount = () => {
@@ -133,10 +131,10 @@ const activeAddresIsSoftwareAccount = () => {
     })
   if (hardwareAddress) {
     showLedgerInteractionModalBody.value = true
-    showWalletConfirmTransactionModal.value = true
+    isHardwareAccount.value = true
   } else {
     showLedgerInteractionModalBody.value = false
-    showWalletConfirmTransactionModal.value = false
+    isHardwareAccount.value = false
   }
   // hardwareAddress ? showLedgerInteractionModalBody.value = true : showLedgerInteractionModalBody.value = false
 }
@@ -432,7 +430,7 @@ interface useWalletInterface {
   readonly showNewDevicePopup: Ref<boolean>;
   readonly showLedgerInteractionModalBody: Ref<boolean>;
   readonly shouldShowMaxUnstakeConfirmation: Ref<boolean>;
-  readonly showWalletConfirmTransactionModal: Ref<boolean>;
+  readonly isHardwareAccount: Ref<boolean>;
   readonly showDerivingModal: Ref<boolean>;
   readonly showLedgerVerify: Ref<boolean>;
   readonly switching: ComputedRef<boolean>;
@@ -892,7 +890,7 @@ export default function useWallet (router: Router): useWalletInterface {
     shouldShowMaxUnstakeConfirmation,
     showDerivingModal,
     showLedgerInteractionModalBody,
-    showWalletConfirmTransactionModal,
+    isHardwareAccount,
     stakeInput,
     unstakeInput,
     transactionError,
