@@ -105,11 +105,9 @@ const wallet: Ref<WalletT | null> = ref(null)
 const latestAddress: Ref<string> = ref('')
 const loadingLatestAddress: Ref<boolean> = ref(true)
 const transactionSubs = new Subscription()
-
 const activeMessage: Ref<string> = ref('')
 const activeMessageInTransaction: Ref<MessageInTransaction | null> = ref(null)
 const activeTransactionForm: Ref<string | null> = ref(null)
-
 const selectedCurrency: Ref<Decoded.TokenAmount | null> = ref(null)
 const shouldShowConfirmation: Ref<boolean> = ref(false)
 const shouldShowMaxUnstakeConfirmation: Ref<boolean> = ref(false)
@@ -119,6 +117,26 @@ const unstakeInput: Ref<UnstakeTokensInput | null> = ref(null)
 const transactionErrorMessage: Ref<string | null> = ref(null)
 const transactionFee: Ref<AmountT | null> = ref(null)
 const transferInput: Ref<TransferTokensInput | null> = ref(null)
+const showLedgerInteractionModalBody: Ref<boolean> = ref(true)
+const isHardwareAccount: Ref<boolean> = ref(false)
+
+// check if software or hardware address
+const activeAddresIsSoftwareAccount = () => {
+  const hardwareAddress =
+  hardwareDevices.value
+    .flatMap((device) => device.addresses)
+    .find((addr: HardwareAddress) => {
+      if (!activeAddress.value) return false
+      return addr.address.equals(activeAddress.value)
+    })
+  if (hardwareAddress) {
+    showLedgerInteractionModalBody.value = true
+    isHardwareAccount.value = true
+  } else {
+    showLedgerInteractionModalBody.value = false
+    isHardwareAccount.value = false
+  }
+}
 
 const setWallet = (newWallet: WalletT) => {
   wallet.value = newWallet
@@ -409,7 +427,9 @@ interface useWalletInterface {
   readonly showHideAccountModal: Ref<boolean>;
   readonly showDisconnectDeviceModal: ComputedRef<boolean>;
   readonly showNewDevicePopup: Ref<boolean>;
+  readonly showLedgerInteractionModalBody: Ref<boolean>;
   readonly shouldShowMaxUnstakeConfirmation: Ref<boolean>;
+  readonly isHardwareAccount: Ref<boolean>;
   readonly showDerivingModal: Ref<boolean>;
   readonly showLedgerVerify: Ref<boolean>;
   readonly switching: ComputedRef<boolean>;
@@ -439,7 +459,6 @@ interface useWalletInterface {
   stakeTokens: (input: StakeTokensInput) => void;
   transferTokens: (input: TransferTokensInput, message: MessageInTransaction, sc: Decoded.TokenAmount) => void;
   unstakeTokens: (input: UnstakeTokensInput) => void;
-
   accountNameFor: (address: AccountAddressT) => string;
   accountRenamed: (newName: string) => void;
   addAccount: () => Promise<AccountT | false>;
@@ -474,6 +493,7 @@ interface useWalletInterface {
   createNewHardwareAccount: () => void;
   closeLedgerErrorModal: () => void;
   setDecimalType: (decimalType: string) => void;
+  activeAddresIsSoftwareAccount: () => void;
 }
 
 const walletLoaded = async () => {
@@ -868,6 +888,8 @@ export default function useWallet (router: Router): useWalletInterface {
     shouldShowConfirmation,
     shouldShowMaxUnstakeConfirmation,
     showDerivingModal,
+    showLedgerInteractionModalBody,
+    isHardwareAccount,
     stakeInput,
     unstakeInput,
     transactionError,
@@ -930,6 +952,7 @@ export default function useWallet (router: Router): useWalletInterface {
     createWallet,
     hideLedgerInteraction,
     initWallet,
+    activeAddresIsSoftwareAccount,
     persistNodeUrl,
     setActiveAddress,
     setHideAccountModal,

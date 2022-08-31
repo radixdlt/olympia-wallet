@@ -211,9 +211,13 @@ const WalletConfirmTransactionModal = defineComponent({
       transactionFee,
       transactionState,
       transferInput,
-      selectedCurrency
+      selectedCurrency,
+      isHardwareAccount,
+      activeAddresIsSoftwareAccount
     } = useWallet(router)
     const { tokenBalances, tokenBalanceFor, tokenInfoFor } = useTokenBalances(radix)
+
+    activeAddresIsSoftwareAccount()
 
     const subs = new Subscription()
     const loading = ref(true)
@@ -287,11 +291,11 @@ const WalletConfirmTransactionModal = defineComponent({
     })
 
     const shouldShowBuildingModal: ComputedRef<boolean> = computed(() =>
-      transactionState.value === 'INITIATED' || transactionState.value === 'BUILT_FROM_INTENT'
+      transactionState.value === 'INITIATED' || transactionState.value === 'BUILT_FROM_INTENT' || transactionState.value === 'PENDING'
     )
 
     const shouldShowEncryptionModal: ComputedRef<boolean> = computed(() => {
-      return transactionState.value === 'PENDING'
+      return transactionState.value === 'PENDING' && isHardwareAccount.value
     })
 
     // Show ledger modal when hw-signing is in progress and the transaction is CONFIRMED
@@ -384,6 +388,7 @@ const WalletConfirmTransactionModal = defineComponent({
       shouldShowEncryptionModal,
       shouldShowLedgerModal,
       shouldShowMaxUnstakeConfirmation,
+      isHardwareAccount,
       stakeInput,
       unstakeInput,
       toContent,
