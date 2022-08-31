@@ -130,8 +130,8 @@ const isSoftwareAccount = () => {
       if (!activeAddress.value) return false
       return addr.address.equals(activeAddress.value)
     })
-  console.log('hardwareAddress-->', hardwareAddress?.address.toString())
-  console.log('active address--->', activeAddress.value?.toString())
+  // console.log('hardwareAddress-->', hardwareAddress?.address.toString())
+  // console.log('active address--->', activeAddress.value?.toString())
   hardwareAddress ? showLedgerInteractionModalBody.value = true : showLedgerInteractionModalBody.value = false
 }
 
@@ -455,7 +455,6 @@ interface useWalletInterface {
   stakeTokens: (input: StakeTokensInput) => void;
   transferTokens: (input: TransferTokensInput, message: MessageInTransaction, sc: Decoded.TokenAmount) => void;
   unstakeTokens: (input: UnstakeTokensInput) => void;
-
   accountNameFor: (address: AccountAddressT) => string;
   accountRenamed: (newName: string) => void;
   addAccount: () => Promise<AccountT | false>;
@@ -490,6 +489,7 @@ interface useWalletInterface {
   createNewHardwareAccount: () => void;
   closeLedgerErrorModal: () => void;
   setDecimalType: (decimalType: string) => void;
+  isSoftwareAccount: () => void;
 }
 
 const walletLoaded = async () => {
@@ -947,6 +947,7 @@ export default function useWallet (router: Router): useWalletInterface {
     createWallet,
     hideLedgerInteraction,
     initWallet,
+    isSoftwareAccount,
     persistNodeUrl,
     setActiveAddress,
     setHideAccountModal,

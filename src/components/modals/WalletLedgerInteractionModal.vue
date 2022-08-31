@@ -35,8 +35,11 @@ const WalletLedgerInteractionModal = defineComponent({
       hideLedgerInteraction,
       cancelTransaction,
       hardwareInteractionState,
-      showLedgerInteractionModalBody
+      showLedgerInteractionModalBody,
+      isSoftwareAccount
     } = useWallet(router)
+
+    isSoftwareAccount()
 
     const interactionTitle: ComputedRef<string> = computed(() => {
       if (hardwareInteractionState.value === '') return ''
