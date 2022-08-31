@@ -350,12 +350,11 @@ const WalletStaking = defineComponent({
     }
 
     const checkForEmptyValidator = () => {
-      console.log('this code is run')
       // if user removes validator address
       const validator = safelyUnwrapValidator(values.validator)
-      console.log(validator)
       validateField('validator')
       if (!validator) {
+        setMaxUnstakeOff()
         setMaxUnstakeNotifcationOff()
         setMaxUnstakeOverageNotifcationOff()
       }
