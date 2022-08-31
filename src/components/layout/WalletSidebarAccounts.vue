@@ -7,7 +7,7 @@
       </svg>
       {{ $t('wallet.back') }}
     </div>
-    <div class="bg-gradient-to-br from-rBlue via-rDarkblue to-rDarkblue">
+    <div :class="{'bg-gradient-to-br from-rBlue via-rDarkblue to-rDarkblue': true, 'pb-4': showSoftwareAccounts }">
       <div class="flex items-center px-5 py-4">
         <svg width="24" viewBox="0 0 26 20" fill="none" xmlns="http://www.w3.org/2000/svg">
           <rect x="1" y="1" width="24" height="18.1333" rx="2" fill="#060F8F"/>
@@ -42,7 +42,7 @@
           @click="debugSwitch(account)"
           class="mb-4"
         />
-        <div @click="addSoftwareAccount" class="m-4 py-4 text-center cursor-pointer hover:text-rGreen transition-colors text-xs border-rGrayMed border-b">
+        <div @click="addSoftwareAccount" class="mx-4 mt-4 py-4 text-center cursor-pointer hover:text-rGreen transition-colors text-xs border-rGrayMed border-b">
           {{ $t('wallet.addSoftwareAccount') }}
         </div>
       </div>
