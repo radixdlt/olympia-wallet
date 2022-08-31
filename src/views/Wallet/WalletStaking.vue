@@ -350,7 +350,6 @@ const WalletStaking = defineComponent({
     }
 
     const checkForEmptyValidator = () => {
-      // if user removes validator address
       const validator = safelyUnwrapValidator(values.validator)
       validateField('validator')
       if (!validator) {
