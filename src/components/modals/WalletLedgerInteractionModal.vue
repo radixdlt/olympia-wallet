@@ -11,7 +11,7 @@
           <div class="text-center mt-8 text-rGrayDark text-lg">
             {{interactionTitle}}
           </div>
-          <div class="text-center mt-4 text-rBlack text-sm">
+          <div v-if="showLedgerInteractionModalBody" class="text-center mt-4 text-rBlack text-sm">
             {{interactionBody}}
           </div>
         </div>
@@ -34,7 +34,8 @@ const WalletLedgerInteractionModal = defineComponent({
     const {
       hideLedgerInteraction,
       cancelTransaction,
-      hardwareInteractionState
+      hardwareInteractionState,
+      showLedgerInteractionModalBody
     } = useWallet(router)
 
     const interactionTitle: ComputedRef<string> = computed(() => {
@@ -51,6 +52,7 @@ const WalletLedgerInteractionModal = defineComponent({
       hideLedgerInteraction,
       interactionTitle,
       interactionBody,
+      showLedgerInteractionModalBody,
       close () {
         hideLedgerInteraction()
         cancelTransaction()

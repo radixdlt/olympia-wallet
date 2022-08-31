@@ -119,6 +119,21 @@ const unstakeInput: Ref<UnstakeTokensInput | null> = ref(null)
 const transactionErrorMessage: Ref<string | null> = ref(null)
 const transactionFee: Ref<AmountT | null> = ref(null)
 const transferInput: Ref<TransferTokensInput | null> = ref(null)
+const showLedgerInteractionModalBody: Ref<boolean> = ref(true)
+
+// check if software or hardware address
+const isSoftwareAccount = () => {
+  const hardwareAddress =
+  hardwareDevices.value
+    .flatMap((device) => device.addresses)
+    .find((addr: HardwareAddress) => {
+      if (!activeAddress.value) return false
+      return addr.address.equals(activeAddress.value)
+    })
+  console.log('hardwareAddress-->', hardwareAddress?.address.toString())
+  console.log('active address--->', activeAddress.value?.toString())
+  hardwareAddress ? showLedgerInteractionModalBody.value = true : showLedgerInteractionModalBody.value = false
+}
 
 const setWallet = (newWallet: WalletT) => {
   wallet.value = newWallet
@@ -409,6 +424,7 @@ interface useWalletInterface {
   readonly showHideAccountModal: Ref<boolean>;
   readonly showDisconnectDeviceModal: ComputedRef<boolean>;
   readonly showNewDevicePopup: Ref<boolean>;
+  readonly showLedgerInteractionModalBody: Ref<boolean>;
   readonly shouldShowMaxUnstakeConfirmation: Ref<boolean>;
   readonly showDerivingModal: Ref<boolean>;
   readonly showLedgerVerify: Ref<boolean>;
@@ -868,6 +884,7 @@ export default function useWallet (router: Router): useWalletInterface {
     shouldShowConfirmation,
     shouldShowMaxUnstakeConfirmation,
     showDerivingModal,
+    showLedgerInteractionModalBody,
     stakeInput,
     unstakeInput,
     transactionError,
