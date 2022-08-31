@@ -71,6 +71,8 @@ export interface PendingTransaction extends TransactionStateSuccess {
   actions: IntendedAction[]
 }
 
+export type AmountFormats = 'us' | 'europe'
+
 const radix = Radix.create()
 const { setError } = useErrors(radix)
 
@@ -398,10 +400,10 @@ const stakeTokens = async (stakeTokensInput: StakeTokensInput) => {
   })
 }
 
-const decimalType: Ref<string> = ref('us')
-getDecimalType().then((val) => { decimalType.value = val })
+const decimalType: Ref<AmountFormats> = ref('us')
+getDecimalType().then((val: AmountFormats) => { decimalType.value = val })
 
-const handleDecimalType = (newDecimalType: string) => {
+const handleDecimalType = (newDecimalType: AmountFormats) => {
   decimalType.value = newDecimalType
   setDecimalType(newDecimalType)
 }
@@ -412,7 +414,7 @@ interface useWalletInterface {
   readonly activeNetwork: Ref<Network | null>;
   readonly connected: ComputedRef<boolean>;
   readonly derivedAccountIndex: Ref<number>;
-  readonly decimalType: Ref<string>;
+  readonly decimalType: Ref<AmountFormats>;
   readonly explorerUrlBase: ComputedRef<string>;
   readonly hardwareDevices: Ref<HardwareDevice[]>;
   readonly hardwareError: Ref<Error | null>;
@@ -492,7 +494,7 @@ interface useWalletInterface {
   walletLoaded: () => void;
   createNewHardwareAccount: () => void;
   closeLedgerErrorModal: () => void;
-  setDecimalType: (decimalType: string) => void;
+  setDecimalType: (decimalType: AmountFormats) => void;
   activeAddresIsSoftwareAccount: () => void;
 }
 

@@ -55,7 +55,7 @@
                 <div class="flex flex-col flex-1 mr-3">
                   <FormField
                     v-if="selectedCurrency"
-                    type="number"
+                    type="text"
                     name="amount"
                     label="Amount"
                     class="w-full"
@@ -63,8 +63,8 @@
                     step="any"
                     :rules="{
                       required: true,
-                      validAmount: true,
-                      insufficientFunds: this.selectedCurrency.value.toString()
+                      validAmount: decimalType,
+                      insufficientFunds: [selectedCurrency.value, decimalType]
                     }"
                   />
 
@@ -166,7 +166,7 @@ const WalletTransaction = defineComponent({
   setup () {
     const router = useRouter()
     const { errors, values, meta, setErrors, resetForm } = useForm<TransactionForm>()
-    const { transferTokens, cancelTransaction, userDidCancel, setActiveTransactionForm, activeAddress, nativeToken, networkPreamble, radix, showDerivingModal } = useWallet(router)
+    const { decimalType, transferTokens, cancelTransaction, userDidCancel, setActiveTransactionForm, activeAddress, nativeToken, networkPreamble, radix, showDerivingModal } = useWallet(router)
     const { t } = useI18n({ useScope: 'global' })
     const { tokenInfoFor, fetchBalancesForAddress, tokenBalances, tokenBalanceFor, tokenBalanceForByString } = useTokenBalances(radix)
     const currency: Ref<string | null> = ref(null)
@@ -247,7 +247,7 @@ const WalletTransaction = defineComponent({
 
     const amountPlaceholder: ComputedRef<string> = computed(() => {
       if (!selectedCurrency.value || !selectedCurrency.value.value) return ''
-      return `${t('transaction.amountPlaceholder')} ${asBigNumber(selectedCurrency.value.value, true)} `
+      return `${t('transaction.amountPlaceholder')} ${asBigNumber(selectedCurrency.value.value, true, decimalType.value)} `
     })
 
     const disableSubmit: ComputedRef<boolean> = computed(() => {
@@ -285,7 +285,7 @@ const WalletTransaction = defineComponent({
 
       if (!meta.value.valid || !selectedCurrency.value) return false
       const safeAddress = safelyUnwrapAddress(values.recipient, networkPreamble.value)
-      const safeAmount = safelyUnwrapAmount(values.amount)
+      const safeAmount = safelyUnwrapAmount(values.amount, decimalType.value)
       const token = tokenInfoFor(selectedCurrency.value.token_identifier.rri)
       if (!token) return false
       const greaterThanZero = safeAmount && validateGreaterThanZero(safeAmount)
@@ -334,6 +334,7 @@ const WalletTransaction = defineComponent({
       activeAddress,
       amountPlaceholder,
       currency,
+      decimalType,
       errors,
       hasTokenBalances,
       meta,

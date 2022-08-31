@@ -40,7 +40,7 @@
           </div>
           <div class="py-3 px-4 text-sm text-rGrayDark border-b border-rGray">
             <div class="text-rGrayDark mb-2">{{ $t('staking.fromLabel')}}</div>
-            <div class="text-rBlack font-mono">{{ activeAddress.toString() }}</div>
+            <div class="text-rBlack font-mono" v-if="activeAddress">{{ activeAddress.toString() }}</div>
           </div>
           <div class="pt-3 pb-6 px-4 text-sm border-b border-rGray">
             <div class="text-rGrayDark mb-2">{{ $t('staking.validatorLabel')}}</div>
@@ -78,12 +78,15 @@
                 <div v-else>
                   <FormField
                     name="amount"
-                    type="number"
+                    type="text"
                     step="any"
                     class="w-9/12 text-sm justify-items-start"
                     :class="{'w-full': activeForm !== 'UNSTAKING'}"
                     :placeholder="amountPlaceholder"
-                    rules="required|validAmount"
+                    :rules="{
+                      required: true,
+                      validAmount: decimalType
+                    }"
                     @input="compareToMaxUnstakeAmount"
                     :validateOnInput="true"
                   />
@@ -205,6 +208,7 @@ const WalletStaking = defineComponent({
     const { errors, values, meta, setErrors, resetForm, validateField } = useForm<StakeForm>()
     const {
       activeAddress,
+      decimalType,
       explorerUrlBase,
       activeNetwork,
       nativeToken,
@@ -304,7 +308,7 @@ const WalletStaking = defineComponent({
 
     const amountPlaceholder: ComputedRef<string> = computed(() =>
       (xrdBalance.value && activeForm.value === 'STAKING')
-        ? `${t('staking.amountPlaceholder')} ${asBigNumber(xrdBalance.value, true)} `
+        ? `${t('staking.amountPlaceholder')} ${asBigNumber(xrdBalance.value, true, decimalType.value)} `
         : t('staking.availableBalancePlaceholder'))
 
     const explorerUrl: ComputedRef<string> = computed(() => `${explorerUrlBase.value}/#/validators`)
@@ -375,7 +379,7 @@ const WalletStaking = defineComponent({
       if (!tokenBalances.value || !nativeToken.value) return
       if (!meta.value.valid || !nativeTokenBalance.value) return
       const safeAddress = safelyUnwrapValidator(values.validator)
-      const safeAmount = safelyUnwrapAmount(values.amount)
+      const safeAmount = safelyUnwrapAmount(values.amount, decimalType.value)
       const greaterThanZero = safeAmount && validateGreaterThanZero(safeAmount)
       const validAmount = safeAmount && validateAmountOfType(safeAmount, nativeToken.value)
 
@@ -476,6 +480,7 @@ const WalletStaking = defineComponent({
       activeForm,
       activeAddress,
       amountPlaceholder,
+      decimalType,
       errors,
       explorerUrl,
       explorerUrlBase,

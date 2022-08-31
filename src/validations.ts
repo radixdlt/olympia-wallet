@@ -2,6 +2,8 @@ import { defineRule, configure } from 'vee-validate'
 import { required, confirmed, length, max } from '@vee-validate/rules'
 import { i18n } from '@/text'
 import { safelyUnwrapAddress, safelyUnwrapAmount, safelyUnwrapValidator } from '@/helpers/validateRadixTypes'
+import { AmountFormats } from './composables/useWallet'
+import BigNumber from 'bignumber.js'
 
 interface FieldContext {
   field: string;
@@ -33,8 +35,13 @@ defineRule('confirmed', confirmed)
 defineRule('length', length)
 defineRule('max', max)
 
-defineRule('insufficientFunds', (value: number, [max]: [string]) => {
-  return value <= Number(max)
+defineRule('insufficientFunds', (amountString: string, [max, preference]: [string, AmountFormats]) => {
+  const bigMax = new BigNumber(max)
+  const shiftedMax = bigMax.shiftedBy(-18) // Atto
+  const valueAmount = safelyUnwrapAmount(amountString, preference)
+  const maxAmount = safelyUnwrapAmount(shiftedMax.toFixed())
+  if (!valueAmount || !maxAmount) return false
+  return valueAmount?.compareTo(maxAmount) <= 0
 })
 
 defineRule('validAddress', (addressString: string, [preamble]: [string]) => {
@@ -47,12 +54,7 @@ defineRule('validValidator', (validatorString: string) => {
   return !!safeAddress
 })
 
-defineRule('validAmount', (amountString: string) => {
-  const amountMatch = /^\d*\.?\d*$/
-  const amount = Number(amountString)
-  if (amount && amountString.match(amountMatch)) {
-    const safeAmount = safelyUnwrapAmount(amountString)
-    return !!safeAmount
-  }
-  return false
+defineRule('validAmount', (amountString: string, [preference]: [AmountFormats]) => {
+  const safeAmount = safelyUnwrapAmount(amountString, preference)
+  return !!safeAmount
 })
