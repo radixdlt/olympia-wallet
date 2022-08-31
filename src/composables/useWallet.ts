@@ -136,7 +136,6 @@ const activeAddresIsSoftwareAccount = () => {
     showLedgerInteractionModalBody.value = false
     isHardwareAccount.value = false
   }
-  // hardwareAddress ? showLedgerInteractionModalBody.value = true : showLedgerInteractionModalBody.value = false
 }
 
 const setWallet = (newWallet: WalletT) => {
