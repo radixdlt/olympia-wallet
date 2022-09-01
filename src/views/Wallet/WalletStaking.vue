@@ -40,7 +40,7 @@
           </div>
           <div class="py-3 px-4 text-sm text-rGrayDark border-b border-rGray">
             <div class="text-rGrayDark mb-2">{{ $t('staking.fromLabel')}}</div>
-            <div class="text-rBlack font-mono">{{ activeAddress.toString() }}</div>
+            <div class="text-rBlack font-mono" v-if="activeAddress">{{ activeAddress.toString() }}</div>
           </div>
           <div class="pt-3 pb-6 px-4 text-sm border-b border-rGray">
             <div class="text-rGrayDark mb-2">{{ $t('staking.validatorLabel')}}</div>
@@ -76,18 +76,20 @@
                     </div>
                   </div>
                 </div>
-                <div v-else>
-                  <FormField
-                    name="amount"
-                    type="number"
-                    step="any"
-                    class="w-9/12 text-sm justify-items-start"
-                    :class="{'w-full': activeForm !== 'UNSTAKING'}"
-                    :placeholder="amountPlaceholder"
-                    rules="required|validAmount"
-                    @input="compareToMaxUnstakeAmount"
-                    :validateOnInput="true"
-                  />
+                <div v-else class="inline-flex">
+                  <div :class="{'w-9/12': activeForm === 'UNSTAKING', 'w-full': activeForm !== 'UNSTAKING'}">
+                    <AmountField
+                      class="text-sm justify-items-start"
+                      :placeholder="amountPlaceholder"
+                      name="amount"
+                      label="Amount"
+                      :rules="{
+                        required: true,
+                        validAmount: decimalType
+                      }"
+                      @input="compareToMaxUnstakeAmount"
+                    />
+                  </div>
                   <button
                     @click.prevent="setMaxUnstakeOn"
                     v-if="activeForm == 'UNSTAKING'"
@@ -154,6 +156,7 @@ import StakeListItem from '@/components/StakeListItem.vue'
 import { safelyUnwrapAmount, safelyUnwrapValidator, validateAmountOfType, validateGreaterThanZero } from '@/helpers/validateRadixTypes'
 import TabsTab from '@/components/TabsTab.vue'
 import TabsContent from '@/components/TabsContent.vue'
+import AmountField from '@/components/AmountField.vue'
 import FormErrorMessage from '@/components/FormErrorMessage.vue'
 import FormField from '@/components/FormField.vue'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
@@ -191,6 +194,7 @@ const uniqBy = (arr: ValidatorAddressT[], predicate: (item: ValidatorAddressT) =
 
 const WalletStaking = defineComponent({
   components: {
+    AmountField,
     ButtonSubmit,
     FormField,
     FormErrorMessage,
@@ -206,6 +210,7 @@ const WalletStaking = defineComponent({
     const { errors, values, meta, setErrors, resetForm, validateField } = useForm<StakeForm>()
     const {
       activeAddress,
+      decimalType,
       explorerUrlBase,
       activeNetwork,
       nativeToken,
@@ -305,7 +310,7 @@ const WalletStaking = defineComponent({
 
     const amountPlaceholder: ComputedRef<string> = computed(() =>
       (xrdBalance.value && activeForm.value === 'STAKING')
-        ? `${t('staking.amountPlaceholder')} ${asBigNumber(xrdBalance.value, true)} `
+        ? `${t('staking.amountPlaceholder')} ${asBigNumber(xrdBalance.value, true, decimalType.value)} `
         : t('staking.availableBalancePlaceholder'))
 
     const explorerUrl: ComputedRef<string> = computed(() => `${explorerUrlBase.value}/#/validators`)
@@ -362,19 +367,16 @@ const WalletStaking = defineComponent({
     const compareToMaxUnstakeAmount = () => {
       if (activeForm.value === 'STAKING') return
       const safeAddress = safelyUnwrapValidator(values.validator)
-      const safeAmount = safelyUnwrapAmount(values.amount)
+      const safeAmount = safelyUnwrapAmount(values.amount, decimalType.value)
       if (!safeAddress || !safeAmount) return
 
       const activeValidatorStakeAmount = getActiveStakeAmountForValidator(safeAddress)
-      const maxAmount = +asBigNumber(activeValidatorStakeAmount) as number
-      const currentValue = +asBigNumber(safeAmount) as number
-      const minDifference = maxAmount - currentValue
-
-      if (minDifference <= 0.000001) {
+      const difference = +asBigNumber(activeValidatorStakeAmount.subtract(safeAmount))
+      if (difference <= 0.000001) {
         setMaxUnstakeNotificationOn()
         setMaxUnstakeOn()
 
-        if (minDifference < 0) {
+        if (difference < 0) {
           setMaxUnstakeOverageNotifcationOn()
         } else {
           setMaxUnstakeOverageNotifcationOff()
@@ -386,7 +388,7 @@ const WalletStaking = defineComponent({
       if (!tokenBalances.value || !nativeToken.value) return
       if (!meta.value.valid || !nativeTokenBalance.value) return
       const safeAddress = safelyUnwrapValidator(values.validator)
-      const safeAmount = safelyUnwrapAmount(values.amount)
+      const safeAmount = safelyUnwrapAmount(values.amount, decimalType.value)
       const greaterThanZero = safeAmount && validateGreaterThanZero(safeAmount)
       const validAmount = safeAmount && validateAmountOfType(safeAmount, nativeToken.value)
 
@@ -487,6 +489,7 @@ const WalletStaking = defineComponent({
       activeForm,
       activeAddress,
       amountPlaceholder,
+      decimalType,
       errors,
       explorerUrl,
       explorerUrlBase,

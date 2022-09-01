@@ -1,3 +1,4 @@
+import { AmountFormats } from '@/composables/useWallet'
 import { AccountAddress, AccountAddressT, Amount, AmountT, Token, ValidatorAddress, ValidatorAddressT } from '@radixdlt/application'
 import BigNumber from 'bignumber.js'
 
@@ -19,8 +20,13 @@ export const safelyUnwrapValidator = (validatorString: string): ValidatorAddress
   return validatorAddressRes.value
 }
 
-export const safelyUnwrapAmount = (amount: string): AmountT | null => {
-  const bigAmount = new BigNumber(amount)
+const swapToUsAmount = (amount: string): string => {
+  return amount.replace(/[,.]/g, (x) => x === ',' ? '.' : ',')
+}
+
+export const safelyUnwrapAmount = (amount: string, decimalType: AmountFormats = 'us'): AmountT | null => {
+  const parsedAmount = decimalType === 'europe' ? swapToUsAmount(amount) : amount
+  const bigAmount = new BigNumber(parsedAmount.replace(',', ''))
   const amountInput = bigAmount.shiftedBy(18) // Atto
   const amountResult = Amount.fromUnsafe(amountInput.toFixed())
   if (amountResult && amountResult.isErr()) {

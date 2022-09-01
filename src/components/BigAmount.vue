@@ -17,7 +17,7 @@ import { AmountT } from '@radixdlt/application'
 import BigNumber from 'bignumber.js'
 import { useToast } from 'vue-toastification'
 import { useI18n } from 'vue-i18n'
-import { useWallet } from '@/composables'
+import useWallet, { AmountFormats } from '@/composables/useWallet'
 import { useRouter } from 'vue-router'
 
 BigNumber.set({
@@ -59,7 +59,7 @@ const internalFormat = {
   suffix: ''
 }
 
-const formattBigNumber = (x: BigNumber, showFull = false, fmtString: string) => {
+export const formattBigNumber = (x: BigNumber, showFull = false, fmtString: AmountFormats) => {
   /*
   1000000000000 => 1,000,000,000,000
   1000000000000.59 => 1,000,000,000,000.6
@@ -112,7 +112,7 @@ const formattBigNumber = (x: BigNumber, showFull = false, fmtString: string) => 
   return z.toFormat(format)
 }
 
-export const asBigNumber = (amount: AmountT, showFull = false, displayFormat = 'us') : string => {
+export const asBigNumber = (amount: AmountT, showFull = false, displayFormat: AmountFormats = 'us') : string => {
   const bigNumber = new BigNumber(amount.toString())
   const shiftedAmount = bigNumber.shiftedBy(-18) // Atto
 

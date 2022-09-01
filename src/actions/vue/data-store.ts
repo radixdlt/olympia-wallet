@@ -1,6 +1,7 @@
 import { AccountName, SelectedNode } from '../electron/data-store'
 import { AccountAddress, Network, ResourceIdentifierT } from '@radixdlt/application'
 import { HardwareAddress, EncodedHardwareAddress, HardwareDevice, EncodedHardwareDevice } from '@/services/_types'
+import { AmountFormats } from '@/composables/useWallet'
 export const saveAccountName = (accountAddress: string, prettyName: string): Promise<string> => new Promise((resolve) => {
   resolve(window.ipcRenderer.invoke('save-account-name', JSON.stringify({ accountAddress, prettyName })))
 })
@@ -120,7 +121,7 @@ export const unhideAccount = async (address: string): Promise<string[]> => {
   return newHiddenTokens
 }
 
-export const getDecimalType = (): Promise<string> => new Promise((resolve) => {
+export const getDecimalType = (): Promise<AmountFormats> => new Promise((resolve) => {
   resolve(window.ipcRenderer.invoke('get-decimal-type'))
 })
 

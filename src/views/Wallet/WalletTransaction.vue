@@ -52,22 +52,17 @@
             <div class="border-b border-rGray py-7 flex items-center">
               <div class="w-32 text-right text-rGrayDark mr-8">{{ $t('transaction.amountLabel') }}</div>
               <div class="flex-1 flex items-start pr-8">
-                <div class="flex flex-col flex-1 mr-3">
-                  <FormField
-                    v-if="selectedCurrency"
-                    type="number"
+                <div class="flex flex-col flex-1 mr-3" v-if="selectedCurrency">
+                  <AmountField
+                    :placeholder="amountPlaceholder"
                     name="amount"
                     label="Amount"
-                    class="w-full"
-                    :placeholder="amountPlaceholder"
-                    step="any"
                     :rules="{
                       required: true,
-                      validAmount: true,
-                      insufficientFunds: this.selectedCurrency.value.toString()
+                      validAmount: decimalType,
+                      insufficientFunds: [selectedCurrency.value, decimalType]
                     }"
                   />
-
                   <FormErrorMessage name="amount" class="text-sm text-red-400" />
                 </div>
                 <select
@@ -128,6 +123,7 @@ import { interval, Subscription } from 'rxjs'
 import { safelyUnwrapAddress, safelyUnwrapAmount, validateAmountOfType, validateGreaterThanZero } from '@/helpers/validateRadixTypes'
 import { AccountAddressT, AmountOrUnsafeInput, Token } from '@radixdlt/application'
 import { asBigNumber } from '@/components/BigAmount.vue'
+import AmountField from '@/components/AmountField.vue'
 import ClickToCopy from '@/components/ClickToCopy.vue'
 import FormErrorMessage from '@/components/FormErrorMessage.vue'
 import FormField from '@/components/FormField.vue'
@@ -155,6 +151,7 @@ const refreshSub: Ref<Subscription | null> = ref(null)
 
 const WalletTransaction = defineComponent({
   components: {
+    AmountField,
     ButtonSubmit,
     ClickToCopy,
     Field,
@@ -166,7 +163,7 @@ const WalletTransaction = defineComponent({
   setup () {
     const router = useRouter()
     const { errors, values, meta, setErrors, resetForm } = useForm<TransactionForm>()
-    const { transferTokens, cancelTransaction, userDidCancel, setActiveTransactionForm, activeAddress, nativeToken, networkPreamble, radix, showDerivingModal } = useWallet(router)
+    const { decimalType, transferTokens, cancelTransaction, userDidCancel, setActiveTransactionForm, activeAddress, nativeToken, networkPreamble, radix, showDerivingModal } = useWallet(router)
     const { t } = useI18n({ useScope: 'global' })
     const { tokenInfoFor, fetchBalancesForAddress, tokenBalances, tokenBalanceFor, tokenBalanceForByString } = useTokenBalances(radix)
     const currency: Ref<string | null> = ref(null)
@@ -247,7 +244,7 @@ const WalletTransaction = defineComponent({
 
     const amountPlaceholder: ComputedRef<string> = computed(() => {
       if (!selectedCurrency.value || !selectedCurrency.value.value) return ''
-      return `${t('transaction.amountPlaceholder')} ${asBigNumber(selectedCurrency.value.value, true)} `
+      return `${t('transaction.amountPlaceholder')} ${asBigNumber(selectedCurrency.value.value, true, decimalType.value)} `
     })
 
     const disableSubmit: ComputedRef<boolean> = computed(() => {
@@ -285,7 +282,7 @@ const WalletTransaction = defineComponent({
 
       if (!meta.value.valid || !selectedCurrency.value) return false
       const safeAddress = safelyUnwrapAddress(values.recipient, networkPreamble.value)
-      const safeAmount = safelyUnwrapAmount(values.amount)
+      const safeAmount = safelyUnwrapAmount(values.amount, decimalType.value)
       const token = tokenInfoFor(selectedCurrency.value.token_identifier.rri)
       if (!token) return false
       const greaterThanZero = safeAmount && validateGreaterThanZero(safeAmount)
@@ -334,6 +331,7 @@ const WalletTransaction = defineComponent({
       activeAddress,
       amountPlaceholder,
       currency,
+      decimalType,
       errors,
       hasTokenBalances,
       meta,
