@@ -41,7 +41,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, Ref, ref, toRef, watch } from 'vue'
+import { computed, defineComponent, Ref, ref, toRef, watch } from 'vue'
 import { Amount } from '@radixdlt/application'
 import AppButtonCancel from '@/components/AppButtonCancel.vue'
 import AppModal from '@/components/AppModal.vue'
@@ -90,17 +90,18 @@ export default defineComponent({
       // Close modal if this is the last error
       if (props.errorsCount <= 1) isVisible.value = false
     }
-    const type: string = error.value?.details?.type
-    const showDetails = !isKnownApiError(type)
-    let errorMsg: string = t('apiErrors.unknown')
-    let errorTitle: string = t('apiErrors.unknown')
-    if (!showDetails) {
+    const showDetails = computed(() => isKnownApiError(error.value?.details?.type))
+
+    const errorMsg = computed(() => {
+      let msg: string = t('apiErrors.unknown')
+      const type: string | undefined = error.value?.details?.type as string
+      if (!type) return msg
+
       switch (type) {
         case 'BelowMinimumStakeError': {
           const minimum = error.value.details?.minimum_amount?.value
           const displayMinimum = minimum ? asBigNumber(minimum) : '90'
-          errorMsg = t('apiErrors.BelowMinimumStakeError.message', { minimum: displayMinimum })
-          errorTitle = t('apiErrors.BelowMinimumStakeError.title')
+          msg = t('apiErrors.BelowMinimumStakeError.message', { minimum: displayMinimum })
           break
         }
         case 'NotEnoughTokensForUnstakeError': {
@@ -108,20 +109,46 @@ export default defineComponent({
           const staked = Amount.fromUnsafe(error.value.details.stake.delegated_stake.value)._unsafeUnwrap()
           const pending = Amount.fromUnsafe(error.value.details.pending_stake.delegated_stake.value)._unsafeUnwrap()
           if (requested > add(staked, pending)) {
-            errorMsg = t('apiErrors.NotEnoughTokensForUnstakeError.requested.message')
-            errorTitle = t('apiErrors.NotEnoughTokensForUnstakeError.requested.title')
+            msg = t('apiErrors.NotEnoughTokensForUnstakeError.requested.message')
             break
           }
-          errorMsg = t('apiErrors.NotEnoughTokensForUnstakeError.pending.message', { pending: asBigNumber(pending) })
-          errorTitle = t('apiErrors.NotEnoughTokensForUnstakeError.pending.title')
+          msg = t('apiErrors.NotEnoughTokensForUnstakeError.pending.message', { pending: asBigNumber(pending) })
           break
         }
         default:
-          errorMsg = t(`apiErrors.${type}.message`)
-          errorTitle = t(`apiErrors.${type}.title`)
+          msg = t(`apiErrors.${type}.message`)
           break
       }
-    }
+
+      return msg
+    })
+
+    const errorTitle = computed(() => {
+      let title: string = t('apiErrors.unknown')
+      const type: string | undefined = error.value?.details?.type as string
+      if (!type) return title
+      switch (type) {
+        case 'BelowMinimumStakeError': {
+          title = t('apiErrors.BelowMinimumStakeError.title')
+          break
+        }
+        case 'NotEnoughTokensForUnstakeError': {
+          const requested = Amount.fromUnsafe(error.value.details.requested_amount.value)._unsafeUnwrap()
+          const staked = Amount.fromUnsafe(error.value.details.stake.delegated_stake.value)._unsafeUnwrap()
+          const pending = Amount.fromUnsafe(error.value.details.pending_stake.delegated_stake.value)._unsafeUnwrap()
+          if (requested > add(staked, pending)) {
+            title = t('apiErrors.NotEnoughTokensForUnstakeError.requested.title')
+            break
+          }
+          title = t('apiErrors.NotEnoughTokensForUnstakeError.pending.title')
+          break
+        }
+        default:
+          title = t(`apiErrors.${type}.title`)
+          break
+      }
+      return title
+    })
 
     return {
       handleClose,

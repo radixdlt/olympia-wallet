@@ -22,7 +22,8 @@ const messages = {
       transactionFailed: 'Your transaction failed. Check that you have sufficient XRD to cover the transfer plus fee.',
       stakeFailed: 'Your transaction failed. Check that you have sufficient XRD to cover your stake plus fee.',
       unstakeFailed: 'Your transaction failed. Check that you are not unstaking more than your total current stake and that you have sufficient XRD to cover the fee.',
-      pinMatch: 'Your new pin doesn\'t match'
+      pinMatch: 'Your new pin doesn\'t match',
+      messageRequired: 'You must add a message to be able to encrypt it'
     },
     home: {
       welcomeOne: 'Welcome to the Radix Olympia Desktop Wallet.',

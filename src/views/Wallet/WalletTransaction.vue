@@ -21,8 +21,8 @@
         {{ $t('transaction.insufficientFunds') }}
       </div>
       <form
-        @submit.prevent="handleSubmit"
         v-else
+        @submit.prevent="handleSubmit"
         class="flex flex-col items-end"
       >
         <div class="bg-white rounded-md border border-rGray text-rBlack mb-8 w-full">
@@ -92,7 +92,6 @@
                       class="w-full"
                       label="Message"
                       :placeholder="$t('transaction.messagePlaceholder')"
-                      :rules="{}"
                     />
                   </div>
                   <Field v-slot="{ field }" name="encrypt" type="checkbox" :value="true" :initial-value="false">
@@ -162,8 +161,15 @@ const WalletTransaction = defineComponent({
 
   setup () {
     const router = useRouter()
-    const { errors, values, meta, setErrors, resetForm } = useForm<TransactionForm>()
-    const { decimalType, transferTokens, cancelTransaction, userDidCancel, setActiveTransactionForm, activeAddress, nativeToken, networkPreamble, radix, showDerivingModal } = useWallet(router)
+    const { errors, values, meta, setErrors, resetForm, setTouched } = useForm<TransactionForm>({
+      initialValues: {
+        recipient: '',
+        amount: '',
+        message: '',
+        encrypt: false
+      }
+    })
+    const { decimalType, transferTokens, cancelTransaction, setActiveTransactionForm, activeAddress, nativeToken, networkPreamble, radix, showDerivingModal } = useWallet(router)
     const { t } = useI18n({ useScope: 'global' })
     const { tokenInfoFor, fetchBalancesForAddress, tokenBalances, tokenBalanceFor, tokenBalanceForByString } = useTokenBalances(radix)
     const currency: Ref<string | null> = ref(null)
@@ -178,14 +184,6 @@ const WalletTransaction = defineComponent({
         hiddenTokens.value = res
       })
       if (nativeToken.value) setXRDByDefault(nativeToken.value)
-    })
-
-    const cancelSub = userDidCancel.subscribe((val) => {
-      // if (val) {
-      //   const existingEncrypt = values.encrypt
-      //   resetForm()
-      //   values.encrypt = existingEncrypt
-      // }
     })
 
     setActiveTransactionForm('transaction')
@@ -222,7 +220,6 @@ const WalletTransaction = defineComponent({
     }, { immediate: true })
 
     onBeforeRouteLeave(() => {
-      cancelSub.unsubscribe()
       if (refreshSub.value) {
         refreshSub.value.unsubscribe()
         refreshSub.value = null
@@ -290,6 +287,12 @@ const WalletTransaction = defineComponent({
       const validAmount = safeAmount && validateAmountOfType(safeAmount, token) && validateGreaterThanZero(safeAmount)
       if (!greaterThanZero) {
         setErrors({ amount: t('validations.greaterThanZero') })
+        return
+      }
+      if (values.encrypt && values.message === '') {
+        setErrors({
+          message: t('validations.messageRequired')
+        })
         return
       }
       if (!validAmount) {
