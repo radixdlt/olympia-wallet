@@ -16,6 +16,8 @@
 <script lang="ts">
 import { defineComponent, toRef } from 'vue'
 import { useField } from 'vee-validate'
+import useWallet, { AmountFormats } from '@/composables/useWallet'
+import { useRouter } from 'vue-router'
 
 const AmountField = defineComponent({
   props: {
@@ -37,11 +39,17 @@ const AmountField = defineComponent({
     const rules = toRef(props, 'rules')
     const name = toRef(props, 'name')
     const { value: inputValue, handleChange, handleBlur } = useField<string>(name, rules)
+    const router = useRouter()
+    const { decimalType } = useWallet(router)
 
     const onInput = (event: Event) => {
       const result = (event.target as HTMLInputElement).value || ''
-      const sanitized = result.replace(/[^\d,.]/g, '')
-      const sanitizedOrUndefined = sanitized === '' ? undefined : sanitized
+      const pattern = decimalType.value === 'us' ? /[^\d.]/g : /[^\d,]/g
+      const decimalOperator = decimalType.value === 'us' ? '.' : ','
+      const sanitized = result.replace(pattern, '')
+      const decimalParts = sanitized.split(decimalOperator)
+      const justOneDecimal = decimalParts.slice(0, 2).join(decimalOperator)
+      const sanitizedOrUndefined = justOneDecimal === '' ? undefined : justOneDecimal
       handleChange(sanitizedOrUndefined)
     }
 
