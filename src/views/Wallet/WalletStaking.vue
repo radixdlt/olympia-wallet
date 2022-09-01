@@ -51,6 +51,7 @@
               :placeholder="$t('staking.validatorPlaceholder')"
               rules="required|validValidator"
               :validateOnInput="true"
+              @input="checkForEmptyValidator"
             />
             <FormErrorMessage name="validator" class="text-sm text-red-400" />
           </div>
@@ -348,6 +349,16 @@ const WalletStaking = defineComponent({
       validateField('validator')
     }
 
+    const checkForEmptyValidator = () => {
+      const validator = safelyUnwrapValidator(values.validator)
+      validateField('validator')
+      if (!validator) {
+        setMaxUnstakeOff()
+        setMaxUnstakeNotifcationOff()
+        setMaxUnstakeOverageNotifcationOff()
+      }
+    }
+
     const compareToMaxUnstakeAmount = () => {
       if (activeForm.value === 'STAKING') return
       const safeAddress = safelyUnwrapValidator(values.validator)
@@ -509,7 +520,8 @@ const WalletStaking = defineComponent({
       setForm,
       setMaxUnstakeOff,
       setMaxUnstakeOn,
-      compareToMaxUnstakeAmount
+      compareToMaxUnstakeAmount,
+      checkForEmptyValidator
     }
   }
 })
