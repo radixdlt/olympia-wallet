@@ -52,22 +52,17 @@
             <div class="border-b border-rGray py-7 flex items-center">
               <div class="w-32 text-right text-rGrayDark mr-8">{{ $t('transaction.amountLabel') }}</div>
               <div class="flex-1 flex items-start pr-8">
-                <div class="flex flex-col flex-1 mr-3">
-                  <FormField
-                    v-if="selectedCurrency"
-                    type="text"
+                <div class="flex flex-col flex-1 mr-3" v-if="selectedCurrency">
+                  <AmountField
+                    :placeholder="amountPlaceholder"
                     name="amount"
                     label="Amount"
-                    class="w-full"
-                    :placeholder="amountPlaceholder"
-                    step="any"
                     :rules="{
                       required: true,
                       validAmount: decimalType,
                       insufficientFunds: [selectedCurrency.value, decimalType]
                     }"
                   />
-
                   <FormErrorMessage name="amount" class="text-sm text-red-400" />
                 </div>
                 <select
@@ -128,6 +123,7 @@ import { interval, Subscription } from 'rxjs'
 import { safelyUnwrapAddress, safelyUnwrapAmount, validateAmountOfType, validateGreaterThanZero } from '@/helpers/validateRadixTypes'
 import { AccountAddressT, AmountOrUnsafeInput, Token } from '@radixdlt/application'
 import { asBigNumber } from '@/components/BigAmount.vue'
+import AmountField from '@/components/AmountField.vue'
 import ClickToCopy from '@/components/ClickToCopy.vue'
 import FormErrorMessage from '@/components/FormErrorMessage.vue'
 import FormField from '@/components/FormField.vue'
@@ -155,6 +151,7 @@ const refreshSub: Ref<Subscription | null> = ref(null)
 
 const WalletTransaction = defineComponent({
   components: {
+    AmountField,
     ButtonSubmit,
     ClickToCopy,
     Field,

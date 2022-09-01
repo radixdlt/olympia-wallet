@@ -75,21 +75,20 @@
                     </div>
                   </div>
                 </div>
-                <div v-else>
-                  <FormField
-                    name="amount"
-                    type="text"
-                    step="any"
-                    class="w-9/12 text-sm justify-items-start"
-                    :class="{'w-full': activeForm !== 'UNSTAKING'}"
-                    :placeholder="amountPlaceholder"
-                    :rules="{
-                      required: true,
-                      validAmount: decimalType
-                    }"
-                    @input="compareToMaxUnstakeAmount"
-                    :validateOnInput="true"
-                  />
+                <div v-else class="inline-flex">
+                  <div :class="{'w-9/12': activeForm === 'UNSTAKING', 'w-full': activeForm !== 'UNSTAKING'}">
+                    <AmountField
+                      class="text-sm justify-items-start"
+                      :placeholder="amountPlaceholder"
+                      name="amount"
+                      label="Amount"
+                      :rules="{
+                        required: true,
+                        validAmount: decimalType
+                      }"
+                      @input="compareToMaxUnstakeAmount"
+                    />
+                  </div>
                   <button
                     @click.prevent="setMaxUnstakeOn"
                     v-if="activeForm == 'UNSTAKING'"
@@ -156,6 +155,7 @@ import StakeListItem from '@/components/StakeListItem.vue'
 import { safelyUnwrapAmount, safelyUnwrapValidator, validateAmountOfType, validateGreaterThanZero } from '@/helpers/validateRadixTypes'
 import TabsTab from '@/components/TabsTab.vue'
 import TabsContent from '@/components/TabsContent.vue'
+import AmountField from '@/components/AmountField.vue'
 import FormErrorMessage from '@/components/FormErrorMessage.vue'
 import FormField from '@/components/FormField.vue'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
@@ -193,6 +193,7 @@ const uniqBy = (arr: ValidatorAddressT[], predicate: (item: ValidatorAddressT) =
 
 const WalletStaking = defineComponent({
   components: {
+    AmountField,
     ButtonSubmit,
     FormField,
     FormErrorMessage,
@@ -355,19 +356,16 @@ const WalletStaking = defineComponent({
     const compareToMaxUnstakeAmount = () => {
       if (activeForm.value === 'STAKING') return
       const safeAddress = safelyUnwrapValidator(values.validator)
-      const safeAmount = safelyUnwrapAmount(values.amount)
+      const safeAmount = safelyUnwrapAmount(values.amount, decimalType.value)
       if (!safeAddress || !safeAmount) return
 
       const activeValidatorStakeAmount = getActiveStakeAmountForValidator(safeAddress)
-      const maxAmount = +asBigNumber(activeValidatorStakeAmount) as number
-      const currentValue = +asBigNumber(safeAmount) as number
-      const minDifference = maxAmount - currentValue
-
-      if (minDifference <= 0.000001) {
+      const difference = +asBigNumber(activeValidatorStakeAmount.subtract(safeAmount))
+      if (difference <= 0.000001) {
         setMaxUnstakeNotificationOn()
         setMaxUnstakeOn()
 
-        if (minDifference < 0) {
+        if (difference < 0) {
           setMaxUnstakeOverageNotifcationOn()
         } else {
           setMaxUnstakeOverageNotifcationOff()
