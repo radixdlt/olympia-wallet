@@ -121,6 +121,7 @@ const transactionFee: Ref<AmountT | null> = ref(null)
 const transferInput: Ref<TransferTokensInput | null> = ref(null)
 const showLedgerInteractionModalBody: Ref<boolean> = ref(true)
 const isHardwareAccount: Ref<boolean> = ref(false)
+const showCancelPrompt: Ref<boolean> = ref(false)
 
 // check if software or hardware address
 const activeAddresIsSoftwareAccount = () => {
@@ -434,6 +435,7 @@ interface useWalletInterface {
   readonly isHardwareAccount: Ref<boolean>;
   readonly showDerivingModal: Ref<boolean>;
   readonly showLedgerVerify: Ref<boolean>;
+  readonly showCancelPrompt: Ref<boolean>
   readonly switching: ComputedRef<boolean>;
   readonly updateAvailable: Ref<boolean>;
   readonly updateInProcess: Ref<boolean>;
@@ -891,6 +893,7 @@ export default function useWallet (router: Router): useWalletInterface {
     shouldShowMaxUnstakeConfirmation,
     showDerivingModal,
     showLedgerInteractionModalBody,
+    showCancelPrompt,
     isHardwareAccount,
     stakeInput,
     unstakeInput,

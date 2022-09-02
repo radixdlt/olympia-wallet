@@ -1,7 +1,7 @@
 <template>
   <div class="fixed w-screen h-screen z-20 flex items-center justify-center bg-translucent-black">
     <div class="h-modalSmall bg-white rounded-md py-7 px-7 w-full max-w-lg absolute top-1/2 left-1/2 transform -translate-x-1/3 -translate-y-1/2">
-      <div>
+      <div class="flex flex-col justify-between">
         <div class="mt-16">
           <svg width="40" height="40" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" class="container animate-spin">
             <path fill-rule="evenodd" clip-rule="evenodd" d="M77.8789 52.8857C72.5168 68.6526 57.5862 80.0002 40.0001 80.0002C29.2115 80.0002 19.417 75.7265 12.2241 68.7838L14.9924 65.9158C21.4721 72.1701 30.2851 76.0141 40.0001 76.0141C55.8278 76.0141 69.2758 65.8025 74.1051 51.6023L77.8789 52.8857Z" fill="#052CC0"/>
@@ -15,19 +15,23 @@
             {{interactionBody}}
           </div>
         </div>
+        <app-button-cancel @click="close" class="mt-4 self-end px-3 hover:bg-transparent">Close</app-button-cancel>
       </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ComputedRef } from 'vue'
+import { computed, defineComponent, ComputedRef, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useWallet } from '@/composables'
 import { useI18n } from 'vue-i18n'
+import AppButtonCancel from '@/components/AppButtonCancel.vue'
 
 const WalletLedgerInteractionModal = defineComponent({
-
+  components: {
+    AppButtonCancel
+  },
   setup () {
     const router = useRouter()
     const { t } = useI18n()
@@ -36,8 +40,15 @@ const WalletLedgerInteractionModal = defineComponent({
       cancelTransaction,
       hardwareInteractionState,
       showLedgerInteractionModalBody,
-      activeAddresIsSoftwareAccount
+      activeAddresIsSoftwareAccount,
+      showCancelPrompt
     } = useWallet(router)
+
+    const showCancelButton = ref(false)
+
+    const cancelModal = () => {
+      showCancelPrompt.value = true
+    }
 
     activeAddresIsSoftwareAccount()
 
@@ -56,6 +67,9 @@ const WalletLedgerInteractionModal = defineComponent({
       interactionTitle,
       interactionBody,
       showLedgerInteractionModalBody,
+      showCancelPrompt,
+      showCancelButton,
+      cancelModal,
       close () {
         hideLedgerInteraction()
         cancelTransaction()

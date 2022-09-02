@@ -167,7 +167,8 @@ const messages = {
         DECRYPTING: {
           title: 'Decrypting Message',
           body: 'Please confirm the decryption on your Ledger device before continuing'
-        }
+        },
+        cancelDecryption: 'Please complete cancelling the decryption on your ledger'
       },
       hardwareWalletAccounts: 'Hardware Wallet Accounts:'
     },
