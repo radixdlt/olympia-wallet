@@ -15,8 +15,8 @@
             {{interactionBody}}
           </div>
         </div>
-        <app-button-cancel v-if="showCancelButton" @click="cancelModal" class="mt-4 self-end px-3 hover:bg-transparent">Cancel</app-button-cancel>
-        <app-button-cancel v-if="!showCancelButton" @click="close" class="mt-4 self-end px-3 hover:bg-transparent">Close</app-button-cancel>
+        <app-button-cancel v-if="showCancelButton && isHardwareAccount && hardwareInteractionState !== 'DERIVING'" @click="cancelModal" class="mt-4 border-none justify-center px-3 hover:bg-white">Cancel</app-button-cancel>
+        <app-button-cancel v-if="!showCancelButton && isHardwareAccount" @click="close" class="mt-4 justify-center border-none px-3 hover:bg-white">Close</app-button-cancel>
       </div>
     </div>
   </div>
@@ -42,7 +42,8 @@ const WalletLedgerInteractionModal = defineComponent({
       hardwareInteractionState,
       showLedgerInteractionModalBody,
       activeAddresIsSoftwareAccount,
-      showCancelPrompt
+      showCancelPrompt,
+      isHardwareAccount
     } = useWallet(router)
 
     const showCancelButton = ref(true)
@@ -72,9 +73,11 @@ const WalletLedgerInteractionModal = defineComponent({
     })
 
     return {
+      hardwareInteractionState,
       hideLedgerInteraction,
       interactionTitle,
       interactionBody,
+      isHardwareAccount,
       showLedgerInteractionModalBody,
       showCancelPrompt,
       showCancelButton,
