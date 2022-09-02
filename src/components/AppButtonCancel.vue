@@ -1,5 +1,5 @@
 <template>
-  <button class="border border-solid border-rGrayDark rounded py-2.5 font-sm text-rGrayDark cursor-pointer hover:bg-rGrayLightest transition-colors focus:outline-none">
+  <button class="border border-solid border-rGrayDark rounded py-2.5 font-sm text-rGrayDark cursor-pointer transition-colors focus:outline-none">
     <slot></slot>
   </button>
 </template>
