@@ -42,7 +42,6 @@ const WalletLedgerInteractionModal = defineComponent({
       hardwareInteractionState,
       showLedgerInteractionModalBody,
       activeAddresIsSoftwareAccount,
-      showCancelPrompt,
       isHardwareAccount
     } = useWallet(router)
 
@@ -79,7 +78,6 @@ const WalletLedgerInteractionModal = defineComponent({
       interactionBody,
       isHardwareAccount,
       showLedgerInteractionModalBody,
-      showCancelPrompt,
       showCancelButton,
       cancelModal,
       close () {
