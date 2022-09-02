@@ -92,9 +92,11 @@
                       class="w-full"
                       label="Message"
                       :placeholder="$t('transaction.messagePlaceholder')"
+                      :rules="{}"
+                      @input="messageUpdated"
                     />
                   </div>
-                  <Field v-slot="{ field }" name="encrypt" type="checkbox" :value="true" :initial-value="false">
+                  <Field v-slot="{ field }" name="encrypt" type="checkbox" :value="true" :initial-value="false" :unchecked-value="false" @input="messageUpdated">
                     <label class="flex items-center space-x-2">
                       <input type="checkbox" name="encrypt" v-bind="field" :value="true" />
                       <span>Encrypt</span>
@@ -289,12 +291,7 @@ const WalletTransaction = defineComponent({
         setErrors({ amount: t('validations.greaterThanZero') })
         return
       }
-      if (values.encrypt && values.message === '') {
-        setErrors({
-          message: t('validations.messageRequired')
-        })
-        return
-      }
+
       if (!validAmount) {
         setErrors({
           amount: t('validations.amountOfType', { granularity: token.granularity.toString() })
@@ -330,6 +327,18 @@ const WalletTransaction = defineComponent({
       }
     }
 
+    const messageUpdated = () => {
+      if (values.encrypt && values.message === '') {
+        setErrors({
+          message: t('validations.messageRequired')
+        })
+      } else {
+        setErrors({
+          message: undefined
+        })
+      }
+    }
+
     return {
       activeAddress,
       amountPlaceholder,
@@ -350,7 +359,8 @@ const WalletTransaction = defineComponent({
       handleSubmit,
       loadedAllData,
       setErrors,
-      tokenInfoFor
+      tokenInfoFor,
+      messageUpdated
     }
   }
 })
