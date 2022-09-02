@@ -8,7 +8,6 @@
             <div class="flex items-center w-full">
               <AppRadioIndicator
                 :enabled="decimalType === 'us'"
-                :disabled="decimalType !== 'us'"
                 class="mr-2 cursor-pointer "
                 @click="setDecimalType('us')"
                 />
@@ -20,7 +19,6 @@
             <div class="flex items-center">
               <AppRadioIndicator
               :enabled="decimalType === 'europe'"
-              :disabled="decimalType !== 'europe'"
               class="mr-2 cursor-pointer"
               @click="setDecimalType('europe')"
               />
