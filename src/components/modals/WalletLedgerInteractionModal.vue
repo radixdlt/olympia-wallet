@@ -15,7 +15,8 @@
             {{interactionBody}}
           </div>
         </div>
-        <app-button-cancel @click="close" class="mt-4 self-end px-3 hover:bg-transparent">Close</app-button-cancel>
+        <app-button-cancel v-if="showCancelButton" @click="cancelModal" class="mt-4 self-end px-3 hover:bg-transparent">Cancel</app-button-cancel>
+        <app-button-cancel v-if="!showCancelButton" @click="close" class="mt-4 self-end px-3 hover:bg-transparent">Close</app-button-cancel>
       </div>
     </div>
   </div>
@@ -44,22 +45,30 @@ const WalletLedgerInteractionModal = defineComponent({
       showCancelPrompt
     } = useWallet(router)
 
-    const showCancelButton = ref(false)
+    const showCancelButton = ref(true)
 
     const cancelModal = () => {
-      showCancelPrompt.value = true
+      showCancelButton.value = false
     }
 
     activeAddresIsSoftwareAccount()
 
     const interactionTitle: ComputedRef<string> = computed(() => {
       if (hardwareInteractionState.value === '') return ''
-      return t(`wallet.ledgerInteractionState.${hardwareInteractionState.value}.title`)
+      if (showCancelButton.value) {
+        return t(`wallet.ledgerInteractionState.${hardwareInteractionState.value}.title`)
+      } else {
+        return t('wallet.ledgerInteractionState.cancelDecryptionTitle')
+      }
     })
 
     const interactionBody: ComputedRef<string> = computed(() => {
       if (hardwareInteractionState.value === '') return ''
-      return t(`wallet.ledgerInteractionState.${hardwareInteractionState.value}.body`)
+      if (showCancelButton.value) {
+        return t(`wallet.ledgerInteractionState.${hardwareInteractionState.value}.body`)
+      } else {
+        return t('wallet.ledgerInteractionState.cancelDecryptionBody')
+      }
     })
 
     return {
