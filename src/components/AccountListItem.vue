@@ -12,9 +12,9 @@
         <span :class="{'text-xxs flex-1 w-full truncate font-mono': true, 'text-white': isActiveAccount, 'text-rGrayDark': !isActiveAccount }">{{ displayAddress }}</span>
       </div>
       <div class="flex gap-1">
-        <div class="flex items-end">
+        <div class="flex items-start">
           <!-- pencil icon -->
-          <div class=" flex group-hover:visible text-rGrayDark hover:text-rGreen transition-colors cursor-pointer items-center p-1 justify-center items:center flex-0 pb-2" @click.stop="editName">
+          <div class="invisible flex group-hover:visible text-rGrayDark hover:text-rGreen transition-colors cursor-pointer items-center p-1 justify-center items:center flex-0 pb-2" @click.stop="editName">
             <!-- <svg width="12" height="12" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path class="stroke-current" d="M7.30515 -5.35835e-06L0.926422 6.37872L3.58423 9.03653L9.96296 2.6578L7.30515 -5.35835e-06Z" fill="white"/>
               <path class="stroke-current" d="M0 9.99999L2.7429 9.87776L0.0850602 7.22003L0 9.99999Z" fill="white"/>
