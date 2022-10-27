@@ -11,8 +11,8 @@
         </div>
         <span :class="{'text-xxs flex-1 w-full truncate font-mono': true, 'text-white': isActiveAccount, 'text-rGrayDark': !isActiveAccount }">{{ displayAddress }}</span>
       </div>
-      <div class="flex">
-        <div class="flex items-end border">
+      <div class="flex gap-1">
+        <div class="flex items-start">
           <!-- pencil icon -->
           <div class=" flex group-hover:visible text-rGrayDark hover:text-rGreen transition-colors cursor-pointer items-center p-1 justify-center items:center flex-0 pb-1" @click.stop="editName">
             <svg width="12" height="12" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -21,7 +21,7 @@
             </svg>
           </div>
         </div>
-        <div class="flex flex-col gap-1 justify-center items-center border">
+        <div class="flex flex-col gap-1 justify-center items-center">
           <!-- eye icon -->
           <div @click="hideAccount(addressVal, nickName)" class="text-rGrayDark hover:text-rGreen transition-colors cursor-pointer flex items-center justify-center">
             <svg class="" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
