@@ -7,7 +7,11 @@ export const formatWalletAddressForDisplay = function (address: AccountAddressT,
 
 export const formatValidatorAddressForDisplay = function (address: ValidatorAddressT): string {
   const s = address.toString()
-  return s.substring(0, 2) + '...' + s.substring(s.length - 9)
+  return formatValidatorAddressString(s)
+}
+
+export const formatValidatorAddressString = function (address: string): string {
+  return address.substring(0, 2) + '...' + address.substring(address.length - 9)
 }
 
 export const truncateRRIStringForDisplay = function (rriString: string): string {

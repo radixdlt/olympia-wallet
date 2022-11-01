@@ -28,7 +28,7 @@
 import { defineComponent, PropType } from 'vue'
 import { ExecutedUnstakeTokensAction, Token } from '@radixdlt/application'
 import ClickToCopy from '@/components/ClickToCopy.vue'
-import { formatValidatorAddressForDisplay } from '@/helpers/formatter'
+import { formatValidatorAddressString } from '@/helpers/formatter'
 import BigAmount from '@/components/BigAmount.vue'
 import TokenSymbol from '@/components/TokenSymbol.vue'
 
@@ -55,7 +55,7 @@ const ActionListItemUnstakeTokens = defineComponent({
   },
   computed: {
     displayAddress (): string {
-      return formatValidatorAddressForDisplay(this.action.from_validator)
+      return formatValidatorAddressString(this.action.from_validator)
     }
   }
 })

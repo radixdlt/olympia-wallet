@@ -96,6 +96,8 @@ import ActionListItemOther from '@/components/ActionListItemOther.vue'
 import TransactionMessage from './TransactionMessage.vue'
 import { isEncrypted } from '@/helpers/message'
 
+const isEqual = (a: AccountAddressT, str: string) => a.toString() === str
+
 export default defineComponent({
   components: {
     ActionListItemStakeTokens,
@@ -143,17 +145,18 @@ export default defineComponent({
     )
 
     const relatedActions: ComputedRef<ExecutedAction[]> = computed(() => {
+      const activeAddrString = props.activeAddress.toString()
       return props.transaction.actions.filter((action: ExecutedAction) => {
         let related
         switch (action.type) {
           case ActionType.TOKEN_TRANSFER:
-            related = action.to_account.equals(props.activeAddress) || action.from_account.equals(props.activeAddress)
+            related = action.to_account === activeAddrString || action.from_account === activeAddrString
             break
           case ActionType.STAKE_TOKENS:
-            related = action.from_account.equals(props.activeAddress)
+            related = action.from_account === activeAddrString
             break
           case ActionType.UNSTAKE_TOKENS:
-            related = action.to_account.equals(props.activeAddress)
+            related = action.to_account === activeAddrString
             break
           case ActionType.OTHER:
             related = false
