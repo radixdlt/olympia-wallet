@@ -23,13 +23,12 @@
               <path d="M6.59916 -0.000175769L0.836914 5.65283L3.23785 8.00825L9.0001 2.35524L6.59916 -0.000175769Z" fill="#F2F2FC"/>
               <path d="M0 8.86212L2.47781 8.75379L0.0768395 6.39844L0 8.86212Z" fill="#F2F2FC"/>
             </svg>
-
           </div>
         </div>
-        <div class="flex flex-col gap-1 justify-center items-center">
+        <div class="flex flex-col gap-1 justify-center items-center ">
           <!-- eye icon -->
-          <div @click="hideAccount(addressVal, nickName)" class="text-rGrayDark hover:text-rGreen transition-colors cursor-pointer flex items-center justify-center">
-            <svg class="" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <div @click="hideAccount(addressVal, nickName)" class="text-rGrayDark hover:text-rGreen transition-colors cursor-pointer  ">
+            <svg class="" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path class="stroke-current" d="M6.25909 2.91429C6.66583 2.81909 7.08226 2.77149 7.5 2.77248C11.6364 2.77248 14 7.49975 14 7.49975C13.6413 8.17079 13.2135 8.80255 12.7236 9.38475M11.01 11.0097C9.99989 11.7797 8.76993 12.2063 7.5 12.227C3.36364 12.227 1 7.49975 1 7.49975C1.73503 6.12996 2.75449 4.9332 3.99 3.98975L11.01 11.0097Z" stroke="#7A99AC" stroke-linecap="round" stroke-linejoin="round"/>
               <path class="stroke-current" d="M1 1L14 14" stroke="#7A99AC" stroke-linecap="round" stroke-linejoin="round"/>
               <path class="stroke-current" d="M9.26777 9.26796C9.03562 9.5001 8.76002 9.68425 8.45671 9.80989C8.15339 9.93553 7.8283 10.0002 7.5 10.0002C7.1717 10.0002 6.84661 9.93552 6.54329 9.80989C6.23998 9.68425 5.96438 9.5001 5.73223 9.26796C5.50009 9.03581 5.31594 8.76021 5.1903 8.4569C5.06466 8.15358 5 7.82849 5 7.50019C5 7.17188 5.06466 6.84679 5.1903 6.54348C5.31594 6.24017 5.50009 5.96457 5.73223 5.73242" stroke="#7A99AC"/>
