@@ -90,7 +90,7 @@
                   </svg>
                   <span class="text-white ml-2 text-sm truncate w-36"> {{ hardwareDevice.name }} </span>
                 </div>
-                <div class="flex flex-grow-0 items-center gap-2 mr-1 gap-2">
+                <div class="flex flex-grow-0 items-center gap-2">
                   <div @click.stop="handleAccountEditName(hardwareDevice)" class="invisible group-hover:visible text-rGrayDark hover:text-rGreen transition-colors cursor-pointer">
                     <svg width="14" height="14" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path class="stroke-current" d="M7.30515 -5.35835e-06L0.926422 6.37872L3.58423 9.03653L9.96296 2.6578L7.30515 -5.35835e-06Z" fill="white"/>
