@@ -92,10 +92,10 @@
                 </div>
                 <div class="flex flex-grow-0 items-center gap-2">
                   <div @click.stop="handleAccountEditName(hardwareDevice)" class="invisible group-hover:visible text-rGrayDark hover:text-rGreen transition-colors cursor-pointer">
-                    <svg width="14" height="14" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path class="stroke-current" d="M7.30515 -5.35835e-06L0.926422 6.37872L3.58423 9.03653L9.96296 2.6578L7.30515 -5.35835e-06Z" fill="white"/>
-                      <path class="stroke-current" d="M0 9.99999L2.7429 9.87776L0.0850602 7.22003L0 9.99999Z" fill="white"/>
-                    </svg>
+                      <svg width="9" height="9" viewBox="0 0 9 9" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M6.59916 -0.000175769L0.836914 5.65283L3.23785 8.00825L9.0001 2.35524L6.59916 -0.000175769Z" fill="#F2F2FC"/>
+                        <path d="M0 8.86212L2.47781 8.75379L0.0768395 6.39844L0 8.86212Z" fill="#F2F2FC"/>
+                      </svg>
                   </div>
                   <div @click="disconnectDevice(i)" class="flex text-rGrayDark hover:text-rGreen transition-colors cursor-pointer">
                     <svg width="15" height="15" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
