@@ -1,6 +1,6 @@
 'use strict'
 
-import electron, { app, ipcMain, protocol, BrowserWindow, powerMonitor, webContents } from 'electron'
+import electron, { app, ipcMain, protocol, BrowserWindow, webContents } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 import path from 'path'
