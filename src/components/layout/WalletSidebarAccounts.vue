@@ -1,6 +1,6 @@
 <template>
   <div class="w-64 pt-6 text-white overflow-y-auto fixed top-0 left-0 h-full bg-rBlueDark z-30 overflow-x-hidden no-scroll">
-    <div @click="setState(false)" class="hover:text-rGreen cursor-pointer transition-colors inline-flex flex-row items-center mb-6 px-6">
+    <div @click="setState(false)" class="hover:text-rGreen cursor-pointer transition-colors inline-flex flex-row items-center mb-6 px-4">
       <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr-2" >
         <circle cx="10" cy="10" r="9.5" transform="rotate(90 10 10)" fill="none" class="stroke-current"  />
         <path d="M12 15L7 10L12 5" class="stroke-current" stroke-miterlimit="10"/>
