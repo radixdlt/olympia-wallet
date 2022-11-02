@@ -21,7 +21,7 @@
             </svg>
           </div>
         </div>
-        <div class="flex flex-col gap-1 justify-center items-center ">
+        <div class="flex flex-col gap-2 justify-center items-center ">
           <!-- eye icon -->
           <div @click="hideAccount(addressVal, nickName)" class="text-rGrayDark hover:text-rGreen transition-colors cursor-pointer  ">
             <svg class="" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">

@@ -1,6 +1,6 @@
 <template>
   <div class="w-64 pt-6 text-white overflow-y-auto fixed top-0 left-0 h-full bg-rBlueDark z-30 overflow-x-hidden no-scroll">
-    <div @click="setState(false)" class="hover:text-rGreen cursor-pointer transition-colors inline-flex flex-row items-center mb-6 px-4">
+    <div @click="setState(false)" class="hover:text-rGreen cursor-pointer transition-colors inline-flex flex-row items-center mb-6 px-4 pl-5">
       <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr-2" >
         <circle cx="10" cy="10" r="9.5" transform="rotate(90 10 10)" fill="none" class="stroke-current"  />
         <path d="M12 15L7 10L12 5" class="stroke-current" stroke-miterlimit="10"/>
@@ -8,7 +8,7 @@
       {{ $t('wallet.back') }}
     </div>
     <div :class="{'bg-gradient-to-br from-rBlue via-rDarkblue to-rDarkblue': true, 'pb-4': showSoftwareAccounts }">
-      <div class="flex items-center px-4 py-4">
+      <div class="flex items-center px-4 pl-5 py-4">
         <svg width="24" viewBox="0 0 26 20" fill="none" xmlns="http://www.w3.org/2000/svg">
           <rect x="1" y="1" width="24" height="18.1333" rx="2" fill="#060F8F"/>
           <path d="M21.2667 4.46667H3C1.89543 4.46667 1 5.3621 1 6.46667V17.1333C1 18.2379 1.89543 19.1333 3 19.1333H23C24.1046 19.1333 25 18.2379 25 17.1333V3C25 1.89543 24.1046 1 23 1H3C1.89543 1 1 1.89543 1 3V3.13333" stroke="white" stroke-linecap="round"/>
