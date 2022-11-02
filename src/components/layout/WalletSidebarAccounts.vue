@@ -8,7 +8,7 @@
       {{ $t('wallet.back') }}
     </div>
     <div :class="{'bg-gradient-to-br from-rBlue via-rDarkblue to-rDarkblue': true, 'pb-4': showSoftwareAccounts }">
-      <div class="flex items-center px-5 py-4">
+      <div class="flex items-center px-4 py-4">
         <svg width="24" viewBox="0 0 26 20" fill="none" xmlns="http://www.w3.org/2000/svg">
           <rect x="1" y="1" width="24" height="18.1333" rx="2" fill="#060F8F"/>
           <path d="M21.2667 4.46667H3C1.89543 4.46667 1 5.3621 1 6.46667V17.1333C1 18.2379 1.89543 19.1333 3 19.1333H23C24.1046 19.1333 25 18.2379 25 17.1333V3C25 1.89543 24.1046 1 23 1H3C1.89543 1 1 1.89543 1 3V3.13333" stroke="white" stroke-linecap="round"/>
