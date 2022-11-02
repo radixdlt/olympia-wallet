@@ -101,10 +101,8 @@ let idleInterval = setInterval(() => {
 
   const currentURL = win.webContents.getURL()
   if (currentURL.includes('wallet')) {
-    console.log('user logged in!')
     win.reload()
   }
-  console.log('user is not logged in!')
 }, INACTIVITY_INTERVAL)
 
 const resetInteractionTimer = () => {
