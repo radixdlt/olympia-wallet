@@ -90,7 +90,7 @@ async function createWindow () {
   }
 }
 
-const INACTIVITY_INTERVAL = 10000 // in ms = 1hr
+const INACTIVITY_INTERVAL = 3600000 // in ms = 1hr
 const DEBOUNCE_INTERVAL = 1000
 
 // Set interaction detection time period to 1hr. If user does not move mouse or
@@ -116,18 +116,6 @@ const resetInteractionTimer = () => {
     }
   }, INACTIVITY_INTERVAL)
 }
-
-setInterval(() => {
-  const idle = powerMonitor.getSystemIdleTime()
-  if (!win) return
-
-  if (idle > INACTIVITY_INTERVAL) {
-    const currentURL = win.webContents.getURL()
-    if (currentURL.includes('wallet')) {
-      win.reload()
-    }
-  }
-}, 5000)
 
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
