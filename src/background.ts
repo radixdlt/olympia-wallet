@@ -1,6 +1,6 @@
 'use strict'
 
-import electron, { app, ipcMain, protocol, BrowserWindow, powerMonitor } from 'electron'
+import electron, { app, ipcMain, protocol, BrowserWindow, powerMonitor, webContents } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 import path from 'path'
@@ -90,17 +90,40 @@ async function createWindow () {
   }
 }
 
-// const INACTIVITY_INTERVAL = 10000
-// const DEBOUNCE_INTERVAL = 2000
-const INACTIVITY_INTERVAL = process.env.INACTIVITY_INTERVAL ? Number(process.env.INACTIVITY_INTERVAL) : 18 // 30 minutes
+const INACTIVITY_INTERVAL = 10000 // in ms = 1hr
+const DEBOUNCE_INTERVAL = 1000
+
+// Set interaction detection time period to 1hr. If user does not move mouse or
+// interact with keyboard.
+// As long as the user hasnt closed the window, refresh the app and have them login again.
+let idleInterval = setInterval(() => {
+  if (!win) return
+
+  const currentURL = win.webContents.getURL()
+  if (currentURL.includes('wallet')) {
+    console.log('user logged in!')
+    win.reload()
+  }
+  console.log('user is not logged in!')
+}, INACTIVITY_INTERVAL)
+
+const resetInteractionTimer = () => {
+  clearInterval(idleInterval)
+  idleInterval = setInterval(() => {
+    if (!win) return
+
+    const currentURL = win.webContents.getURL()
+    if (currentURL.includes('wallet')) {
+      win.reload()
+    }
+  }, INACTIVITY_INTERVAL)
+}
 
 setInterval(() => {
   const idle = powerMonitor.getSystemIdleTime()
-  console.log('idle time--->', idle)
-  console.log('inactivity interval-->', INACTIVITY_INTERVAL)
   if (!win) return
+
   if (idle > INACTIVITY_INTERVAL) {
-    console.log('activity interval reached!:  idle--->', idle, 'INACTIVITY_INTERVAL--->', INACTIVITY_INTERVAL)
     const currentURL = win.webContents.getURL()
     if (currentURL.includes('wallet')) {
       win.reload()
@@ -113,7 +136,6 @@ app.on('window-all-closed', () => {
   // On macOS it is common for applications and their menu bar
   // to stay active until the user quits explicitly with Cmd + Q
   if (process.platform !== 'darwin') {
-    console.log('app.quit called')
     app.quit()
   }
 })
@@ -130,7 +152,7 @@ app.on('activate', () => {
 app.on('ready', async () => {
   electron.powerMonitor.on('suspend', () => {
     if (BrowserWindow.getAllWindows().length > 0) {
-      win.reload()
+      if (win) win.reload()
     }
   })
 
@@ -144,10 +166,12 @@ app.on('ready', async () => {
   }
   createWindow()
 
-  // const onEvent = debounce(resetInteractionTimer, DEBOUNCE_INTERVAL)
-  // win.webContents.on('before-input-event', onEvent)
-  // win.webContents.on('cursor-changed', onEvent)
-  // win.webContents.on('before-input-event', onEvent)
+  const onEvent = debounce(resetInteractionTimer, DEBOUNCE_INTERVAL)
+  if (win) {
+    win.webContents.on('before-input-event', onEvent)
+    win.webContents.on('cursor-changed', onEvent)
+    win.webContents.on('before-input-event', onEvent)
+  }
 
   checkForUpdates()
 })
@@ -178,7 +202,7 @@ ipcMain.handle('forget-custom-node-url', forgetCustomNodeURL)
 ipcMain.handle('hide-token-type', hideTokenType)
 ipcMain.handle('unhide-token-type', unhideTokenType)
 ipcMain.handle('get-hidden-tokens', getHiddenTokens)
-ipcMain.handle('refresh-app', () => { win.reload() })
+ipcMain.handle('refresh-app', () => { if (win) win.reload() })
 ipcMain.handle('get-version-number', () => pkg.version)
 ipcMain.handle('download-latest-version', downloadUpdate)
 ipcMain.handle('get-is-update-available', getIsUpdateAvailable)
