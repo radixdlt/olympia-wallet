@@ -186,7 +186,6 @@ const WalletSidebarAccounts = defineComponent({
     })
 
     const nonHiddenHardwareDevices: ComputedRef<HardwareDevice[]> = computed(() => {
-      console.log('here')
       return hardwareDevices.value.map((hwDevice: HardwareDevice) => {
         const availableAddresses = hwDevice.addresses.filter((hwAddr) => {
           const newArr = hiddenAccounts.value.flatMap(acct => Object.values(acct))

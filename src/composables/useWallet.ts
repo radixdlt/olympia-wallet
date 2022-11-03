@@ -424,7 +424,6 @@ fetchHiddenAccountsFromElectron()
 
 // handleHiddenAccounts
 const handleHiddenAccounts = async (newAcctToHide: string, newAcctNickname: string) => {
-  console.log(newAcctToHide, newAcctNickname)
   await setHiddenAccounts(newAcctToHide, newAcctNickname)
   await fetchHiddenAccountsFromElectron()
 }
@@ -758,7 +757,6 @@ const decryptMessage = async (tx: ExecutedTransaction): Promise<string> => {
 const setHideAccountModal = (val: boolean) => { showHideAccountModal.value = val }
 
 const setActiveAccountAddress = (addr: string, acctNickName: string) => {
-  // console.log(addr, acctNickName)
   accountToBeHiddenAddress.value = addr
   accountToBeHiddenNickname.value = acctNickName
 }
