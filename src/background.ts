@@ -42,7 +42,7 @@ import { checkForUpdates, downloadUpdate, quitAndInstall } from './updater'
 const pkg = require('../package.json')
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
-let win: BrowserWindow
+let win: BrowserWindow | null
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
@@ -75,6 +75,10 @@ async function createWindow () {
     require('electron').shell.openExternal(url)
   })
 
+  win.on('closed', () => {
+    win = null
+  })
+
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
     await win.loadURL(process.env.WEBPACK_DEV_SERVER_URL as string)
@@ -86,15 +90,31 @@ async function createWindow () {
   }
 }
 
-const INACTIVITY_INTERVAL = 3600000
+const INACTIVITY_INTERVAL = 3600000 // in ms = 1hr
 const DEBOUNCE_INTERVAL = 1000
+
 // Set interaction detection time period to 1hr. If user does not move mouse or
-// interact with keyboard, refresh app and have User log in again.
-let idleInterval = setInterval(() => { win.reload()}, INACTIVITY_INTERVAL)
+// interact with keyboard.
+// As long as the user hasnt closed the window, refresh the app and have them login again.
+let idleInterval = setInterval(() => {
+  if (!win) return
+
+  const currentURL = win.webContents.getURL()
+  if (currentURL.includes('wallet')) {
+    win.reload()
+  }
+}, INACTIVITY_INTERVAL)
 
 const resetInteractionTimer = () => {
   clearInterval(idleInterval)
-  idleInterval = setInterval(() => { win.reload() }, INACTIVITY_INTERVAL)  
+  idleInterval = setInterval(() => {
+    if (!win) return
+
+    const currentURL = win.webContents.getURL()
+    if (currentURL.includes('wallet')) {
+      win.reload()
+    }
+  }, INACTIVITY_INTERVAL)
 }
 
 // Quit when all windows are closed.
@@ -118,7 +138,7 @@ app.on('activate', () => {
 app.on('ready', async () => {
   electron.powerMonitor.on('suspend', () => {
     if (BrowserWindow.getAllWindows().length > 0) {
-      win.reload()
+      if (win) win.reload()
     }
   })
 
@@ -133,9 +153,11 @@ app.on('ready', async () => {
   createWindow()
 
   const onEvent = debounce(resetInteractionTimer, DEBOUNCE_INTERVAL)
-  win.webContents.on('before-input-event', onEvent)
-  win.webContents.on('cursor-changed', onEvent)
-  win.webContents.on('before-input-event', onEvent)
+  if (win) {
+    win.webContents.on('before-input-event', onEvent)
+    win.webContents.on('cursor-changed', onEvent)
+    win.webContents.on('before-input-event', onEvent)
+  }
 
   checkForUpdates()
 })
@@ -166,7 +188,7 @@ ipcMain.handle('forget-custom-node-url', forgetCustomNodeURL)
 ipcMain.handle('hide-token-type', hideTokenType)
 ipcMain.handle('unhide-token-type', unhideTokenType)
 ipcMain.handle('get-hidden-tokens', getHiddenTokens)
-ipcMain.handle('refresh-app', () => { win.reload() })
+ipcMain.handle('refresh-app', () => { if (win) win.reload() })
 ipcMain.handle('get-version-number', () => pkg.version)
 ipcMain.handle('download-latest-version', downloadUpdate)
 ipcMain.handle('get-is-update-available', getIsUpdateAvailable)
