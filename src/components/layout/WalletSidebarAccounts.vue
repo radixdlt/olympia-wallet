@@ -1,6 +1,6 @@
 <template>
   <div class="w-64 pt-6 text-white overflow-y-auto fixed top-0 left-0 h-full bg-rBlueDark z-30 overflow-x-hidden no-scroll">
-    <div @click="setState(false)" class="hover:text-rGreen cursor-pointer transition-colors inline-flex flex-row items-center mb-6 px-6">
+    <div @click="setState(false)" class="hover:text-rGreen cursor-pointer transition-colors inline-flex flex-row items-center mb-6 px-4 pl-5">
       <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr-2" >
         <circle cx="10" cy="10" r="9.5" transform="rotate(90 10 10)" fill="none" class="stroke-current"  />
         <path d="M12 15L7 10L12 5" class="stroke-current" stroke-miterlimit="10"/>
@@ -8,7 +8,7 @@
       {{ $t('wallet.back') }}
     </div>
     <div :class="{'bg-gradient-to-br from-rBlue via-rDarkblue to-rDarkblue': true, 'pb-4': showSoftwareAccounts }">
-      <div class="flex items-center px-5 py-4">
+      <div class="flex items-center px-4 pl-5 py-4">
         <svg width="24" viewBox="0 0 26 20" fill="none" xmlns="http://www.w3.org/2000/svg">
           <rect x="1" y="1" width="24" height="18.1333" rx="2" fill="#060F8F"/>
           <path d="M21.2667 4.46667H3C1.89543 4.46667 1 5.3621 1 6.46667V17.1333C1 18.2379 1.89543 19.1333 3 19.1333H23C24.1046 19.1333 25 18.2379 25 17.1333V3C25 1.89543 24.1046 1 23 1H3C1.89543 1 1 1.89543 1 3V3.13333" stroke="white" stroke-linecap="round"/>
@@ -76,8 +76,8 @@
             <path class="stroke-current" d="M1.5 10.5L5 7" stroke="#F2F2FC" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </div>
-        <div v-if="hardwareDevices.length > 0 && showHardwareAccounts">
-          <div v-for="(hardwareDevice, i) in hardwareDevices" :key="i">
+        <div v-if="hardwareDevices.length > 0">
+          <div v-for="(hardwareDevice, i) in nonHiddenHardwareDevices" :key="i">
             <div>
               <div class="flex items-center justify-between group py-5 mx-4 px-1">
                 <div class="flex cursor-pointer items-center">
@@ -90,12 +90,12 @@
                   </svg>
                   <span class="text-white ml-2 text-sm truncate w-36"> {{ hardwareDevice.name }} </span>
                 </div>
-                <div class="flex flex-grow-0 items-center gap-2 mr-1 gap-2">
+                <div class="flex flex-grow-0 items-center gap-2">
                   <div @click.stop="handleAccountEditName(hardwareDevice)" class="invisible group-hover:visible text-rGrayDark hover:text-rGreen transition-colors cursor-pointer">
-                    <svg width="14" height="14" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path class="stroke-current" d="M7.30515 -5.35835e-06L0.926422 6.37872L3.58423 9.03653L9.96296 2.6578L7.30515 -5.35835e-06Z" fill="white"/>
-                      <path class="stroke-current" d="M0 9.99999L2.7429 9.87776L0.0850602 7.22003L0 9.99999Z" fill="white"/>
-                    </svg>
+                      <svg width="9" height="9" viewBox="0 0 9 9" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M6.59916 -0.000175769L0.836914 5.65283L3.23785 8.00825L9.0001 2.35524L6.59916 -0.000175769Z" fill="#F2F2FC"/>
+                        <path d="M0 8.86212L2.47781 8.75379L0.0768395 6.39844L0 8.86212Z" fill="#F2F2FC"/>
+                      </svg>
                   </div>
                   <div @click="disconnectDevice(i)" class="flex text-rGrayDark hover:text-rGreen transition-colors cursor-pointer">
                     <svg width="15" height="15" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -164,7 +164,8 @@ const WalletSidebarAccounts = defineComponent({
       derivedAccountIndex,
       activeNetwork,
       createNewHardwareAccount,
-      setDisconnectDeviceModal
+      setDisconnectDeviceModal,
+      hiddenAccounts
     } = useWallet(router)
 
     const { setState } = useSidebar()
@@ -176,7 +177,21 @@ const WalletSidebarAccounts = defineComponent({
     const localAccounts: ComputedRef<AccountT[]> = computed(() => {
       if (!accounts.value) return []
       return accounts.value.all.filter((account: AccountT) => {
-        return account.signingKey.isLocalHDSigningKey
+        const isLocalAccount = account.signingKey.isLocalHDSigningKey
+        // flatten array of objects
+        const newArr = hiddenAccounts.value.flatMap(acct => Object.values(acct))
+        const isHidden = newArr.includes(account.address.toString())
+        return isLocalAccount && !isHidden
+      })
+    })
+
+    const nonHiddenHardwareDevices: ComputedRef<HardwareDevice[]> = computed(() => {
+      return hardwareDevices.value.map((hwDevice: HardwareDevice) => {
+        const availableAddresses = hwDevice.addresses.filter((hwAddr) => {
+          const newArr = hiddenAccounts.value.flatMap(acct => Object.values(acct))
+          return !newArr.includes(hwAddr.address.toString())
+        })
+        return { ...hwDevice, addresses: availableAddresses }
       })
     })
 
@@ -194,6 +209,7 @@ const WalletSidebarAccounts = defineComponent({
       showSoftwareAccounts,
       showHardwareAccounts,
       localAccounts,
+      nonHiddenHardwareDevices,
       handleAccountEditName,
       setState,
       addSoftwareAccount () {

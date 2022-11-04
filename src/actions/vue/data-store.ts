@@ -111,13 +111,17 @@ export const getHiddenAccounts = (): Promise<string[]> => new Promise((resolve) 
   resolve(window.ipcRenderer.invoke('get-hidden-accounts'))
 })
 
-export const hideAccount = async (address: string): Promise<string[]> => {
-  const newHiddenTokens = await window.ipcRenderer.invoke('hide-account', address)
-  return newHiddenTokens
-}
+export const setHiddenAccounts = (address: string, nickname: string): Promise<string> => new Promise((resolve) => {
+  resolve(window.ipcRenderer.invoke('set-hidden-accounts', JSON.stringify({ address, nickname })))
+})
+
+// show hidden accounts
+export const updateHiddenAccounts = (address: string): Promise<string> => new Promise((resolve) => {
+  resolve(window.ipcRenderer.invoke('update-hidden-accounts', address))
+})
 
 export const unhideAccount = async (address: string): Promise<string[]> => {
-  const newHiddenTokens = await window.ipcRenderer.invoke('unhide-account', address)
+  const newHiddenTokens = await window.ipcRenderer.invoke('unhide-accounts', address)
   return newHiddenTokens
 }
 

@@ -1,6 +1,6 @@
 <template>
-  <div class="fixed w-screen h-screen z-20 flex items-center justify-center bg-translucent-black">
-    <div class="h-modalSmall bg-white rounded-md w-full max-w-lg absolute top-1/2 left-1/2 transform -translate-x-1/3 -translate-y-1/2">
+  <div class=" w-screen h-screen z-20 flex items-center justify-center bg-translucent-black absolute">
+    <div class="h-modalSmall bg-white rounded-md w-full max-w-lg absolute top-1/2 left-1/2 transform -translate-x-1/3 -translate-y-1/2 z-50">
       <div class="border bg-rGrayLight">
         <div class="flex items-center justify-center pt-8">
           <svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -39,15 +39,19 @@ const WalletHideAccountModal = defineComponent({
   setup () {
     const router = useRouter()
     const {
-      setDisconnectDeviceModal
+      setHideAccountModal,
+      accountToBeHiddenAddress,
+      accountToBeHiddenNickname,
+      handleHiddenAccounts
     } = useWallet(router)
 
     return {
       handleSubmit: () => {
-        setDisconnectDeviceModal(-1)
+        setHideAccountModal(false)
+        handleHiddenAccounts(accountToBeHiddenAddress.value, accountToBeHiddenNickname.value)
       },
       handleClose: () => {
-        setDisconnectDeviceModal(-1)
+        setHideAccountModal(false)
       }
     }
   }
