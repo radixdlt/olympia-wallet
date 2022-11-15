@@ -65,7 +65,7 @@ const ActionListItemTransferTokens = defineComponent({
   computed: {
     isRecipient (): boolean {
       if (!this.activeAddress) return false
-      return this.action.to_account.equals(this.activeAddress)
+      return this.activeAddress.toString() === this.action.to_account
     }
   },
 

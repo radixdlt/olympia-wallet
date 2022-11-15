@@ -1533,10 +1533,10 @@
     prelude-ts "^1.0.2"
     rxjs "7.0.0"
 
-"@radixdlt/application@4.0.20":
-  version "4.0.20"
-  resolved "https://registry.yarnpkg.com/@radixdlt/application/-/application-4.0.20.tgz#67920a128c6b0aa96d6d826c5c114bf006755d81"
-  integrity sha512-oOQ9S45a/1dP1VVCSh33NEXpXJaIZ25lQOlvxtHxN9IIbDGVwAGJMZn4J6cxQbYy5iENegIlnJPhnI8CD24f5A==
+"@radixdlt/application@4.0.21":
+  version "4.0.21"
+  resolved "https://registry.yarnpkg.com/@radixdlt/application/-/application-4.0.21.tgz#a7651b92fecc88d5e63c5fc07ae0437035087f65"
+  integrity sha512-2m0RpxYILEFu/lmPnQhWnrOODqQcfjo/g3LRRa7s4zjWv+y49ChPx6aC0vpFDvUcffgNVV8A2IDnV2qLhsIUPg==
   dependencies:
     "@open-rpc/mock-server" "1.7.2"
     "@open-rpc/schema-utils-js" "1.14.3"
@@ -1572,10 +1572,10 @@
     neverthrow "^4.0.1"
     ramda "^0.27.1"
 
-"@radixdlt/hardware-ledger@2.1.38":
-  version "2.1.38"
-  resolved "https://registry.yarnpkg.com/@radixdlt/hardware-ledger/-/hardware-ledger-2.1.38.tgz#65d12b8dd2d87404d5af1b1aa4fb2ee637085d55"
-  integrity sha512-ylj9/2a8x5o9GXKzQ3soJ94qGLtQ/3nt2lRSAF77KaOdcBIDbAJlxLJ3g/leQYzDYfZzSKZ9iuyKbOGQC3RkPA==
+"@radixdlt/hardware-ledger@2.1.39":
+  version "2.1.39"
+  resolved "https://registry.yarnpkg.com/@radixdlt/hardware-ledger/-/hardware-ledger-2.1.39.tgz#49a0fe71bd6951379e80c82c5473fbbff39e85bd"
+  integrity sha512-3ftBqiFNBQlo8JWIchOgEi/NNO0vzb2rjf2NjARMi1XbyrjaY+RQFbyOaYCO/pIY4MIOc1em6H8V36u4wtvaYA==
   dependencies:
     "@ledgerhq/hw-transport-node-hid" "^6.2.0"
     "@radixdlt/crypto" "^2.1.16"
@@ -1601,10 +1601,10 @@
     rxjs "7.0.0"
     uuid "^8.3.2"
 
-"@radixdlt/networking@^2.1.17":
-  version "2.1.17"
-  resolved "https://registry.yarnpkg.com/@radixdlt/networking/-/networking-2.1.17.tgz#9f281461b506c48dae0da4c293ead613c1d390cc"
-  integrity sha512-SfSQ3KIgEYdz7PRyiqxZuC10TG4ngbBFvDIZZiBU5uKyUwAK5oVAUzpccRRG6W8yIxpDKXvdlK8eutQL5iCpvA==
+"@radixdlt/networking@^2.1.18":
+  version "2.1.18"
+  resolved "https://registry.yarnpkg.com/@radixdlt/networking/-/networking-2.1.18.tgz#9977c3b5d7f152c17c5e0e7116dc51da9916cfe0"
+  integrity sha512-kjzjZok5bq5CJhIfLyjPPWAgJJ+uE7kRoziAhGCauCBWfp/WdZheqnP97+zVkKs1f/LL2cG9/T75TquHkEl3LQ==
   dependencies:
     "@open-rpc/client-js" "1.6.2"
     "@open-rpc/schema-utils-js" "1.14.3"

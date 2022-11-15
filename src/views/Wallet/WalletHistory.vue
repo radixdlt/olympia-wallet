@@ -21,17 +21,6 @@
       </div>
       <template v-else-if="transactionsWithMessages.length > 0">
         <div>
-          <!-- <transaction-list-item
-            v-for="(txn, i) in pendingTransactions"
-            :key="i"
-            :transaction="txn"
-            :index="i"
-            :activeAddress="activeAddress"
-            :pending="true"
-            :nativeToken="nativeToken"
-            :explorerUrlBase="explorerUrlBase"
-          /> -->
-
           <transaction-list-item
             v-for="(txn, i) in transactionsWithMessages"
             :key="i"
