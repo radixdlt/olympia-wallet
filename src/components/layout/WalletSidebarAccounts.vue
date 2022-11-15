@@ -50,7 +50,7 @@
 
     <div class="bg-gradient-to-br from-rBlue via-rDarkblue to-rDarkblue h-full">
       <div class="border-rGray border-opacity-50">
-        <div class="flex items-center py-4 mx-4 border-b border-rGrayMed px-1">
+        <div class="flex items-center py-4 mx-4 border-b border-rGrayMed px-0.5">
           <svg width="28" viewBox="0 0 29 23" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M1 9.39837L1 18.2217L7.02673 18.2217L7.02673 9.39837L1 9.39837Z" stroke="white" stroke-miterlimit="10"/>
             <path d="M2.52002 15.6089L5.5063 15.6089" stroke="white" stroke-miterlimit="10"/>
@@ -79,7 +79,7 @@
         <div v-if="hardwareDevices.length > 0">
           <div v-for="(hardwareDevice, i) in nonHiddenHardwareDevices" :key="i">
             <div>
-              <div class="flex items-center justify-between group py-5 mx-4 px-1">
+              <div class="flex items-center justify-between group py-5 mx-4 px-0.5">
                 <div class="flex cursor-pointer items-center">
                   <svg height="18" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-rGreen" :class="{'fill-current': isActiveDevice(hardwareDevice)}">
                     <path d="M18.7382 10.6172H7.26074V19H18.7382V10.6172Z" stroke="white" stroke-width="1.5" stroke-miterlimit="10" />
