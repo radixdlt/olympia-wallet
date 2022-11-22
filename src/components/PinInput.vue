@@ -23,7 +23,8 @@
       ref="inputRef"
       v-model="value"
       :data-ci="dataCi"
-      @blur="focusInput()"
+      @blur="focusInput"
+      @keypress="isNumber($event)"
       @input="handleChange"
     />
 
@@ -111,13 +112,19 @@ const PinInput = defineComponent({
 
   methods: {
     handleChange (event: Event) {
+      // console.log(event.target)
       const target = event.target as HTMLInputElement
+      // console.log(target.value)
+      console.log('this.value->', this.value, this.value.length, this)
       if (this.value.length > 4) this.value = this.value.slice(0, 4)
       if (target.value.length >= 4) {
         this.$emit('finished', this.name)
       } else {
         this.$emit('unfinished', this.name)
       }
+    },
+    isNumber (evt: any) {
+      console.log('event from on change', evt)
     }
   },
 
