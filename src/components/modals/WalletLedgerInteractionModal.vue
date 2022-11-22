@@ -62,8 +62,10 @@ const WalletLedgerInteractionModal = defineComponent({
       }
     })
 
+    console.log('hardware interaction state ', hardwareInteractionState.value)
+
     const interactionBody: ComputedRef<string> = computed(() => {
-      if (hardwareInteractionState.value === '') return ''
+      if (hardwareInteractionState.value === 'DERIVING' || hardwareInteractionState.value === '') return ''
       if (showCancelButton.value) {
         return t(`wallet.ledgerInteractionState.${hardwareInteractionState.value}.body`)
       } else {
