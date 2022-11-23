@@ -18,13 +18,13 @@
     </div>
     <input
       :name="name"
-      type="number"
+      type="text"
       class="opacity-0 absolute top-0 left-0 w-full h-full cursor-pointer"
       ref="inputRef"
       v-model="value"
       :data-ci="dataCi"
       @blur="focusInput"
-      @keypress="isNumber($event)"
+      @keypress={c}
       @input="handleChange"
     />
 
@@ -112,12 +112,15 @@ const PinInput = defineComponent({
 
   methods: {
     handleChange (event: Event) {
+      this.value = this.value.replace(/[^0-9]+/, '')
+      // if event value === '- or -#) return out of it
       // console.log(event.target)
       const target = event.target as HTMLInputElement
       // console.log(target.value)
-      console.log('this.value->', this.value, this.value.length, this)
+      console.log('this.value->', this.value, 'this.length->', this.value.length)
       if (this.value.length > 4) this.value = this.value.slice(0, 4)
-      if (target.value.length >= 4) {
+      if (this.value.length >= 4) {
+        console.log('inside if, length is ', target.value.length, this.value.length)
         this.$emit('finished', this.name)
       } else {
         this.$emit('unfinished', this.name)

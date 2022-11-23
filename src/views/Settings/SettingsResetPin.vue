@@ -90,6 +90,7 @@ const SettingsResetPin = defineComponent({
     const isValidPin = ref(false)
     const updatedPin = ref(false)
     const resetFormForNonmatchingPins = () => {
+      console.log('??')
       const newValues = { password: values.password, pin: '', confirmationPin: '' }
       const newErrors = { confirmationPin: t('validations.pinMatch') }
       resetForm({ values: newValues, errors: newErrors })
