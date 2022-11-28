@@ -23,7 +23,6 @@ export default defineComponent({
 
   computed: {
     showNumber (): boolean {
-      // console.log('showNumber result--->', !!(this.values && this.values.length === this.index + 1 && this.focused))
       return !!(this.values && this.values.length === this.index + 1 && this.focused)
     },
     showDot (): boolean {
@@ -31,7 +30,6 @@ export default defineComponent({
     },
     display (): string {
       if (this.values && this.showNumber) return this.values[this.index]
-      // else if (this.values && this.showDot) return this.values[this.index]
       else if (this.values && this.showDot) return '•'
       else return ''
     }

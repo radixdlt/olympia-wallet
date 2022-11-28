@@ -24,7 +24,6 @@
       v-model="value"
       :data-ci="dataCi"
       @blur="focusInput"
-      @keypress={c}
       @input="handleChange"
     />
 
@@ -45,6 +44,7 @@
 import { defineComponent, onMounted, Ref, ref } from 'vue'
 import { useField } from 'vee-validate'
 import PinInputDigit from '@/components/PinInputDigit.vue'
+import { useI18n } from 'vue-i18n'
 
 const PinInput = defineComponent({
   components: {
@@ -82,6 +82,7 @@ const PinInput = defineComponent({
   setup (props) {
     const inputRef = ref<null | { focus:() => null, onblur: any, onfocus: any }> (null)
     const isFocused: Ref<boolean> = ref(false)
+    const { t } = useI18n()
     const focusInput = () => {
       if (props.autofocus && inputRef.value) {
         return inputRef.value.focus()
@@ -95,7 +96,10 @@ const PinInput = defineComponent({
       }
     })
 
+    console.log('props.name-->', props.name)
     const { value, errorMessage } = props.required ? useField<string>(props.name, 'required') : useField<string>(props.name)
+    // const { value, errorMessage } = props.required ? useField<string>(t('validations.pinConfirmation'), 'required') : useField<string>(props.name)
+    console.log('value->', value.value, 'error message-->', errorMessage.value)
 
     return {
       inputRef,
@@ -113,21 +117,15 @@ const PinInput = defineComponent({
   methods: {
     handleChange (event: Event) {
       this.value = this.value.replace(/[^0-9]+/, '')
-      // if event value === '- or -#) return out of it
-      // console.log(event.target)
       const target = event.target as HTMLInputElement
-      // console.log(target.value)
       console.log('this.value->', this.value, 'this.length->', this.value.length)
       if (this.value.length > 4) this.value = this.value.slice(0, 4)
       if (this.value.length >= 4) {
-        console.log('inside if, length is ', target.value.length, this.value.length)
+        console.log('pin >= than 4!')
         this.$emit('finished', this.name)
       } else {
         this.$emit('unfinished', this.name)
       }
-    },
-    isNumber (evt: any) {
-      console.log('event from on change', evt)
     }
   },
 

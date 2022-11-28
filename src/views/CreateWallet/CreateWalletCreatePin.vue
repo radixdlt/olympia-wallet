@@ -19,6 +19,7 @@
         :autofocus="!updatingFirstInput"
         :large="true"
         class="mb-36 max-w-sm"
+        @submit="handleSubmit"
         data-ci="create-wallet-confirm-input"
       >
       </pin-input>
