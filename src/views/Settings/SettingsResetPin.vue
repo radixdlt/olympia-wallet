@@ -36,8 +36,8 @@
 
     <div class="text-rGrayDark mb-2 mt-10">{{ $t('settings.confirmationPinLabel') }}</div>
     <pin-input
-      name="confirmation"
-      :values="values.confirmation"
+      name="pinConfirmation"
+      :values="values.pinConfirmation"
       :autofocus="activePin === 2"
       class="mb-6 max-w-sm"
       data-ci="confirmation"
@@ -71,7 +71,7 @@ import { useI18n } from 'vue-i18n'
 interface ResetPinForm {
   password: string;
   pin: string;
-  confirmation: string;
+  pinConfirmation: string;
 }
 
 const SettingsResetPin = defineComponent({
@@ -89,14 +89,14 @@ const SettingsResetPin = defineComponent({
     const isValidPin = ref(false)
     const updatedPin = ref(false)
     const resetFormForNonmatchingPins = () => {
-      const newValues = { password: values.password, pin: '', confirmation: '' }
-      const newErrors = { confirmation: t('validations.pinMatch') }
+      const newValues = { password: values.password, pin: '', pinConfirmation: '' }
+      const newErrors = { pinConfirmation: t('validations.pinMatch') }
       resetForm({ values: newValues, errors: newErrors })
       activePin.value = 1
     }
 
     const handleComparePin = () => {
-      if (values.pin === values.confirmation) {
+      if (values.pin === values.pinConfirmation) {
         isValidPin.value = true
       } else {
         resetFormForNonmatchingPins()
@@ -108,7 +108,7 @@ const SettingsResetPin = defineComponent({
     }
 
     const handleResetPin = async () => {
-      if (values.pin !== values.confirmation) {
+      if (values.pin !== values.pinConfirmation) {
         resetFormForNonmatchingPins()
         return Promise.resolve()
       }
@@ -132,13 +132,13 @@ const SettingsResetPin = defineComponent({
     })
 
     const firstPinClicked = () => {
-      const newValues = { password: values.password, pin: '', confirmation: '' }
+      const newValues = { password: values.password, pin: '', pinConfirmation: '' }
       resetForm({ values: newValues })
       activePin.value = 1
     }
 
     const secondPinClicked = () => {
-      const newValues = { ...values, pinCnfirmation: '' }
+      const newValues = { ...values, pinConfirmation: '' }
       resetForm({ values: newValues })
       activePin.value = 2
     }

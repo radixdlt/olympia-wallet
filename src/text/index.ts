@@ -8,7 +8,7 @@ const messages = {
     validations: {
       default: '%{field} is invalid',
       required: '%{field} is required',
-      confirmed: '%{field} do not match',
+      confirmed: '%{field} does not match',
       length: '%{field} is the wrong length',
       max: '%{field} must be less than 160 characters long',
       validAddress: 'Enter a valid address',
