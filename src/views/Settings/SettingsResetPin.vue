@@ -29,7 +29,7 @@
       class="mb-6 max-w-sm"
       data-ci="pin"
       @finished="activePin = 2"
-      @click="activePin = 1"
+      @click="firstPinClicked"
       :required=false
     >
     </pin-input>
@@ -43,7 +43,7 @@
       data-ci="confirmation"
       @finished="handleComparePin"
       @unfinished="handleUnfinishedPin"
-      @click="activePin = 2"
+      @click="secondPinClicked"
       :required=false
     >
     </pin-input>
@@ -131,6 +131,18 @@ const SettingsResetPin = defineComponent({
       return meta.value.dirty ? !meta.value.valid : true
     })
 
+    const firstPinClicked = () => {
+      const newValues = { password: values.password, pin: '', confirmation: '' }
+      resetForm({ values: newValues })
+      activePin.value = 1
+    }
+
+    const secondPinClicked = () => {
+      const newValues = { ...values, pinCnfirmation: '' }
+      resetForm({ values: newValues })
+      activePin.value = 2
+    }
+
     return {
       /* refs */
       activePin,
@@ -146,6 +158,8 @@ const SettingsResetPin = defineComponent({
       handleComparePin,
       handleUnfinishedPin,
       handleResetPin,
+      firstPinClicked,
+      secondPinClicked,
 
       /* computed */
       disableSubmit
