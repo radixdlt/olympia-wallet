@@ -91,7 +91,7 @@
 
 <script lang="ts">
 import { computed, ComputedRef, defineComponent, ref, Ref } from 'vue'
-import { Mnemonic, MnemomicT, WalletT, StrengthT } from '@radixdlt/application'
+import { Mnemonic, MnemomicT, Network, WalletT, StrengthT } from '@radixdlt/application'
 import CreateWalletCreatePasscode from './CreateWalletCreatePasscode.vue'
 import CreateWalletCreatePin from './CreateWalletCreatePin.vue'
 import CreateWalletViewMnemonic from './CreateWalletViewMnemonic.vue'
@@ -134,7 +134,7 @@ const CreateWallet = defineComponent({
     if (!network) {
       radix.connect(defaultNetwork).then(() => {
         return firstValueFrom(radix.ledger.networkId())
-      }).then((net: any) => {
+      }).then((net: Network) => {
         setNetwork(net)
         network = net
       }).catch(() => {
