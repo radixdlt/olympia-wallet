@@ -96,7 +96,6 @@ const PinInput = defineComponent({
       value.value = value.value.replace(/[^0-9]+/, '')
       if (value.value.length > 4) value.value = value.value.slice(0, 4)
       if (value.value.length >= 4) {
-        console.log('pin >= than 4!')
         context.emit('finished', name.value)
       } else {
         context.emit('unfinished', name.value)
