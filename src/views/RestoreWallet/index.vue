@@ -89,7 +89,6 @@ import RestoreWalletEnterMnemonic from './RestoreWalletEnterMnemonic.vue'
 import CreateWalletCreatePasscode from '@/views/CreateWallet/CreateWalletCreatePasscode.vue'
 import CreateWalletCreatePin from '@/views/CreateWallet/CreateWalletCreatePin.vue'
 import MultipleAccountsDisclaimer from '@/views/CreateWallet/MultipleAccountsDisclaimer.vue'
-import { ref as rxRef } from '@nopr3d/vue-next-rx'
 import { saveDerivedAccountsIndex } from '@/actions/vue/data-store'
 import { useSidebar, useWallet } from '@/composables'
 import { useRouter } from 'vue-router'
@@ -105,9 +104,9 @@ const RestoreWallet = defineComponent({
   },
 
   setup () {
-    const step = rxRef(0)
-    const passcode: Ref<string> = rxRef('')
-    const mnemonic: Ref<MnemomicT | null> = rxRef(null)
+    const step = ref(0)
+    const passcode: Ref<string> = ref('')
+    const mnemonic: Ref<MnemomicT | null> = ref(null)
     const router = useRouter()
     const { loginWithWallet, setNetwork, walletLoaded, setWallet, waitUntilAllLoaded, resetWallet } = useWallet(router)
     const { setState } = useSidebar()
