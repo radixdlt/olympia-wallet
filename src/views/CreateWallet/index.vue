@@ -1,9 +1,9 @@
 <template>
   <div data-ci="create-wallet-view" class="flex flex-row min-h-screen">
     <div class="w-72 mr-5 py-8 px-5 text-white leading-snug">
-      <router-link to="/" class="flex">
+      <button @click="resetAndReturn" class="flex">
         <img alt="Radix DLT Logo" src="../../assets/logo.svg" class="w-30 mb-12 ">
-      </router-link>
+      </button>
       <wizard-heading
         :name="$t('createWallet.recoveryTitle')"
         :isActiveStep="step === 0 || step === 1"
@@ -35,14 +35,14 @@
         :disabled="step < 3"
         @click="() => {
           step = 3
-          resetPinTrigger = resetPinTrigger + 1
         }"
       >
       </wizard-heading>
       <div class="border border-white rounded p-3 mb-8" v-if="step === 3">{{ $t('createWallet.pinHelpOne') }}</div>
       <div class="border border-white rounded p-3 mb-8" v-if="step === 4">{{ $t('createWallet.pinHelpTwo') }}</div>
 
-      <router-link
+      <button
+        @click="resetAndReturn"
         to="/"
         data-ci="home-button"
         class="hover:text-rGreen cursor-pointer transition-colors inline-flex flex-row items-center absolute bottom-8"
@@ -52,7 +52,7 @@
           <path d="M12 15L7 10L12 5" class="stroke-current" stroke-miterlimit="10"/>
         </svg>
         {{ $t('createWallet.startOver') }}
-      </router-link>
+      </button>
     </div>
 
     <div class="bg-white pt-headerHeight pb-8 px-11 flex-1">
@@ -114,7 +114,7 @@ const CreateWallet = defineComponent({
 
   setup () {
     const router = useRouter()
-    const { activeNetwork, createWallet, radix, loginWithWallet, setPin, setNetwork, setWallet, walletLoaded, waitUntilAllLoaded } = useWallet(router)
+    const { activeNetwork, createWallet, radix, loginWithWallet, resetWallet, setPin, setNetwork, setWallet, walletLoaded, waitUntilAllLoaded } = useWallet(router)
     const { setState } = useSidebar()
     const newWallet: Ref<WalletT | null> = ref(null)
     const mnemonicStrength: Ref<StrengthT> = ref(StrengthT.WORD_COUNT_12)
@@ -174,6 +174,10 @@ const CreateWallet = defineComponent({
       })
     }
 
+    const resetAndReturn = () => {
+      resetWallet('')
+    }
+
     return {
       mnemonic,
       mnemonicStrength,
@@ -186,7 +190,8 @@ const CreateWallet = defineComponent({
       handleCreateWallet,
       handleEnterPin,
       handleCreatePin,
-      handleSetSeedStrength
+      handleSetSeedStrength,
+      resetAndReturn
     }
   }
 })
