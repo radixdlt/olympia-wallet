@@ -8,7 +8,7 @@ const messages = {
     validations: {
       default: '%{field} is invalid',
       required: '%{field} is required',
-      confirmed: '%{field} do not match',
+      confirmed: '%{field} does not match',
       length: '%{field} is the wrong length',
       max: '%{field} must be less than 160 characters long',
       validAddress: 'Enter a valid address',
@@ -23,7 +23,8 @@ const messages = {
       stakeFailed: 'Your transaction failed. Check that you have sufficient XRD to cover your stake plus fee.',
       unstakeFailed: 'Your transaction failed. Check that you are not unstaking more than your total current stake and that you have sufficient XRD to cover the fee.',
       pinMatch: 'Your new pin doesn\'t match',
-      messageRequired: 'You must add a message to be able to encrypt it'
+      messageRequired: 'You must add a message to be able to encrypt it',
+      pinConfirmation: 'Pin confirmation'
     },
     home: {
       welcomeOne: 'Welcome to the Radix Olympia Desktop Wallet.',

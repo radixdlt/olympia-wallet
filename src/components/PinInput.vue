@@ -5,7 +5,7 @@
       'border-rBlue divide-rBlue text-rBlue': isFocused
     }">
       <div
-        v-for="(digit, i) in [1, 2, 3, 4]"
+        v-for="(i) in [0, 1, 2, 3]"
         :key="i"
         class="flex items-center justify-center w-"
         :class="{
@@ -18,17 +18,17 @@
     </div>
     <input
       :name="name"
-      type="number"
+      type="text"
       class="opacity-0 absolute top-0 left-0 w-full h-full cursor-pointer"
       ref="inputRef"
       v-model="value"
       :data-ci="dataCi"
-      @blur="focusInput()"
+      @blur="focusInput"
       @input="handleChange"
     />
 
     <div class="relative my-4 w-full text-sm" :class="{'-ml-24': shiftErrorLeft}">
-      <div v-if="errorMessage" class="flex flex-row items-center justify-center text-rRed absolute">
+      <div v-if="errorMessage" class="flex flex-row items-center justify-center text-rRed absolute -mt-2">
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr-3">
         <circle cx="7" cy="7" r="6.5" transform="rotate(90 7 7)" fill="#EF4136" stroke="#EF4136"/>
         <rect x="4" y="5" width="1" height="7" transform="rotate(-45 4 5)" fill="white"/>
@@ -41,7 +41,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, Ref, ref } from 'vue'
+import { defineComponent, onMounted, Ref, ref, toRef } from 'vue'
 import { useField } from 'vee-validate'
 import PinInputDigit from '@/components/PinInputDigit.vue'
 
@@ -61,11 +61,6 @@ const PinInput = defineComponent({
       type: String,
       required: true
     },
-    required: {
-      type: Boolean,
-      required: false,
-      default: true
-    },
     large: {
       type: Boolean,
       required: false,
@@ -78,7 +73,8 @@ const PinInput = defineComponent({
     }
   },
 
-  setup (props) {
+  setup (props, context) {
+    const name = toRef(props, 'name')
     const inputRef = ref<null | { focus:() => null, onblur: any, onfocus: any }> (null)
     const isFocused: Ref<boolean> = ref(false)
     const focusInput = () => {
@@ -94,31 +90,31 @@ const PinInput = defineComponent({
       }
     })
 
-    const { value, errorMessage } = props.required ? useField<string>(props.name, 'required') : useField<string>(props.name)
+    const { value, errorMessage } = useField<string>(name.value, 'required')
+
+    const handleChange = () => {
+      console.log(value.value)
+      value.value = value.value.replace(/[^0-9]+/, '')
+      if (value.value.length > 4) value.value = value.value.slice(0, 4)
+      if (value.value.length >= 4) {
+        context.emit('finished', name.value)
+      } else {
+        context.emit('unfinished', name.value)
+      }
+    }
 
     return {
       inputRef,
       focusInput,
       value,
       errorMessage,
-      isFocused
+      isFocused,
+      handleChange
     }
   },
 
   mounted () {
     this.focusInput()
-  },
-
-  methods: {
-    handleChange (event: Event) {
-      const target = event.target as HTMLInputElement
-      if (this.value.length > 4) this.value = this.value.slice(0, 4)
-      if (target.value.length >= 4) {
-        this.$emit('finished', this.name)
-      } else {
-        this.$emit('unfinished', this.name)
-      }
-    }
   },
 
   updated () {

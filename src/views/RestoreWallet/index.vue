@@ -1,9 +1,9 @@
 <template>
   <div data-ci="create-wallet-view" class="flex flex-row h-screen">
     <div class="w-72 mr-5 py-8 px-5 text-white leading-snug">
-      <router-link to="/" class="flex">
+      <button class="flex" @click="resetAndReturn">
         <img alt="Radix DLT Logo" src="../../assets/logo.svg" class="w-30 mb-12 ">
-      </router-link>
+      </button>
       <wizard-heading
         :name="$t('restoreWallet.recoveryTitle')"
         :isActiveStep="step === 0"
@@ -12,8 +12,7 @@
           step = 0
           pinIsSet = false
         }"
-      >
-      </wizard-heading>
+      />
       <div v-if="step === 0">
         <div class="border border-white rounded p-3 mb-8">{{ $t('restoreWallet.recoveryHelp') }}</div>
       </div>
@@ -27,8 +26,7 @@
           step = 1
           pinIsSet = false
         }"
-      >
-      </wizard-heading>
+      />
       <div class="border border-white rounded p-3 mb-8" v-if="step === 1">{{ $t('restoreWallet.passwordHelp') }}</div>
       <wizard-heading
         :name="$t('restoreWallet.pinTitle')"
@@ -38,15 +36,14 @@
         @click="() => {
           step = 2
           pinIsSet = false
-          resetPinTrigger = resetPinTrigger + 1
         }"
-      >
-      </wizard-heading>
+      />
       <div class="border border-white rounded p-3 mb-8" v-if="step === 2 && !pinIsSet">{{ $t('restoreWallet.pinHelpOne') }}</div>
       <div class="border border-white rounded p-3 mb-8" v-if="step === 3 && !pinIsSet">{{ $t('restoreWallet.pinHelpTwo') }}</div>
       <div class="border border-white rounded p-3 mb-8" v-if="step === 3 && pinIsSet">{{ $t('restoreWallet.disclaimerHelp') }}</div>
 
-      <router-link
+      <button
+        @click="resetAndReturn"
         to="/"
         data-ci="home-button"
         class="hover:text-rGreen cursor-pointer transition-colors inline-flex flex-row items-center absolute bottom-8"
@@ -56,7 +53,7 @@
           <path d="M12 15L7 10L12 5" class="stroke-current" stroke-miterlimit="10"/>
         </svg>
         {{ $t('createWallet.startOver') }}
-      </router-link>
+      </button>
     </div>
     <div class="bg-white flex-1 overflow-y-scroll" v-if="pinIsSet">
       <multiple-accounts-disclaimer
@@ -68,34 +65,29 @@
       <restore-wallet-enter-mnemonic
         v-if="step == 0"
         @confirm="captureMnemonic"
-      >
-      </restore-wallet-enter-mnemonic>
+      />
       <create-wallet-create-passcode
         v-if="step == 1"
         @confirm="createWallet"
-      >
-      </create-wallet-create-passcode>
+      />
 
       <create-wallet-create-pin
         v-if="(step == 2 || step == 3) && !pinIsSet"
         @confirm="handleCreatePin"
-        @enteredPin="handleEnterPin"
-      >
-      </create-wallet-create-pin>
+      />
     </div>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, ref, Ref } from 'vue'
-import { MnemomicT, Mnemonic, Network, WalletT } from '@radixdlt/application'
+import { MnemomicT, Network, WalletT } from '@radixdlt/application'
 import WizardHeading from '@/components/WizardHeading.vue'
 import { initWallet, storePin } from '@/actions/vue/create-wallet'
 import RestoreWalletEnterMnemonic from './RestoreWalletEnterMnemonic.vue'
 import CreateWalletCreatePasscode from '@/views/CreateWallet/CreateWalletCreatePasscode.vue'
 import CreateWalletCreatePin from '@/views/CreateWallet/CreateWalletCreatePin.vue'
 import MultipleAccountsDisclaimer from '@/views/CreateWallet/MultipleAccountsDisclaimer.vue'
-import { ref as rxRef } from '@nopr3d/vue-next-rx'
 import { saveDerivedAccountsIndex } from '@/actions/vue/data-store'
 import { useSidebar, useWallet } from '@/composables'
 import { useRouter } from 'vue-router'
@@ -111,11 +103,11 @@ const RestoreWallet = defineComponent({
   },
 
   setup () {
-    const step = rxRef(0)
-    const passcode: Ref<string> = rxRef('')
-    const mnemonic: Ref<MnemomicT | null> = rxRef(null)
+    const step = ref(0)
+    const passcode: Ref<string> = ref('')
+    const mnemonic: Ref<MnemomicT | null> = ref(null)
     const router = useRouter()
-    const { loginWithWallet, setNetwork, walletLoaded, setWallet, waitUntilAllLoaded } = useWallet(router)
+    const { loginWithWallet, setNetwork, walletLoaded, setWallet, waitUntilAllLoaded, resetWallet } = useWallet(router)
     const { setState } = useSidebar()
     const newWallet: Ref<WalletT | null> = ref(null)
     const pinIsSet: Ref<boolean> = ref(false)
@@ -137,15 +129,17 @@ const RestoreWallet = defineComponent({
       step.value = 1
     }
 
-    const handleEnterPin = (val: boolean) => {
-      val ? step.value = 3 : step.value = 2
-    }
-
     const handleCreatePin = (pin: string) => {
+      console.log('new pin who dis', pin)
       pinIsSet.value = true
       if (!newWallet.value) return
       setWallet(newWallet.value)
       storePin(pin)
+      step.value = 3
+    }
+
+    const resetAndReturn = () => {
+      resetWallet('')
     }
 
     const completeWalletRestore = (isUnderstood: boolean) => {
@@ -176,8 +170,8 @@ const RestoreWallet = defineComponent({
       createWallet,
       captureMnemonic,
       completeWalletRestore,
-      handleEnterPin,
-      handleCreatePin
+      handleCreatePin,
+      resetAndReturn
     }
   }
 })

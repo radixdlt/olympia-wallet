@@ -503,7 +503,7 @@ interface useWalletInterface {
   persistNodeUrl: (url: string) => Promise<void>;
   reloadSubscriptions: () => void;
   reset: () => void;
-  resetWallet: (nextRoute: 'create-wallet' | 'restore-wallet') => void;
+  resetWallet: (nextRoute: 'create-wallet' | 'restore-wallet' | '') => void;
   setActiveAddress: (address: string) => void;
   setHideAccountModal: (val: boolean) => void;
   setLedgerVerify: (val: boolean) => void;
