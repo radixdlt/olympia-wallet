@@ -20,7 +20,7 @@ configure({
     // Pass validation messages through i18n
     let field = context.field
     if (field === 'confirmation') {
-      field = 'Passwords'
+      field = 'Password'
     }
 
     if (field === 'pinConfirmation') {

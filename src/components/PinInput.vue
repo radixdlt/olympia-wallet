@@ -28,7 +28,7 @@
     />
 
     <div class="relative my-4 w-full text-sm" :class="{'-ml-24': shiftErrorLeft}">
-      <div v-if="errorMessage" class="flex flex-row items-center justify-center text-rRed absolute">
+      <div v-if="errorMessage" class="flex flex-row items-center justify-center text-rRed absolute -mt-2">
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr-3">
         <circle cx="7" cy="7" r="6.5" transform="rotate(90 7 7)" fill="#EF4136" stroke="#EF4136"/>
         <rect x="4" y="5" width="1" height="7" transform="rotate(-45 4 5)" fill="white"/>
@@ -93,6 +93,7 @@ const PinInput = defineComponent({
     const { value, errorMessage } = useField<string>(name.value, 'required')
 
     const handleChange = () => {
+      console.log(value.value)
       value.value = value.value.replace(/[^0-9]+/, '')
       if (value.value.length > 4) value.value = value.value.slice(0, 4)
       if (value.value.length >= 4) {

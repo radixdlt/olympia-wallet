@@ -21,7 +21,7 @@
       <FormErrorMessage name="password" />
     </div>
 
-    <div class="text-rGrayDark mt-12 mb-2">{{ $t('settings.pinLabel') }}</div>
+    <div class="text-rGrayDark mt-10 mb-2">{{ $t('settings.pinLabel') }}</div>
     <pin-input
       name="pin"
       :values="values.pin"
@@ -34,7 +34,7 @@
     >
     </pin-input>
 
-    <div class="text-rGrayDark mb-2 mt-12">{{ $t('settings.confirmationPinLabel') }}</div>
+    <div class="text-rGrayDark mb-2 mt-8">{{ $t('settings.confirmationPinLabel') }}</div>
     <pin-input
       name="confirmation"
       :values="values.confirmation"
@@ -48,7 +48,7 @@
     >
     </pin-input>
 
-    <ButtonSubmit class="w-72 mx-auto mt-8" :disabled="disableSubmit">
+    <ButtonSubmit class="w-72 mx-auto mt-6" :disabled="disableSubmit">
       {{ $t('settings.confirm') }}
     </ButtonSubmit>
     <div v-if="updatedPin" class="text-rGrayDark text-sm mt-4">
