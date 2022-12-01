@@ -34,7 +34,7 @@
     >
     </pin-input>
 
-    <div class="text-rGrayDark mb-4">{{ $t('settings.confirmationPinLabel') }}</div>
+    <div class="text-rGrayDark mb-2 mt-12">{{ $t('settings.confirmationPinLabel') }}</div>
     <pin-input
       name="confirmation"
       :values="values.confirmation"
