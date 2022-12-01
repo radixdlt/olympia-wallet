@@ -19,12 +19,12 @@ configure({
   generateMessage: (context: FieldContext) => {
     // Pass validation messages through i18n
     let field = context.field
-    if (field === 'confirmation') {
+    if (field === 'password') {
       field = 'Password'
     }
 
-    if (field === 'pinConfirmation') {
-      field = 'Pin Confirmation'
+    if (field === 'pinConfirmation' || field === 'confirmation') {
+      field = 'Pin confirmation'
     }
 
     if (context.rule) {
