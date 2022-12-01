@@ -23,6 +23,10 @@ configure({
       field = 'Passwords'
     }
 
+    if (field === 'pinConfirmation') {
+      field = 'Pin Confirmation'
+    }
+
     if (context.rule) {
       return i18n.global.t(`validations.${context.rule.name}`, { field: field, params: context.rule.params })
     }

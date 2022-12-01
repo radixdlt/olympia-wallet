@@ -5,9 +5,10 @@
       <pin-input
         name="pin"
         :values="values.pin"
-        :autofocus="updatingFirstInput"
+        :autofocus="activePin === 1"
         :large="true"
-        @finished="handleFinished"
+        @click="firstPinClicked"
+        @finished="activePin = 2"
         class="mb-14 max-w-sm"
         data-ci="create-wallet-pin-input"
       >
@@ -16,11 +17,14 @@
       <pin-input
         name="pinConfirmation"
         :values="values.pinConfirmation"
-        :autofocus="!updatingFirstInput"
+        :autofocus="activePin === 2"
         :large="true"
         class="mb-36 max-w-sm"
-        @submit="handleSubmit"
+        @finished="handleComparePin"
+        @unfinished="handleUnfinishedPin"
+        @click="secondPinClicked"
         data-ci="create-wallet-confirm-input"
+        :rules="['required','confirmed:pin']"
       >
       </pin-input>
 
@@ -32,10 +36,11 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, ref, computed } from 'vue'
 import { useForm } from 'vee-validate'
 import PinInput from '@/components/PinInput.vue'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
+import { useI18n } from 'vue-i18n'
 
 interface PasswordForm {
   pin: string;
@@ -48,52 +53,71 @@ const CreateWalletCreatePin = defineComponent({
     PinInput
   },
 
-  setup () {
+  setup (props, context) {
     const { errors, values, meta, resetForm, setErrors } = useForm<PasswordForm>()
+    const { t } = useI18n()
+
+    const activePin = ref(0)
+    const isValidPin = ref(false)
+
+    const resetFormForNonmatchingPins = () => {
+      const newValues = { pin: '', pinConfirmation: '' }
+      const newErrors = { pinConfirmation: t('validations.pinMatch') }
+      resetForm({ values: newValues, errors: newErrors })
+      activePin.value = 1
+    }
+
+    const handleComparePin = () => {
+      if (values.pin === values.pinConfirmation) {
+        isValidPin.value = true
+      } else {
+        resetFormForNonmatchingPins()
+      }
+    }
+
+    const handleUnfinishedPin = () => {
+      isValidPin.value = false
+    }
+
+    const handleSubmit = async () => {
+      if (values.pin !== values.pinConfirmation) {
+        resetFormForNonmatchingPins()
+        return Promise.resolve()
+      }
+      context.emit('confirm', values.pin)
+    }
+
+    const disableSubmit = computed(() => {
+      return meta.value.dirty ? !meta.value.valid : true
+    })
+
+    const firstPinClicked = () => {
+      const newValues = { pin: '', pinConfirmation: '' }
+      resetForm({ values: newValues })
+      activePin.value = 1
+    }
+
+    const secondPinClicked = () => {
+      const newValues = { ...values, pinConfirmation: '' }
+      resetForm({ values: newValues })
+      activePin.value = 2
+    }
 
     return {
+      activePin,
       errors,
       values,
       meta,
+      disableSubmit,
       resetForm,
-      setErrors
+      setErrors,
+      handleComparePin,
+      handleUnfinishedPin,
+      handleSubmit,
+      firstPinClicked,
+      secondPinClicked
     }
-  },
-
-  data () {
-    return {
-      updatingFirstInput: true
-    }
-  },
-
-  computed: {
-    disableSubmit (): boolean {
-      return this.meta.dirty ? !this.meta.valid : true
-    }
-  },
-
-  methods: {
-    handleFinished (key: string) {
-      if (key === 'pin') {
-        this.updatingFirstInput = false
-        this.$emit('enteredPin', true)
-      } else {
-        this.updatingFirstInput = true
-        this.$emit('enteredPin', false)
-      }
-    },
-    handleSubmit () {
-      if (this.values.pin !== this.values.pinConfirmation) {
-        this.setErrors({
-          pinConfirmation: this.$t('validations.pinMatch')
-        })
-      } else {
-        this.$emit('confirm', this.values.pin)
-      }
-    }
-  },
-
-  emits: ['confirm', 'enteredPin']
+  }
 })
 
 export default CreateWalletCreatePin

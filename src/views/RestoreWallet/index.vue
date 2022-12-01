@@ -74,7 +74,6 @@
       <create-wallet-create-pin
         v-if="(step == 2 || step == 3) && !pinIsSet"
         @confirm="handleCreatePin"
-        @enteredPin="handleEnterPin"
       />
     </div>
   </div>
@@ -130,15 +129,13 @@ const RestoreWallet = defineComponent({
       step.value = 1
     }
 
-    const handleEnterPin = (val: boolean) => {
-      val ? step.value = 3 : step.value = 2
-    }
-
     const handleCreatePin = (pin: string) => {
+      console.log('new pin who dis', pin)
       pinIsSet.value = true
       if (!newWallet.value) return
       setWallet(newWallet.value)
       storePin(pin)
+      step.value = 3
     }
 
     const resetAndReturn = () => {
@@ -173,7 +170,6 @@ const RestoreWallet = defineComponent({
       createWallet,
       captureMnemonic,
       completeWalletRestore,
-      handleEnterPin,
       handleCreatePin,
       resetAndReturn
     }

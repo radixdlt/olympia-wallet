@@ -5,7 +5,7 @@
       'border-rBlue divide-rBlue text-rBlue': isFocused
     }">
       <div
-        v-for="(digit, i) in [1, 2, 3, 4]"
+        v-for="(i) in [0, 1, 2, 3]"
         :key="i"
         class="flex items-center justify-center w-"
         :class="{
@@ -41,10 +41,9 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, Ref, ref } from 'vue'
+import { defineComponent, onMounted, Ref, ref, toRef } from 'vue'
 import { useField } from 'vee-validate'
 import PinInputDigit from '@/components/PinInputDigit.vue'
-import { useI18n } from 'vue-i18n'
 
 const PinInput = defineComponent({
   components: {
@@ -62,11 +61,6 @@ const PinInput = defineComponent({
       type: String,
       required: true
     },
-    required: {
-      type: Boolean,
-      required: false,
-      default: true
-    },
     large: {
       type: Boolean,
       required: false,
@@ -79,10 +73,10 @@ const PinInput = defineComponent({
     }
   },
 
-  setup (props) {
+  setup (props, context) {
+    const name = toRef(props, 'name')
     const inputRef = ref<null | { focus:() => null, onblur: any, onfocus: any }> (null)
     const isFocused: Ref<boolean> = ref(false)
-    const { t } = useI18n()
     const focusInput = () => {
       if (props.autofocus && inputRef.value) {
         return inputRef.value.focus()
@@ -96,37 +90,31 @@ const PinInput = defineComponent({
       }
     })
 
-    console.log('props.name-->', props.name)
-    const { value, errorMessage } = props.required ? useField<string>(props.name, 'required') : useField<string>(props.name)
-    // const { value, errorMessage } = props.required ? useField<string>(t('validations.pinConfirmation'), 'required') : useField<string>(props.name)
-    console.log('value->', value.value, 'error message-->', errorMessage.value)
+    const { value, errorMessage } = useField<string>(name.value, 'required')
+
+    const handleChange = () => {
+      value.value = value.value.replace(/[^0-9]+/, '')
+      if (value.value.length > 4) value.value = value.value.slice(0, 4)
+      if (value.value.length >= 4) {
+        console.log('pin >= than 4!')
+        context.emit('finished', name.value)
+      } else {
+        context.emit('unfinished', name.value)
+      }
+    }
 
     return {
       inputRef,
       focusInput,
       value,
       errorMessage,
-      isFocused
+      isFocused,
+      handleChange
     }
   },
 
   mounted () {
     this.focusInput()
-  },
-
-  methods: {
-    handleChange (event: Event) {
-      this.value = this.value.replace(/[^0-9]+/, '')
-      const target = event.target as HTMLInputElement
-      console.log('this.value->', this.value, 'this.length->', this.value.length)
-      if (this.value.length > 4) this.value = this.value.slice(0, 4)
-      if (this.value.length >= 4) {
-        console.log('pin >= than 4!')
-        this.$emit('finished', this.name)
-      } else {
-        this.$emit('unfinished', this.name)
-      }
-    }
   },
 
   updated () {
