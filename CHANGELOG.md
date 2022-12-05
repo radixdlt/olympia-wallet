@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.5.0 (2022-12-05)
+
+### What's Changed
+* feat: Hide/Show derived accounts https://github.com/radixdlt/olympia-wallet/pull/541
+* fix: Error thrown when user has been idle https://github.com/radixdlt/olympia-wallet/pull/581
+* fix: Wallet History Page performance https://github.com/radixdlt/olympia-wallet/pull/580
+* fix: Realign sidenav icons between hardware & software wallet accounts https://github.com/radixdlt/olympia-wallet/pull/583
+* fix: Deriving account modal copy https://github.com/radixdlt/olympia-wallet/pull/584
+* fix: Bug when restoring wallet https://github.com/radixdlt/olympia-wallet/pull/585
+
+## 1.4.0
+
 ## What's Changed
 * epic: Multiple Hardware Accounts (WIP) by @staylorwr in https://github.com/radixdlt/olympia-wallet/pull/478
 * Fix Latest builds by bumping the version by @staylorwr in https://github.com/radixdlt/olympia-wallet/pull/496
