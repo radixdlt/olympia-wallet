@@ -1,4 +1,4 @@
-import { migrateHardwareAccount } from "./helpers"
+import { migrateHardwareAccount } from './helpers'
 
 const migrations = {
   '0.0.1': (store: Record<string, any>) => {
@@ -44,7 +44,7 @@ const migrations = {
 
     // --------------------------------------------Hidden Accounts-------------------------------------------------
     if (!store.get('hiddenAccounts')) store.set('hiddenAccounts', [])
-    
+
     if (!store.get('update-downloaded')) store.set('update-downloaded', false)
   }
 }

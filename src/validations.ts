@@ -19,7 +19,6 @@ configure({
   generateMessage: (context: FieldContext) => {
     // Pass validation messages through i18n
     let field = context.field
-    console.log('field is-->', field)
     if (field === 'password') {
       field = 'password'
     }
@@ -29,7 +28,6 @@ configure({
     }
 
     if (context.rule) {
-      console.log(context.rule.name)
       return i18n.global.t(`validations.${context.rule.name}`, { field: field, params: context.rule.params })
     }
     return i18n.global.t('validations.default', { field: field })

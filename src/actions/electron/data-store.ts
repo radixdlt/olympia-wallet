@@ -2,7 +2,7 @@ import { IpcMainInvokeEvent } from 'electron/main'
 import Store from 'electron-store'
 import migrations from '@/electron-store/migrations'
 import { HardwareDevice } from '@/services/_types'
-import { add } from '@/helpers/arithmetic';
+import { add } from '@/helpers/arithmetic'
 
 type MaybeString = string | null;
 export type AccountName = { address: string; name: string; }
@@ -20,9 +20,9 @@ export const saveAccountName = (event: IpcMainInvokeEvent, data: string) => {
 
 export const saveDeviceName = (event: IpcMainInvokeEvent, data: string) => {
   const { network, deviceIndex, prettyName } = JSON.parse(data)
-  let hardwareDevices = store.get(`wallets.${network}.hardwareDevices`) as HardwareDevice[]
+  const hardwareDevices = store.get(`wallets.${network}.hardwareDevices`) as HardwareDevice[]
   const device = hardwareDevices[deviceIndex]
-  const renamedDeviceObject = {"name": prettyName, "addresses":[...device.addresses]}
+  const renamedDeviceObject = { name: prettyName, addresses: [...device.addresses] }
   hardwareDevices.splice(deviceIndex, 1, renamedDeviceObject)
   store.set(`wallets.${network}.hardwareDevices`, hardwareDevices)
 }
@@ -52,13 +52,13 @@ export const saveDerivedAccountsIndex = (event: IpcMainInvokeEvent, data: string
 
 export const saveDerivedHardwareAccountsIndex = (event: IpcMainInvokeEvent, data: string): void => {
   const { num, network, deviceId } = JSON.parse(data) // instead of num, need this to be the new account address
-  const devices: any = store.get(`wallets.${network}.hardwareDevices`, []) 
-  
+  const devices: any = store.get(`wallets.${network}.hardwareDevices`, [])
+
   // deviceId should be the new account address
-  const newAddressStruct = {'name': deviceId, 'account': deviceId}  
-  
+  const newAddressStruct = { name: deviceId, account: deviceId }
+
   // copy/destructure existing hardwareDevices struct and append new address to end
-  const newAddresses = [{'name': deviceId, addresses: [...devices[0].addresses, newAddressStruct]}] 
+  const newAddresses = [{ name: deviceId, addresses: [...devices[0].addresses, newAddressStruct] }]
   store.set(`wallets.${network}.hardwareDevices`, newAddresses)
 }
 
@@ -72,7 +72,7 @@ export const saveHardwareDevices = (event: IpcMainInvokeEvent, data: string): vo
 }
 
 export const getHardwareDevices = (event: IpcMainInvokeEvent, network: string) : HardwareDevice[] => {
-  return store.get(`wallets.${network}.hardwareDevices`) as HardwareDevice[] || [] 
+  return store.get(`wallets.${network}.hardwareDevices`) as HardwareDevice[] || []
 }
 
 export const getHardwareDeviceAccounts = (event: IpcMainInvokeEvent, network: string, deviceId: string) => {
@@ -86,7 +86,6 @@ export const resetStore = (event: IpcMainInvokeEvent): void => {
   store.clear()
   store.set('acceptedTos', acceptedTos)
   store.set('decimalType', decimalType)
-  return
 }
 
 export const persistNodeSelection = (event: IpcMainInvokeEvent, data: string): void => {
