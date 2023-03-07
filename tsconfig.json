@@ -16,7 +16,8 @@
       "webpack-env",
       "mocha",
       "chai",
-      "node"
+      "node",
+      "qrcode"
     ],
     "paths": {
       "@/*": [

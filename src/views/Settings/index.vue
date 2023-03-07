@@ -10,6 +10,7 @@
           <tabs-tab :isActive="activeTab === 'display'" @click="() => handleClickTab('display')">{{ $t('settings.tabTitleDisplay') }}</tabs-tab>
           <tabs-tab :isActive="activeTab === 'showAccounts'" @click="() => handleClickTab('showAccounts')">{{ $t('settings.tabTitleShowAccounts')}}</tabs-tab>
           <tabs-tab :isActive="activeTab === 'nodes'" @click="() => handleClickTab('nodes')">{{ $t('settings.tabTitleGateway') }}</tabs-tab>
+          <tabs-tab :isActive="activeTab === 'export'" @click="() => handleClickTab('export')" :isDisabled="!connected">{{ $t('settings.tabTitleExport') }}</tabs-tab>
         </div>
         <tabs-content :leftTabIsActive="activeTab === 'password'">
           <settings-reset-password
@@ -35,6 +36,7 @@
           <settings-select-node v-if="activeTab === 'nodes'" />
           <settings-select-decimal v-if="activeTab === 'display'" />
           <settings-show-accounts v-if="activeTab === 'showAccounts'"/>
+          <settings-export v-if="activeTab === 'export'"/>
         </tabs-content>
       </div>
     </div>
@@ -54,6 +56,7 @@ import SettingsSelectNode from './SettingsSelectNode.vue'
 import SettingsTokens from './SettingsTokens.vue'
 import SettingsSelectDecimal from './SettingsSelectDecimal.vue'
 import SettingsShowAccounts from './SettingsShowAccounts.vue'
+import SettingsExport from './SettingsExport.vue'
 import WalletLayout from '@/components/layout/WalletLayout.vue'
 import { Ref, ref } from '@nopr3d/vue-next-rx'
 import { useSettingsTab, useWallet } from '@/composables'
@@ -63,6 +66,7 @@ import LoadingIcon from '@/components/LoadingIcon.vue'
 const SettingsIndex = defineComponent({
   components: {
     LoadingIcon,
+    SettingsExport,
     SettingsResetPassword,
     SettingsResetPin,
     SettingsRevealMnemonic,

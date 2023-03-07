@@ -485,6 +485,7 @@ interface useWalletInterface {
   readonly transactionErrorMessage: Ref<string | null>;
   readonly userDidCancel: Subject<boolean>;
 
+  activateAccount: () => Promise<AccountT | null>;
   cancelTransaction: () => void;
   confirmTransaction: () => void;
   setActiveTransactionForm: (val: string) => void;
@@ -985,6 +986,7 @@ export default function useWallet (router: Router): useWalletInterface {
       router.push(`/${nextRoute}`)
     },
 
+    activateAccount,
     cancelTransaction,
     confirmTransaction,
     setActiveTransactionForm,
