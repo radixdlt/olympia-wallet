@@ -18,7 +18,7 @@
     </p>
 
     <p v-else class="text-white text-sm pb-3 pt-1 px-5">
-      <span class="opacity-80"> {{ $t('wallet.network') }}: </span> {{$t('wallet.disconnected') }}
+      <span class="opacity-80"> {{ $t('wallet.network') }}: </span> <a @click="reconnect">{{$t('wallet.disconnected') }}</a>
     </p>
   </div>
 </template>
@@ -43,13 +43,18 @@ export default defineComponent({
       setUpdateInProcess(true)
     }
 
+    const reconnect = () => {
+      router.push('/')
+    }
+
     return {
       lowercaseNetwork,
       updateAvailable,
       versionNumber,
       downloadLatestVersion,
       setUpdateInProcess,
-      downloadUpdate
+      downloadUpdate,
+      reconnect
     }
   }
 })
