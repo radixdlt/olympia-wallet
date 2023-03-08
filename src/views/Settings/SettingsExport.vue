@@ -137,13 +137,12 @@ const zero = Amount.fromUnsafe(0)._unsafeUnwrap()
 type ExportedAccount = {
   name: string
   balance: string
-  address: string
   publicKey: string
   derivationPath: string
   deviceName: string
 }
 
-const columns = ['address', 'publicKey', 'derivationPath', 'balance', 'name', 'deviceName']
+const columns = ['publicKey', 'derivationPath', 'balance', 'name', 'deviceName']
 
 const stringToQRUrl = async (str: string, options: QRCodeOptions) : Promise<string> => {
   return new Promise((resolve, reject) => {
@@ -275,7 +274,6 @@ export default defineComponent({
       return {
         name,
         balance,
-        address,
         publicKey: account.publicKey.toString(),
         deviceName: encode(deviceName),
         derivationPath: `${account.hdPath?.toString()}${isLocal ? 'H' : ''}`.replace("'", '')
