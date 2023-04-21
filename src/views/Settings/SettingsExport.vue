@@ -27,21 +27,6 @@
         <p v-if="(totalExports - totalSoftwareExports > 0)">Hardware Accounts: {{ exportedHardwareAccounts.length }} / {{ totalExports - totalSoftwareExports }}</p>
       </div>
       <div class="flex flex-col gap-2" v-if="isLoading">
-        <div class="inline-flex text-left gap-x-2">
-          <div>
-            <p class="text-sm">Version</p>
-            <input v-model="version" class="border p-2 rounded-md w-16" />
-          </div>
-          <div>
-            <p class="text-sm">Error Correction</p>
-            <select v-model="activeCorrectionLevel" class="border p-2 rounded-md w-16">
-              <option value="L">L</option>
-              <option value="M">M</option>
-              <option value="Q">Q</option>
-              <option value="H">H</option>
-            </select>
-          </div>
-        </div>
         <div v-for="(device, index) in relevantDevices" :key="index" >
           <div class="w-full flex justify-between border rounded-md py-1 px-3 items-center">
             <span>{{ device.name }}: {{ device.addresses.length }} Accounts</span>
@@ -75,7 +60,7 @@
         <button @click="closeModal" class="border border-solid border-rGrayDark rounded py-2.5 font-sm text-rGrayDark cursor-pointer transition-colors focus:outline-none w-44">
           Close
         </button>
-        <button @click="copy" class="border border-solid border-rGrayDark rounded py-2.5 font-sm text-rGrayDark cursor-pointer transition-colors focus:outline-none w-44" v-if="fullExport">
+        <button @click="copy" class="border border-solid border-rGrayDark rounded py-2.5 font-sm text-rGrayDark cursor-pointer transition-colors focus:outline-none w-44" v-if="fullExport.length > 0">
           Copy Export
         </button>
         <button-submit :disabled="completedExports < totalExports" @click="showQRCode" class="w-44" :small="true" v-if="isLoading">
@@ -118,31 +103,17 @@
 
 <script lang="ts">
 import { defineComponent, computed, ComputedRef, ref, Ref } from 'vue'
-import { AccountAddressT, AccountT, Amount, AmountT, Token } from '@radixdlt/application'
+import { AccountT } from '@radixdlt/application'
 import { copyToClipboard } from '@/actions/vue/create-wallet'
 import { useToast } from 'vue-toastification'
-import papaparse from 'papaparse'
 import { useRouter } from 'vue-router'
 import { useWallet } from '@/composables'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
-import { add } from '@/helpers/arithmetic'
-import { asBigNumber } from '@/helpers/asBigNumber'
 import ExportAccountListItem from './ExportAccountListItem.vue'
 import { firstValueFrom } from 'rxjs'
+import { accountToExportPayload, exportAsCode } from '@/helpers/exportAsCode'
 import { HardwareDevice } from '@/services/_types'
 import { QRCodeOptions, toDataURL } from 'qrcode'
-
-const zero = Amount.fromUnsafe(0)._unsafeUnwrap()
-
-type ExportedAccount = {
-  name: string
-  balance: string
-  publicKey: string
-  derivationPath: string
-  deviceName: string
-}
-
-const columns = ['publicKey', 'derivationPath', 'balance', 'name', 'deviceName']
 
 const stringToQRUrl = async (str: string, options: QRCodeOptions) : Promise<string> => {
   return new Promise((resolve, reject) => {
@@ -157,22 +128,11 @@ const stringToQRUrl = async (str: string, options: QRCodeOptions) : Promise<stri
   This function takes a string and chunks it into QR codes
   It will try to make the QR codes as big as possible, but will reduce the size if it fails
 */
-const chunkIntoURLs = async (str: string, options: QRCodeOptions) : Promise<string[]> => {
+const chunkIntoURLs = async (strs: string[], options: QRCodeOptions) : Promise<string[]> => {
   const r: string[] = []
-  let offset = 0
-  const defaultSize = 2000
-  let currentChunkSize = defaultSize
-
-  while (offset < str.length) {
-    try {
-      const result = await stringToQRUrl(str.substr(offset, currentChunkSize), options)
-      r.push(result)
-      offset += currentChunkSize
-      if (currentChunkSize !== defaultSize) currentChunkSize = defaultSize
-    } catch (e) {
-      currentChunkSize = currentChunkSize - 100
-      continue
-    }
+  for (const str of strs) {
+    const result = await stringToQRUrl(str, options)
+    r.push(result)
   }
 
   return r
@@ -187,15 +147,15 @@ export default defineComponent({
   setup () {
     const router = useRouter()
     const toast = useToast()
-    const { accounts, accountNameFor, activateAccount, setActiveAddress, decimalType, hardwareDevices, nativeToken, radix } = useWallet(router)
+    const { accounts, accountNameFor, activateAccount, setActiveAddress, hardwareDevices, radix } = useWallet(router)
     const isExporting = ref(false)
     const isLoading = ref(true)
     const totalExports = ref(0)
     const completedExports = ref(0)
     const totalSoftwareExports = ref(0)
     const relevantDevices: Ref<HardwareDevice[]> = ref([])
-    const exportedSoftwareAccounts: Ref<ExportedAccount[]> = ref([])
-    const exportedHardwareAccounts: Ref<ExportedAccount[]> = ref([])
+    const exportedSoftwareAccounts: Ref<string[]> = ref([])
+    const exportedHardwareAccounts: Ref<string[]> = ref([])
     const completedDevices: Ref<HardwareDevice[]> = ref([])
     const mnemonicLength = ref(0)
     const qrCodes: Ref<string[]> = ref([])
@@ -203,7 +163,7 @@ export default defineComponent({
 
     const activeCorrectionLevel = ref('M')
     const version = ref(38)
-    const fullExport = ref('')
+    const fullExport: Ref<string[]> = ref([])
 
     const QROptions = computed(() => {
       return {
@@ -218,14 +178,6 @@ export default defineComponent({
         return account.signingKey.isLocalHDSigningKey
       })
     })
-
-    const fetchBalance = async (address: AccountAddressT, native: Token): Promise<string> => {
-      const balances = await firstValueFrom(radix.ledger.tokenBalancesForAddress(address))
-      const nativeTokenBalance = balances.account_balances.liquid_balances.find((lb) => lb.token_identifier.rri.equals(native.rri))
-      if (!nativeTokenBalance) return '0'
-      const balance = add(nativeTokenBalance.value, balances.account_balances.staked_and_unstaking_balance.value || zero)
-      return asBigNumber(balance as AmountT, true, decimalType.value)
-    }
 
     const selectedAccounts = ref<string[]>([])
 
@@ -256,28 +208,12 @@ export default defineComponent({
       selectedAccounts.value = [...localAddrs, ...hardwareAddresses]
     }
 
-    const encode = (str: string): string => {
-      return btoa(unescape(encodeURIComponent(str))).replace(/=/g, '')
-    }
-
-    const accountSummary = async (account: AccountT, isLocal: boolean): Promise<ExportedAccount | null> => {
-      if (!nativeToken.value) return null
+    const accountSummary = (account: AccountT, isLocal: boolean): string => {
       const name = accountNameFor(account.address)
-      const address = account.address.toString()
-      const balance = await fetchBalance(account.address, nativeToken.value)
       completedExports.value = completedExports.value + 1
-
-      const deviceName = isLocal ? '' : relevantDevices.value.find((device) => {
-        return device.addresses.find((hwAddr) => hwAddr.address.toString() === address)
-      })?.name || ''
-
-      return {
-        name,
-        balance,
-        publicKey: account.publicKey.toString(),
-        deviceName: encode(deviceName),
-        derivationPath: `${account.hdPath?.toString()}${isLocal ? 'H' : ''}`.replace("'", '')
-      }
+      const localType = isLocal ? 'S' : 'H'
+      const addressIndex = account.hdPath?.addressIndex.index || 0
+      return accountToExportPayload(localType, account.publicKey.toString(true), addressIndex, name)
     }
 
     const exportAccounts = async () => {
@@ -289,9 +225,7 @@ export default defineComponent({
       const selectedLocalAccounts = localAccounts.value.filter((account) => selectedAccounts.value.includes(account.address.toString()))
       totalSoftwareExports.value = selectedLocalAccounts.length
       totalExports.value = selectedAccounts.value.length
-      const fetchLocal = selectedLocalAccounts.map((account) => {
-        return accountSummary(account, true)
-      })
+      exportedSoftwareAccounts.value = selectedLocalAccounts.map((account) => accountSummary(account, true))
 
       relevantDevices.value = hardwareDevices.value.map((hwDevice: HardwareDevice) => {
         const availableAddresses = hwDevice.addresses.filter((hwAddr) => {
@@ -299,9 +233,6 @@ export default defineComponent({
         })
         return { ...hwDevice, addresses: availableAddresses }
       }).filter((hwDevice) => hwDevice.addresses.length > 0)
-      const allLocal = await Promise.all(fetchLocal)
-
-      exportedSoftwareAccounts.value = allLocal.filter((account) => account !== null) as ExportedAccount[]
 
       const mnemonic = await firstValueFrom(radix.revealMnemonic())
       mnemonicLength.value = mnemonic.words.length
@@ -313,8 +244,7 @@ export default defineComponent({
         setActiveAddress(address.address.toString())
         const nextAccount = await activateAccount()
         if (!nextAccount) throw new Error('Could not activate account')
-        const summary = await accountSummary(nextAccount, false)
-        if (!summary) break
+        const summary = accountSummary(nextAccount, false)
         deviceExports.push(summary)
         exportedHardwareAccounts.value = [...exportedHardwareAccounts.value, summary]
       }
@@ -325,28 +255,20 @@ export default defineComponent({
       isLoading.value = false
       activeQRCode.value = 0
       const accounts = [...exportedSoftwareAccounts.value, ...exportedHardwareAccounts.value]
-      const data = papaparse.unparse({
-        fields: columns,
-        data: accounts
-      }, { header: false })
-      const allData = `mnemonic ${mnemonicLength.value}
-${data}
-`
-      console.log(allData)
-      console.log('data length is', allData.length)
-      fullExport.value = allData
+      const allData = exportAsCode(accounts, 1800, mnemonicLength.value)
       qrCodes.value = await chunkIntoURLs(allData, QROptions.value)
+      fullExport.value = allData
     }
 
     const closeModal = () => {
       isLoading.value = false
       isExporting.value = false
-      fullExport.value = ''
+      fullExport.value = []
       qrCodes.value = []
     }
 
     const copy = () => {
-      copyToClipboard(fullExport.value)
+      copyToClipboard(fullExport.value.join('\n'))
       toast.success('Copied to Clipboard')
     }
 
