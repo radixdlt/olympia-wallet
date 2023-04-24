@@ -138,6 +138,8 @@ const chunkIntoURLs = async (strs: string[], options: QRCodeOptions) : Promise<s
   return r
 }
 
+const hardenedIncrement = 0x80000000
+
 export default defineComponent({
   components: {
     ButtonSubmit,
@@ -210,11 +212,14 @@ export default defineComponent({
 
     const accountSummary = (account: AccountT, isLocal: boolean): string => {
       if (!account.hdPath) throw new Error('Account does not have an HD path')
+      if (account.hdPath.addressIndex.index < hardenedIncrement) throw new Error('Unhardened Address Index')
+
       const name = accountNameFor(account.address)
       completedExports.value = completedExports.value + 1
       const localType = isLocal ? 'S' : 'H'
       const compressedKey = compressPublicKeyToHex(account.publicKey.toString())
-      const addressIndex = account.hdPath.addressIndex.index
+      const addressIndex = account.hdPath.addressIndex.index - hardenedIncrement
+
       return accountToExportPayload(localType, compressedKey, addressIndex, name)
     }
 
@@ -224,7 +229,7 @@ export default defineComponent({
       qrCodes.value = []
       exportedSoftwareAccounts.value = []
       completedExports.value = 0
-      const selectedLocalAccounts = localAccounts.value.filter((account) => selectedAccounts.value.includes(account.address.toString()))
+      const selectedLocalAccounts = localAccounts.value.filter((account) => selectedAccounts.value.includes(account.address.toString()) && account.hdPath)
       totalSoftwareExports.value = selectedLocalAccounts.length
       totalExports.value = selectedAccounts.value.length
       exportedSoftwareAccounts.value = selectedLocalAccounts.map((account) => accountSummary(account, true))
@@ -245,7 +250,7 @@ export default defineComponent({
       for (const address of device.addresses) {
         setActiveAddress(address.address.toString())
         const nextAccount = await activateAccount()
-        if (!nextAccount) throw new Error('Could not activate account')
+        if (!nextAccount || !nextAccount.hdPath) throw new Error('Could not activate account')
         const summary = accountSummary(nextAccount, false)
         deviceExports.push(summary)
         exportedHardwareAccounts.value = [...exportedHardwareAccounts.value, summary]
