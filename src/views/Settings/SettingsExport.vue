@@ -111,7 +111,7 @@ import { useWallet } from '@/composables'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
 import ExportAccountListItem from './ExportAccountListItem.vue'
 import { firstValueFrom } from 'rxjs'
-import { accountToExportPayload, exportAsCode } from '@/helpers/exportAsCode'
+import { accountToExportPayload, compressPublicKeyToHex, exportAsCode } from '@/helpers/exportAsCode'
 import { HardwareDevice } from '@/services/_types'
 import { QRCodeOptions, toDataURL } from 'qrcode'
 
@@ -209,11 +209,13 @@ export default defineComponent({
     }
 
     const accountSummary = (account: AccountT, isLocal: boolean): string => {
+      if (!account.hdPath) throw new Error('Account does not have an HD path')
       const name = accountNameFor(account.address)
       completedExports.value = completedExports.value + 1
       const localType = isLocal ? 'S' : 'H'
-      const addressIndex = account.hdPath?.addressIndex.index || 0
-      return accountToExportPayload(localType, account.publicKey.toString(true), addressIndex, name)
+      const compressedKey = compressPublicKeyToHex(account.publicKey.toString())
+      const addressIndex = account.hdPath.addressIndex.index
+      return accountToExportPayload(localType, compressedKey, addressIndex, name)
     }
 
     const exportAccounts = async () => {

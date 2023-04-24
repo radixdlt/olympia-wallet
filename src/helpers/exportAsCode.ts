@@ -3,6 +3,7 @@ const INTRA_SEPARATOR = '^'
 const INTER_SEPARATOR = '~'
 const END_OF_ACCOUNT_NAME = '}'
 
+const FORBIDDEN_CHARACTERS = [END__OF_HEADER, INTRA_SEPARATOR, INTER_SEPARATOR, END_OF_ACCOUNT_NAME]
 const ACCOUNT_NAME_REPLACEMENT = '_'
 
 type AccountType = 'H' | 'S'
@@ -20,8 +21,12 @@ export const exportAsCode = (accounts: string[], payloadSize: number, mnemonicLe
   })
 }
 
+export const compressPublicKeyToHex = (publicKey: string) : string => {
+  return Buffer.from(publicKey, 'hex').toString('base64')
+}
+
 export const sanitizeName = (name: string): string => {
   const limitedName = name.substring(0, 30)
-  const replacedName = limitedName.replace(/[\]^~}]/, ACCOUNT_NAME_REPLACEMENT)
+  const replacedName = FORBIDDEN_CHARACTERS.reduce((acc, forbidden) => acc.replace(forbidden, ACCOUNT_NAME_REPLACEMENT), limitedName)
   return `${replacedName}${END_OF_ACCOUNT_NAME}`
 }
