@@ -21,27 +21,7 @@
       </div>
     </div>
     <div v-if="isExporting">
-      <div class="w-full text-left flex flex-col gap-1 mb-2">
-        <p>Total Accounts: {{ completedExports }} / {{ totalExports }}</p>
-        <p v-if="totalSoftwareExports > 0">Software Accounts: {{ exportedSoftwareAccounts.length }} / {{ totalSoftwareExports }}</p>
-        <p v-if="(totalExports - totalSoftwareExports > 0)">Hardware Accounts: {{ exportedHardwareAccounts.length }} / {{ totalExports - totalSoftwareExports }}</p>
-      </div>
-      <div class="flex flex-col gap-2" v-if="isLoading">
-        <div v-for="(device, index) in relevantDevices" :key="index" >
-          <div class="w-full flex justify-between border rounded-md py-1 px-3 items-center">
-            <span>{{ device.name }}: {{ device.addresses.length }} Accounts</span>
-            <div v-if="completedDevices.includes(device)" class="flex gap-2">
-              <span class="text-rGreen">Completed</span>
-            </div>
-            <div v-else>
-              <button-submit :disabled="false" :small="true" @click="startDeviceExport(device)">
-                Ready
-              </button-submit>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div v-else>
+      <div>
         <p>Scan your QR {{qrCodes.length > 1 ? 'Codes' : 'Code'}} into the Babylon Wallet</p>
         <div class="flex justify-between items-center">
           <button :disabled="activeQRCode == 0" @click="activeQRCode--">
@@ -60,12 +40,9 @@
         <button @click="closeModal" class="border border-solid border-rGrayDark rounded py-2.5 font-sm text-rGrayDark cursor-pointer transition-colors focus:outline-none w-44">
           Close
         </button>
-        <button @click="copy" class="border border-solid border-rGrayDark rounded py-2.5 font-sm text-rGrayDark cursor-pointer transition-colors focus:outline-none w-44" v-if="fullExport.length > 0">
+        <button @click="copy" :disabled="qrCodes.length == 0" class="border border-solid border-rGrayDark rounded py-2.5 font-sm text-rGrayDark cursor-pointer transition-colors focus:outline-none w-44" v-if="fullExport.length > 0">
           Copy Export
         </button>
-        <button-submit :disabled="completedExports < totalExports" @click="showQRCode" class="w-44" :small="true" v-if="isLoading">
-          Show QR Codes
-        </button-submit>
       </div>
     </div>
     <div v-else>
@@ -104,6 +81,7 @@
 <script lang="ts">
 import { defineComponent, computed, ComputedRef, ref, Ref } from 'vue'
 import { AccountT } from '@radixdlt/application'
+import { AccountAddressT } from '@radixdlt/account'
 import { copyToClipboard } from '@/actions/vue/create-wallet'
 import { useToast } from 'vue-toastification'
 import { useRouter } from 'vue-router'
@@ -112,7 +90,7 @@ import ButtonSubmit from '@/components/ButtonSubmit.vue'
 import ExportAccountListItem from './ExportAccountListItem.vue'
 import { firstValueFrom } from 'rxjs'
 import { accountToExportPayload, compressPublicKeyToHex, exportAsCode } from '@/helpers/exportAsCode'
-import { HardwareDevice } from '@/services/_types'
+import { HardwareAddress, HardwareDevice } from '@/services/_types'
 import { QRCodeOptions, toDataURL } from 'qrcode'
 
 const stringToQRUrl = async (str: string, options: QRCodeOptions) : Promise<string> => {
@@ -149,19 +127,13 @@ export default defineComponent({
   setup () {
     const router = useRouter()
     const toast = useToast()
-    const { accounts, accountNameFor, activateAccount, setActiveAddress, hardwareDevices, radix } = useWallet(router)
+    const { accounts, accountNameFor, hardwareDevices, radix } = useWallet(router)
     const isExporting = ref(false)
     const isLoading = ref(true)
-    const totalExports = ref(0)
-    const completedExports = ref(0)
-    const totalSoftwareExports = ref(0)
-    const relevantDevices: Ref<HardwareDevice[]> = ref([])
-    const exportedSoftwareAccounts: Ref<string[]> = ref([])
-    const exportedHardwareAccounts: Ref<string[]> = ref([])
-    const completedDevices: Ref<HardwareDevice[]> = ref([])
     const mnemonicLength = ref(0)
     const qrCodes: Ref<string[]> = ref([])
     const activeQRCode = ref(0)
+    const selectedAccounts = ref<string[]>([])
 
     const activeCorrectionLevel = ref('M')
     const version = ref(38)
@@ -180,8 +152,6 @@ export default defineComponent({
         return account.signingKey.isLocalHDSigningKey
       })
     })
-
-    const selectedAccounts = ref<string[]>([])
 
     const toggleAddress = (addr: string) => {
       if (selectedAccounts.value.includes(addr)) {
@@ -210,15 +180,10 @@ export default defineComponent({
       selectedAccounts.value = [...localAddrs, ...hardwareAddresses]
     }
 
-    const accountSummary = (account: AccountT, isLocal: boolean): string => {
-      if (!account.hdPath) throw new Error('Account does not have an HD path')
-      if (account.hdPath.addressIndex.index < hardenedIncrement) throw new Error('Unhardened Address Index')
-
-      const name = accountNameFor(account.address)
-      completedExports.value = completedExports.value + 1
+    const accountSummary = (address: AccountAddressT, addressIndex: number, isLocal: boolean): string => {
+      const name = accountNameFor(address)
       const localType = isLocal ? 'S' : 'H'
-      const compressedKey = compressPublicKeyToHex(account.publicKey.toString())
-      const addressIndex = account.hdPath.addressIndex.index - hardenedIncrement
+      const compressedKey = compressPublicKeyToHex(address.publicKey.toString())
 
       return accountToExportPayload(localType, compressedKey, addressIndex, name)
     }
@@ -227,44 +192,33 @@ export default defineComponent({
       isExporting.value = true
       isLoading.value = true
       qrCodes.value = []
-      exportedSoftwareAccounts.value = []
-      completedExports.value = 0
-      const selectedLocalAccounts = localAccounts.value.filter((account) => selectedAccounts.value.includes(account.address.toString()) && account.hdPath)
-      totalSoftwareExports.value = selectedLocalAccounts.length
-      totalExports.value = selectedAccounts.value.length
-      exportedSoftwareAccounts.value = selectedLocalAccounts.map((account) => accountSummary(account, true))
-
-      relevantDevices.value = hardwareDevices.value.map((hwDevice: HardwareDevice) => {
-        const availableAddresses = hwDevice.addresses.filter((hwAddr) => {
-          return selectedAccounts.value.includes(hwAddr.address.toString())
+      const accounts: string[] = []
+      localAccounts.value
+        .filter((account) => selectedAccounts.value.includes(account.address.toString()) && account.hdPath)
+        .forEach((account) => {
+          if (!account.hdPath) throw new Error('Account does not have an HD path')
+          if (account.hdPath.addressIndex.index < hardenedIncrement) throw new Error('Unhardened Address Index')
+          const addressIndex = account.hdPath.addressIndex.index - hardenedIncrement
+          const exportedAccount = accountSummary(account.address, addressIndex, true)
+          accounts.push(exportedAccount)
         })
-        return { ...hwDevice, addresses: availableAddresses }
-      }).filter((hwDevice) => hwDevice.addresses.length > 0)
+
+      hardwareDevices.value
+        .flatMap((hwDevice: HardwareDevice) =>
+          hwDevice.addresses.filter((hwAddr) => selectedAccounts.value.includes(hwAddr.address.toString()))
+        )
+        .forEach((hwAddr: HardwareAddress) => {
+          const exportedAccount = accountSummary(hwAddr.address, hwAddr.index, false)
+          accounts.push(exportedAccount)
+        })
 
       const mnemonic = await firstValueFrom(radix.revealMnemonic())
       mnemonicLength.value = mnemonic.words.length
-    }
 
-    const startDeviceExport = async (device: HardwareDevice) => {
-      const deviceExports = []
-      for (const address of device.addresses) {
-        setActiveAddress(address.address.toString())
-        const nextAccount = await activateAccount()
-        if (!nextAccount || !nextAccount.hdPath) throw new Error('Could not activate account')
-        const summary = accountSummary(nextAccount, false)
-        deviceExports.push(summary)
-        exportedHardwareAccounts.value = [...exportedHardwareAccounts.value, summary]
-      }
-      completedDevices.value = [...completedDevices.value, device]
-    }
-
-    const showQRCode = async () => {
-      isLoading.value = false
-      activeQRCode.value = 0
-      const accounts = [...exportedSoftwareAccounts.value, ...exportedHardwareAccounts.value]
       const allData = exportAsCode(accounts, 1800, mnemonicLength.value)
       qrCodes.value = await chunkIntoURLs(allData, QROptions.value)
       fullExport.value = allData
+      isLoading.value = false
     }
 
     const closeModal = () => {
@@ -283,19 +237,12 @@ export default defineComponent({
       activeQRCode,
       activeCorrectionLevel,
       allSoftwareSelected,
-      completedExports,
-      completedDevices,
-      exportedHardwareAccounts,
-      exportedSoftwareAccounts,
       hardwareDevices,
       isExporting,
       isLoading,
       qrCodes,
       localAccounts,
-      relevantDevices,
       selectedAccounts,
-      totalExports,
-      totalSoftwareExports,
       QROptions,
       version,
       fullExport,
@@ -304,8 +251,6 @@ export default defineComponent({
       addAll,
       closeModal,
       exportAccounts,
-      startDeviceExport,
-      showQRCode,
       toggleAddress,
       toggleAllSoftware,
       copy
