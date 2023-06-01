@@ -8,11 +8,7 @@
     </div>
 
     <div
-      class="grid gap-y-12 relative mb-12"
-      :class="{
-        'grid-cols-4': mnemonicStrength === StrengthT.WORD_COUNT_12,
-        'grid-cols-6': mnemonicStrength != StrengthT.WORD_COUNT_12
-      }"
+      class="grid gap-y-12 relative mb-12 grid-cols-3"
     >
       <mnemonic-display
         v-for="(word, i) in displayMnemonic"
