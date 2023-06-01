@@ -7,9 +7,7 @@
       {{ $t('settings.mnemonicDisclaimerThree') }}
     </div>
 
-    <div
-      class="grid gap-y-12 relative mb-12 grid-cols-3"
-    >
+    <div class="grid gap-y-12 relative mb-12 grid-cols-3">
       <mnemonic-display
         v-for="(word, i) in displayMnemonic"
         :key="i"
