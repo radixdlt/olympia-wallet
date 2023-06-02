@@ -3,7 +3,7 @@
     <div class="flex flex-row items-center flex-grow overflow-ellipsis">
       <AppRadioIndicator
         :enabled="isActive"
-        :disabled="loading"
+        :disabled="loading || computedNetwork != 'mainnet'"
         @click="handleSelectNode"
         class="mr-2"
       />
@@ -78,6 +78,10 @@ export default defineComponent({
     const isActive: ComputedRef<boolean> = computed(() => nodeUrl.value ? nodeUrl.value === props.url : false)
 
     const handleSelectNode = () => {
+      if (computedNetwork.value !== 'mainnet') {
+        toast.error('Only mainnet is currently supported')
+        return
+      }
       if (activeConnection.value && !connected.value) {
         toast.error('Invalid network, unable to connect')
         return

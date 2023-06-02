@@ -89,7 +89,7 @@ import CreateWalletCreatePasscode from '@/views/CreateWallet/CreateWalletCreateP
 import CreateWalletCreatePin from '@/views/CreateWallet/CreateWalletCreatePin.vue'
 import MultipleAccountsDisclaimer from '@/views/CreateWallet/MultipleAccountsDisclaimer.vue'
 import { saveDerivedAccountsIndex } from '@/actions/vue/data-store'
-import { useSidebar, useWallet } from '@/composables'
+import { useOfflineWallet, useSidebar, useWallet } from '@/composables'
 import { useRouter } from 'vue-router'
 import { firstValueFrom } from 'rxjs'
 
@@ -108,6 +108,7 @@ const RestoreWallet = defineComponent({
     const mnemonic: Ref<MnemomicT | null> = ref(null)
     const router = useRouter()
     const { loginWithWallet, setNetwork, walletLoaded, setWallet, waitUntilAllLoaded, resetWallet } = useWallet(router)
+    const { login } = useOfflineWallet()
     const { setState } = useSidebar()
     const newWallet: Ref<WalletT | null> = ref(null)
     const pinIsSet: Ref<boolean> = ref(false)
@@ -117,6 +118,7 @@ const RestoreWallet = defineComponent({
       if (!mnemonic.value) return
       initWallet(mnemonic.value, pass, Network.MAINNET)
         .then((wallet: WalletT) => {
+          login(pass)
           saveDerivedAccountsIndex(0, Network.MAINNET)
           step.value = 2
           passcode.value = pass
@@ -130,7 +132,6 @@ const RestoreWallet = defineComponent({
     }
 
     const handleCreatePin = (pin: string) => {
-      console.log('new pin who dis', pin)
       pinIsSet.value = true
       if (!newWallet.value) return
       setWallet(newWallet.value)

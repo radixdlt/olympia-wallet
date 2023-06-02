@@ -172,7 +172,8 @@ const messages = {
         cancelDecryptionTitle: 'Cancel Decryption',
         cancelDecryptionBody: 'Please cancel the decryption on your Ledger device.'
       },
-      hardwareWalletAccounts: 'Hardware Wallet Accounts:'
+      hardwareWalletAccounts: 'Hardware Wallet Accounts:',
+      babylonIsHere: 'The Babylon Network is here.  This wallet is now obsolete and reflects the last state of the Olympia ledger.  Transactions, Staking and Unstaking is now disabled.'
     },
     hardware: {
       disclaimer: 'Whenever copying a hardware wallet address, it is strongly recommended to verify it on the hardware device. To copy and verify this address, please switch to the hardware address first by selecting it in the account picker.',
