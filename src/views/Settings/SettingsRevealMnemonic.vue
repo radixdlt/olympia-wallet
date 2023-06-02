@@ -29,7 +29,7 @@
 
       <template v-if="enteringPassword">
         <form
-          class="absolute top-1/3 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white border border-rGray rounded-md flex flex-col items-center px-11 pt-9 pb-7"
+          class="absolute left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white border border-rGray rounded-md flex flex-col items-center px-11 pt-9 pb-7 z-50"
           @submit.prevent="handleSubmit"
         >
           <div class="text-rGrayDark mb-9">{{ $t('settings.mnemonicModalHeading') }}</div>

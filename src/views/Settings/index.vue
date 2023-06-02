@@ -5,7 +5,7 @@
         <div class="flex flex-row">
           <tabs-tab :isActive="activeTab === 'password'" @click="() => handleClickTab('password')" :isDisabled="!connected">{{ $t('settings.tabTitlePassword') }}</tabs-tab>
           <tabs-tab :isActive="activeTab === 'pin'" @click="() => handleClickTab('pin')" :isDisabled="!connected">{{ $t('settings.tabTitlePin') }}</tabs-tab>
-          <tabs-tab :isActive="activeTab === 'mnemonic'" @click="() => handleClickTab('mnemonic')" :isDisabled="!connected">{{ $t('settings.tabTitleMnemonic') }}</tabs-tab>
+          <tabs-tab :isActive="activeTab === 'mnemonic'" @click="() => handleClickTab('mnemonic')" :isDisabled="!wallet">{{ $t('settings.tabTitleMnemonic') }}</tabs-tab>
           <tabs-tab :isActive="activeTab === 'tokens'" @click="() => handleClickTab('tokens')">{{ $t('settings.tabTitleTokens') }}</tabs-tab>
           <tabs-tab :isActive="activeTab === 'display'" @click="() => handleClickTab('display')">{{ $t('settings.tabTitleDisplay') }}</tabs-tab>
           <tabs-tab :isActive="activeTab === 'showAccounts'" @click="() => handleClickTab('showAccounts')">{{ $t('settings.tabTitleShowAccounts')}}</tabs-tab>
@@ -44,9 +44,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onUnmounted, watch } from 'vue'
+import { defineComponent, watch } from 'vue'
 import { MnemomicT } from '@radixdlt/application'
-import { combineLatest, Subject, Subscription } from 'rxjs'
 import TabsTab from '@/components/TabsTab.vue'
 import TabsContent from '@/components/TabsContent.vue'
 import SettingsResetPin from './SettingsResetPin.vue'
@@ -59,7 +58,7 @@ import SettingsShowAccounts from './SettingsShowAccounts.vue'
 import SettingsExport from './SettingsExport.vue'
 import WalletLayout from '@/components/layout/WalletLayout.vue'
 import { Ref, ref } from '@nopr3d/vue-next-rx'
-import { useSettingsTab, useWallet } from '@/composables'
+import { useOfflineWallet, useSettingsTab, useWallet } from '@/composables'
 import { useRoute, useRouter } from 'vue-router'
 import LoadingIcon from '@/components/LoadingIcon.vue'
 
@@ -80,11 +79,10 @@ const SettingsIndex = defineComponent({
   },
 
   setup () {
-    const subs = new Subscription()
     const mnemonic: Ref<MnemomicT | null> = ref(null)
-    const userRequestedMnemonic = new Subject<boolean>()
     const router = useRouter()
-    const { connected, radix, activeAddress, setActiveAddress, showHideAccountModal } = useWallet(router)
+    const { connected, activeAddress, setActiveAddress, showHideAccountModal } = useWallet(router)
+    const { revealMnemonic, wallet } = useOfflineWallet()
     const { activeTab, setTab } = useSettingsTab()
     const route = useRoute()
 
@@ -99,36 +97,26 @@ const SettingsIndex = defineComponent({
       { immediate: true }
     )
 
-    // Only fetch mnemonic if user confirms pin
-    const watchUserDidRequstMnemonic = combineLatest<[MnemomicT, boolean]>([radix.revealMnemonic(), userRequestedMnemonic])
-      .subscribe(([m, didRequest]: [MnemomicT, boolean]) => {
-        if (didRequest) { mnemonic.value = m }
-      })
-    subs.add(watchUserDidRequstMnemonic)
-
-    const handleAccessMnemonic = () => userRequestedMnemonic.next(true)
-
-    const unsetMnemonic = () => userRequestedMnemonic.next(false)
+    const handleAccessMnemonic = () => {
+      mnemonic.value = revealMnemonic()
+    }
 
     const handleClickTab = (tab: string) => {
       if (tab !== 'mnemonic') {
         mnemonic.value = null
-        unsetMnemonic()
       }
       setTab(tab)
     }
-
-    onUnmounted(() => subs.unsubscribe())
 
     return {
       activeAddress,
       connected,
       mnemonic,
       handleAccessMnemonic,
-      unsetMnemonic,
       handleClickTab,
       activeTab,
       setTab,
+      wallet,
       showHideAccountModal
     }
   }

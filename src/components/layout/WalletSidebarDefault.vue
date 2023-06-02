@@ -29,25 +29,6 @@
         </wallet-nav-link>
       </router-link>
 
-      <router-link :to="{ name: 'WalletTransaction', params: { activeAddress: activeAddress?.toString() }}" custom v-slot="{ href, navigate, isActive }">
-        <wallet-nav-link :href="href" :navigate="navigate" :isActive="isActive" :title="$t('wallet.navTransaction')">
-          <svg width="28" height="20" viewBox="0 0 28 20" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr-3">
-            <path d="M27 9.8871L14.4194 1.5V9.8871" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M9.3871 9.88707H27L14.3338 18.2742V13.2419" stroke="#00C389" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M9.3871 9.88715C9.3871 8.94326 9.06866 8.02698 8.48331 7.28651C7.89795 6.54605 7.07991 6.02472 6.16151 5.80685C5.24311 5.58898 4.27806 5.68731 3.42248 6.08594C2.5669 6.48458 1.87083 7.1602 1.44685 8.00351C1.02288 8.84682 0.895806 9.8085 1.08619 10.733C1.27657 11.6575 1.77327 12.4907 2.49595 13.0979C3.21863 13.7051 4.12501 14.0507 5.06848 14.0788C6.01195 14.107 6.93733 13.816 7.69492 13.253" stroke="#00C389" stroke-width="1.5" stroke-linecap="round"/>
-          </svg>
-        </wallet-nav-link>
-      </router-link>
-
-      <router-link :to="{ name: 'WalletStaking', params: { activeAddress: activeAddress?.toString() }}" custom v-slot="{ href, navigate, isActive }">
-        <wallet-nav-link :href="href" :navigate="navigate" :isActive="isActive" :title="$t('wallet.navStake')">
-          <svg width="19" height="24" viewBox="0 0 19 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr-3">
-            <path d="M3.27832 9.8159V7.35169C3.27832 3.99519 5.99934 1.27417 9.35584 1.27417C12.7123 1.27417 15.4334 3.99519 15.4334 7.35169V9.8159" stroke="white" stroke-width="1.5" stroke-miterlimit="10"/>
-            <path d="M1 23.8483V9.6189H3.46252H15.2989H17.7614V23.1004H4.48513" stroke="#00C389" stroke-width="1.5" stroke-miterlimit="10"/>
-          </svg>
-        </wallet-nav-link>
-      </router-link>
-
       <router-link :to="{ name: 'WalletHistory', params: { activeAddress: activeAddress?.toString() }}" custom v-slot="{ href, navigate, isActive }">
         <wallet-nav-link :href="href" :navigate="navigate" :isActive="isActive" :title="$t('wallet.navHistory')">
           <svg width="20" height="24" viewBox="0 0 20 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="mr-3">

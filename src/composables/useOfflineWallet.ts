@@ -50,7 +50,7 @@ const fetch = async () => {
 }
 
 const revealMnemonic = () => {
-  if (!wallet.value) return
+  if (!wallet.value) return null
   return wallet.value.revealMnemonic()
 }
 
