@@ -185,14 +185,12 @@ export default defineComponent({
       }
     }
 
-    const allSoftwareSelected = computed(() => {
-      return localAccounts.value.every((account) => selectedAccounts.value.includes(account.address.toString()))
-    })
-
     const addAll = () => {
       const localAddrs = localAccounts.value.map((account) => account.address.toString())
       const hardwareAddresses = hardwareDevices.value.flatMap((device) => device.addresses.map((address) => address.address.toString()))
-      selectedAccounts.value = [...localAddrs, ...hardwareAddresses]
+      const allAccounts = [...localAddrs, ...hardwareAddresses]
+      const hiddenAddresses = hiddenAccounts.value.map((hidden) => hidden.address)
+      selectedAccounts.value = includeHiddenAccounts.value ? allAccounts : allAccounts.filter((addr) => !hiddenAddresses.includes(addr))
       exportAccounts()
     }
 
@@ -205,6 +203,11 @@ export default defineComponent({
     }
 
     const exportAccounts = async () => {
+      const hiddenAddresses = hiddenAccounts.value.map((hidden) => hidden.address)
+      if (!includeHiddenAccounts.value) {
+        selectedAccounts.value = selectedAccounts.value.filter((addr) => !hiddenAddresses.includes(addr))
+      }
+
       isExporting.value = true
       isLoading.value = true
       qrCodes.value = []
@@ -230,9 +233,13 @@ export default defineComponent({
           accounts.push(exportedAccount)
         })
 
+      const options = {
+        errorCorrectionLevel: 'M' as QRCodeOptions['errorCorrectionLevel']
+      }
+
       mnemonicLength.value = mnemonic?.words.length
       const allData = exportAsCode(accounts, 1800, mnemonicLength.value)
-      qrCodes.value = await chunkIntoURLs(allData, QROptions.value)
+      qrCodes.value = await chunkIntoURLs(allData, options)
       fullExport.value = allData
       isLoading.value = false
     }
@@ -255,7 +262,6 @@ export default defineComponent({
     return {
       activeQRCode,
       activeCorrectionLevel,
-      allSoftwareSelected,
       hardwareDevices,
       hiddenAccounts,
       includeHiddenAccounts,

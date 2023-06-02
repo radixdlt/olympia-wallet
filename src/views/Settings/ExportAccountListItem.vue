@@ -1,11 +1,11 @@
 <template>
-  <div class="p-3 items-center justify-between flex border rounded-md gap-x-4">
+  <label class="p-3 items-center justify-between flex border rounded-md gap-x-4 transition-colors ease-in-out" :class="{'border-rBlue': addressSelected}" :for="address.toString()">
     <div class="flex-grow-0">
       <input
         type="checkbox"
-        :checked="selected.includes(address.toString())"
+        :checked="addressSelected"
         :value="address.toString()"
-        :id="name"
+        :id="address.toString()"
         @input="$emit('toggle', address.toString())"
       />
     </div>
@@ -18,11 +18,11 @@
         {{ address.toString() }}
       </div>
     </div>
-  </div>
+  </label>
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue'
+import { defineComponent, PropType, toRef, computed } from 'vue'
 import { AccountAddressT } from '@radixdlt/application'
 
 export default defineComponent({
@@ -42,6 +42,15 @@ export default defineComponent({
     isHidden: {
       type: Boolean,
       required: true
+    }
+  },
+
+  setup (props) {
+    const address = toRef(props, 'address')
+    const selected = toRef(props, 'selected')
+    const addressSelected = computed(() => selected.value.includes(address.value.toString()))
+    return {
+      addressSelected
     }
   }
 })
