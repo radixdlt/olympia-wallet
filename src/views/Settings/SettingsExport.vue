@@ -6,6 +6,9 @@
         <p>{{ $t("settings.export.title") }}</p>
         <br />
         <p>{{ $t("settings.export.description") }}</p>
+        <div v-if="hiddenAccounts.length > 0" class="mt-2">
+          <label><input type="checkbox" v-model="includeHiddenAccounts" name="hidden"/> Include hidden accounts in the export</label>
+        </div>
       </div>
       <div class="flex flex-col gap-y-2" v-if="!isExporting">
         <div class="flex justify-end">
@@ -54,17 +57,19 @@
           v-for="account in localAccounts"
           :key="account.address.toString()"
           :address="account.address"
+          :is-hidden="isHidden(account.address)"
           :name="accountNameFor(account.address)"
           :selected="selectedAccounts"
           @toggle="toggleAddress"
         />
       </div>
-      <div v-for="(device, i) in hardwareDevices" :key="i" class="mt-4 flex flex-col gap-4">
+      <div v-for="(device, i) in hardwareDevicesToDisplay" :key="i" class="mt-4 flex flex-col gap-4">
         <p class="border-b pb-1">{{ device.name  }}</p>
         <export-account-list-item
           v-for="address in device.addresses"
           :key="address.toString()"
           :address="address.address"
+          :isHidden="isHidden(address.address)"
           :name="accountNameFor(address.address)"
           :selected="selectedAccounts"
           @toggle="toggleAddress"
@@ -81,12 +86,13 @@ import { AccountT } from '@radixdlt/application'
 import { AccountAddressT } from '@radixdlt/account'
 import { copyToClipboard } from '@/actions/vue/create-wallet'
 import { useToast } from 'vue-toastification'
-import { useOfflineWallet } from '@/composables'
+import { useOfflineWallet, useWallet } from '@/composables'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
 import ExportAccountListItem from './ExportAccountListItem.vue'
 import { accountToExportPayload, compressPublicKeyToHex, exportAsCode } from '@/helpers/exportAsCode'
 import { HardwareAddress, HardwareDevice } from '@/services/_types'
 import { QRCodeOptions, toDataURL } from 'qrcode'
+import { useRouter } from 'vue-router'
 
 const stringToQRUrl = async (str: string, options: QRCodeOptions) : Promise<string> => {
   return new Promise((resolve, reject) => {
@@ -121,7 +127,10 @@ export default defineComponent({
 
   setup () {
     const toast = useToast()
-    const { accounts, hardwareDevices, accountNameFor, fetch, revealMnemonic } = useOfflineWallet()
+    const router = useRouter()
+    const { accounts, hardwareDevices, fetch, revealMnemonic } = useOfflineWallet()
+    const { hiddenAccounts, accountNameFor } = useWallet(router)
+
     fetch()
     const isExporting = ref(false)
     const isLoading = ref(true)
@@ -129,6 +138,27 @@ export default defineComponent({
     const qrCodes: Ref<string[]> = ref([])
     const activeQRCode = ref(0)
     const selectedAccounts = ref<string[]>([])
+    const includeHiddenAccounts = ref(true)
+
+    const accountsToDisplay = computed(() => {
+      if (!accounts.value) return []
+      if (includeHiddenAccounts.value) return accounts.value.all
+      const allHiddenAddresses = hiddenAccounts.value.map((addr) => addr.address)
+      return accounts.value.all.filter((account) => !allHiddenAddresses.includes(account.address.toString()))
+    })
+
+    const hardwareDevicesToDisplay = computed(() => {
+      if (!hardwareDevices.value) return []
+      if (includeHiddenAccounts.value) return hardwareDevices.value
+      const allHiddenAddresses = hiddenAccounts.value.map((addr) => addr.address)
+      const devicesWithoutHidden = hardwareDevices.value.map((device) => {
+        return {
+          ...device,
+          addresses: device.addresses.filter((addr) => !allHiddenAddresses.includes(addr.address.toString()))
+        }
+      }).filter((device) => device.addresses.length > 0)
+      return devicesWithoutHidden
+    })
 
     const activeCorrectionLevel = ref('M')
     const version = ref(38)
@@ -142,8 +172,7 @@ export default defineComponent({
     })
 
     const localAccounts: ComputedRef<AccountT[]> = computed(() => {
-      if (!accounts.value) return []
-      return accounts.value.all.filter((account: AccountT) => {
+      return accountsToDisplay.value.filter((account: AccountT) => {
         return account.signingKey.isLocalHDSigningKey
       })
     })
@@ -219,12 +248,17 @@ export default defineComponent({
       copyToClipboard(fullExport.value.join('\n'))
       toast.success('Copied to Clipboard')
     }
+    const isHidden = (address: AccountAddressT) => {
+      return hiddenAccounts.value.map((hidden) => hidden.address).includes(address.toString())
+    }
 
     return {
       activeQRCode,
       activeCorrectionLevel,
       allSoftwareSelected,
       hardwareDevices,
+      hiddenAccounts,
+      includeHiddenAccounts,
       isExporting,
       isLoading,
       qrCodes,
@@ -233,11 +267,13 @@ export default defineComponent({
       QROptions,
       version,
       fullExport,
+      hardwareDevicesToDisplay,
 
       accountNameFor,
       addAll,
       closeModal,
       exportAccounts,
+      isHidden,
       toggleAddress,
       copy
     }

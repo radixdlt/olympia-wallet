@@ -107,7 +107,7 @@ export const setAcceptedTos = (value: boolean): Promise<boolean> => new Promise(
   resolve(window.ipcRenderer.invoke('set-accepted-tos', value))
 })
 
-export const getHiddenAccounts = (): Promise<string[]> => new Promise((resolve) => {
+export const getHiddenAccounts = (): Promise<{address: string, nickname: string}[]> => new Promise((resolve) => {
   resolve(window.ipcRenderer.invoke('get-hidden-accounts'))
 })
 

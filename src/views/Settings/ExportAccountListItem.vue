@@ -10,10 +10,13 @@
       />
     </div>
     <div class="flex flex-col gap-2 flex-1">
-      <span v-if="name" class="text-sm">{{ name }}</span>
-      <span class="flex items-center gap-1 text-xs text-rBlue">
+      <div>
+        <span v-if="name" class="text-sm mr-2">{{ name }}</span>
+        <span v-if="isHidden" class="text-sm text-rGrayMed">(Hidden)</span>
+      </div>
+      <div class="flex items-center gap-1 text-xs text-rBlue">
         {{ address.toString() }}
-      </span>
+      </div>
     </div>
   </div>
 </template>
@@ -34,6 +37,10 @@ export default defineComponent({
     },
     selected: {
       type: Array as PropType<string[]>,
+      required: true
+    },
+    isHidden: {
+      type: Boolean,
       required: true
     }
   }

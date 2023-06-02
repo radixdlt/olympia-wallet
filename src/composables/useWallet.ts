@@ -413,7 +413,7 @@ const handleDecimalType = (newDecimalType: AmountFormats) => {
   setDecimalType(newDecimalType)
 }
 
-const hiddenAccounts: Ref<string []> = ref([])
+const hiddenAccounts: Ref<{address: string, nickname: string} []> = ref([])
 
 // get hiddenAccounts
 const fetchHiddenAccountsFromElectron = async () => {
@@ -449,7 +449,7 @@ interface useWalletInterface {
   readonly hardwareInteractionState: Ref<string>;
   readonly hasWallet: Ref<boolean>;
   readonly ledgerVerifyError: Ref<boolean>;
-  readonly hiddenAccounts: ComputedRef<string []>;
+  readonly hiddenAccounts: ComputedRef<{ address: string, nickname: string}[]>;
   // readonly ledgerVerifyError: Ref<Error | null>;
   readonly nativeToken: Ref<Token | null>;
   readonly networkPreamble: ComputedRef<string>;
