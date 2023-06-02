@@ -8,14 +8,14 @@
         <p>{{ $t("settings.export.description") }}</p>
       </div>
       <div class="flex flex-col gap-y-2" v-if="!isExporting">
-        <div>
-          <button-submit :disabled="false" :small="true" @click="addAll">
-            Add All Accounts
+        <div class="flex justify-end">
+          <button-submit :disabled="false" :small="true" @click="addAll" class="w-36">
+            Export All
           </button-submit>
         </div>
         <div>
-          <button-submit :disabled="selectedAccounts.length == 0" :small="true" @click="exportAccounts" class="w-full">
-            Export
+          <button-submit :disabled="selectedAccounts.length == 0" :small="true" @click="exportAccounts" class="w-36">
+            Export Selected
           </button-submit>
         </div>
       </div>
@@ -49,9 +49,6 @@
       <div class="flex flex-col gap-4">
         <div class="border-b pb-1 flex items-center justify-between">
           <p>{{ $t("settings.export.software") }}</p>
-          <button-submit :disabled="false" :small="true" @click="toggleAllSoftware">
-            {{ allSoftwareSelected ? "Deselect All" : "Select All" }}
-          </button-submit>
         </div>
         <export-account-list-item
           v-for="account in localAccounts"
@@ -84,11 +81,9 @@ import { AccountT } from '@radixdlt/application'
 import { AccountAddressT } from '@radixdlt/account'
 import { copyToClipboard } from '@/actions/vue/create-wallet'
 import { useToast } from 'vue-toastification'
-import { useRouter } from 'vue-router'
-import { useWallet } from '@/composables'
+import { useOfflineWallet } from '@/composables'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
 import ExportAccountListItem from './ExportAccountListItem.vue'
-import { firstValueFrom } from 'rxjs'
 import { accountToExportPayload, compressPublicKeyToHex, exportAsCode } from '@/helpers/exportAsCode'
 import { HardwareAddress, HardwareDevice } from '@/services/_types'
 import { QRCodeOptions, toDataURL } from 'qrcode'
@@ -125,9 +120,9 @@ export default defineComponent({
   },
 
   setup () {
-    const router = useRouter()
     const toast = useToast()
-    const { accounts, accountNameFor, hardwareDevices, radix } = useWallet(router)
+    const { accounts, hardwareDevices, accountNameFor, fetch, revealMnemonic } = useOfflineWallet()
+    fetch()
     const isExporting = ref(false)
     const isLoading = ref(true)
     const mnemonicLength = ref(0)
@@ -165,19 +160,11 @@ export default defineComponent({
       return localAccounts.value.every((account) => selectedAccounts.value.includes(account.address.toString()))
     })
 
-    const toggleAllSoftware = () => {
-      const localAddrs = localAccounts.value.map((account) => account.address.toString())
-      if (allSoftwareSelected.value) {
-        selectedAccounts.value = selectedAccounts.value.filter((addr) => !localAddrs.includes(addr))
-      } else {
-        selectedAccounts.value = [...selectedAccounts.value, ...localAddrs]
-      }
-    }
-
     const addAll = () => {
       const localAddrs = localAccounts.value.map((account) => account.address.toString())
       const hardwareAddresses = hardwareDevices.value.flatMap((device) => device.addresses.map((address) => address.address.toString()))
       selectedAccounts.value = [...localAddrs, ...hardwareAddresses]
+      exportAccounts()
     }
 
     const accountSummary = (address: AccountAddressT, addressIndex: number, isLocal: boolean): string => {
@@ -193,6 +180,8 @@ export default defineComponent({
       isLoading.value = true
       qrCodes.value = []
       const accounts: string[] = []
+      const mnemonic = revealMnemonic()
+      if (!mnemonic) throw new Error('No Mnemonic')
       localAccounts.value
         .filter((account) => selectedAccounts.value.includes(account.address.toString()) && account.hdPath)
         .forEach((account) => {
@@ -212,9 +201,7 @@ export default defineComponent({
           accounts.push(exportedAccount)
         })
 
-      const mnemonic = await firstValueFrom(radix.revealMnemonic())
-      mnemonicLength.value = mnemonic.words.length
-
+      mnemonicLength.value = mnemonic?.words.length
       const allData = exportAsCode(accounts, 1800, mnemonicLength.value)
       qrCodes.value = await chunkIntoURLs(allData, QROptions.value)
       fullExport.value = allData
@@ -252,7 +239,6 @@ export default defineComponent({
       closeModal,
       exportAccounts,
       toggleAddress,
-      toggleAllSoftware,
       copy
     }
   }

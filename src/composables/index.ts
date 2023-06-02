@@ -1,4 +1,5 @@
 import useConnectableRadix from './useConnectableRadix'
+import useOfflineWallet from './useOfflineWallet'
 import useErrors from './useErrors'
 import useHistory from './useHistory'
 import useHomeModal from './useHomeModal'
@@ -10,6 +11,7 @@ import useWallet from './useWallet'
 
 export {
   useConnectableRadix,
+  useOfflineWallet,
   useErrors,
   useHistory,
   useHomeModal,

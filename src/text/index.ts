@@ -355,7 +355,7 @@ const messages = {
       noAccountsToShowMessage: 'There are no hidden accounts to show.',
       unhideAccountBtnText: 'unhide account',
       export: {
-        title: 'Export your Accounts',
+        title: 'Export your MAINNET Accounts',
         description: 'Generate a series of QR Codes that contain your software and hardware wallet accounts. You can use these QR Codes to import your accounts into the Babylon iOS Wallet.',
         software: 'Software Wallets'
       }

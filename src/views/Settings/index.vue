@@ -10,7 +10,7 @@
           <tabs-tab :isActive="activeTab === 'display'" @click="() => handleClickTab('display')">{{ $t('settings.tabTitleDisplay') }}</tabs-tab>
           <tabs-tab :isActive="activeTab === 'showAccounts'" @click="() => handleClickTab('showAccounts')">{{ $t('settings.tabTitleShowAccounts')}}</tabs-tab>
           <tabs-tab :isActive="activeTab === 'nodes'" @click="() => handleClickTab('nodes')">{{ $t('settings.tabTitleGateway') }}</tabs-tab>
-          <tabs-tab :isActive="activeTab === 'export'" @click="() => handleClickTab('export')" :isDisabled="!connected">{{ $t('settings.tabTitleExport') }}</tabs-tab>
+          <tabs-tab :isActive="activeTab === 'export'" @click="() => handleClickTab('export')">{{ $t('settings.tabTitleExport') }}</tabs-tab>
         </div>
         <tabs-content :leftTabIsActive="activeTab === 'password'">
           <settings-reset-password
