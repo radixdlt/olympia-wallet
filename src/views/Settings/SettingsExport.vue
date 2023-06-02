@@ -1,82 +1,86 @@
 <template>
   <div>
-  <div class="bg-white flex flex-col rounded-full w-full min-h-full p-10">
-    <div class="flex justify-between">
-      <div class="text-rGrayDark mb-6 text-sm max-w-lg">
-        <p>{{ $t("settings.export.title") }}</p>
-        <br />
-        <p>{{ $t("settings.export.description") }}</p>
-        <div v-if="hiddenAccounts.length > 0" class="mt-2">
-          <label><input type="checkbox" v-model="includeHiddenAccounts" name="hidden"/> Include hidden accounts in the export</label>
+    <div class="bg-white flex flex-col rounded-full w-full min-h-full p-10">
+      <div class="flex justify-between">
+        <div class="text-rGrayDark mb-6 text-sm max-w-lg">
+          <p>{{ $t("settings.export.title") }}</p>
+          <br />
+          <p>{{ $t("settings.export.description") }}</p>
+          <div v-if="hiddenAccounts.length > 0" class="mt-2">
+            <label><input type="checkbox" v-model="includeHiddenAccounts" name="hidden"/> Include hidden accounts in the export</label>
+          </div>
+        </div>
+        <div class="flex flex-col gap-y-2" v-if="!isExporting">
+          <div class="flex justify-end">
+            <button-submit :disabled="false" :small="true" @click="addAll" class="w-36">
+              Export All
+            </button-submit>
+          </div>
+          <div>
+            <button-submit :disabled="selectedAccounts.length == 0" :small="true" @click="exportAccounts" class="w-36">
+              Export Selected
+            </button-submit>
+          </div>
         </div>
       </div>
-      <div class="flex flex-col gap-y-2" v-if="!isExporting">
-        <div class="flex justify-end">
-          <button-submit :disabled="false" :small="true" @click="addAll" class="w-36">
-            Export All
-          </button-submit>
-        </div>
-        <div>
-          <button-submit :disabled="selectedAccounts.length == 0" :small="true" @click="exportAccounts" class="w-36">
-            Export Selected
-          </button-submit>
-        </div>
-      </div>
-    </div>
-    <div v-if="isExporting">
       <div>
+        <div class="flex flex-col gap-4">
+          <div class="border-b pb-1 flex items-center justify-between">
+            <p>{{ $t("settings.export.software") }}</p>
+          </div>
+          <export-account-list-item
+            v-for="account in localAccounts"
+            :key="account.address.toString()"
+            :address="account.address"
+            :is-hidden="isHidden(account.address)"
+            :name="accountNameFor(account.address)"
+            :selected="selectedAccounts"
+            @toggle="toggleAddress"
+          />
+        </div>
+        <div v-for="(device, i) in hardwareDevicesToDisplay" :key="i" class="mt-4 flex flex-col gap-4">
+          <p class="border-b pb-1">{{ device.name  }}</p>
+          <export-account-list-item
+            v-for="address in device.addresses"
+            :key="address.toString()"
+            :address="address.address"
+            :isHidden="isHidden(address.address)"
+            :name="accountNameFor(address.address)"
+            :selected="selectedAccounts"
+            @toggle="toggleAddress"
+          />
+        </div>
+      </div>
+    </div>
+    <div v-if="isExporting" class="absolute inset-0 z-50 bg-white flex flex-col max-h-screen">
+      <div class="flex-grow-0 flex-shrink-0 w-full bg-rGrayLight text-rBlack text-md h-8 flex items-center justify-between px-2">
         <p>Scan your QR {{qrCodes.length > 1 ? 'Codes' : 'Code'}} into the Babylon Wallet</p>
-        <div class="flex justify-between items-center">
-          <button :disabled="activeQRCode == 0" @click="activeQRCode--">
-            Previous
-          </button>
-          <span>{{ activeQRCode + 1 }} of {{ qrCodes.length }}</span>
-          <button :disabled="activeQRCode == qrCodes.length" @click="activeQRCode++">
-            Next
-          </button>
-        </div>
-        <div class="flex justify-center">
-          <img :src="qrCodes[activeQRCode]" />
-        </div>
-      </div>
-      <div class="flex flex-row space-x-5 justify-center my-4">
-        <button @click="closeModal" class="border border-solid border-rGrayDark rounded py-2.5 font-sm text-rGrayDark cursor-pointer transition-colors focus:outline-none w-44">
-          Close
+        <button @click="closeModal">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M18 6L6 18" stroke="#003057" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M6 6L18 18" stroke="#003057" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
         </button>
-        <button @click="copy" :disabled="qrCodes.length == 0" class="border border-solid border-rGrayDark rounded py-2.5 font-sm text-rGrayDark cursor-pointer transition-colors focus:outline-none w-44" v-if="fullExport.length > 0">
-          Copy Export
+      </div>
+      <div class="flex justify-center h-exportQRContainer">
+        <img :src="qrCodes[activeQRCode]" class="aspect-square object-contain"/>
+      </div>
+      <div class="flex flex-row space-x-16 justify-center h-12 items-center">
+        <button v-if="qrCodes.length > 1" :disabled="activeQRCode == 0" @click="activeQRCode = activeQRCode - 1" class="border border-solid border-rGrayDark rounded py-2.5 font-sm text-rGrayDark cursor-pointer transition-colors focus:outline-none w-32">
+          Previous
+        </button>
+        <span v-if="qrCodes.length > 1">
+          Code: {{ activeQRCode + 1 }} / {{ qrCodes.length }}
+        </span>
+        <button v-if="qrCodes.length > 1 && activeQRCode != qrCodes.length - 1" @click="activeQRCode = activeQRCode + 1" class="border border-solid border-rGrayDark rounded py-2.5 font-sm text-rGrayDark cursor-pointer transition-colors focus:outline-none w-32">
+          Next
+        </button>
+
+        <button v-if="activeQRCode == qrCodes.length - 1" class="border border-solid border-rGreen rounded py-2.5 font-sm text-white bg-rGreen cursor-pointer transition-colors focus:outline-none w-32" @click="finish">
+          Finish
         </button>
       </div>
     </div>
-    <div v-else>
-      <div class="flex flex-col gap-4">
-        <div class="border-b pb-1 flex items-center justify-between">
-          <p>{{ $t("settings.export.software") }}</p>
-        </div>
-        <export-account-list-item
-          v-for="account in localAccounts"
-          :key="account.address.toString()"
-          :address="account.address"
-          :is-hidden="isHidden(account.address)"
-          :name="accountNameFor(account.address)"
-          :selected="selectedAccounts"
-          @toggle="toggleAddress"
-        />
-      </div>
-      <div v-for="(device, i) in hardwareDevicesToDisplay" :key="i" class="mt-4 flex flex-col gap-4">
-        <p class="border-b pb-1">{{ device.name  }}</p>
-        <export-account-list-item
-          v-for="address in device.addresses"
-          :key="address.toString()"
-          :address="address.address"
-          :isHidden="isHidden(address.address)"
-          :name="accountNameFor(address.address)"
-          :selected="selectedAccounts"
-          @toggle="toggleAddress"
-        />
-      </div>
-    </div>
-  </div>
   </div>
 </template>
 
@@ -84,9 +88,7 @@
 import { defineComponent, computed, ComputedRef, ref, Ref } from 'vue'
 import { AccountT } from '@radixdlt/application'
 import { AccountAddressT } from '@radixdlt/account'
-import { copyToClipboard } from '@/actions/vue/create-wallet'
-import { useToast } from 'vue-toastification'
-import { useOfflineWallet, useWallet } from '@/composables'
+import { useOfflineWallet, useWallet, useSettingsTab } from '@/composables'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
 import ExportAccountListItem from './ExportAccountListItem.vue'
 import { accountToExportPayload, compressPublicKeyToHex, exportAsCode } from '@/helpers/exportAsCode'
@@ -126,10 +128,10 @@ export default defineComponent({
   },
 
   setup () {
-    const toast = useToast()
     const router = useRouter()
     const { accounts, hardwareDevices, fetch, revealMnemonic } = useOfflineWallet()
     const { hiddenAccounts, accountNameFor } = useWallet(router)
+    const { setTab } = useSettingsTab()
 
     fetch()
     const isExporting = ref(false)
@@ -251,12 +253,16 @@ export default defineComponent({
       qrCodes.value = []
     }
 
-    const copy = () => {
-      copyToClipboard(fullExport.value.join('\n'))
-      toast.success('Copied to Clipboard')
-    }
     const isHidden = (address: AccountAddressT) => {
       return hiddenAccounts.value.map((hidden) => hidden.address).includes(address.toString())
+    }
+
+    const finish = () => {
+      isExporting.value = false
+      qrCodes.value = []
+      activeQRCode.value = 0
+      fullExport.value = []
+      setTab('mnemonic')
     }
 
     return {
@@ -281,7 +287,7 @@ export default defineComponent({
       exportAccounts,
       isHidden,
       toggleAddress,
-      copy
+      finish
     }
   }
 })
