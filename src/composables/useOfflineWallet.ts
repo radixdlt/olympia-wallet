@@ -23,7 +23,7 @@ const wallet: Ref<WalletT | null> = ref(null)
 const network = Network.MAINNET
 const accounts: Ref<AccountsT | null> = ref(null)
 const hardwareDevices: Ref<HardwareDevice[]> = ref([])
-const accountIndex: Ref<number> = ref(0)
+const accountIndex: Ref<number | null> = ref(null)
 
 const login = async (password: string) => {
   const signingKeychainResult = await SigningKeychain.byLoadingAndDecryptingKeystore({
@@ -45,7 +45,8 @@ const fetch = async () => {
   const index = await getDerivedAccountsIndex(network)
   if (Number(index) === accountIndex.value) return
   accountIndex.value = Number(index)
-  accounts.value = await firstValueFrom(wallet.value.restoreLocalHDAccountsToIndex(accountIndex.value + 1))
+  const numberToRestore = Number(index) === 0 ? Number(index) : Number(index) + 1
+  accounts.value = await firstValueFrom(wallet.value.restoreLocalHDAccountsToIndex(numberToRestore))
   hardwareDevices.value = await getHardwareDevices(network)
 }
 

@@ -25,7 +25,7 @@ import { defineComponent, watch } from 'vue'
 import { saveAccountName } from '@/actions/vue/data-store'
 import { ref } from '@nopr3d/vue-next-rx'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
-import { useWallet } from '@/composables'
+import { useOfflineWallet, useWallet } from '@/composables'
 import { useRouter } from 'vue-router'
 
 const AccountEditName = defineComponent({
@@ -36,6 +36,7 @@ const AccountEditName = defineComponent({
   setup () {
     const name = ref('')
     const router = useRouter()
+    const { fetch } = useOfflineWallet()
     const { accountNameFor, activeAddress, accountRenamed } = useWallet(router)
     if (!activeAddress.value) {
       router.push('/')
@@ -51,7 +52,10 @@ const AccountEditName = defineComponent({
     const handleSubmit = () => {
       if (!activeAddress.value) return
       saveAccountName(activeAddress.value.toString(), name.value)
-        .then(() => accountRenamed(name.value))
+        .then(() => {
+          accountRenamed(name.value)
+          fetch()
+        })
     }
     return { name, handleSubmit }
   }

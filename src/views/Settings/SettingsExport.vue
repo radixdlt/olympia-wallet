@@ -80,19 +80,17 @@
             <path d="M19 12H5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             <path d="M12 19L5 12L12 5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
-
-          Previous
+          Previous QR
         </button>
         <span v-if="qrCodes.length > 1">
           Code: {{ activeQRCode + 1 }} / {{ qrCodes.length }}
         </span>
         <button v-if="qrCodes.length > 1 && activeQRCode != qrCodes.length - 1" @click="activeQRCode = activeQRCode + 1" class="border border-solid border-rBlue rounded py-2.5 font-sm text-white bg-rBlue cursor-pointer transition-colors focus:outline-none w-52 flex items-center justify-center gap-x-2">
-          Next
+          Next QR
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M5 12H19" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             <path d="M12 5L19 12L12 19" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
-
         </button>
 
         <button v-if="activeQRCode == qrCodes.length - 1" class="border border-solid border-rGreen rounded py-2.5 font-sm text-white bg-rGreen cursor-pointer transition-colors focus:outline-none w-52" @click="finish">
@@ -104,7 +102,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, ComputedRef, ref, Ref } from 'vue'
+import { defineComponent, computed, ComputedRef, ref, Ref, watch } from 'vue'
 import { AccountT } from '@radixdlt/application'
 import { AccountAddressT } from '@radixdlt/account'
 import { useOfflineWallet, useWallet, useSettingsTab } from '@/composables'
@@ -113,7 +111,7 @@ import ExportAccountListItem from './ExportAccountListItem.vue'
 import { accountToExportPayload, compressPublicKeyToHex, exportAsCode } from '@/helpers/exportAsCode'
 import { HardwareAddress, HardwareDevice } from '@/services/_types'
 import { QRCodeOptions, toDataURL } from 'qrcode'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 
 const stringToQRUrl = async (str: string, options: QRCodeOptions) : Promise<string> => {
   return new Promise((resolve, reject) => {
@@ -150,9 +148,13 @@ export default defineComponent({
     const router = useRouter()
     const { accounts, hardwareDevices, fetch, revealMnemonic } = useOfflineWallet()
     const { hiddenAccounts, accountNameFor } = useWallet(router)
-    const { setTab } = useSettingsTab()
+    const { activeTab, setTab } = useSettingsTab()
+    const route = useRoute()
 
-    fetch()
+    watch(() => [route.fullPath, activeTab], () => {
+      fetch()
+    }, { immediate: true })
+
     const isExporting = ref(false)
     const isLoading = ref(true)
     const mnemonicLength = ref(0)
@@ -219,7 +221,6 @@ export default defineComponent({
       const name = accountNameFor(address)
       const localType = isLocal ? 'S' : 'H'
       const compressedKey = compressPublicKeyToHex(address.publicKey.toString())
-
       return accountToExportPayload(localType, compressedKey, addressIndex, name)
     }
 

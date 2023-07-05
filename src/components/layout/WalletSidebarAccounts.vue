@@ -144,7 +144,7 @@
 import { defineComponent, ref, Ref, computed, ComputedRef } from 'vue'
 import { AccountAddressT, AccountT } from '@radixdlt/application'
 import AccountListItem from '@/components/AccountListItem.vue'
-import { useWallet, useSidebar } from '@/composables'
+import { useWallet, useSidebar, useOfflineWallet } from '@/composables'
 import { useRouter } from 'vue-router'
 import { HardwareDevice } from '@/services/_types'
 
@@ -167,6 +167,7 @@ const WalletSidebarAccounts = defineComponent({
       setDisconnectDeviceModal,
       hiddenAccounts
     } = useWallet(router)
+    const { fetch } = useOfflineWallet()
 
     const { setState } = useSidebar()
     const showHardwareHelper = ref(false)
@@ -215,12 +216,12 @@ const WalletSidebarAccounts = defineComponent({
       addSoftwareAccount () {
         addAccount().then((account: AccountT | false) => {
           if (!account) return
+          fetch()
           const name = router.currentRoute.value.name || 'WalletOverview'
           if (name === 'Settings') { switchAddress(account.address) }
           router.push({ name, params: { activeAddress: account.address.toString() } })
         })
       },
-      switchAddress,
       debugSwitch (account: AccountT) {
         const name = router.currentRoute.value.name || 'WalletOverview'
         router.push({ name, params: { activeAddress: account.address.toString() } })
