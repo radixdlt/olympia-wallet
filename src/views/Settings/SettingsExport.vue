@@ -2,12 +2,15 @@
   <div>
     <div class="bg-white flex flex-col rounded-full w-full min-h-full p-10">
       <div class="flex justify-between">
-        <div class="text-rGrayDark mb-6 text-sm max-w-lg">
-          <p>{{ $t("settings.export.title") }}</p>
-          <br />
-          <p>{{ $t("settings.export.description") }}</p>
-          <div v-if="hiddenAccounts.length > 0" class="mt-2">
-            <label><input type="checkbox" v-model="includeHiddenAccounts" name="hidden"/> Include hidden accounts in the export</label>
+        <div class="mb-6 max-w-xl text-sm leading-5">
+          <p class="mb-3">
+            To migrate your Radix mainnet accounts, first <a href="https://wallet.radixdlt.com/" target="_blank" class="font-medium">download and setup the new Radix Wallet for Babylon</a>. If you are using a Ledger hardware wallet device, you will also need to download and link the Radix Connector browser extension.
+          </p>
+          <p>
+            Then begin the export process by clicking "Export All" or "Export Selected" here.
+          </p>
+          <div v-if="hiddenAccounts.length > 0" class="mt-3">
+            <label class="flex items-center"><input type="checkbox" v-model="includeHiddenAccounts" name="hidden" class="mr-2"/> Include hidden accounts in the export</label>
           </div>
         </div>
         <div class="flex flex-col gap-y-2" v-if="!isExporting">
@@ -53,8 +56,10 @@
       </div>
     </div>
     <div v-if="isExporting" class="absolute inset-0 z-50 bg-white flex flex-col max-h-screen">
-      <div class="flex-grow-0 flex-shrink-0 w-full bg-rGrayLight text-rBlack text-md h-8 flex items-center justify-between px-2">
-        <p>Scan your QR {{qrCodes.length > 1 ? 'Codes' : 'Code'}} into the Babylon Wallet</p>
+      <div class="flex-grow-0 flex-shrink-0 w-full bg-rGrayLight text-rBlack text-md h-12 flex items-center justify-between px-2">
+        <div>
+          <p>To import your accounts, use the "Import from a Legacy Wallet" feature of the new Radix Wallet mobile app to scan this QR code.</p>
+        </div>
         <button @click="closeModal">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M18 6L6 18" stroke="#003057" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -65,19 +70,33 @@
       <div class="flex justify-center h-exportQRContainer">
         <img :src="qrCodes[activeQRCode]" class="aspect-square object-contain"/>
       </div>
-      <div class="flex flex-row space-x-16 justify-center h-12 items-center">
-        <button v-if="qrCodes.length > 1" :disabled="activeQRCode == 0" @click="activeQRCode = activeQRCode - 1" class="border border-solid border-rGrayDark rounded py-2.5 font-sm text-rGrayDark cursor-pointer transition-colors focus:outline-none w-32">
+      <div class="flex flex-row space-x-16 justify-center h-12 items-center mb-3">
+        <button v-if="qrCodes.length > 1" :disabled="activeQRCode == 0" @click="activeQRCode = activeQRCode - 1" :class="{
+          'border border-solid  rounded py-2.5 font-sm  cursor-pointer flex items-center justify-center gap-x-3 focus:outline-none w-52 transition-colors': true,
+          'border-rGrayDark text-rGrayDark': activeQRCode == 0,
+          'border-rBlue text-white bg-rBlue': activeQRCode != 0
+        }">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="stroke-current">
+            <path d="M19 12H5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M12 19L5 12L12 5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+
           Previous
         </button>
         <span v-if="qrCodes.length > 1">
           Code: {{ activeQRCode + 1 }} / {{ qrCodes.length }}
         </span>
-        <button v-if="qrCodes.length > 1 && activeQRCode != qrCodes.length - 1" @click="activeQRCode = activeQRCode + 1" class="border border-solid border-rGrayDark rounded py-2.5 font-sm text-rGrayDark cursor-pointer transition-colors focus:outline-none w-32">
+        <button v-if="qrCodes.length > 1 && activeQRCode != qrCodes.length - 1" @click="activeQRCode = activeQRCode + 1" class="border border-solid border-rBlue rounded py-2.5 font-sm text-white bg-rBlue cursor-pointer transition-colors focus:outline-none w-52 flex items-center justify-center gap-x-2">
           Next
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M5 12H19" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M12 5L19 12L12 19" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+
         </button>
 
-        <button v-if="activeQRCode == qrCodes.length - 1" class="border border-solid border-rGreen rounded py-2.5 font-sm text-white bg-rGreen cursor-pointer transition-colors focus:outline-none w-32" @click="finish">
-          Finish
+        <button v-if="activeQRCode == qrCodes.length - 1" class="border border-solid border-rGreen rounded py-2.5 font-sm text-white bg-rGreen cursor-pointer transition-colors focus:outline-none w-52" @click="finish">
+          Continue to Seed Phrase
         </button>
       </div>
     </div>
