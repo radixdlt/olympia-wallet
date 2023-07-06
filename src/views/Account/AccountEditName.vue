@@ -1,5 +1,5 @@
 <template>
-  <div class="relative bg-white w-full flex-1">
+  <div class="flex flex-col overflow-y-auto relative bg-white w-full flex-1">
     <form
       @submit.prevent="handleSubmit"
       class="flex flex-col pt-20 pb-6 pl-16 pr-8 relative z-10 max-w-lg"
@@ -7,7 +7,7 @@
       <h2 class="text-5xl text-rBlack font-thin leading-tight mb-9">{{ $t('account.editNameHeading') }}</h2>
       <input
         v-model="name"
-        class="w-full border-t-0 border-r-0 border-l-0 py-5 border-b border-rBlack leading-8 focus:ring-0 focus:outline-none focus:border-rGreen mb-40 max-w-sm"
+        class="w-full border-t-0 border-r-0 border-l-0 py-5 border-b border-rBlack leading-8 focus:ring-0 focus:outline-none focus:border-rGreen mb-36 max-w-sm"
         :placeholder="$t('account.nameInputPlaceholder')"
       />
 
