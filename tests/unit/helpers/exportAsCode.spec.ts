@@ -14,6 +14,8 @@ describe('sanitizeName', () => {
     expect(sanitizeName('Main account.')).to.equal('Main account.}')
     expect(sanitizeName('Olympia is a small town in Eli')).to.equal('Olympia is a small town in Eli}')
     expect(sanitizeName('Hello ~ ^')).to.equal('Hello _ _}')
+    expect(sanitizeName('TestTestTestTestTestTestTest 😁')).to.equal('TestTestTestTestTestTestTest 😁}')
+    expect(sanitizeName('Test😁')).to.equal('Test}')
   })
 })
 

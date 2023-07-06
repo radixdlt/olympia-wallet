@@ -201,6 +201,11 @@ const WalletSidebarAccounts = defineComponent({
       router.push({ name: 'device-edit-name', params: { activeAddress: firstAccount } })
     }
 
+    const createNewHardwareAccountAction = async () => {
+      await createNewHardwareAccount()
+      fetch()
+    }
+
     return {
       activeAddress,
       derivedAccountIndex,
@@ -255,7 +260,7 @@ const WalletSidebarAccounts = defineComponent({
         setState(false)
         router.push(`/wallet/${account.address.toString()}/account-edit-name`)
       },
-      createNewHardwareAccount,
+      createNewHardwareAccount: createNewHardwareAccountAction,
       isActiveDevice (hardwareDevice: HardwareDevice) {
         return !!hardwareDevice.addresses.find((hwaddr) => {
           if (!activeAddress.value) return false

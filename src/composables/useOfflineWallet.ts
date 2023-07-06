@@ -43,11 +43,11 @@ const login = async (password: string) => {
 const fetch = async () => {
   if (!wallet.value) return
   const index = await getDerivedAccountsIndex(network)
+  hardwareDevices.value = await getHardwareDevices(network)
   if (Number(index) === accountIndex.value) return
   accountIndex.value = Number(index)
   const numberToRestore = Number(index) === 0 ? Number(index) : Number(index) + 1
   accounts.value = await firstValueFrom(wallet.value.restoreLocalHDAccountsToIndex(numberToRestore))
-  hardwareDevices.value = await getHardwareDevices(network)
 }
 
 const revealMnemonic = () => {

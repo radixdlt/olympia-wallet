@@ -25,7 +25,7 @@ import { defineComponent, watch } from 'vue'
 import { saveDeviceName, getHardwareDevices } from '@/actions/vue/data-store'
 import { ref } from '@nopr3d/vue-next-rx'
 import ButtonSubmit from '@/components/ButtonSubmit.vue'
-import { useWallet } from '@/composables'
+import { useOfflineWallet, useWallet } from '@/composables'
 import { useRouter } from 'vue-router'
 
 const WalletDeviceEditName = defineComponent({
@@ -36,6 +36,7 @@ const WalletDeviceEditName = defineComponent({
   setup () {
     const name = ref('')
     const router = useRouter()
+    const { fetch } = useOfflineWallet()
 
     const { activeAddress, deviceRenamed, activeNetwork } = useWallet(router)
     if (!activeAddress.value) {
@@ -75,6 +76,7 @@ const WalletDeviceEditName = defineComponent({
       if (idx < 0) return
 
       await saveDeviceName(idx, activeNetwork.value, name.value)
+      fetch()
       deviceRenamed()
     }
 

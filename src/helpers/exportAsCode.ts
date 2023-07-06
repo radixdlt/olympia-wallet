@@ -26,7 +26,7 @@ export const compressPublicKeyToHex = (publicKey: string) : string => {
 }
 
 export const sanitizeName = (name: string): string => {
-  const limitedName = name.substring(0, 30)
+  const limitedName = [...name].slice(0, 30).join('')
   const replacedName = FORBIDDEN_CHARACTERS.reduce((acc, forbidden) => acc.replace(forbidden, ACCOUNT_NAME_REPLACEMENT), limitedName)
   return `${replacedName}${END_OF_ACCOUNT_NAME}`
 }
