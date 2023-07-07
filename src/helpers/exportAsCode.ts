@@ -25,8 +25,13 @@ export const compressPublicKeyToHex = (publicKey: string) : string => {
   return Buffer.from(publicKey, 'hex').toString('base64')
 }
 
+/* eslint-disable no-control-regex */
+const emojiRegex = /\p{Emoji_Modifier_Base}\p{Emoji_Modifier}?|\p{Emoji_Presentation}|\p{Emoji}\uFE0F/gu
+const unicodeRegex = /[^\u0000-\u007F]/gu
+
 export const sanitizeName = (name: string): string => {
-  const limitedName = [...name].slice(0, 30).join('')
+  const nameWithoutUnicode = name.replace(emojiRegex, ACCOUNT_NAME_REPLACEMENT).replace(unicodeRegex, ACCOUNT_NAME_REPLACEMENT)
+  const limitedName = [...nameWithoutUnicode].slice(0, 30).join('')
   const replacedName = FORBIDDEN_CHARACTERS.reduce((acc, forbidden) => acc.replace(forbidden, ACCOUNT_NAME_REPLACEMENT), limitedName)
   return `${replacedName}${END_OF_ACCOUNT_NAME}`
 }
