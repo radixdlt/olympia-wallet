@@ -15,7 +15,12 @@ describe('sanitizeName', () => {
     expect(sanitizeName('Olympia is a small town in Eli')).to.equal('Olympia is a small town in Eli}')
     expect(sanitizeName('Hello ~ ^')).to.equal('Hello _ _}')
     expect(sanitizeName('TestTestTestTestTestTestTest 😁')).to.equal('TestTestTestTestTestTestTest 😁}')
-    expect(sanitizeName('Test😁')).to.equal('Test}')
+    expect(sanitizeName('abcdefghijklmnopqrstuvwxyz0123456789')).to.equals('abcdefghijklmnopqrstuvwxyz0123}')
+    expect(sanitizeName('🤣🤣🤣🤣🤣🤣🤣🤣🤣🤣1234567890🤣🤣🤣🤣🤣🤣🤣🤣🤣🤣1234567890')).to.equal('🤣🤣🤣🤣🤣🤣🤣🤣🤣🤣1234567890🤣🤣🤣🤣🤣🤣🤣🤣🤣🤣}')
+    expect(sanitizeName('Hello HelloHello Hello 🤣🤣 🤣🤣 🤣🤣 🤣🤣')).to.equal('Hello HelloHello Hello 🤣🤣 🤣🤣 🤣}')
+    expect(sanitizeName('✋🏼✋🏼✋🏼✋🏼✋🏼✋🏼✋🏼✋🏼✋🏼✋🏼✋🏼✋🏼✋🏼✋🏼✋🏼✋🏼✋🏼✋🏼✋🏼✋🏼✋🏼✋🏼✋🏼✋🏼✋🏼✋🏼✋🏼✋🏼✋🏼✋🏼')).to.equal('✋🏼✋🏼✋🏼✋🏼✋🏼✋🏼✋🏼✋🏼✋🏼✋🏼✋🏼✋🏼✋🏼✋🏼✋🏼}')
+    expect(sanitizeName('🤣🤣🤣🤣🤣🤣🤣🤣🤣🤣🤣🤣🤣🤣🤣🤣🤣🤣🤣🤣🤣🤣🤣🤣🤣🤣🤣🤣🤣🤣')).to.equal('🤣🤣🤣🤣🤣🤣🤣🤣🤣🤣🤣🤣🤣🤣🤣🤣🤣🤣🤣🤣🤣🤣🤣🤣🤣🤣🤣🤣🤣🤣}')
+    expect(sanitizeName('Test😁')).to.equal('Test😁}')
   })
 })
 
