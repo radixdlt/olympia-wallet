@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.6.0 (2023-07-10)
+
+* feat: Export Wallet in https://github.com/radixdlt/olympia-wallet/pull/594
+
 ## 1.5.0 (2022-12-05)
 
 ### What's Changed
