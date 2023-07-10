@@ -2,7 +2,6 @@ on:
   push:
     branches:
       - main
-      - st/export-wallet
 
 name: release-latest
 jobs:
