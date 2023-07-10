@@ -97,7 +97,7 @@ import CreateWalletCreatePin from './CreateWalletCreatePin.vue'
 import CreateWalletViewMnemonic from './CreateWalletViewMnemonic.vue'
 import CreateWalletEnterMnemonic from './CreateWalletEnterMnemonic.vue'
 import WizardHeading from '@/components/WizardHeading.vue'
-import { useSidebar, useWallet } from '@/composables'
+import { useOfflineWallet, useSidebar, useWallet } from '@/composables'
 import { useRouter } from 'vue-router'
 import { firstValueFrom } from 'rxjs'
 import { useToast } from 'vue-toastification'
@@ -119,6 +119,7 @@ const CreateWallet = defineComponent({
     const newWallet: Ref<WalletT | null> = ref(null)
     const mnemonicStrength: Ref<StrengthT> = ref(StrengthT.WORD_COUNT_12)
     const toast = useToast()
+    const { login } = useOfflineWallet()
 
     const mnemonic: ComputedRef<MnemomicT> = computed(() => Mnemonic.generateNew({ strength: mnemonicStrength.value }))
 
@@ -160,6 +161,7 @@ const CreateWallet = defineComponent({
       setWallet(newWallet.value)
       setPin(pin)
       loginWithWallet(passcode.value).then((client) => {
+        login(passcode.value)
         return Promise.all([
           firstValueFrom(client.ledger.networkId()),
           firstValueFrom(client.activeAccount)

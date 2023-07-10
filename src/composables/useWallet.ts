@@ -413,7 +413,7 @@ const handleDecimalType = (newDecimalType: AmountFormats) => {
   setDecimalType(newDecimalType)
 }
 
-const hiddenAccounts: Ref<string []> = ref([])
+const hiddenAccounts: Ref<{address: string, nickname: string} []> = ref([])
 
 // get hiddenAccounts
 const fetchHiddenAccountsFromElectron = async () => {
@@ -449,7 +449,7 @@ interface useWalletInterface {
   readonly hardwareInteractionState: Ref<string>;
   readonly hasWallet: Ref<boolean>;
   readonly ledgerVerifyError: Ref<boolean>;
-  readonly hiddenAccounts: ComputedRef<string []>;
+  readonly hiddenAccounts: ComputedRef<{ address: string, nickname: string}[]>;
   // readonly ledgerVerifyError: Ref<Error | null>;
   readonly nativeToken: Ref<Token | null>;
   readonly networkPreamble: ComputedRef<string>;
@@ -485,6 +485,7 @@ interface useWalletInterface {
   readonly transactionErrorMessage: Ref<string | null>;
   readonly userDidCancel: Subject<boolean>;
 
+  activateAccount: () => Promise<AccountT | null>;
   cancelTransaction: () => void;
   confirmTransaction: () => void;
   setActiveTransactionForm: (val: string) => void;
@@ -985,6 +986,7 @@ export default function useWallet (router: Router): useWalletInterface {
       router.push(`/${nextRoute}`)
     },
 
+    activateAccount,
     cancelTransaction,
     confirmTransaction,
     setActiveTransactionForm,

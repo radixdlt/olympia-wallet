@@ -24,67 +24,67 @@ export function debounce<Args extends any[], F extends (...args: Args) => any>(
   waitMilliseconds = 50,
   options: Options<ReturnType<F>> = {}
 ): DebouncedFunction<Args, F> {
-  let timeoutId: ReturnType<typeof setTimeout> | undefined;
-  const isImmediate = options.isImmediate ?? false;
-  const callback = options.callback ?? false;
-  const maxWait = options.maxWait;
-  let lastInvokeTime = Date.now();
+  let timeoutId: ReturnType<typeof setTimeout> | undefined
+  const isImmediate = options.isImmediate ?? false
+  const callback = options.callback ?? false
+  const maxWait = options.maxWait
+  let lastInvokeTime = Date.now()
 
-  let promises: DebouncedPromise<ReturnType<F>>[] = [];
+  let promises: DebouncedPromise<ReturnType<F>>[] = []
 
-  function nextInvokeTimeout() {
+  function nextInvokeTimeout () {
     if (maxWait !== undefined) {
-      const timeSinceLastInvocation = Date.now() - lastInvokeTime;
+      const timeSinceLastInvocation = Date.now() - lastInvokeTime
 
       if (timeSinceLastInvocation + waitMilliseconds >= maxWait) {
-        return maxWait - timeSinceLastInvocation;
+        return maxWait - timeSinceLastInvocation
       }
     }
 
-    return waitMilliseconds;
+    return waitMilliseconds
   }
 
   const debouncedFunction = function (
     this: ThisParameterType<F>,
     ...args: Parameters<F>
   ) {
-    const context = this;
+    const context = this
     return new Promise<ReturnType<F>>((resolve, reject) => {
       const invokeFunction = function () {
-        timeoutId = undefined;
-        lastInvokeTime = Date.now();
+        timeoutId = undefined
+        lastInvokeTime = Date.now()
         if (!isImmediate) {
-          const result = func.apply(context, args);
-          callback && callback(result);
-          promises.forEach(({ resolve }) => resolve(result));
-          promises = [];
+          const result = func.apply(context, args)
+          callback && callback(result)
+          promises.forEach(({ resolve }) => resolve(result))
+          promises = []
         }
-      };
+      }
 
-      const shouldCallNow = isImmediate && timeoutId === undefined;
+      const shouldCallNow = isImmediate && timeoutId === undefined
 
       if (timeoutId !== undefined) {
-        clearTimeout(timeoutId);
+        clearTimeout(timeoutId)
       }
 
-      timeoutId = setTimeout(invokeFunction, nextInvokeTimeout());
+      timeoutId = setTimeout(invokeFunction, nextInvokeTimeout())
 
       if (shouldCallNow) {
-        const result = func.apply(context, args);
-        callback && callback(result);
-        return resolve(result);
+        const result = func.apply(context, args)
+        callback && callback(result)
+        return resolve(result)
       }
-      promises.push({ resolve, reject });
-    });
-  };
+      promises.push({ resolve, reject })
+    })
+  }
 
   debouncedFunction.cancel = function (reason?: any) {
     if (timeoutId !== undefined) {
-      clearTimeout(timeoutId);
+      clearTimeout(timeoutId)
     }
-    promises.forEach(({ reject }) => reject(reason));
-    promises = [];
-  };
+    promises.forEach(({ reject }) => reject(reason))
+    promises = []
+  }
 
-  return debouncedFunction;
+  return debouncedFunction
 }

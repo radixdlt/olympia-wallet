@@ -49,3 +49,7 @@ ol.alpha > li:before {
   width: 0;
   height: 0;
 }
+
+.aspect-square {
+  aspect-ratio: 1 / 1;
+}

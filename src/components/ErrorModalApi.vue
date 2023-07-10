@@ -49,7 +49,7 @@ import { useRouter } from 'vue-router'
 import { useWallet, useErrors } from '@/composables'
 import { refreshApp } from '@/actions/vue/general'
 import { useI18n } from 'vue-i18n'
-import { asBigNumber } from '@/components/BigAmount.vue'
+import { asBigNumber } from '@/helpers/asBigNumber'
 import ClickToCopy from '@/components/ClickToCopy.vue'
 import { add } from '@/helpers/arithmetic'
 

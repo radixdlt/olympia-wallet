@@ -44,7 +44,7 @@ import ButtonSubmit from '@/components/ButtonSubmit.vue'
 import { useI18n } from 'vue-i18n'
 import { ref } from '@nopr3d/vue-next-rx'
 import { useRouter } from 'vue-router'
-import { useSettingsTab, useWallet, useErrors } from '@/composables'
+import { useOfflineWallet, useSettingsTab, useWallet, useErrors } from '@/composables'
 import { firstValueFrom, throwError } from 'rxjs'
 import { timeout } from 'rxjs/operators'
 
@@ -67,26 +67,31 @@ const HomeEnterPasscode = defineComponent({
     const { radix, setConnected, setNetwork, loginWithWallet, walletLoaded, nodeUrl } = useWallet(router)
     const { setTab } = useSettingsTab()
     const { setError } = useErrors(radix)
+    const { login: loginOffline } = useOfflineWallet()
 
     const disableSubmit: ComputedRef<boolean> = computed(() => {
       const metaIsDirty = meta.value.dirty ? !meta.value.valid : true
       return isAuthenticating.value || metaIsDirty
     })
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
       isAuthenticating.value = true
-      loginWithWallet(values.password).then((client) => {
+
+      try {
+        const client = await loginWithWallet(values.password)
+        await loginOffline(values.password)
         const sub = client.ledger.networkId().pipe(
           timeout({
             each: 9000,
             with: () => throwError(() => new Error('network timeout'))
           })
         )
-        return firstValueFrom(sub)
-      }).then((network) => {
+        const network = await firstValueFrom(sub)
         setNetwork(network)
         walletLoaded()
-      }).catch((error) => {
+        isAuthenticating.value = false
+      } catch (error: any) {
+        isAuthenticating.value = false
         setConnected(false)
         if (error.message === 'network timeout') {
           setTab('nodes')
@@ -99,9 +104,7 @@ const HomeEnterPasscode = defineComponent({
         setErrors({
           password: t('validations.incorrectPassword')
         })
-      }).finally(() => {
-        isAuthenticating.value = false
-      })
+      }
     }
 
     return {

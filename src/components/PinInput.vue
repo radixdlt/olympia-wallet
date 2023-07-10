@@ -93,7 +93,6 @@ const PinInput = defineComponent({
     const { value, errorMessage } = useField<string>(name.value, 'required')
 
     const handleChange = () => {
-      console.log(value.value)
       value.value = value.value.replace(/[^0-9]+/, '')
       if (value.value.length > 4) value.value = value.value.slice(0, 4)
       if (value.value.length >= 4) {

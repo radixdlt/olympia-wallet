@@ -16,7 +16,8 @@
       "webpack-env",
       "mocha",
       "chai",
-      "node"
+      "node",
+      "qrcode"
     ],
     "paths": {
       "@/*": [
@@ -29,7 +30,8 @@
       "dom",
       "dom.iterable",
       "scripthost"
-    ]
+    ],
+    "resolveJsonModule": true
   },
   "include": [
     "src/**/*.ts",

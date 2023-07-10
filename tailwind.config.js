@@ -35,7 +35,8 @@ module.exports = {
         tallest: '99999999999px',
         modal: '600px',
         modalMedium: '490px',
-        modalSmall: '300px'
+        modalSmall: '300px',
+        exportQRContainer: 'calc(100vh - 96px)'
       },
       padding: {
         headerHeight: '6.4rem'

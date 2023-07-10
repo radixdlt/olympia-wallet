@@ -1,0 +1,57 @@
+<template>
+  <label class="p-3 items-center justify-between flex border rounded-md gap-x-4 transition-colors ease-in-out" :class="{'border-rBlue': addressSelected}" :for="address.toString()">
+    <div class="flex-grow-0">
+      <input
+        type="checkbox"
+        :checked="addressSelected"
+        :value="address.toString()"
+        :id="address.toString()"
+        @input="$emit('toggle', address.toString())"
+      />
+    </div>
+    <div class="flex flex-col gap-2 flex-1">
+      <div>
+        <span v-if="name" class="text-sm mr-2">{{ name }}</span>
+        <span v-if="isHidden" class="text-sm text-rGrayMed">(Hidden)</span>
+      </div>
+      <div class="flex items-center gap-1 text-xs text-rBlue">
+        {{ address.toString() }}
+      </div>
+    </div>
+  </label>
+</template>
+
+<script lang="ts">
+import { defineComponent, PropType, toRef, computed } from 'vue'
+import { AccountAddressT } from '@radixdlt/application'
+
+export default defineComponent({
+  props: {
+    address: {
+      type: Object as PropType<AccountAddressT>,
+      required: true
+    },
+    name: {
+      type: String,
+      required: false
+    },
+    selected: {
+      type: Array as PropType<string[]>,
+      required: true
+    },
+    isHidden: {
+      type: Boolean,
+      required: true
+    }
+  },
+
+  setup (props) {
+    const address = toRef(props, 'address')
+    const selected = toRef(props, 'selected')
+    const addressSelected = computed(() => selected.value.includes(address.value.toString()))
+    return {
+      addressSelected
+    }
+  }
+})
+</script>

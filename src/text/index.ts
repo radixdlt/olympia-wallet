@@ -113,7 +113,7 @@ const messages = {
       navAddHWWallet: 'Add your first hardware account',
       navAddHWAccount: '+ Add Hardware Account',
       hardwareWalletHeading: 'Hardware Account',
-      testNetworkDisclaimer: 'You are currently connected to a TEST NETWORK. To view your legitimate tokens and transactions on the Radix Public Network, you must choose "Mainnet" in Wallet Settings.',
+      testNetworkDisclaimer: 'You are currently connected to a TEST NETWORK. Babylon Network is active and these networks are being shut down.  To view your legitimate tokens and transactions on the Radix Public Network, you must choose "Mainnet" in Wallet Settings.',
       version: 'Version',
       network: 'Network',
       update: 'Update Available',
@@ -172,7 +172,8 @@ const messages = {
         cancelDecryptionTitle: 'Cancel Decryption',
         cancelDecryptionBody: 'Please cancel the decryption on your Ledger device.'
       },
-      hardwareWalletAccounts: 'Hardware Wallet Accounts:'
+      hardwareWalletAccounts: 'Hardware Wallet Accounts:',
+      babylonIsHere: 'The Babylon Network is here.  This wallet is now obsolete and reflects the last state of the Olympia ledger.  Transactions, Staking and Unstaking is now disabled.'
     },
     hardware: {
       disclaimer: 'Whenever copying a hardware wallet address, it is strongly recommended to verify it on the hardware device. To copy and verify this address, please switch to the hardware address first by selecting it in the account picker.',
@@ -348,11 +349,17 @@ const messages = {
       tabTitleGateway: 'Choose Gateway',
       tabTitleDisplay: 'Display',
       tabTitleShowAccounts: 'Accounts',
+      tabTitleExport: 'Export',
       hiddenAccountsLabel: 'Hidden Accounts',
       accountsToShowMessageTop: 'You have hidden the accounts below from display in the navigation sidebar.',
       accountsToShowMessageBottom: 'You may choose to unhide them if you wish to see them listed in the sidebar again.',
       noAccountsToShowMessage: 'There are no hidden accounts to show.',
-      unhideAccountBtnText: 'unhide account'
+      unhideAccountBtnText: 'unhide account',
+      export: {
+        title: 'Export your MAINNET Accounts',
+        description: 'Generate a series of QR Codes that contain your software and hardware wallet accounts. You can use these QR Codes to import your accounts into the Babylon iOS Wallet.',
+        software: 'Software Accounts'
+      }
     },
     errors: {
       hardwareMismatchTitle: 'Hardware Wallet Account Mismatch',
