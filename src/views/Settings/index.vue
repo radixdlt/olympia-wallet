@@ -11,6 +11,7 @@
           <tabs-tab :isActive="activeTab === 'showAccounts'" @click="() => handleClickTab('showAccounts')">{{ $t('settings.tabTitleShowAccounts')}}</tabs-tab>
           <tabs-tab :isActive="activeTab === 'nodes'" @click="() => handleClickTab('nodes')">{{ $t('settings.tabTitleGateway') }}</tabs-tab>
           <tabs-tab :isActive="activeTab === 'export'" @click="() => handleClickTab('export')">{{ $t('settings.tabTitleExport') }}</tabs-tab>
+          <tabs-tab :isActive="activeTab === 'delete'" @click="() => handleClickTab('delete')">Delete Wallet</tabs-tab>
         </div>
         <tabs-content :leftTabIsActive="activeTab === 'password'">
           <settings-reset-password
@@ -37,6 +38,7 @@
           <settings-select-decimal v-if="activeTab === 'display'" />
           <settings-show-accounts v-if="activeTab === 'showAccounts'"/>
           <settings-export v-if="activeTab === 'export'"/>
+          <settings-delete v-if="activeTab === 'delete'"/>
         </tabs-content>
       </div>
     </div>
@@ -56,6 +58,7 @@ import SettingsTokens from './SettingsTokens.vue'
 import SettingsSelectDecimal from './SettingsSelectDecimal.vue'
 import SettingsShowAccounts from './SettingsShowAccounts.vue'
 import SettingsExport from './SettingsExport.vue'
+import SettingsDelete from './SettingsDelete.vue'
 import WalletLayout from '@/components/layout/WalletLayout.vue'
 import { Ref, ref } from '@nopr3d/vue-next-rx'
 import { useOfflineWallet, useSettingsTab, useWallet } from '@/composables'
@@ -72,6 +75,7 @@ const SettingsIndex = defineComponent({
     SettingsSelectDecimal,
     SettingsSelectNode,
     SettingsShowAccounts,
+    SettingsDelete,
     SettingsTokens,
     TabsContent,
     TabsTab,

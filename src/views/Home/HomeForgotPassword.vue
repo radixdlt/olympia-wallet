@@ -24,10 +24,10 @@
               <p class="text-rBlack leading-5 text-center mb-4">
                 {{ $t('home.deleteChoiceContent') }}
               </p>
-              <button type="button" class="inline-flex justify-center w-full rounded border-transparent border shadow-sm px-4 py-3 bg-rRed text-base text-white focus:outline-none" @click="mode = 'restore'">
+              <button type="button" class="inline-flex justify-center w-full rounded border-transparent border shadow-sm px-4 py-3 bg-rRed text-base text-white focus:outline-none" @click="setMode('restore')">
                 {{ $t('home.deleteRestoreButton') }}
               </button>
-              <button type="button" class="inline-flex justify-center w-full rounded border-rRed border shadow-sm px-4 py-3 bg-white text-base text-rRed focus:outline-none mt-4" @click="mode = 'create'">
+              <button type="button" class="inline-flex justify-center w-full rounded border-rRed border shadow-sm px-4 py-3 bg-white text-base text-rRed focus:outline-none mt-4" @click="setMode('create')">
                 {{ $t('home.deleteCreateButton') }}
               </button>
             </div>
@@ -95,9 +95,9 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, Ref } from 'vue'
-import { ref } from '@nopr3d/vue-next-rx'
+import { defineComponent, computed, ref } from 'vue'
 import { Dialog, DialogOverlay, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue'
+import { useHomeForgotPassword } from '@/composables'
 
 export default defineComponent({
   components: {
@@ -115,49 +115,33 @@ export default defineComponent({
     }
   },
 
-  data () {
-    return {
-      confirmRestore: '',
-      confirmCreate: ''
+  setup (props, context) {
+    const { mode, setMode } = useHomeForgotPassword()
+    const confirmRestore = ref('')
+    const confirmCreate = ref('')
+
+    const restoreDisabled = computed(() => {
+      return confirmRestore.value !== 'DELETE AND RESTORE'
+    })
+
+    const createDisabled = computed(() => {
+      return confirmCreate.value !== 'DELETE WALLET'
+    })
+
+    const resetAndEmit = (evt: 'close' | 'resetAndCreate' | 'resetAndRestore') => {
+      setMode('choice')
+      confirmRestore.value = ''
+      confirmCreate.value = ''
+      context.emit(evt)
     }
-  },
 
-  setup () {
-    const mode: Ref<string> = ref('choice')
-    return { mode }
-  },
+    const close = () => resetAndEmit('close')
 
-  computed: {
-    restoreDisabled (): boolean {
-      return this.confirmRestore !== 'DELETE AND RESTORE'
-    },
+    const submitCreate = () => resetAndEmit('resetAndCreate')
 
-    createDisabled (): boolean {
-      return this.confirmCreate !== 'DELETE WALLET'
-    }
-  },
+    const submitRestore = () => resetAndEmit('resetAndRestore')
 
-  methods: {
-    close () {
-      this.mode = 'choice'
-      this.confirmRestore = ''
-      this.confirmCreate = ''
-      this.$emit('close')
-    },
-
-    submitCreate () {
-      this.mode = 'choice'
-      this.confirmRestore = ''
-      this.confirmCreate = ''
-      this.$emit('resetAndCreate')
-    },
-
-    submitRestore () {
-      this.mode = 'choice'
-      this.confirmRestore = ''
-      this.confirmCreate = ''
-      this.$emit('resetAndRestore')
-    }
+    return { mode, createDisabled, restoreDisabled, setMode, close, submitCreate, submitRestore, confirmRestore, confirmCreate }
   },
 
   emits: ['close', 'resetAndCreate', 'resetAndRestore']
