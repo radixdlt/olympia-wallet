@@ -37,7 +37,10 @@
           <div class="text-white font-normal text-normal leading-snug mr-12">
             <div class="text-lg"> {{ $t('home.welcomeOne') }} </div>
             <div class="text-sm mt-3"> {{ $t('home.welcomeFour') }} </div>
-            <div class="text-sm mt-3"> {{ $t('home.welcomeFive') }} </div>
+            <div class="text-sm mt-3">
+              This application is no longer able to interact with the Radix Network, but you can still use it to export accounts created on Olympia to the <a href="https://wallet.radixdlt.com" target="_blank" class="font-medium">all-new Radix Wallet</a>
+              for the new Babylon version of the Radix Network.
+            </div>
           </div>
         </div>
         <div class="py-8 flex flex-row w-full">
@@ -102,23 +105,28 @@ const Home = defineComponent({
     getAcceptedTos().then((res) => {
       acceptedTos.value = res
     })
-    hasKeystore().then((val: boolean) => {
-      loading.value = false
-      if (!val) {
-        Promise.race([
-          radix.connect(defaultNetwork),
-          new Promise((resolve, reject) => setTimeout(() => reject(new Error()), 5000))
-        ]).then(() => {
-          connected.value = true
-          return firstValueFrom(radix.ledger.networkId())
-        }).then((network: Network) => {
-          setNetwork(network as Network)
-        }).catch(() => {
-          unableToConnect.value = true
-          connected.value = false
-        })
-      }
-    })
+
+    const initialize = () => {
+      hasKeystore().then((val: boolean) => {
+        loading.value = false
+        if (!val) {
+          Promise.race([
+            radix.connect(defaultNetwork),
+            new Promise((resolve, reject) => setTimeout(() => reject(new Error()), 5000))
+          ]).then(() => {
+            connected.value = true
+            return firstValueFrom(radix.ledger.networkId())
+          }).then((network: Network) => {
+            setNetwork(network as Network)
+          }).catch(() => {
+            unableToConnect.value = true
+            connected.value = false
+          })
+        }
+      })
+    }
+
+    initialize()
 
     return {
       loading,
@@ -137,7 +145,8 @@ const Home = defineComponent({
       },
 
       resetAndCreate () {
-        resetWallet('create-wallet')
+        resetWallet('')
+        initialize()
       },
 
       resetAndRestore () {

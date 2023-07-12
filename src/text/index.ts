@@ -29,7 +29,7 @@ const messages = {
     home: {
       welcomeOne: 'Welcome to the Radix Olympia Desktop Wallet.',
       welcomeThree: 'Decentralized finance applications are currently being built on protocols that were not designed to meet the needs and requirements of DeFi.',
-      welcomeFour: 'Radix is using our technology innovations to create the first layer 1 protocol specifically built to serve the rapidly growing DeFi world.',
+      welcomeFour: 'This wallet application was designed for the first version of the Radix Public Network called Olympia. The network has completed its update to a new version called Babylon.',
       welcomeFive: 'Olympia is the first release of the Radix mainnet with the XRD token, dPoS staking, low fees, and a simplified form of our Cerberus consensus protocol. It provides the decentralized network foundations for our future releases that will introduce a DeFi-focused developer experience and unlimited scalability.',
       passwordTitle: 'Enter your password to access your wallet',
       passwordPlaceholder: 'enter password',
