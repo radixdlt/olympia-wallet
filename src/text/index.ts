@@ -44,7 +44,7 @@ const messages = {
       forgotPassword: 'I forgot my password',
       acceptTos: 'Accept',
       deleteWalletTitle: 'Do you want to delete your current wallet?',
-      deleteWalletContent: 'If you can\'t remember your password, you\'ll need to delete this local wallet and restore from your seed phrase or create a new wallet.',
+      deleteWalletContent: 'This will delete all data held in this wallet, including seed phrase. To avoid permanently losing control of your accounts, make sure you have backed up your seed phrase, or have successfully migrated your account control to the new Radix Wallet mobile app for Babylon.',
       deleteChoiceContent: 'Are you sure you want to proceed?',
       deleteRestoreButton: 'Delete and restore from seed phrase',
       deleteCreateButton: 'Delete and create a new wallet',
