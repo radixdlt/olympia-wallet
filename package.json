@@ -42,7 +42,7 @@
     "global": "^4.4.0",
     "loglevel": "^1.7.1",
     "luxon": "^1.26.0",
-    "postcss": "^7",
+    "postcss": "^8",
     "qrcode": "^1.5.1",
     "rxjs": "7.0.0",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.1.0",
