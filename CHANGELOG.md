@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.6.1 (2025-10-09)
+
+* chore: Switch to olympia gateway proxy https://github.com/radixdlt/olympia-wallet/pull/605
+
 ## 1.6.0 (2023-07-10)
 
 * feat: Export Wallet in https://github.com/radixdlt/olympia-wallet/pull/594

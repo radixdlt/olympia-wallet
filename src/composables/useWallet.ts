@@ -787,7 +787,7 @@ const fetchSavedNodeUrl = async (signingKeychain: SigningKeychainT): Promise<str
   const { selectedNode, selectedNodeHash } = await fetchSelectedNodeFromStore()
   if (!selectedNode) {
     // set a default node, one did not exist.
-    const defaultToMainnet = 'https://mainnet.radixdlt.com'
+    const defaultToMainnet = 'https://olympia-gateway.radixdlt.com'
     const hash = await hashNodeUrl(defaultToMainnet, signingKeychain)
     await persistNodeSelection(defaultToMainnet, hash)
     return defaultToMainnet
