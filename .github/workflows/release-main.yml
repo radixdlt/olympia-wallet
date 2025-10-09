@@ -12,16 +12,16 @@ jobs:
       GH_TOKEN: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
     strategy:
       matrix:
-        os: [macos-latest, ubuntu-latest, windows-latest]
+        os: [macos-13, ubuntu-latest, windows-latest]
     steps:
       - name: Check out Git repository
         uses: actions/checkout@v1
 
-      - name: Install npm
-        run: nvm install 15
-
-      - name: Instal yarn
-        run: npm install -g yarn
+      - name: Install Node.js, NPM and Yarn
+        uses: actions/setup-node@v2
+        with:
+          node-version: '15'
+          check-latest: true
 
       - name: Build/release Electron app
         uses: samuelmeuli/action-electron-builder@v1
