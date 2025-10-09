@@ -17,7 +17,7 @@ export const network = (networkName: Network): ChosenNetworkT => {
   } else if (networkName === Network.MAINNET) {
     response = {
       network: Network.MAINNET,
-      networkURL: 'https://mainnet.radixdlt.com',
+      networkURL: 'https://olympia-gateway.radixdlt.com',
       preamble: HRP[Network.MAINNET].account
     }
   } else {
@@ -26,12 +26,12 @@ export const network = (networkName: Network): ChosenNetworkT => {
   return response
 }
 
-export const defaultNetwork = 'https://mainnet.radixdlt.com'
+export const defaultNetwork = 'https://olympia-gateway.radixdlt.com'
 
 export const defaultNetworks: ChosenNetworkT[] = [
   {
     network: Network.MAINNET,
-    networkURL: 'https://mainnet.radixdlt.com',
+    networkURL: 'https://olympia-gateway.radixdlt.com',
     preamble: HRP[Network.MAINNET].account
   },
   {
