@@ -17,9 +17,11 @@ jobs:
       - name: Check out Git repository
         uses: actions/checkout@v1
 
-      - name: Install Node.js, NPM and Yarn
-        run:
-          | nvm install 15
+      - name: Install npm
+        run: nvm install 15
+
+      - name: Instal yarn
+        run: npm install -g yarn
 
       - name: Build/release Electron app
         uses: samuelmeuli/action-electron-builder@v1
