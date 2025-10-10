@@ -23,19 +23,46 @@ jobs:
           node-version: '15'
           check-latest: true
 
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Install Apple certificates
+        if: matrix.os == 'macos-13'
+        env:
+          MAC_CERTS: ${{ secrets.MAC_CERTS }}
+          MAC_CERTS_PASSWORD: ${{ secrets.MAC_CERTS_PASSWORD }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          KEYCHAIN_NAME=build.keychain
+          KEYCHAIN_PASSWORD=$(uuidgen)
+          CERTS_PATH="$RUNNER_TEMP/certificates.p12"
+
+          security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_NAME"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN_NAME"
+          security default-keychain -s "$KEYCHAIN_NAME"
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_NAME"
+
+          echo "$MAC_CERTS" | base64 --decode > "$CERTS_PATH"
+          security import "$CERTS_PATH" -k "$KEYCHAIN_NAME" -P "$MAC_CERTS_PASSWORD" -T /usr/bin/codesign
+          security list-keychain -d user -s "$KEYCHAIN_NAME" login.keychain
+          security set-key-partition-list -S apple-tool:,apple: -s -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN_NAME"
+
+          echo "CSC_LINK=$CERTS_PATH" >> "$GITHUB_ENV"
+          echo "CSC_KEY_PASSWORD=$MAC_CERTS_PASSWORD" >> "$GITHUB_ENV"
+
       - name: Build/release Electron app
-        uses: samuelmeuli/action-electron-builder@v1
+        shell: bash
         env:
           VUE_APP_NETWORK_NAME: MAINNET
           VUE_APP_EXPLORER: https://explorer.radixdlt.com
           APPLE_ID: ${{ secrets.APPLE_ID }}
           APPLE_ID_PASSWORD: ${{ secrets.APPLE_ID_PASSWORD }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
-        with:
-          # GitHub token, automatically provided to the action
-          # (No need to define this secret in the repo settings)
-          github_token: ${{ secrets.github_token }}
-          use_vue_cli: true
-          release: ${{ startsWith(github.ref, 'refs/tags/v') }}
-          mac_certs: ${{ secrets.MAC_CERTS }}
-          mac_certs_password: ${{ secrets.MAC_CERTS_PASSWORD }}
+        run: |
+          set -euo pipefail
+          if [[ "${{ startsWith(github.ref, 'refs/tags/v') }}" == 'true' ]]; then
+            yarn electron:build
+          else
+            yarn electron:build --publish=never
+          fi

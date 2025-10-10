@@ -17,25 +17,45 @@ jobs:
         with:
           node-version: '15'
           check-latest: true
-      - run: yarn
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
       - name: mark latest
         uses: ./.github/actions/mark-latest
 
+      - name: Install Apple certificates
+        if: matrix.os == 'macos-latest'
+        env:
+          MAC_CERTS: ${{ secrets.MAC_CERTS }}
+          MAC_CERTS_PASSWORD: ${{ secrets.MAC_CERTS_PASSWORD }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          KEYCHAIN_NAME=build.keychain
+          KEYCHAIN_PASSWORD=$(uuidgen)
+          CERTS_PATH="$RUNNER_TEMP/certificates.p12"
+
+          security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_NAME"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN_NAME"
+          security default-keychain -s "$KEYCHAIN_NAME"
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_NAME"
+
+          echo "$MAC_CERTS" | base64 --decode > "$CERTS_PATH"
+          security import "$CERTS_PATH" -k "$KEYCHAIN_NAME" -P "$MAC_CERTS_PASSWORD" -T /usr/bin/codesign
+          security list-keychain -d user -s "$KEYCHAIN_NAME" login.keychain
+          security set-key-partition-list -S apple-tool:,apple: -s -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN_NAME"
+
+          echo "CSC_LINK=$CERTS_PATH" >> "$GITHUB_ENV"
+          echo "CSC_KEY_PASSWORD=$MAC_CERTS_PASSWORD" >> "$GITHUB_ENV"
+
       - name: Build/release Electron app
-        uses: samuelmeuli/action-electron-builder@v1
+        shell: bash
         env:
           APPLE_ID: ${{ secrets.APPLE_ID }}
           APPLE_ID_PASSWORD: ${{ secrets.APPLE_ID_PASSWORD }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
-        with:
-          # GitHub token, automatically provided to the action
-          # (No need to define this secret in the repo settings)
-          github_token: ${{ secrets.github_token }}
-          use_vue_cli: true
-          release: ${{ startsWith(github.ref, 'refs/tags/v') }}
-          mac_certs: ${{ secrets.MAC_CERTS }}
-          mac_certs_password: ${{ secrets.MAC_CERTS_PASSWORD }}
-          args: "--publish=never"
+        run: |
+          set -euo pipefail
+          yarn electron:build --publish=never
       - name: Move Files
         shell: bash
         run: ./move_dist.sh
@@ -49,7 +69,7 @@ jobs:
 
       - name: Upload Mac Artifacts
         uses: actions/upload-artifact@v1
-        if: matrix.os == 'macOS-latest'
+        if: matrix.os == 'macos-latest'
         with:
           name: olympia-wallet-mac
           path: dist-mac
