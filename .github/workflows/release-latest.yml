@@ -10,7 +10,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [macos-13, ubuntu-latest, windows-latest]
+        os: [macos-15, ubuntu-latest, windows-latest]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
@@ -23,7 +23,7 @@ jobs:
         uses: ./.github/actions/mark-latest
 
       - name: Install Apple certificates
-        if: matrix.os == 'macos-13'
+        if: matrix.os == 'macos-15'
         env:
           MAC_CERTS: ${{ secrets.MAC_CERTS }}
           MAC_CERTS_PASSWORD: ${{ secrets.MAC_CERTS_PASSWORD }}
@@ -69,7 +69,7 @@ jobs:
 
       - name: Upload Mac Artifacts
         uses: actions/upload-artifact@v4
-        if: matrix.os == 'macos-13'
+        if: matrix.os == 'macos-15'
         with:
           name: olympia-wallet-mac
           path: dist-mac
